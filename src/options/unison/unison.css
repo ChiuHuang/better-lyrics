@@ -846,6 +846,143 @@ kbd {
   opacity: 0.7;
 }
 
+.unison-vote-btn--edit {
+  align-self: flex-start;
+}
+
+/* -- Video linking (owner tools) --------------------------  */
+
+.unison-detail-videos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.unison-detail-videos-heading {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.unison-video-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.unison-video-row,
+.unison-suggest-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.375rem;
+}
+
+.unison-suggest-row--disabled {
+  opacity: 0.5;
+}
+
+.unison-video-id {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: rgb(165, 180, 252);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unison-video-id:hover {
+  text-decoration: underline;
+}
+
+.unison-video-primary {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.unison-video-empty {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.unison-suggest-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.unison-suggest-title {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unison-suggest-meta {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.unison-video-remove,
+.unison-video-add {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: inherit;
+  font-size: 0.6875rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.unison-video-remove:hover:not(:disabled),
+.unison-video-add:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.unison-video-remove svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.unison-video-remove:disabled,
+.unison-video-add:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.unison-edit-variant-banner {
+  padding: 0.625rem 0.875rem;
+  margin-bottom: 1rem;
+  background: rgba(129, 140, 248, 0.12);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  border-radius: 0.5rem;
+  color: rgb(165, 180, 252);
+  font-size: 0.8125rem;
+}
+
 /* -- Report Dropdown --------------------------  */
 
 .unison-report-dropdown {

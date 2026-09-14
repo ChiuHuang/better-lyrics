@@ -4,7 +4,9 @@ import { t } from "@core/i18n";
 import {
   DEFAULT_FEED_FILTERS,
   type FeedFilters,
+  type LinkedVideo,
   type ReportReason,
+  type SuggestedVideo,
   type UnisonConfidence,
   type UnisonFeedEntry,
   type UnisonFormat,
@@ -16,18 +18,23 @@ import {
 import {
   castVote,
   deleteLyrics,
+  editVariant,
   getFeed,
   getLyricsById,
   getLyricsByVideoId,
   getMySubmissions,
+  linkVideo,
+  listVideos,
   removeVote,
   reportLyrics,
   searchLyrics,
   submitLyrics,
+  suggestedVideos,
+  unlinkVideo,
 } from "@modules/unison/unisonApi";
 import { UnisonErrorCode } from "@modules/unison/errorCodes";
 import { appendInlineProfile, profileUrl } from "@modules/unison/gamificationRender";
-import { generatePetName, getDisplayName } from "@/core/keyIdentity";
+import { generatePetName, getDisplayName, getIdentity } from "@/core/keyIdentity";
 import { warnUnison } from "@core/logger";
 
 // -- SVG Icons --------------------------
@@ -136,6 +143,8 @@ const feedTabCache: Record<FeedTabName, FeedTabCache> = {
 
 let activeFeedTab: FeedTabName = "recent";
 let feedSentinelObserver: IntersectionObserver | undefined;
+let editVariantMode: { parentId: number } | null = null;
+let detailRenderToken = 0;
 
 // -- Dev Stub --------------------------
 
@@ -221,9 +230,18 @@ function routeFromParams(): void {
 
   if (params.get("submit") === "true") {
     showView("submit");
-    prefillSubmitForm(params);
+    const editParent = params.get("editVariant");
+    if (editParent) {
+      prefillSubmitForm(params);
+      void enterEditVariantMode(Number(editParent));
+    } else {
+      clearEditVariantMode();
+      prefillSubmitForm(params);
+    }
     return;
   }
+
+  clearEditVariantMode();
 
   const lyricsId = params.get("id");
   if (lyricsId) {
@@ -974,6 +992,7 @@ async function loadDetailByVideoId(videoId: string): Promise<void> {
 }
 
 function renderDetail(entry: UnisonLyricsEntry, isOwn: boolean = false): void {
+  const token = ++detailRenderToken;
   detailMeta.replaceChildren();
   detailPreview.replaceChildren();
   detailLyrics.replaceChildren();
@@ -1037,10 +1056,12 @@ function renderDetail(entry: UnisonLyricsEntry, isOwn: boolean = false): void {
   detailMeta.appendChild(scoreRow);
   if (entry.fulfilled) detailMeta.appendChild(createFulfilledBlock(entry.submitter));
   detailMeta.appendChild(votingRow);
+  detailMeta.appendChild(createEditVariantButton(entry));
   if (isOwn) {
     detailMeta.appendChild(createDetailDeleteButton(entry.id));
   }
   detailMeta.appendChild(ytLink);
+  void renderOwnerVideoTools(entry, token);
 
   // -- Preview column
   renderPreviewInto(detailPreview, entry.lyrics);
@@ -1252,6 +1273,252 @@ function createDetailDeleteButton(unisonId: number): HTMLButtonElement {
   });
 
   return btn;
+}
+
+// -- Video linking & edit (detail page) --------------------------
+
+function videoLinkErrorMessage(code: string | undefined, fallback: string): string {
+  switch (code) {
+    case UnisonErrorCode.NOT_OWNER:
+      return t("unison_deleteForbidden");
+    case UnisonErrorCode.LINK_CAP_REACHED:
+      return t("unison_error_linkCapReached");
+    case UnisonErrorCode.DURATION_MISMATCH:
+      return t("unison_error_durationMismatch");
+    case UnisonErrorCode.VIDEO_UNVERIFIABLE:
+      return t("unison_error_videoUnverifiable");
+    case UnisonErrorCode.CANNOT_UNLINK_PRIMARY:
+      return t("unison_error_cannotUnlinkPrimary");
+    default:
+      return fallback;
+  }
+}
+
+async function isOwnerOf(entry: UnisonLyricsEntry): Promise<boolean> {
+  if (!entry.submitter) return false;
+  try {
+    const { keyId } = await getIdentity();
+    return keyId === entry.submitter.keyId;
+  } catch (err) {
+    warnUnison("owner check failed", err);
+    return false;
+  }
+}
+
+function formatDurationSeconds(seconds: number): string {
+  const total = Math.max(0, Math.round(seconds));
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
+function createVideoIdLink(videoId: string): HTMLAnchorElement {
+  const link = document.createElement("a");
+  link.className = "unison-video-id";
+  link.href = `https://music.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
+  link.target = "_blank";
+  link.rel = "noreferrer noopener";
+  link.textContent = videoId;
+  return link;
+}
+
+function renderLinkedVideoList(
+  lyricsId: number,
+  listEl: HTMLElement,
+  videos: LinkedVideo[],
+  refresh: () => Promise<void>
+): void {
+  listEl.replaceChildren();
+  if (!videos.length) {
+    const empty = document.createElement("li");
+    empty.className = "unison-video-empty";
+    empty.textContent = t("unison_noLinkedVideos");
+    listEl.appendChild(empty);
+    return;
+  }
+
+  for (const video of videos) {
+    const row = document.createElement("li");
+    row.className = "unison-video-row";
+    row.appendChild(createVideoIdLink(video.videoId));
+
+    if (video.isPrimary) {
+      const badge = document.createElement("span");
+      badge.className = "unison-video-primary";
+      badge.textContent = t("unison_videoPrimary");
+      row.appendChild(badge);
+    } else {
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "unison-video-remove";
+      removeBtn.appendChild(svgIcon("trash"));
+      removeBtn.append(t("unison_removeVideo"));
+      removeBtn.addEventListener("click", async () => {
+        removeBtn.disabled = true;
+        const result = await unlinkVideo(lyricsId, video.videoId);
+        if (result.success) {
+          await refresh();
+          return;
+        }
+        removeBtn.disabled = false;
+        removeBtn.replaceChildren(
+          document.createTextNode(videoLinkErrorMessage(result.code, t("unison_unlinkFailed")))
+        );
+      });
+      row.appendChild(removeBtn);
+    }
+
+    listEl.appendChild(row);
+  }
+}
+
+function renderSuggestedVideoList(
+  lyricsId: number,
+  listEl: HTMLElement,
+  suggestions: SuggestedVideo[],
+  refresh: () => Promise<void>
+): void {
+  listEl.replaceChildren();
+  if (!suggestions.length) {
+    const empty = document.createElement("li");
+    empty.className = "unison-video-empty";
+    empty.textContent = t("unison_noSuggestions");
+    listEl.appendChild(empty);
+    return;
+  }
+
+  for (const suggestion of suggestions) {
+    const row = document.createElement("li");
+    row.className = "unison-suggest-row";
+    if (!suggestion.withinDurationDelta) row.classList.add("unison-suggest-row--disabled");
+
+    const info = document.createElement("div");
+    info.className = "unison-suggest-info";
+
+    const title = document.createElement("span");
+    title.className = "unison-suggest-title";
+    title.textContent = suggestion.title;
+    info.appendChild(title);
+
+    const meta = document.createElement("span");
+    meta.className = "unison-suggest-meta";
+    meta.textContent = `${suggestion.artist} · ${formatDurationSeconds(suggestion.durationSeconds)}`;
+    info.appendChild(meta);
+    row.appendChild(info);
+
+    const addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.className = "unison-video-add";
+    addBtn.textContent = t("unison_addVideo");
+    addBtn.disabled = !suggestion.withinDurationDelta;
+    addBtn.addEventListener("click", async () => {
+      addBtn.disabled = true;
+      const result = await linkVideo(lyricsId, suggestion.videoId);
+      if (result.success) {
+        await refresh();
+        return;
+      }
+      addBtn.disabled = false;
+      addBtn.textContent = videoLinkErrorMessage(result.code, t("unison_linkFailed"));
+    });
+    row.appendChild(addBtn);
+
+    listEl.appendChild(row);
+  }
+}
+
+async function renderOwnerVideoTools(entry: UnisonLyricsEntry, token: number): Promise<void> {
+  if (!(await isOwnerOf(entry))) return;
+  if (token !== detailRenderToken) return;
+
+  const section = document.createElement("div");
+  section.className = "unison-detail-videos";
+
+  const linkedHeading = document.createElement("h3");
+  linkedHeading.className = "unison-detail-videos-heading";
+  linkedHeading.textContent = t("unison_linkedVideos");
+
+  const linkedList = document.createElement("ul");
+  linkedList.className = "unison-video-list";
+
+  const suggestHeading = document.createElement("h3");
+  suggestHeading.className = "unison-detail-videos-heading";
+  suggestHeading.textContent = t("unison_suggestedVideos");
+
+  const suggestList = document.createElement("ul");
+  suggestList.className = "unison-video-list unison-suggest-list";
+
+  section.appendChild(linkedHeading);
+  section.appendChild(linkedList);
+  section.appendChild(suggestHeading);
+  section.appendChild(suggestList);
+  detailMeta.appendChild(section);
+
+  async function refresh(): Promise<void> {
+    const [linkedRes, suggestRes] = await Promise.all([listVideos(entry.id), suggestedVideos(entry.id)]);
+    renderLinkedVideoList(entry.id, linkedList, linkedRes.data, refresh);
+    renderSuggestedVideoList(entry.id, suggestList, suggestRes.data, refresh);
+  }
+
+  await refresh();
+}
+
+function createEditVariantButton(entry: UnisonLyricsEntry): HTMLButtonElement {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "unison-vote-btn unison-vote-btn--edit";
+  btn.appendChild(svgIcon("upvote"));
+  btn.append(t("unison_editAsVariant"));
+  btn.addEventListener("click", () => {
+    editVariantMode = { parentId: entry.id };
+    navigateTo({ submit: "true", editVariant: String(entry.id) });
+    seedEditVariantForm(entry);
+  });
+  return btn;
+}
+
+async function enterEditVariantMode(parentId: number): Promise<void> {
+  if (editVariantMode?.parentId === parentId) return;
+  const result = await getLyricsById(parentId);
+  if (!result.success || !result.data) return;
+  editVariantMode = { parentId };
+  seedEditVariantForm(result.data);
+}
+
+function seedEditVariantForm(entry: UnisonLyricsEntry): void {
+  const setField = (id: string, value: string) => {
+    const el = document.getElementById(id) as HTMLInputElement | null;
+    if (el) el.value = value;
+  };
+  setField("unison-field-song", entry.song);
+  setField("unison-field-artist", entry.artist);
+  setField("unison-field-album", entry.album ?? "");
+  setField("unison-field-videoId", entry.videoId);
+  setField("unison-field-isrc", entry.isrc ?? "");
+  lyricsTextarea.value = entry.lyrics;
+  if (entry.language) submitLanguageSelect.value = entry.language;
+  updatePreview();
+  autoDetectFormat();
+  updateComposerLink();
+  showEditVariantBanner(entry.song);
+}
+
+function showEditVariantBanner(song: string): void {
+  let banner = document.getElementById("unison-edit-variant-banner");
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.id = "unison-edit-variant-banner";
+    banner.className = "unison-edit-variant-banner";
+    viewSubmit.insertBefore(banner, viewSubmit.firstChild);
+  }
+  banner.textContent = t("unison_editingVariantOf", [song]);
+  banner.hidden = false;
+}
+
+function clearEditVariantMode(): void {
+  editVariantMode = null;
+  const banner = document.getElementById("unison-edit-variant-banner");
+  if (banner) banner.hidden = true;
 }
 
 function showReportMenu(unisonId: number, anchor: HTMLButtonElement): void {
@@ -1578,6 +1845,37 @@ function updatePreview(): void {
   renderPreviewInto(previewContent, lyricsTextarea.value, true);
 }
 
+function editVariantErrorMessage(result: { code?: string; status?: number }): string {
+  if (result.code === UnisonErrorCode.VARIANT_CAP_REACHED) return t("unison_error_variantCapReached");
+  if (result.code === UnisonErrorCode.RATE_LIMITED || result.status === 429) return t("unison_error_rateLimited");
+  if (result.code === UnisonErrorCode.NOT_FOUND || result.status === 404) return t("unison_error_parentGone");
+  return t("unison_editVariantFailed");
+}
+
+async function handleEditVariantSubmit(lyrics: string, format: UnisonFormat | "auto", language: string): Promise<void> {
+  if (!editVariantMode) return;
+
+  if (!lyrics) {
+    showFeedback(submitFeedback, { title: t("unison_validationRequired"), isError: true });
+    return;
+  }
+
+  const resolvedFormat = format === "auto" ? detectFormat(lyrics) : format;
+  submitBtn.disabled = true;
+  const result = await editVariant(editVariantMode.parentId, lyrics, resolvedFormat, language || undefined);
+
+  if (result.success) {
+    showFeedback(submitFeedback, { title: t("unison_editVariantSuccess"), isError: false });
+    const newId = result.data?.id;
+    clearEditVariantMode();
+    if (newId) setTimeout(() => navigateTo({ id: String(newId) }), 1500);
+    return;
+  }
+
+  submitBtn.disabled = false;
+  showFeedback(submitFeedback, { title: editVariantErrorMessage(result), hint: result.hint, isError: true });
+}
+
 async function handleSubmit(): Promise<void> {
   const song = (document.getElementById("unison-field-song") as HTMLInputElement).value.trim();
   const artist = (document.getElementById("unison-field-artist") as HTMLInputElement).value.trim();
@@ -1588,6 +1886,11 @@ async function handleSubmit(): Promise<void> {
   const language = submitLanguageSelect.value;
   const lyrics = lyricsTextarea.value.trim();
   let format = formatSelect.value as UnisonFormat | "auto";
+
+  if (editVariantMode) {
+    await handleEditVariantSubmit(lyrics, format, language);
+    return;
+  }
 
   if (!song || !artist || !videoId || !lyrics) {
     showFeedback(submitFeedback, { title: t("unison_validationRequired"), isError: true });
