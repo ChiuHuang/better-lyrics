@@ -1262,6 +1262,10 @@ kbd {
   gap: 0.25rem;
 }
 
+.unison-field[hidden] {
+  display: none;
+}
+
 .unison-field-label {
   font-size: 0.6875rem;
   font-weight: 600;

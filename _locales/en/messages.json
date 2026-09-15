@@ -1897,6 +1897,10 @@
     "message": "Couldn't save this variant",
     "description": "Generic error shown when creating an edited variant fails"
   },
+  "unison_showMore": {
+    "message": "Show more",
+    "description": "Button that reveals the rest of the suggested videos list beyond the first few"
+  },
   "unison_editConfirmTitle": {
     "message": "Save your edit?",
     "description": "Title of the dialog shown before saving an edited variant, when the lyric being edited already has votes"

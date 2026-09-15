@@ -1059,7 +1059,7 @@ function renderDetail(entry: UnisonLyricsEntry, isOwn: boolean = false): void {
   detailMeta.appendChild(scoreRow);
   if (entry.fulfilled) detailMeta.appendChild(createFulfilledBlock(entry.submitter));
   detailMeta.appendChild(votingRow);
-  detailMeta.appendChild(createEditVariantButton(entry));
+  void appendEditVariantForOwner(entry, votingRow, token);
   if (isOwn) {
     detailMeta.appendChild(createDetailDeleteButton(entry.id));
   }
@@ -1451,7 +1451,7 @@ function renderSuggestedVideoList(
   const moreBtn = document.createElement("button");
   moreBtn.type = "button";
   moreBtn.className = "unison-suggest-more-btn";
-  moreBtn.textContent = t("unison_loadMore");
+  moreBtn.textContent = t("unison_showMore");
   moreBtn.addEventListener("click", () => {
     moreRow.remove();
     appendRows(suggestions.slice(SUGGESTED_VIDEO_PAGE_SIZE));
@@ -1496,6 +1496,12 @@ async function renderOwnerVideoTools(entry: UnisonLyricsEntry, token: number): P
   await refresh();
 }
 
+async function appendEditVariantForOwner(entry: UnisonLyricsEntry, anchor: HTMLElement, token: number): Promise<void> {
+  if (!(await isOwnerOf(entry))) return;
+  if (token !== detailRenderToken) return;
+  anchor.insertAdjacentElement("afterend", createEditVariantButton(entry));
+}
+
 function createEditVariantButton(entry: UnisonLyricsEntry): HTMLButtonElement {
   const btn = document.createElement("button");
   btn.type = "button";
@@ -1514,6 +1520,7 @@ async function enterEditVariantMode(parentId: number): Promise<void> {
   if (editVariantMode?.parentId === parentId) return;
   const result = await getLyricsById(parentId);
   if (!result.success || !result.data) return;
+  if (!(await isOwnerOf(result.data))) return;
   editVariantMode = { parentId, voteCount: result.data.voteCount, sealed: sealMarks(result.data.marks).length > 0 };
   seedEditVariantForm(result.data);
 }
