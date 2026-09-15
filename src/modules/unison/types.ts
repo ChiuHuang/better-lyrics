@@ -91,9 +91,9 @@ export interface SuggestedVideo {
   title: string;
   artist: string;
   album?: string;
+  videoType: "song" | "video";
   durationSeconds: number;
   matchScore: number;
-  withinDurationDelta: boolean;
 }
 
 export interface UnisonApiResponse<T> {

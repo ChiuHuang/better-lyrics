@@ -1631,6 +1631,24 @@
     "message": "11-character ID from the YouTube Music URL",
     "description": "Hint text below video ID field label"
   },
+  "unison_additionalVideos": {
+    "message": "Additional videos",
+    "description": "Label for the optional submit-form field where the user lists other videos of the same song to link to this lyric"
+  },
+  "unison_additionalVideosHint": {
+    "message": "Optional. Other uploads of this song to link, videoIds or URLs separated by spaces or commas. Each is verified; ones that don't match are skipped.",
+    "description": "Hint text below the additional videos field on the submit form"
+  },
+  "unison_additionalVideosSkipped": {
+    "message": "Submitted. Couldn't verify these videos, so they weren't linked: $videos$",
+    "description": "Feedback after submitting when some additional videos could not be linked. $videos$ is a comma-separated list of videoIds",
+    "placeholders": {
+      "videos": {
+        "content": "$1",
+        "example": "dQw4w9WgXcQ, abcdEFGH123"
+      }
+    }
+  },
   "unison_formatHint": {
     "message": "Auto-detected from lyrics content",
     "description": "Hint text below format field label"
