@@ -1214,7 +1214,7 @@ ytmusic-player-page:not([is-mweb-modernization-enabled]) #side-panel.blyrics-has
 	display: none;
 	z-index: 2;
 	max-width: 40rem;
-	text-align: left;
+	text-align: start;
 	font-family: var(--blyrics-font-family);
 }
 
@@ -1407,7 +1407,7 @@ ytmusic-player-page[player-fullscreened]:not([blyrics-dfs]) #blyrics-fs-column {
   max-width: none;
   margin: 0;
   padding: 0;
-  text-align: left;
+  text-align: start;
 }
 
 .blyrics-fs-info-row {

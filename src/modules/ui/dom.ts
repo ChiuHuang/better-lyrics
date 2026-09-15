@@ -1725,6 +1725,7 @@ export function injectSongAttributes(title: string, artist: string, album?: stri
 
   const row = wrapSongInfoWithActions(document, songInfoWrapper);
   row.id = "blyrics-fs-info-row";
+  row.dir = "auto";
 
   const controls = createFullscreenControls(document);
   controls.element.id = "blyrics-fs-controls";
