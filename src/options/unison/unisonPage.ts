@@ -33,6 +33,7 @@ import {
   unlinkVideo,
 } from "@modules/unison/unisonApi";
 import { UnisonErrorCode } from "@modules/unison/errorCodes";
+import { sealMarks } from "@modules/unison/gamification";
 import { appendInlineProfile, profileUrl } from "@modules/unison/gamificationRender";
 import { generatePetName, getDisplayName, getIdentity } from "@/core/keyIdentity";
 import { warnUnison } from "@core/logger";
@@ -144,7 +145,7 @@ const feedTabCache: Record<FeedTabName, FeedTabCache> = {
 
 let activeFeedTab: FeedTabName = "recent";
 let feedSentinelObserver: IntersectionObserver | undefined;
-let editVariantMode: { parentId: number } | null = null;
+let editVariantMode: { parentId: number; voteCount: number; sealed: boolean } | null = null;
 let additionalVideosInput: { getIds(): string[]; clear(): void } | null = null;
 let detailRenderToken = 0;
 
@@ -1502,7 +1503,7 @@ function createEditVariantButton(entry: UnisonLyricsEntry): HTMLButtonElement {
   btn.appendChild(svgIcon("editAsVariant"));
   btn.append(t("unison_editAsVariant"));
   btn.addEventListener("click", () => {
-    editVariantMode = { parentId: entry.id };
+    editVariantMode = { parentId: entry.id, voteCount: entry.voteCount, sealed: sealMarks(entry.marks).length > 0 };
     navigateTo({ submit: "true", editVariant: String(entry.id) });
     seedEditVariantForm(entry);
   });
@@ -1513,7 +1514,7 @@ async function enterEditVariantMode(parentId: number): Promise<void> {
   if (editVariantMode?.parentId === parentId) return;
   const result = await getLyricsById(parentId);
   if (!result.success || !result.data) return;
-  editVariantMode = { parentId };
+  editVariantMode = { parentId, voteCount: result.data.voteCount, sealed: sealMarks(result.data.marks).length > 0 };
   seedEditVariantForm(result.data);
 }
 
@@ -1899,12 +1900,74 @@ function editVariantErrorMessage(result: { code?: string; status?: number }): st
   return t("unison_editVariantFailed");
 }
 
+function confirmDialog(opts: { title: string; body: string; confirmLabel: string; banner?: string }): Promise<boolean> {
+  return new Promise(resolve => {
+    const dialog = document.createElement("dialog");
+    dialog.className = "unison-confirm";
+
+    const heading = document.createElement("h3");
+    heading.className = "unison-confirm-title";
+    heading.textContent = opts.title;
+
+    const text = document.createElement("p");
+    text.className = "unison-confirm-body";
+    text.textContent = opts.body;
+    dialog.append(heading, text);
+
+    if (opts.banner) {
+      const banner = document.createElement("div");
+      banner.className = "unison-confirm-banner";
+      banner.textContent = opts.banner;
+      dialog.appendChild(banner);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "unison-confirm-actions";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.className = "unison-confirm-btn unison-confirm-btn--cancel";
+    cancelBtn.textContent = t("options_cancel");
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "unison-confirm-btn unison-confirm-btn--save";
+    saveBtn.textContent = opts.confirmLabel;
+    actions.append(cancelBtn, saveBtn);
+    dialog.appendChild(actions);
+
+    const close = (result: boolean) => {
+      dialog.close();
+      dialog.remove();
+      resolve(result);
+    };
+    cancelBtn.addEventListener("click", () => close(false));
+    saveBtn.addEventListener("click", () => close(true));
+    dialog.addEventListener("cancel", event => {
+      event.preventDefault();
+      close(false);
+    });
+
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    cancelBtn.focus();
+  });
+}
+
 async function handleEditVariantSubmit(lyrics: string, format: UnisonFormat | "auto", language: string): Promise<void> {
   if (!editVariantMode) return;
 
   if (!lyrics) {
     showFeedback(submitFeedback, { title: t("unison_validationRequired"), isError: true });
     return;
+  }
+
+  if (editVariantMode.voteCount > 0 || editVariantMode.sealed) {
+    const confirmed = await confirmDialog({
+      title: t("unison_editConfirmTitle"),
+      body: t("unison_editConfirmBody"),
+      confirmLabel: t("unison_editConfirmSave"),
+      banner: editVariantMode.sealed ? t("unison_editConfirmSealed") : undefined,
+    });
+    if (!confirmed) return;
   }
 
   const resolvedFormat = format === "auto" ? detectFormat(lyrics) : format;

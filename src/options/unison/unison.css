@@ -1001,6 +1001,84 @@ kbd {
   font-size: 0.8125rem;
 }
 
+/* -- Confirm Dialog --------------------------  */
+
+.unison-confirm {
+  max-width: 24rem;
+  padding: 1.25rem;
+  background: #3e3e41;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.75rem;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 20px 50px -10px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.unison-confirm::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.unison-confirm-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.unison-confirm-body {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.unison-confirm-banner {
+  margin-top: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  background: rgba(129, 140, 248, 0.12);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  border-radius: 0.5rem;
+  color: rgb(165, 180, 252);
+  font-size: 0.78125rem;
+  line-height: 1.45;
+}
+
+.unison-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.unison-confirm-btn {
+  padding: 0.5rem 0.875rem;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.unison-confirm-btn--cancel {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.unison-confirm-btn--cancel:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.unison-confirm-btn--save {
+  background: rgb(99, 102, 241);
+  color: #fff;
+}
+
+.unison-confirm-btn--save:hover {
+  background: rgb(79, 82, 221);
+}
+
 /* -- Report Dropdown --------------------------  */
 
 .unison-report-dropdown {

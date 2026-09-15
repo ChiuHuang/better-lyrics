@@ -1897,6 +1897,22 @@
     "message": "Couldn't save this variant",
     "description": "Generic error shown when creating an edited variant fails"
   },
+  "unison_editConfirmTitle": {
+    "message": "Save your edit?",
+    "description": "Title of the dialog shown before saving an edited variant, when the lyric being edited already has votes"
+  },
+  "unison_editConfirmBody": {
+    "message": "Your edit goes up as a new variant starting at 0 votes. The votes on the current one don't come with it.",
+    "description": "Body text of the dialog explaining that saving an edit creates a fresh variant and does not carry over the current variant's votes"
+  },
+  "unison_editConfirmSealed": {
+    "message": "Heads up: this one's committee approved, so it's locked and your edit won't replace it. You can post yours as a separate variant, but climbing past an approved one is tough.",
+    "description": "Inline banner in the save-edit dialog, shown only when the lyric being edited is committee approved, explaining it stays locked and the edit posts as a separate hard-to-rank variant"
+  },
+  "unison_editConfirmSave": {
+    "message": "Save edit",
+    "description": "Confirm button in the dialog shown before saving an edited variant"
+  },
   "unison_error_linkCapReached": {
     "message": "Link limit reached for this lyric",
     "description": "Error shown when a lyric already has the maximum number of linked videos"
