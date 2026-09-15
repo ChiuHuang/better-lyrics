@@ -1281,7 +1281,7 @@ ytmusic-player-page:not([is-mweb-modernization-enabled]) #side-panel.blyrics-has
 /* -- Player progress bar --------------------------------------------------- */
 .blyrics-progress {
   --blyrics-progress-track: rgb(255 255 255 / 22%);
-  --blyrics-progress-dot-shadow: 0 1px 3px rgb(0 0 0 / 38%), 0 3px 8px rgb(0 0 0 / 24%);
+  --blyrics-progress-dot-shadow: -2px 0px 6px rgba(0, 0, 0, 0.1), -1px 0px 2px rgba(0, 0, 0, 0.15);
 }
 
 .blyrics-progress__bar {
