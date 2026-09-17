@@ -94,7 +94,7 @@ async function fetchUnison(
       const lower = item.text.toLowerCase();
       if (line?.translation && line.needsTranslation && line.translation.toLowerCase() !== lower) {
         cache.translation.set(`${to}_${item.text}`, {
-          originalLanguage: data.detectedLang || "",
+          originalLanguage: detectNonLatinLanguage(item.text) || data.detectedLang || "",
           translatedText: line.translation,
         });
       }
@@ -223,7 +223,7 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
       chunk.forEach((item, i) => {
         const translatedText = translatedLines[i]?.trim();
         if (translatedText && translatedText.toLowerCase() !== item.text.toLowerCase()) {
-          const result = { originalLanguage: detectedLanguage, translatedText };
+          const result = { originalLanguage: detectNonLatinLanguage(item.text) || detectedLanguage, translatedText };
           cache.translation.set(`${targetLanguage}_${item.text}`, result);
           results[item.index] = result;
         }
