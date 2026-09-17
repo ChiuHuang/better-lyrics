@@ -43,8 +43,7 @@ interface BatchRomanizationResponse {
 }
 
 const BATCH_SEPARATOR = "\n\n;\n\n";
-const ROMANIZATION_SEPARATOR = " 0000 ";
-const ROMANIZATION_SEPARATOR_PATTERN = /\s*0000\s*/;
+const ROMANIZATION_SEPARATOR_BASE = "0000";
 const MAX_URL_LENGTH = 15000;
 
 interface UnisonTranslateLine {
@@ -262,6 +261,14 @@ function resolveRomanizationLanguage(sourceLanguage: string | undefined, lines: 
   return dominant;
 }
 
+function chooseRomanizationSeparator(texts: string[]): string {
+  let separator = ROMANIZATION_SEPARATOR_BASE;
+  while (texts.some(text => text.includes(separator))) {
+    separator += "0";
+  }
+  return separator;
+}
+
 /**
  * Romanizes a batch of lyric lines in a single request, chunked if necessary.
  */
@@ -324,8 +331,11 @@ export async function romanizeBatch(request: BatchRequest): Promise<BatchRomaniz
     toRomanize.map(item => item.text)
   );
   detectedLanguage = lang;
+  const separator = chooseRomanizationSeparator(toRomanize.map(item => item.text));
+  const separatorPattern = new RegExp(`\\s*${separator}\\s*`);
+  const joinedSeparator = ` ${separator} `;
   const baseUrl = TRANSLATE_IN_ROMAJI(lang, "");
-  const separatorEncoded = encodeURIComponent(ROMANIZATION_SEPARATOR);
+  const separatorEncoded = encodeURIComponent(joinedSeparator);
 
   for (const item of toRomanize) {
     const itemEncoded = encodeURIComponent(item.text);
@@ -346,7 +356,7 @@ export async function romanizeBatch(request: BatchRequest): Promise<BatchRomaniz
 
   for (const chunk of chunks) {
     try {
-      const combinedText = chunk.map(item => item.text).join(ROMANIZATION_SEPARATOR);
+      const combinedText = chunk.map(item => item.text).join(joinedSeparator);
       const url = TRANSLATE_IN_ROMAJI(lang, combinedText);
 
       const response = await fetch(url, { cache: "force-cache", signal });
@@ -363,7 +373,7 @@ export async function romanizeBatch(request: BatchRequest): Promise<BatchRomaniz
         }
       }
 
-      const romanizedLines = fullRomanizedText.split(ROMANIZATION_SEPARATOR_PATTERN).map(part => part.trim());
+      const romanizedLines = fullRomanizedText.split(separatorPattern).map(part => part.trim());
 
       if (romanizedLines.length !== chunk.length) {
         logCore(
