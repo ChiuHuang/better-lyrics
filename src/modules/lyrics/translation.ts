@@ -1,5 +1,13 @@
-import { TRANSLATE_IN_ROMAJI, TRANSLATE_LYRICS_URL, TRANSLATION_ERROR_LOG, UNISON_TRANSLATE_URL } from "@constants";
+import {
+  ROMANIZATION_LANGUAGES,
+  TRANSLATE_IN_ROMAJI,
+  TRANSLATE_LYRICS_URL,
+  TRANSLATION_ERROR_LOG,
+  UNISON_TRANSLATE_URL,
+} from "@constants";
 import { logCore } from "@core/logger";
+import { containsNonLatin, detectNonLatinLanguage } from "@braccato/core/text";
+import { languageMatchesAny } from "@utils";
 
 interface TranslationResult {
   originalLanguage: string;
@@ -35,6 +43,8 @@ interface BatchRomanizationResponse {
 }
 
 const BATCH_SEPARATOR = "\n\n;\n\n";
+const ROMANIZATION_SEPARATOR = " 0000 ";
+const ROMANIZATION_SEPARATOR_PATTERN = /\s*0000\s*/;
 const MAX_URL_LENGTH = 15000;
 
 interface UnisonTranslateLine {
@@ -228,6 +238,30 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
   return { results, detectedLanguage };
 }
 
+function resolveRomanizationLanguage(sourceLanguage: string | undefined, lines: string[]): string {
+  if (sourceLanguage && languageMatchesAny(sourceLanguage, ROMANIZATION_LANGUAGES)) {
+    return sourceLanguage;
+  }
+
+  const tally = new Map<string, number>();
+  for (const line of lines) {
+    const detected = detectNonLatinLanguage(line);
+    if (detected) {
+      tally.set(detected, (tally.get(detected) ?? 0) + 1);
+    }
+  }
+
+  let dominant = "auto";
+  let max = 0;
+  for (const [lang, count] of tally) {
+    if (count > max) {
+      max = count;
+      dominant = lang;
+    }
+  }
+  return dominant;
+}
+
 /**
  * Romanizes a batch of lyric lines in a single request, chunked if necessary.
  */
@@ -243,7 +277,7 @@ export async function romanizeBatch(request: BatchRequest): Promise<BatchRomaniz
   // Check cache first
   lines.forEach((line, index) => {
     const trimmed = line.trim();
-    if (!trimmed || trimmed === "♪") return;
+    if (!trimmed || trimmed === "♪" || !containsNonLatin(trimmed)) return;
 
     if (cache.romanization.has(trimmed)) {
       results[index] = cache.romanization.get(trimmed)!;
@@ -285,9 +319,13 @@ export async function romanizeBatch(request: BatchRequest): Promise<BatchRomaniz
   let currentChunk: { index: number; text: string }[] = [];
   let currentEncodedLength = 0;
 
-  const lang = sourceLanguage || "auto";
+  const lang = resolveRomanizationLanguage(
+    sourceLanguage,
+    toRomanize.map(item => item.text)
+  );
+  detectedLanguage = lang;
   const baseUrl = TRANSLATE_IN_ROMAJI(lang, "");
-  const separatorEncoded = encodeURIComponent(BATCH_SEPARATOR);
+  const separatorEncoded = encodeURIComponent(ROMANIZATION_SEPARATOR);
 
   for (const item of toRomanize) {
     const itemEncoded = encodeURIComponent(item.text);
@@ -308,7 +346,7 @@ export async function romanizeBatch(request: BatchRequest): Promise<BatchRomaniz
 
   for (const chunk of chunks) {
     try {
-      const combinedText = chunk.map(item => item.text).join(BATCH_SEPARATOR);
+      const combinedText = chunk.map(item => item.text).join(ROMANIZATION_SEPARATOR);
       const url = TRANSLATE_IN_ROMAJI(lang, combinedText);
 
       const response = await fetch(url, { cache: "force-cache", signal });
@@ -325,25 +363,14 @@ export async function romanizeBatch(request: BatchRequest): Promise<BatchRomaniz
         }
       }
 
-      let romanizedLines = fullRomanizedText.split(BATCH_SEPARATOR);
+      const romanizedLines = fullRomanizedText.split(ROMANIZATION_SEPARATOR_PATTERN).map(part => part.trim());
 
-      // Fallback: If Google merged the romanizations into fewer blocks than expected
-      if (romanizedLines.length < chunk.length) {
-        const semicolonSplit = fullRomanizedText.split(";").filter(l => l.trim().length > 0);
-        if (semicolonSplit.length === chunk.length) {
-          romanizedLines = semicolonSplit;
-        } else {
-          const singleNewlineSplit = fullRomanizedText.split(/\r?\n/).filter(l => l.trim().length > 0);
-          if (singleNewlineSplit.length === chunk.length) {
-            romanizedLines = singleNewlineSplit;
-          } else if (romanizedLines.length === 1 && chunk.length > 1) {
-            logCore(
-              TRANSLATION_ERROR_LOG,
-              `Batch romanization failed to split: expected ${chunk.length} lines, got 1.`
-            );
-            romanizedLines = [];
-          }
-        }
+      if (romanizedLines.length !== chunk.length) {
+        logCore(
+          TRANSLATION_ERROR_LOG,
+          `Batch romanization failed to split: expected ${chunk.length} lines, got ${romanizedLines.length}.`
+        );
+        continue;
       }
 
       chunk.forEach((item, i) => {
