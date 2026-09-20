@@ -164,8 +164,7 @@ blyrics-line-scroll-above-duration = calc(750ms + log(var(--blyrics-line-scroll-
 | `blyrics-disable-richsync` | `false` | Render richsynced lyrics through the line-synced path instead, including line-synced fade-in |
 | `blyrics-line-synced-animation-delay` | `50` | Per-word delay for synced lyrics (ms) |
 | `blyrics-lyric-ending-threshold-s` | `0.5` | Seconds before line ends to consider it complete |
-| `blyrics-early-scroll-consider-s` | auto (`~0.54` default) | Future lookahead for scroll grouping (s) |
-| `blyrics-queue-scroll-ms` | auto (`~131` default, capped at `200`) | Max queued scroll delay (ms) |
+| `blyrics-early-scroll-consider-s` | `0.54` | Independent future lookahead for scroll grouping (s) |
 | `blyrics-debug-renderer` | `false` | Enable debug overlay |
 | `blyrics-debug-animation-timing` | `false` | Log WAAPI lyric animation timing samples, learned offsets, and timing cleanup events |
 | `blyrics-target-scroll-pos-ratio` | `0.37` | Lyric position (0=top, 0.5=center, 1=bottom) |
@@ -187,7 +186,7 @@ blyrics-line-scroll-above-duration = calc(750ms + log(var(--blyrics-line-scroll-
 | `blyrics-line-scroll-translate-y-{start,end}` | delta / `0px` | Shared Y offsets |
 | `blyrics-line-scroll-{above,active,below}-translate-y-{start,end}` | shared offset | Side-specific Y offsets; `above`/`below` swap on upward scrolls |
 
-**Scroll timing**: if `blyrics-early-scroll-consider-s` and `blyrics-queue-scroll-ms` are not manually set, they are derived from `--blyrics-lyric-scroll-duration` using the default timing ratio. If one is manually set, the other is derived from the scroll equation; auto-derived queueing is capped at `200ms`. If both are manually set, keep this balanced: `--blyrics-lyric-scroll-duration` + 0.02s = `blyrics-early-scroll-consider-s` + `blyrics-queue-scroll-ms`.
+**Scroll timing**: `blyrics-early-scroll-consider-s` defaults to `0.54` seconds independently of animation duration. Lookahead only affects the target when another lyric triggers a scroll; entering the window alone does not scroll. Lines included in a committed scroll cannot trigger again at their own start. Seeking, resuming autoscroll and relayout may still reposition the view. There is no scroll gate or queue; `blyrics-queue-scroll-ms` is ignored and no timing equation needs balancing. `--blyrics-lyric-scroll-duration` remains a per-line animation fallback and container transform transition duration. Themes that relied on automatically derived lookahead should set it explicitly.
 
 ## Dynamic Properties
 
@@ -314,7 +313,7 @@ Timing uses the Web Animations API:
 - Lyric line scale and scroll smoothing also use `element.animate()`
 - Scroll smoothing uses per-line `translate`, not container `transform`; JS automatically animates lines visible in the previous or current viewport and provides relative index, absolute relative index, signed scroll delta, and absolute scroll distance as CSS variables
 - Visible lyric lines receive inline `will-change: transform, translate` before scroll animations start
-- Per-line scroll effects can overlap with additive Web Animations (`composite: "add"`); custom line durations are visual only, and the next autoscroll is gated by `--blyrics-lyric-scroll-duration`
+- Per-line scroll effects can overlap with additive Web Animations (`composite: "add"`); new lyric groups scroll immediately while earlier animations continue; line durations control visual motion independently of lookahead
 - The instrumental wave morphs between `--blyrics-instrumental-wave-path-high` and `--blyrics-instrumental-wave-path-low`; both must use the same path commands in the same order with the same argument counts, or the ripple snaps at the halfway point instead of morphing
 - Visual keyframe values, effect enable flags, durations, and easing are CSS variables; JS still owns scheduling, pause/resume, seeking, and cancellation
 - `prefers-reduced-motion: reduce` keeps smooth scroll enabled but disables side-specific line-scroll differential effects
