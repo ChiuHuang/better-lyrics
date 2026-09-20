@@ -324,10 +324,9 @@ The engine animates the individual `translate` property instead of `transform`, 
 
 | Variable                                 | Default Value                    | Description                                     |
 | ---------------------------------------- | -------------------------------- | ----------------------------------------------- |
-| `--blyrics-lyric-scroll-duration`       | `650ms`                          | Fallback per-line animation duration and container transform transition; does not delay new scrolls |
 | `--blyrics-lyric-scroll-timing-function` | `cubic-bezier(0.86, 0, 0.2, 1)`  | Timing function for scrolling lyric transitions |
 
-`--blyrics-lyric-scroll-duration` remains a compatibility fallback. Use the line-scroll duration knobs to control visual motion; early-consider is independent of animation duration.
+`--blyrics-lyric-scroll-duration` and its `--blyrics-lyric-transition-duration` alias have been removed, along with the old container transform transition. Use the line-scroll duration knobs to control visual motion; early-consider is independent of animation duration. Replace any explicit references to the removed variables with a duration or your own custom property. If a line duration is missing, invalid or resolves to a nonpositive value, the engine uses an internal `750ms` fallback.
 
 ### Gradient Stops
 
@@ -438,7 +437,6 @@ The main container for the lyrics is styled using the `.blyrics-container` class
   line-height: var(--blyrics-line-height);
   position: relative !important;
   z-index: 1;
-  transition: transform var(--blyrics-lyric-scroll-duration) var(--blyrics-lyric-scroll-timing-function) 0s;
   padding-top: 2rem;
   padding-bottom: calc(var(--blyrics-padding-bottom));
 }

@@ -96,7 +96,6 @@ Essential reference for creating custom themes. For deep dives, see [STYLING.md]
   --blyrics-timing-offset: 0.115s;
   --blyrics-richsync-timing-offset: 0.150s;
   --blyrics-scroll-timing-offset: 0.5s;
-  --blyrics-lyric-scroll-duration: 650ms;
   --blyrics-lyric-scroll-timing-function: cubic-bezier(0.86, 0, 0.2, 1);
 }
 ```
@@ -186,7 +185,7 @@ blyrics-line-scroll-above-duration = calc(750ms + log(var(--blyrics-line-scroll-
 | `blyrics-line-scroll-translate-y-{start,end}` | delta / `0px` | Shared Y offsets |
 | `blyrics-line-scroll-{above,active,below}-translate-y-{start,end}` | shared offset | Side-specific Y offsets; `above`/`below` swap on upward scrolls |
 
-**Scroll timing**: `blyrics-early-scroll-consider-s` defaults to `0.54` seconds independently of animation duration. Lookahead only affects the target when another lyric triggers a scroll; entering the window alone does not scroll. Lines included in a committed scroll cannot trigger again at their own start. Seeking, resuming autoscroll and relayout may still reposition the view. There is no scroll gate or queue; `blyrics-queue-scroll-ms` is ignored and no timing equation needs balancing. `--blyrics-lyric-scroll-duration` remains a per-line animation fallback and container transform transition duration. Themes that relied on automatically derived lookahead should set it explicitly.
+**Scroll timing**: `blyrics-early-scroll-consider-s` defaults to `0.54` seconds independently of animation duration. Lookahead only affects the target when another lyric triggers a scroll; entering the window alone does not scroll. Lines included in a committed scroll cannot trigger again at their own start. Seeking, resuming autoscroll and relayout may still reposition the view. There is no scroll gate or queue; `blyrics-queue-scroll-ms` is ignored and no timing equation needs balancing. `--blyrics-lyric-scroll-duration`, its `--blyrics-lyric-transition-duration` alias and the container transform transition have been removed. Use the line-scroll duration knobs instead; replace explicit references to the removed variables with a duration or your own custom property. Missing, invalid or nonpositive line durations fall back to an internal `750ms`. Themes that relied on automatically derived lookahead should set it explicitly.
 
 ## Dynamic Properties
 
