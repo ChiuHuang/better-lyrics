@@ -148,6 +148,8 @@ chrome.alarms.onAlarm.addListener(alarm => {
   }
 });
 
+const YTMU_SERVER_ORIGIN = "https://ytmtranslate.chiuhuang.dev";
+
 chrome.runtime.onMessage.addListener(request => {
   if (request.action === "applyStyles") {
     chrome.tabs.query({ url: "*://music.youtube.com/*" }, tabs => {
@@ -160,6 +162,29 @@ chrome.runtime.onMessage.addListener(request => {
       });
     });
   }
+  return true;
+});
+
+// YT Music Ultimate provider: cross-origin fetch lives here because content
+// scripts are subject to CORS; the background worker is not (host permission).
+chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
+  if (request.action !== "fetchYTMULyrics") return;
+  const url = String(request.url || "");
+  if (!url.startsWith(YTMU_SERVER_ORIGIN + "/")) {
+    sendResponse({ ok: false, error: "Blocked URL" });
+    return;
+  }
+  fetch(url, { signal: AbortSignal.timeout(20000) })
+    .then(async response => {
+      if (!response.ok) {
+        sendResponse({ ok: false, status: response.status });
+        return;
+      }
+      sendResponse({ ok: true, data: await response.json() });
+    })
+    .catch(error => {
+      sendResponse({ ok: false, error: String(error) });
+    });
   return true;
 });
 

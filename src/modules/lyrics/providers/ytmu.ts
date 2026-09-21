@@ -84,28 +84,30 @@ function toLyrics(lines: YTMULine[], lang: string): Lyric[] {
     });
 }
 
+async function fetchFromBackground(url: string): Promise<YTMUResponse | null> {
+  try {
+    const response = await chrome.runtime.sendMessage({ action: "fetchYTMULyrics", url });
+    if (!response || !response.ok) {
+      warnCore("YT Music Ultimate background fetch failed:", response?.status ?? response?.error);
+      return null;
+    }
+    return response.data as YTMUResponse;
+  } catch (error) {
+    warnCore("YT Music Ultimate background fetch errored:", error);
+    return null;
+  }
+}
+
 async function fetchYTMU(providerParameters: ProviderParameters, lang: string): Promise<YTMUResponse | null> {
   const existing = activeFetches.get(providerParameters.videoId);
   if (existing) return existing;
 
   const promise = (async () => {
-    try {
-      const url = new URL(YTMU_SERVER_URL + "/api/lyrics");
-      url.searchParams.set("v", providerParameters.videoId);
-      url.searchParams.set("lang", lang);
-      url.searchParams.set("fast", "1");
-      const response = await fetch(url.toString(), {
-        signal: AbortSignal.any([providerParameters.signal, AbortSignal.timeout(20000)]),
-      });
-      if (!response.ok) {
-        warnCore("YT Music Ultimate provider request failed:", response.status, response.statusText);
-        return null;
-      }
-      return (await response.json()) as YTMUResponse;
-    } catch (error) {
-      warnCore("YT Music Ultimate provider request errored:", error);
-      return null;
-    }
+    const url = new URL(YTMU_SERVER_URL + "/api/lyrics");
+    url.searchParams.set("v", providerParameters.videoId);
+    url.searchParams.set("lang", lang);
+    url.searchParams.set("fast", "1");
+    return fetchFromBackground(url.toString());
   })();
 
   activeFetches.set(providerParameters.videoId, promise);
