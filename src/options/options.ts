@@ -304,6 +304,9 @@ const restoreOptions = (): void => {
     translationLanguage: "en",
     isRomanizationEnabled: false,
     preferredProviderList: [
+      "ytmu-richsynced",
+      "ytmu-synced",
+      "ytmu-plain",
       "bLyrics-richsynced",
       "unison-richsynced",
       "binimum-richsynced",
@@ -421,6 +424,9 @@ const setOptionsInForm = (items: Options): void => {
   providersListElem.replaceChildren();
 
   const defaultProviderOrder = [
+    "ytmu-richsynced",
+    "ytmu-synced",
+    "ytmu-plain",
     "bLyrics-richsynced",
     "unison-richsynced",
     "binimum-richsynced",
@@ -456,6 +462,9 @@ interface ProviderInfo {
 }
 
 const getProviderIdToInfoMap = (): { [key: string]: ProviderInfo } => ({
+  "ytmu-richsynced": { name: "YT Music Ultimate", syncType: "syllable" },
+  "ytmu-synced": { name: "YT Music Ultimate", syncType: "line" },
+  "ytmu-plain": { name: "YT Music Ultimate", syncType: "unsynced" },
   "binimum-richsynced": { name: t("options_provider_binilyrics"), syncType: "syllable" },
   "binimum-synced": { name: t("options_provider_binilyrics"), syncType: "line" },
   "musixmatch-richsync": {

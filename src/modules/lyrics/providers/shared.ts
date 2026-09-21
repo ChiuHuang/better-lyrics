@@ -10,6 +10,7 @@ import unified from "./unified";
 import ytLyrics, { type YTLyricSourceResult } from "./yt";
 import { ytCaptions } from "./ytCaptions";
 import unison, { type UnisonData } from "@modules/lyrics/providers/unison";
+import ytmu from "./ytmu";
 import { mergePreferredProviders } from "./providerList";
 import { logCore } from "@core/logger";
 /** Current version of the lyrics cache format */
@@ -146,6 +147,9 @@ export function initProviders(): void {
 }
 
 const sourceKeyToFillFn = {
+  "ytmu-richsynced": (p: ProviderParameters) => ytmu(p, "ytmu-richsynced"),
+  "ytmu-synced": (p: ProviderParameters) => ytmu(p, "ytmu-synced"),
+  "ytmu-plain": (p: ProviderParameters) => ytmu(p, "ytmu-plain"),
   "binimum-richsynced": (p: ProviderParameters) => unified(p, "binimum-richsynced"),
   "binimum-synced": (p: ProviderParameters) => unified(p, "binimum-synced"),
   "bLyrics-richsynced": (p: ProviderParameters) => unified(p, "bLyrics-richsynced"),
