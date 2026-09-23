@@ -40,6 +40,8 @@ import { type IconKey, svgIcon } from "./icons";
 import { appendLanguageOptions, matchLanguageOption } from "./languages";
 import { detectFormat, renderPreviewInto } from "./lyricsPreview";
 import { appendMetaRow } from "./metaTable";
+import { renderRevisionBar } from "./revisions/revisionBar";
+import type { RevisionHost } from "./revisions/revisionUi";
 
 // -- Icons --------------------------
 
@@ -81,6 +83,8 @@ let filterLanguageSelect: HTMLSelectElement;
 let detailMeta: HTMLElement;
 let detailPreview: HTMLElement;
 let detailLyrics: HTMLElement;
+let revisionSlot: HTMLElement;
+let savebarSlot: HTMLElement;
 let submitBtn: HTMLButtonElement;
 let submitFeedback: HTMLElement;
 let previewContent: HTMLElement;
@@ -201,13 +205,17 @@ function showView(view: View): void {
   if (leftIdentity) leftIdentity.style.display = isSubmit ? "none" : "";
 }
 
-function navigateTo(params: Record<string, string>): void {
+function navigateTo(params: Record<string, string>, options: { replace?: boolean } = {}): void {
   const base = window.location.pathname;
   const url = new URL(base, window.location.origin);
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
   }
-  window.history.pushState({}, "", url.toString());
+  if (options.replace) {
+    window.history.replaceState({}, "", url.toString());
+  } else {
+    window.history.pushState({}, "", url.toString());
+  }
   routeFromParams();
 }
 
@@ -271,6 +279,8 @@ export function initUnisonPage(): void {
   detailMeta = document.getElementById("unison-detail-meta") as HTMLElement;
   detailPreview = document.getElementById("unison-detail-preview") as HTMLElement;
   detailLyrics = document.getElementById("unison-detail-lyrics") as HTMLElement;
+  revisionSlot = document.getElementById("unison-revision-slot") as HTMLElement;
+  savebarSlot = document.getElementById("unison-revision-savebar-slot") as HTMLElement;
   submitBtn = document.getElementById("unison-submit-btn") as HTMLButtonElement;
   submitFeedback = document.getElementById("unison-submit-feedback") as HTMLElement;
   previewContent = document.getElementById("unison-preview-content") as HTMLElement;
@@ -850,6 +860,8 @@ function renderDetailSkeleton(): void {
   detailMeta.replaceChildren();
   detailPreview.replaceChildren();
   detailLyrics.replaceChildren();
+  revisionSlot.replaceChildren();
+  savebarSlot.replaceChildren();
 
   const titleSkel = document.createElement("div");
   titleSkel.className = "unison-skeleton";
@@ -908,6 +920,8 @@ function renderDetail(entry: UnisonLyricsEntry, isOwn: boolean = false): void {
   detailMeta.replaceChildren();
   detailPreview.replaceChildren();
   detailLyrics.replaceChildren();
+  revisionSlot.replaceChildren();
+  savebarSlot.replaceChildren();
 
   // -- Meta sidebar
   const title = document.createElement("h2");
@@ -973,6 +987,7 @@ function renderDetail(entry: UnisonLyricsEntry, isOwn: boolean = false): void {
   }
   detailMeta.appendChild(ytLink);
   void renderOwnerVideoTools(entry, token);
+  void renderDetailRevisionBar(entry, token);
 
   // -- Preview column
   renderPreviewInto(detailPreview, entry.lyrics);
@@ -1472,6 +1487,23 @@ async function renderOwnerVideoTools(entry: UnisonLyricsEntry, token: number): P
   }
 
   await refresh();
+}
+
+// -- Revisions --------------------------
+
+function revisionHost(token: number): RevisionHost {
+  const mine = new URLSearchParams(window.location.search).get("mine");
+  return {
+    navigate: (params, options) => navigateTo(mine ? { ...params, mine } : params, options),
+    isCurrent: () => token === detailRenderToken,
+  };
+}
+
+async function renderDetailRevisionBar(entry: UnisonLyricsEntry, token: number): Promise<void> {
+  if (!entry.revision) return;
+  const isOwner = await isOwnerOf(entry);
+  if (token !== detailRenderToken) return;
+  renderRevisionBar(entry, revisionSlot, revisionHost(token), isOwner);
 }
 
 function showReportMenu(unisonId: number, anchor: HTMLButtonElement): void {
