@@ -39,8 +39,14 @@ interface YTMUResponse {
   error?: string;
 }
 
-// One fetch per videoId, shared across the three ytmu source keys
+// One fetch per videoId+lang, shared across the three ytmu source keys.
+// The server embeds translations for the requested lang, so keying by videoId
+// alone would serve stale translations after a target-language switch.
 const activeFetches = new Map<string, Promise<YTMUResponse | null>>();
+
+function fetchCacheKey(videoId: string, lang: string): string {
+  return `${videoId}:${lang}`;
+}
 
 function isNotFoundResponse(data: YTMUResponse | null): boolean {
   if (!data) return true;
@@ -99,7 +105,8 @@ async function fetchFromBackground(url: string): Promise<YTMUResponse | null> {
 }
 
 async function fetchYTMU(providerParameters: ProviderParameters, lang: string): Promise<YTMUResponse | null> {
-  const existing = activeFetches.get(providerParameters.videoId);
+  const dedupKey = fetchCacheKey(providerParameters.videoId, lang);
+  const existing = activeFetches.get(dedupKey);
   if (existing) return existing;
 
   const promise = (async () => {
@@ -110,10 +117,10 @@ async function fetchYTMU(providerParameters: ProviderParameters, lang: string): 
     return fetchFromBackground(url.toString());
   })();
 
-  activeFetches.set(providerParameters.videoId, promise);
+  activeFetches.set(dedupKey, promise);
   void promise.finally(() => {
-    if (activeFetches.get(providerParameters.videoId) === promise) {
-      activeFetches.delete(providerParameters.videoId);
+    if (activeFetches.get(dedupKey) === promise) {
+      activeFetches.delete(dedupKey);
     }
   });
   return promise;
@@ -141,7 +148,7 @@ export default async function ytmu(
     return;
   }
 
-  const lang = AppState.translationLanguage || "zh-TW";
+  const lang = providerParameters.translationLang || AppState.translationLanguage || "zh-TW";
   const data = await fetchYTMU(providerParameters, lang);
   if (isNotFoundResponse(data)) {
     return;

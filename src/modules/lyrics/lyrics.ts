@@ -277,6 +277,7 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
       sourceMap,
       alwaysFetchMetadata: swappedVideoId,
       signal,
+      translationLang: AppState.translationLanguage,
     };
     let ytLyricsEarlyInjectAbortController = new AbortController();
 
@@ -477,6 +478,7 @@ export async function preFetchLyrics(
     sourceMap,
     alwaysFetchMetadata: swappedVideoId,
     signal,
+    translationLang: AppState.translationLanguage,
   };
 
   try {

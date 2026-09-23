@@ -102,6 +102,21 @@ export interface ProviderParameters {
   sourceMap: SourceMapType;
   alwaysFetchMetadata: boolean;
   signal: AbortSignal;
+  /** Active target translation language. YTMU embeds server translations for
+   * this lang, so its cache entries are keyed per language. */
+  translationLang?: string;
+}
+
+function isYtmuProvider(provider: LyricSourceKey): boolean {
+  return provider === "ytmu-richsynced" || provider === "ytmu-synced" || provider === "ytmu-plain";
+}
+
+function lyricsCacheKey(providerParameters: ProviderParameters, provider: LyricSourceKey): string {
+  const base = `blyrics_${providerParameters.videoId}_${provider}`;
+  if (isYtmuProvider(provider) && providerParameters.translationLang) {
+    return `${base}:${providerParameters.translationLang}`;
+  }
+  return base;
 }
 
 export type SourceMapType = {
@@ -190,7 +205,7 @@ export async function saveLyricsToCache(providerParameters: ProviderParameters, 
   let source = providerParameters.sourceMap[provider];
   if (source.filled && !source.resultCached && !source.lyricSourceResult && provider !== "metadata") {
     source.resultCached = true;
-    const cacheKey = `blyrics_${providerParameters.videoId}_${provider}`;
+    const cacheKey = lyricsCacheKey(providerParameters, provider);
     await setTransientStorage(
       cacheKey,
       JSON.stringify({ version: LYRIC_CACHE_VERSION, missing: true }),
@@ -206,7 +221,7 @@ export async function saveLyricsToCache(providerParameters: ProviderParameters, 
     source.lyricSourceResult.cacheAllowed !== false
   ) {
     source.resultCached = true;
-    const cacheKey = `blyrics_${providerParameters.videoId}_${provider}`;
+    const cacheKey = lyricsCacheKey(providerParameters, provider);
     let versionedData = {
       version: LYRIC_CACHE_VERSION,
       ...source.lyricSourceResult,
@@ -226,7 +241,7 @@ export async function getLyrics(
   let lyricSource = providerParameters.sourceMap[sourceName];
   if (!lyricSource.filled) {
     // Check cache first
-    const cacheKey = `blyrics_${providerParameters.videoId}_${sourceName}`;
+    const cacheKey = lyricsCacheKey(providerParameters, sourceName);
     const cachedData = await getTransientStorage(cacheKey);
     if (cachedData) {
       const data = JSON.parse(cachedData);

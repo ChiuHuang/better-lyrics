@@ -232,6 +232,11 @@ async function processBatchTranslationsAndRomanizations(
   let sourceLanguage = data.language;
   let didInjectCachedContent = false;
 
+  // YT Music Ultimate embeds the server translation in each line. Use it
+  // directly even when the translate toggle is off; only lines without a
+  // server translation fall through to the Google/Unison batch below.
+  const isYTMUSource = data.source === "YT Music Ultimate";
+
   // 1. Identify what needs to be translated/romanized
   lyrics.forEach((item, index) => {
     if (item.isInstrumental) return;
@@ -282,20 +287,29 @@ async function processBatchTranslationsAndRomanizations(
     // --- Translation ---
     const isSourceLangDisabled = !!trustedLanguage && isTranslationDisabledForLang(trustedLanguage);
 
-    if (isTranslateEnabled && !isSourceLangDisabled) {
-      let translationResult: string | null = null;
+    const matchedLang =
+      item.translations && Object.keys(item.translations).find(lang => langCodesMatch(targetTranslationLang, lang));
+    let translationResult: string | null = null;
+    if (item.translations && matchedLang) {
+      translationResult = item.translations[matchedLang];
+    } else if (item.translation && langCodesMatch(targetTranslationLang, item.translation.lang)) {
+      translationResult = item.translation.text;
+    }
 
-      const matchedLang =
-        item.translations && Object.keys(item.translations).find(lang => langCodesMatch(targetTranslationLang, lang));
-      if (item.translations && matchedLang) {
-        translationResult = item.translations[matchedLang];
-      } else if (item.translation && langCodesMatch(targetTranslationLang, item.translation.lang)) {
-        translationResult = item.translation.text;
-      } else {
+    if (translationResult && !isSameText(translationResult, item.words)) {
+      if (isYTMUSource || (isTranslateEnabled && !isSourceLangDisabled)) {
+        injectTranslation(doc, lyricElement, translationResult);
+        recordLyricDecoration(index, { translation: translationResult });
+        didInjectCachedContent = true;
+        return;
+      }
+    }
+
+    if (isTranslateEnabled && !isSourceLangDisabled) {
+      if (!translationResult) {
         const cached = getTranslationFromCache(item.words, targetTranslationLang);
         translationResult = cached?.translatedText || null;
       }
-
       if (translationResult && !isSameText(translationResult, item.words)) {
         injectTranslation(doc, lyricElement, translationResult);
         recordLyricDecoration(index, { translation: translationResult });

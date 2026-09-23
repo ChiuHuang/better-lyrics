@@ -208,6 +208,15 @@ function extractVideoIdFromCacheKey(key: string): string | null {
     if (withoutPrefix.endsWith(suffix)) {
       return withoutPrefix.slice(0, -suffix.length);
     }
+    // YTMU entries carry a trailing ":<translationLang>" (see lyricsCacheKey
+    // in providers/shared). Strip it before matching the source suffix.
+    const langSep = withoutPrefix.lastIndexOf(":");
+    if (langSep > 0) {
+      const base = withoutPrefix.slice(0, langSep);
+      if (base.endsWith(suffix)) {
+        return base.slice(0, -suffix.length);
+      }
+    }
   }
   return null;
 }
