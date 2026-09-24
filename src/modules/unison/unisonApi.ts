@@ -261,6 +261,7 @@ export async function getLyricsByVideoId(videoId: string): Promise<ApiResult<Uni
 export async function submitLyrics(
   submission: UnisonSubmission
 ): Promise<ApiResult<{ id: number; created: boolean } | null>> {
+  if (IS_DEV && submission.song.startsWith("[DEV]")) return devFixtures.submit();
   return signedRequest<{ id: number; created: boolean } | null>(
     "/lyrics/submit",
     "POST",
@@ -297,6 +298,7 @@ export async function requestLyrics(request: UnisonLyricsRequest): Promise<ApiRe
 // -- Video linking --------------------------
 
 export async function listVideos(lyricsId: number): Promise<ApiResult<LinkedVideo[]>> {
+  if (IS_DEV && devFixtures.has(lyricsId)) return devFixtures.videos(lyricsId);
   try {
     const response = await fetchWithTimeout(`${UNISON_API_BASE_URL}/lyrics/${lyricsId}/videos`);
     if (!response.ok) {
@@ -312,6 +314,7 @@ export async function listVideos(lyricsId: number): Promise<ApiResult<LinkedVide
 }
 
 export async function suggestedVideos(lyricsId: number): Promise<ApiResult<SuggestedVideo[]>> {
+  if (IS_DEV && devFixtures.has(lyricsId)) return devFixtures.suggestions(lyricsId);
   const res = await signedRequest<{ suggestions: SuggestedVideo[] }>(
     `/lyrics/${lyricsId}/suggested-videos`,
     "POST",
@@ -339,6 +342,7 @@ export async function linkVideo(
   lyricsId: number,
   videoId: string
 ): Promise<ApiResult<{ videos: LinkedVideo[] } | null>> {
+  if (IS_DEV && devFixtures.has(lyricsId)) return devFixtures.link(lyricsId, videoId);
   return signedRequest<{ videos: LinkedVideo[] } | null>(`/lyrics/${lyricsId}/videos`, "POST", { videoId });
 }
 
@@ -346,6 +350,7 @@ export async function unlinkVideo(
   lyricsId: number,
   videoId: string
 ): Promise<ApiResult<{ videos: LinkedVideo[] } | null>> {
+  if (IS_DEV && devFixtures.has(lyricsId)) return devFixtures.unlink(lyricsId, videoId);
   return signedRequest<{ videos: LinkedVideo[] } | null>(
     `/lyrics/${lyricsId}/videos/${encodeURIComponent(videoId)}`,
     "DELETE",

@@ -3,6 +3,7 @@ import { UnisonErrorCode } from "@modules/unison/errorCodes";
 import type {
   DiffRow,
   FieldCheck,
+  LinkedVideo,
   PendingReason,
   PreviewResult,
   RevisionContent,
@@ -10,6 +11,7 @@ import type {
   RevisionDraft,
   RevisionStatus,
   RevisionSummary,
+  SuggestedVideo,
   UnisonFeedEntry,
   UnisonFormat,
   UnisonLyricsEntry,
@@ -94,7 +96,7 @@ const LATENCY_MS = 400;
 const MAGIC = { rateLimit: "#ratelimit", throttle: "#throttle", flag: "#flag" } as const;
 
 export function devFixtureHint(): string {
-  return `Resets on reload. Type in the editor: ${MAGIC.rateLimit} (daily limit), ${MAGIC.throttle} (preview 429, retries), ${MAGIC.flag} (preview goes live, save is flagged). Break the TTML or an LRC stamp for a parse error; change more than 15% of the words to go over the limit.`;
+  return `Resets on reload. Type in the editor: ${MAGIC.rateLimit} (daily limit), ${MAGIC.throttle} (preview 429, retries), ${MAGIC.flag} (preview goes live, save is flagged). Break the TTML or an LRC stamp for a parse error; change more than 15% of the words to go over the limit. Videos: ${VIDEO_DURATION_MISMATCH} fails the length check, ${VIDEO_UNVERIFIABLE} fails verification, ${VIDEO_RATE_LIMITED} hits the rate limit, and a lyric holds ${VIDEO_CAP} videos. Submitting a song titled "[DEV] ..." pretends to create lyric -101.`;
 }
 
 const ME = { displayName: "You (dev)" };
@@ -490,6 +492,38 @@ function diffRows(before: LyricLine[], after: LyricLine[]): DiffRow[] {
 }
 
 // -- Fixtures --------------------------
+
+// -- Videos --------------------------
+
+const VIDEO_CAP = 5;
+const VIDEO_DURATION_MISMATCH = "devLength01";
+const VIDEO_UNVERIFIABLE = "devVerify01";
+const VIDEO_RATE_LIMITED = "devLimits01";
+
+const SUGGESTIONS: SuggestedVideo[] = [
+  suggestion("devSuggest1", "Amazing Grace (Official Video)", "video", 0.94),
+  suggestion("devSuggest2", "Amazing Grace (Live)", "video", 0.81),
+  suggestion("devSuggest3", "Amazing Grace (Remastered)", "song", 0.77),
+  suggestion(VIDEO_DURATION_MISMATCH, "Amazing Grace (Extended Mix)", "song", 0.66),
+  suggestion(VIDEO_UNVERIFIABLE, "Amazing Grace (Private Upload)", "video", 0.61),
+  suggestion("devSuggest4", "Amazing Grace (Lyric Video)", "video", 0.58),
+  suggestion("devSuggest5", "Amazing Grace (Acoustic)", "song", 0.52),
+];
+
+function suggestion(videoId: string, title: string, videoType: SuggestedVideo["videoType"], matchScore: number) {
+  return { videoId, title, artist: "John Newton", videoType, durationSeconds: 240, matchScore };
+}
+
+const linkedVideos = new Map<number, LinkedVideo[]>();
+
+function videosOf(lyric: FixtureLyric): LinkedVideo[] {
+  let videos = linkedVideos.get(lyric.id);
+  if (!videos) {
+    videos = [{ videoId: lyric.videoId, isPrimary: true }];
+    linkedVideos.set(lyric.id, videos);
+  }
+  return videos;
+}
 
 let nextRevisionId = -1000;
 let store: FixtureLyric[] | null = null;
@@ -953,6 +987,49 @@ export const devFixtures = {
     if (target.status === "live") return fail(409, UnisonErrorCode.NO_CHANGES, "No changes.");
     const { lyrics, format, language, isrc } = target;
     return commit(lyric, { lyrics, format, language, isrc }, target.revNo);
+  },
+
+  async submit(): Promise<FixtureResult<{ id: number; created: boolean }>> {
+    await latency();
+    return ok({ id: -101, created: true });
+  },
+
+  async videos(id: number): Promise<FixtureResult<LinkedVideo[]>> {
+    await latency();
+    return ok([...videosOf(find(id))]);
+  },
+
+  async suggestions(id: number): Promise<FixtureResult<SuggestedVideo[]>> {
+    await latency();
+    const linked = videosOf(find(id));
+    return ok(SUGGESTIONS.filter(candidate => !linked.some(video => video.videoId === candidate.videoId)));
+  },
+
+  async link(id: number, videoId: string): Promise<FixtureResult<{ videos: LinkedVideo[] } | null>> {
+    await latency();
+    const lyric = find(id);
+    if (!lyric.ownedByMe) return fail(403, UnisonErrorCode.NOT_OWNER, "Only the owner can link videos.");
+    if (videoId === VIDEO_RATE_LIMITED) return fail(429, UnisonErrorCode.RATE_LIMITED, "Too many requests.");
+    if (videoId === VIDEO_DURATION_MISMATCH) return fail(422, UnisonErrorCode.DURATION_MISMATCH, "Length mismatch.");
+    if (videoId === VIDEO_UNVERIFIABLE) return fail(422, UnisonErrorCode.VIDEO_UNVERIFIABLE, "Unverifiable.");
+    const videos = videosOf(lyric);
+    if (!videos.some(video => video.videoId === videoId)) {
+      if (videos.length >= VIDEO_CAP) return fail(409, UnisonErrorCode.LINK_CAP_REACHED, "Link cap reached.");
+      videos.push({ videoId, isPrimary: false });
+    }
+    return ok({ videos: [...videos] });
+  },
+
+  async unlink(id: number, videoId: string): Promise<FixtureResult<{ videos: LinkedVideo[] } | null>> {
+    await latency();
+    const lyric = find(id);
+    if (!lyric.ownedByMe) return fail(403, UnisonErrorCode.NOT_OWNER, "Only the owner can unlink videos.");
+    const videos = videosOf(lyric);
+    const index = videos.findIndex(video => video.videoId === videoId);
+    if (index === -1) return fail(404, UnisonErrorCode.NOT_FOUND, "Video not linked.");
+    if (videos[index].isPrimary) return fail(409, UnisonErrorCode.CANNOT_UNLINK_PRIMARY, "Primary video.");
+    videos.splice(index, 1);
+    return ok({ videos: [...videos] });
   },
 
   async withdraw(id: number): Promise<FixtureResult<{ revision: RevisionSummary } | null>> {
