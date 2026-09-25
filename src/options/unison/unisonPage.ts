@@ -1364,8 +1364,91 @@ function renderLinkedVideoList(
 
 const SUGGESTED_VIDEO_PAGE_SIZE = 5;
 
+function normalizeTitle(title: string): string {
+  return title.normalize("NFKC").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function createVideoPreview(suggestion: SuggestedVideo): HTMLElement {
+  const preview = document.createElement("a");
+  preview.className = "unison-link-preview";
+  preview.href = `https://music.youtube.com/watch?v=${encodeURIComponent(suggestion.videoId)}`;
+  preview.target = "_blank";
+  preview.rel = "noreferrer noopener";
+
+  const thumb = document.createElement("img");
+  thumb.className = "unison-link-preview-thumb";
+  thumb.src = `https://i.ytimg.com/vi/${encodeURIComponent(suggestion.videoId)}/mqdefault.jpg`;
+  thumb.alt = "";
+  thumb.loading = "lazy";
+
+  const info = document.createElement("span");
+  info.className = "unison-link-preview-info";
+  const title = document.createElement("span");
+  title.className = "unison-link-preview-title";
+  title.textContent = suggestion.title;
+  const meta = document.createElement("span");
+  meta.className = "unison-link-preview-meta";
+  meta.textContent = `${suggestion.artist} · ${formatDurationSeconds(suggestion.durationSeconds)}`;
+  const id = document.createElement("span");
+  id.className = "unison-link-preview-id";
+  id.append(svgIcon("externalLink"), suggestion.videoId);
+  info.append(title, meta, id);
+
+  preview.append(thumb, info);
+  return preview;
+}
+
+function confirmLinkVideo(song: string, suggestion: SuggestedVideo): Promise<boolean> {
+  return new Promise(resolve => {
+    const dialog = document.createElement("dialog");
+    dialog.className = "unison-confirm";
+
+    const heading = document.createElement("h3");
+    heading.className = "unison-confirm-title";
+    heading.textContent = t("unison_linkConfirmTitle");
+
+    const body = document.createElement("p");
+    body.className = "unison-confirm-body";
+    body.textContent = t("unison_linkConfirmBody", [suggestion.title, song]);
+
+    const actions = document.createElement("div");
+    actions.className = "unison-confirm-actions";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.className = "unison-confirm-btn unison-confirm-btn--cancel";
+    cancelBtn.textContent = t("options_modal_cancel");
+    const confirmBtn = document.createElement("button");
+    confirmBtn.type = "button";
+    confirmBtn.className = "unison-confirm-btn unison-confirm-btn--save";
+    confirmBtn.textContent = t("unison_addVideo");
+    actions.append(cancelBtn, confirmBtn);
+
+    dialog.append(heading, body, createVideoPreview(suggestion), actions);
+
+    const close = (confirmed: boolean): void => {
+      dialog.close();
+      dialog.remove();
+      resolve(confirmed);
+    };
+    cancelBtn.addEventListener("click", () => close(false));
+    confirmBtn.addEventListener("click", () => close(true));
+    dialog.addEventListener("cancel", event => {
+      event.preventDefault();
+      close(false);
+    });
+    dialog.addEventListener("click", event => {
+      if (event.target === dialog) close(false);
+    });
+
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    cancelBtn.focus();
+  });
+}
+
 function createSuggestedVideoRow(
   lyricsId: number,
+  song: string,
   suggestion: SuggestedVideo,
   refresh: () => Promise<void>
 ): HTMLLIElement {
@@ -1391,6 +1474,8 @@ function createSuggestedVideoRow(
   addBtn.className = "unison-video-add";
   addBtn.textContent = t("unison_addVideo");
   addBtn.addEventListener("click", async () => {
+    if (normalizeTitle(suggestion.title) !== normalizeTitle(song) && !(await confirmLinkVideo(song, suggestion)))
+      return;
     addBtn.disabled = true;
     const result = await linkVideo(lyricsId, suggestion.videoId);
     if (result.success) {
@@ -1407,6 +1492,7 @@ function createSuggestedVideoRow(
 
 function renderSuggestedVideoList(
   lyricsId: number,
+  song: string,
   listEl: HTMLElement,
   suggestions: SuggestedVideo[],
   refresh: () => Promise<void>
@@ -1422,7 +1508,7 @@ function renderSuggestedVideoList(
 
   const appendRows = (items: SuggestedVideo[]): void => {
     for (const suggestion of items) {
-      listEl.appendChild(createSuggestedVideoRow(lyricsId, suggestion, refresh));
+      listEl.appendChild(createSuggestedVideoRow(lyricsId, song, suggestion, refresh));
     }
   };
 
@@ -1477,7 +1563,7 @@ async function renderOwnerVideoTools(entry: UnisonLyricsEntry, token: number): P
   async function refresh(): Promise<void> {
     const [linkedRes, suggestRes] = await Promise.all([listVideos(entry.id), suggestedVideos(entry.id)]);
     renderLinkedVideoList(entry.id, linkedList, linkedRes.data, refresh);
-    renderSuggestedVideoList(entry.id, suggestList, suggestRes.data, refresh);
+    renderSuggestedVideoList(entry.id, entry.song, suggestList, suggestRes.data, refresh);
   }
 
   await refresh();

@@ -1863,6 +1863,24 @@
     "message": "No suggestions right now",
     "description": "Shown under the suggested-videos heading when Unison has no suggestions"
   },
+  "unison_linkConfirmTitle": {
+    "message": "Link this video?",
+    "description": "Title of the confirmation shown before linking a suggested video whose title differs from the lyric's song title"
+  },
+  "unison_linkConfirmBody": {
+    "message": "\"$video$\" isn't titled exactly \"$song$\". Check it's the same recording before linking, since remixes, live and sped-up versions usually need their own lyrics.",
+    "description": "Body of the confirmation before linking a suggested video. $video$ is the suggested video's title, $song$ is the lyric's song title",
+    "placeholders": {
+      "video": {
+        "content": "$1",
+        "example": "Blinding Lights (Major Lazer Remix)"
+      },
+      "song": {
+        "content": "$2",
+        "example": "Blinding Lights"
+      }
+    }
+  },
   "unison_addVideo": {
     "message": "Add",
     "description": "Button that links a suggested video to a Unison lyric"
