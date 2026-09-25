@@ -1001,8 +1001,10 @@ export const devFixtures = {
 
   async suggestions(id: number): Promise<FixtureResult<SuggestedVideo[]>> {
     await latency();
-    const linked = videosOf(find(id));
-    return ok(SUGGESTIONS.filter(candidate => !linked.some(video => video.videoId === candidate.videoId)));
+    const lyric = find(id);
+    const linked = videosOf(lyric);
+    const exact = suggestion("devSameName", lyric.song, "song", 1);
+    return ok([exact, ...SUGGESTIONS].filter(candidate => !linked.some(video => video.videoId === candidate.videoId)));
   },
 
   async link(id: number, videoId: string): Promise<FixtureResult<{ videos: LinkedVideo[] } | null>> {
