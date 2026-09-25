@@ -987,6 +987,13 @@ kbd {
   color: #fff;
 }
 
+.unison-submit-suggestions:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
 /* -- Confirm Dialog --------------------------  */
 
 .unison-confirm {

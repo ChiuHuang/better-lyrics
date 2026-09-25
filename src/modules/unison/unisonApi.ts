@@ -313,6 +313,21 @@ export async function suggestedVideos(lyricsId: number): Promise<ApiResult<Sugge
   return { success: res.success, data: res.data?.suggestions ?? [], error: res.error };
 }
 
+interface SubmissionSuggestionQuery {
+  song: string;
+  artist: string;
+  album: string | null;
+  duration: number;
+  videoId?: string;
+}
+
+export async function suggestVideosForSubmission(
+  query: SubmissionSuggestionQuery
+): Promise<ApiResult<SuggestedVideo[]>> {
+  const res = await signedRequest<{ suggestions: SuggestedVideo[] }>("/lyrics/suggested-videos", "POST", { ...query });
+  return { success: res.success, data: res.data?.suggestions ?? [], error: res.error };
+}
+
 export async function linkVideo(
   lyricsId: number,
   videoId: string

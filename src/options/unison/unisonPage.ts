@@ -29,6 +29,7 @@ import {
   searchLyrics,
   submitLyrics,
   suggestedVideos,
+  suggestVideosForSubmission,
   unlinkVideo,
 } from "@modules/unison/unisonApi";
 import { UnisonErrorCode } from "@modules/unison/errorCodes";
@@ -142,7 +143,12 @@ const feedTabCache: Record<FeedTabName, FeedTabCache> = {
 
 let activeFeedTab: FeedTabName = "recent";
 let feedSentinelObserver: IntersectionObserver | undefined;
-let additionalVideosInput: { getIds(): string[] } | null = null;
+interface VideoIdTokenInput {
+  getIds(): string[];
+  add(videoId: string): void;
+}
+
+let additionalVideosInput: VideoIdTokenInput | null = null;
 let detailRenderToken = 0;
 
 // -- Dev Stub --------------------------
@@ -1446,14 +1452,12 @@ function confirmLinkVideo(song: string, suggestion: SuggestedVideo): Promise<boo
   });
 }
 
-function createSuggestedVideoRow(
-  lyricsId: number,
-  song: string,
-  suggestion: SuggestedVideo,
-  refresh: () => Promise<void>
-): HTMLLIElement {
+type AddSuggestion = (suggestion: SuggestedVideo) => Promise<string | null>;
+
+function createSuggestedVideoRow(song: string, suggestion: SuggestedVideo, onAdd: AddSuggestion): HTMLLIElement {
   const row = document.createElement("li");
   row.className = "unison-suggest-row";
+  row.dataset.videoId = suggestion.videoId;
 
   const info = document.createElement("div");
   info.className = "unison-suggest-info";
@@ -1477,13 +1481,10 @@ function createSuggestedVideoRow(
     if (normalizeTitle(suggestion.title) !== normalizeTitle(song) && !(await confirmLinkVideo(song, suggestion)))
       return;
     addBtn.disabled = true;
-    const result = await linkVideo(lyricsId, suggestion.videoId);
-    if (result.success) {
-      await refresh();
-      return;
-    }
+    const error = await onAdd(suggestion);
+    if (error === null) return;
     addBtn.disabled = false;
-    addBtn.textContent = videoLinkErrorMessage(result.code, t("unison_linkFailed"));
+    addBtn.textContent = error;
   });
   row.appendChild(addBtn);
 
@@ -1491,11 +1492,10 @@ function createSuggestedVideoRow(
 }
 
 function renderSuggestedVideoList(
-  lyricsId: number,
-  song: string,
   listEl: HTMLElement,
+  song: string,
   suggestions: SuggestedVideo[],
-  refresh: () => Promise<void>
+  onAdd: AddSuggestion
 ): void {
   listEl.replaceChildren();
   if (!suggestions.length) {
@@ -1508,7 +1508,7 @@ function renderSuggestedVideoList(
 
   const appendRows = (items: SuggestedVideo[]): void => {
     for (const suggestion of items) {
-      listEl.appendChild(createSuggestedVideoRow(lyricsId, song, suggestion, refresh));
+      listEl.appendChild(createSuggestedVideoRow(song, suggestion, onAdd));
     }
   };
 
@@ -1563,7 +1563,12 @@ async function renderOwnerVideoTools(entry: UnisonLyricsEntry, token: number): P
   async function refresh(): Promise<void> {
     const [linkedRes, suggestRes] = await Promise.all([listVideos(entry.id), suggestedVideos(entry.id)]);
     renderLinkedVideoList(entry.id, linkedList, linkedRes.data, refresh);
-    renderSuggestedVideoList(entry.id, entry.song, suggestList, suggestRes.data, refresh);
+    renderSuggestedVideoList(suggestList, entry.song, suggestRes.data, async suggestion => {
+      const result = await linkVideo(entry.id, suggestion.videoId);
+      if (!result.success) return videoLinkErrorMessage(result.code, t("unison_linkFailed"));
+      await refresh();
+      return null;
+    });
   }
 
   await refresh();
@@ -1614,6 +1619,9 @@ function setupSubmitForm(): void {
     additionalVideosInput = createVideoIdTokenInput(additionalMount, () =>
       (document.getElementById("unison-field-videoId") as HTMLInputElement).value.trim()
     );
+  }
+  for (const id of SUBMIT_SUGGESTION_FIELDS) {
+    document.getElementById(id)?.addEventListener("change", () => void refreshSubmitSuggestions());
   }
 
   const languageDefault = document.createElement("option");
@@ -1713,6 +1721,54 @@ function prefillSubmitForm(params: URLSearchParams): void {
   }
 
   updateComposerLink();
+  void refreshSubmitSuggestions();
+}
+
+// -- Submit suggestions --------------------------
+
+const SUBMIT_SUGGESTION_FIELDS = [
+  "unison-field-song",
+  "unison-field-artist",
+  "unison-field-album",
+  "unison-field-duration",
+  "unison-field-videoId",
+];
+
+let submitSuggestionToken = 0;
+
+async function refreshSubmitSuggestions(): Promise<void> {
+  const section = document.getElementById("unison-submit-suggestions");
+  const list = document.getElementById("unison-submit-suggestions-list");
+  if (!section || !list) return;
+  const token = ++submitSuggestionToken;
+
+  const value = (id: string): string => (document.getElementById(id) as HTMLInputElement).value.trim();
+  const song = value("unison-field-song");
+  const artist = value("unison-field-artist");
+  const duration = parseDurationInput(value("unison-field-duration"));
+  const videoId = parseVideoId(value("unison-field-videoId"));
+  if (!song || !artist || !duration) {
+    section.hidden = true;
+    return;
+  }
+
+  const result = await suggestVideosForSubmission({
+    song,
+    artist,
+    album: value("unison-field-album") || null,
+    duration,
+    videoId: videoId ?? undefined,
+  });
+  if (token !== submitSuggestionToken) return;
+
+  const suggestions = result.data.filter(suggestion => !additionalVideosInput?.getIds().includes(suggestion.videoId));
+  section.hidden = suggestions.length === 0;
+  renderSuggestedVideoList(list, song, suggestions, async suggestion => {
+    additionalVideosInput?.add(suggestion.videoId);
+    list.querySelector(`[data-video-id="${suggestion.videoId}"]`)?.remove();
+    if (!list.querySelector(".unison-suggest-row, .unison-suggest-more")) section.hidden = true;
+    return null;
+  });
 }
 
 function updateComposerLink(): void {
@@ -1915,7 +1971,7 @@ function parseVideoId(raw: string): string | null {
   }
 }
 
-function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => string): { getIds(): string[] } {
+function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => string): VideoIdTokenInput {
   const tokens: { id: string | null; text: string }[] = [];
 
   container.classList.add("unison-token-input");
@@ -2021,6 +2077,7 @@ function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => str
       for (const token of tokens) if (token.id) ids.push(token.id);
       return ids;
     },
+    add: commit,
   };
 }
 
