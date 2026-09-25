@@ -994,6 +994,11 @@ export const devFixtures = {
     return ok({ id: -101, created: true });
   },
 
+  async submissionSuggestions(song: string): Promise<FixtureResult<SuggestedVideo[]>> {
+    await latency();
+    return ok([suggestion("devSameName", song, "song", 1), ...SUGGESTIONS]);
+  },
+
   async videos(id: number): Promise<FixtureResult<LinkedVideo[]>> {
     await latency();
     return ok([...videosOf(find(id))]);
