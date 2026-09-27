@@ -81,7 +81,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   bindLyricsFileDrop(textarea, replaceLyrics);
 
   const controls: SidebarControls = {
-    upload: createUploadButton(replaceLyrics),
+    upload: createUploadButton(textarea, replaceLyrics),
     languageSelect: createLanguageSelect(entry.language),
     isrcInput: createIsrcInput(entry.isrc),
     isrcError: createFieldError(),
@@ -326,8 +326,8 @@ function createField(label: string, ...controls: HTMLElement[]): HTMLLabelElemen
   return field;
 }
 
-function createUploadButton(onLoad: (text: string) => void): HTMLElement {
-  const input = createLyricsFileInput(onLoad);
+function createUploadButton(textarea: HTMLTextAreaElement, onLoad: (text: string) => void): HTMLElement {
+  const input = createLyricsFileInput(textarea, onLoad);
   const button = createButton({ label: t("options_editor_importFile"), icon: "upload" });
   button.addEventListener("click", () => input.click());
   const wrap = document.createElement("div");
