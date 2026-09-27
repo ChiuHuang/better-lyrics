@@ -15,6 +15,7 @@ import type {
   UnisonFeedEntry,
   UnisonFormat,
   UnisonLyricsEntry,
+  UnisonSubmission,
 } from "@modules/unison/types";
 import { XMLValidator } from "fast-xml-parser";
 
@@ -41,7 +42,7 @@ interface FixtureLyric {
   id: number;
   song: string;
   artist: string;
-  album: string;
+  album: string | null;
   videoId: string;
   ownedByMe: boolean;
   sealed: boolean;
@@ -76,8 +77,10 @@ interface LyricSpec {
   song: string;
   artist?: string;
   format: UnisonFormat;
-  language: string;
+  language: string | null;
   isrc: string | null;
+  album?: string | null;
+  videoId?: string;
   ownedByMe: boolean;
   sealed?: boolean;
   revisions: RevisionSpec[];
@@ -98,7 +101,7 @@ const LATENCY_MS = 400;
 const MAGIC = { rateLimit: "#ratelimit", throttle: "#throttle", flag: "#flag" } as const;
 
 export function devFixtureHint(): string {
-  return `Resets on reload. Type in the editor: ${MAGIC.rateLimit} (daily limit), ${MAGIC.throttle} (preview 429, retries), ${MAGIC.flag} (preview goes live, save is flagged). Break the TTML or an LRC stamp for a parse error; change more than 15% of the words to go over the limit. Videos: ${VIDEO_DURATION_MISMATCH} fails the length check, ${VIDEO_UNVERIFIABLE} fails verification, ${VIDEO_RATE_LIMITED} hits the rate limit, and a lyric holds ${VIDEO_CAP} videos. Submitting a song titled "[DEV] ..." pretends to create lyric -101.`;
+  return `Resets on reload. Type in the editor: ${MAGIC.rateLimit} (daily limit), ${MAGIC.throttle} (preview 429, retries), ${MAGIC.flag} (preview goes live, save is flagged). Break the TTML or an LRC stamp for a parse error; change more than 15% of the words to go over the limit. Videos: ${VIDEO_DURATION_MISMATCH} fails the length check, ${VIDEO_UNVERIFIABLE} fails verification, ${VIDEO_RATE_LIMITED} hits the rate limit, and a lyric holds ${VIDEO_CAP} videos. Submitting a song titled "[DEV] ..." creates a new fixture lyric you own.`;
 }
 
 const ME = { displayName: "You (dev)" };
@@ -546,10 +549,13 @@ function videosOf(lyric: FixtureLyric): LinkedVideo[] {
   return videos;
 }
 
+const FIXTURE_ID_CEILING = -100;
+
 let nextRevisionId = -1000;
 let store: FixtureLyric[] | null = null;
 
 function buildLyric(spec: LyricSpec, now: number): FixtureLyric {
+  const album = spec.album === undefined ? FIXTURE_ALBUM : spec.album;
   const anchorIndex = Math.max(
     0,
     spec.revisions.findIndex(rev => rev.anchor)
@@ -578,7 +584,7 @@ function buildLyric(spec: LyricSpec, now: number): FixtureLyric {
       format: spec.format,
       language: spec.language,
       isrc: spec.isrc,
-      album: FIXTURE_ALBUM,
+      album,
       headRows: rev.headRows,
     };
   });
@@ -586,8 +592,8 @@ function buildLyric(spec: LyricSpec, now: number): FixtureLyric {
     id: spec.id,
     song: spec.song,
     artist: spec.artist ?? "Amazing Grace, John Newton",
-    album: FIXTURE_ALBUM,
-    videoId: "dQw4w9WgXcQ",
+    album,
+    videoId: spec.videoId ?? "dQw4w9WgXcQ",
     ownedByMe: spec.ownedByMe,
     sealed: spec.sealed ?? false,
     revisions,
@@ -934,7 +940,7 @@ function feedEntry(lyric: FixtureLyric): UnisonFeedEntry {
     videoId: lyric.videoId,
     song: lyric.song,
     artist: lyric.artist,
-    album: lyric.album,
+    album: lyric.album ?? undefined,
     duration: 240,
     format: live.format,
     language: live.language ?? undefined,
@@ -1026,9 +1032,24 @@ export const devFixtures = {
     return commit(lyric, { lyrics, format, language, isrc, album }, target.revNo);
   },
 
-  async submit(): Promise<FixtureResult<{ id: number; created: boolean }>> {
+  async submit(submission: UnisonSubmission): Promise<FixtureResult<{ id: number; created: boolean }>> {
     await latency();
-    return ok({ id: -101, created: true });
+    const lyrics = fixtures();
+    const id = Math.min(FIXTURE_ID_CEILING, ...lyrics.map(lyric => lyric.id)) - 1;
+    const spec: LyricSpec = {
+      id,
+      song: submission.song,
+      artist: submission.artist,
+      format: submission.format,
+      language: submission.language || null,
+      isrc: submission.isrc ? normalizeIsrc(submission.isrc) : null,
+      album: submission.album?.trim() || null,
+      videoId: submission.videoId,
+      ownedByMe: true,
+      revisions: [{ lyrics: submission.lyrics.trim(), status: "live", daysAgo: 0 }],
+    };
+    lyrics.push(buildLyric(spec, Date.now() / 1000));
+    return ok({ id, created: true });
   },
 
   async submissionSuggestions(song: string): Promise<FixtureResult<SuggestedVideo[]>> {

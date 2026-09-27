@@ -261,7 +261,7 @@ export async function getLyricsByVideoId(videoId: string): Promise<ApiResult<Uni
 export async function submitLyrics(
   submission: UnisonSubmission
 ): Promise<ApiResult<{ id: number; created: boolean } | null>> {
-  if (IS_DEV && submission.song.startsWith("[DEV]")) return devFixtures.submit();
+  if (IS_DEV && submission.song.startsWith("[DEV]")) return devFixtures.submit(submission);
   return signedRequest<{ id: number; created: boolean } | null>(
     "/lyrics/submit",
     "POST",
