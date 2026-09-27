@@ -1687,6 +1687,10 @@
       }
     }
   },
+  "unison_viewSubmittedLyrics": {
+    "message": "View lyrics",
+    "description": "Button in the submit feedback that opens the lyric that was just submitted, shown when some additional videos could not be linked"
+  },
   "unison_formatHint": {
     "message": "Auto-detected from lyrics content",
     "description": "Hint text below format field label"

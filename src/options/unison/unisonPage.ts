@@ -2144,10 +2144,17 @@ async function handleSubmit(): Promise<void> {
   const skipped = newId != null && additionalIds.length ? await linkAdditionalVideos(newId, additionalIds) : [];
 
   submitBtn.disabled = false;
-  showFeedback(submitFeedback, {
-    title: skipped.length ? t("unison_additionalVideosSkipped", [skipped.join(", ")]) : t("unison_submitSuccess"),
-    isError: false,
-  });
+
+  if (skipped.length && newId != null) {
+    showFeedback(submitFeedback, {
+      title: t("unison_additionalVideosSkipped", [skipped.join(", ")]),
+      isError: false,
+      action: { label: t("unison_viewSubmittedLyrics"), onClick: () => navigateTo({ id: String(newId) }) },
+    });
+    return;
+  }
+
+  showFeedback(submitFeedback, { title: t("unison_submitSuccess"), isError: false });
 
   if (newId != null) {
     setTimeout(() => navigateTo({ id: String(newId) }), 1500);
@@ -2158,6 +2165,7 @@ interface FeedbackOptions {
   title: string;
   hint?: string;
   isError: boolean;
+  action?: { label: string; onClick: () => void };
 }
 
 function humanizeTitle(s: string): string {
@@ -2188,6 +2196,15 @@ function showFeedback(el: HTMLElement, opts: FeedbackOptions): void {
     hint.className = "unison-feedback-hint";
     hint.textContent = opts.hint;
     body.appendChild(hint);
+  }
+
+  if (opts.action) {
+    const actionBtn = document.createElement("button");
+    actionBtn.type = "button";
+    actionBtn.className = "unison-feedback-action";
+    actionBtn.textContent = opts.action.label;
+    actionBtn.addEventListener("click", opts.action.onClick);
+    body.appendChild(actionBtn);
   }
 
   el.appendChild(icon);
