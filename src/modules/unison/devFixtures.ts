@@ -357,7 +357,7 @@ const ALBUM_MAX_LENGTH = 500;
 
 function albumCheck(album: string | null | undefined): FieldCheck {
   const value = album?.trim() ?? "";
-  if (value.length > ALBUM_MAX_LENGTH || /\p{Cc}/u.test(value)) {
+  if (value.length > ALBUM_MAX_LENGTH || /[\p{Cc}\u2028\u2029]/u.test(value)) {
     return { field: "album", status: "bad", message: "Album names must be a single line of up to 500 characters." };
   }
   return { field: "album", status: "ok", message: album?.trim() ? `Album: ${album.trim()}.` : "No album set." };
