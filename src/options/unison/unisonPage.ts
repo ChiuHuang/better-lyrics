@@ -146,6 +146,8 @@ let feedSentinelObserver: IntersectionObserver | undefined;
 interface VideoIdTokenInput {
   getIds(): string[];
   add(videoId: string): void;
+  hasInvalid(): boolean;
+  focus(): void;
 }
 
 let additionalVideosInput: VideoIdTokenInput | null = null;
@@ -2082,6 +2084,8 @@ function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => str
       return ids;
     },
     add: commit,
+    hasInvalid: () => tokens.some(token => !token.id),
+    focus: () => field.focus(),
   };
 }
 
@@ -2108,6 +2112,12 @@ async function handleSubmit(): Promise<void> {
 
   if (!song || !artist || !videoId || !lyrics) {
     showFeedback(submitFeedback, { title: t("unison_validationRequired"), isError: true });
+    return;
+  }
+
+  if (additionalVideosInput?.hasInvalid()) {
+    showFeedback(submitFeedback, { title: t("unison_additionalVideosInvalid"), isError: true });
+    additionalVideosInput.focus();
     return;
   }
 

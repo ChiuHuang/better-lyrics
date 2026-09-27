@@ -1687,6 +1687,10 @@
       }
     }
   },
+  "unison_additionalVideosInvalid": {
+    "message": "Some additional videos aren't valid video IDs or URLs. Fix or remove them to submit.",
+    "description": "Error shown on submit when the additional videos field contains entries that are not valid YouTube video IDs or URLs"
+  },
   "unison_viewSubmittedLyrics": {
     "message": "View lyrics",
     "description": "Button in the submit feedback that opens the lyric that was just submitted, shown when some additional videos could not be linked"
