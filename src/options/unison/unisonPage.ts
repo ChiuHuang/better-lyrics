@@ -149,6 +149,7 @@ interface VideoIdTokenInput {
   add(videoId: string, options?: { suggested?: boolean }): void;
   hasInvalid(): boolean;
   focus(): void;
+  removeSuggested(): void;
 }
 
 let additionalVideosInput: VideoIdTokenInput | null = null;
@@ -1817,7 +1818,7 @@ async function refreshSubmitSuggestions(): Promise<void> {
   const duration = parseDurationInput(value("unison-field-duration"));
   const videoId = parseVideoId(value("unison-field-videoId"));
   if (!song || !artist || !duration) {
-    submitSuggestionState = null;
+    clearSubmitSuggestionState();
     section.hidden = true;
     return;
   }
@@ -1830,22 +1831,26 @@ async function refreshSubmitSuggestions(): Promise<void> {
     videoId: videoId ?? undefined,
   };
   const queryKey = JSON.stringify(query);
+  if (submitSuggestionState?.queryKey !== queryKey) clearSubmitSuggestionState();
+
   const result = await suggestVideosForSubmission(query);
   if (token !== submitSuggestionToken) return;
 
   if (!result.success) {
-    if (submitSuggestionState?.queryKey !== queryKey) submitSuggestionState = null;
     section.hidden = false;
     renderVideoListError(list, () => void refreshSubmitSuggestions());
     return;
   }
 
-  if (submitSuggestionState?.queryKey !== queryKey) {
-    submitSuggestionState = { queryKey, song, suggestions: [], dismissedIds: new Set() };
-  }
+  submitSuggestionState ??= { queryKey, song, suggestions: [], dismissedIds: new Set() };
   submitSuggestionState.suggestions = result.data;
   addSameSuggestions(submitSuggestionState);
   renderSubmitSuggestions();
+}
+
+function clearSubmitSuggestionState(): void {
+  submitSuggestionState = null;
+  additionalVideosInput?.removeSuggested();
 }
 
 function addSameSuggestions(state: SubmitSuggestionState): void {
@@ -2167,7 +2172,9 @@ function createVideoIdTokenInput(
         continue;
       }
       if (id === primaryId) continue;
-      if (tokens.some(token => token.id === id)) {
+      const existing = tokens.find(token => token.id === id);
+      if (existing) {
+        if (!suggested) existing.suggested = false;
         flashPill(id);
         continue;
       }
@@ -2219,6 +2226,12 @@ function createVideoIdTokenInput(
     add: (videoId, options) => commit(videoId, options?.suggested ?? false),
     hasInvalid: () => tokens.some(token => !token.id),
     focus: () => field.focus(),
+    removeSuggested: () => {
+      const kept = tokens.filter(token => !token.suggested);
+      if (kept.length === tokens.length) return;
+      tokens.splice(0, tokens.length, ...kept);
+      render();
+    },
   };
 }
 
