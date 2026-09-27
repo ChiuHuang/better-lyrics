@@ -811,15 +811,15 @@ function evaluate(lyric: FixtureLyric, draft: RevisionDraft): PreviewResult {
   const isrc = draft.isrc ? normalizeIsrc(draft.isrc) : draft.isrc;
   const stored: FieldValues = {
     language: resolveField(draft.language, live.language),
-    isrc: checks[2].status === "bad" ? anchor.isrc : resolveField(isrc, live.isrc),
-    album: checks[3].status === "bad" ? anchor.album : resolveField(draft.album?.trim(), live.album),
+    isrc: checks[2].status === "bad" ? live.isrc : resolveField(isrc, live.isrc),
+    album: checks[3].status === "bad" ? live.album : resolveField(draft.album?.trim(), live.album),
   };
   const noChanges =
     lyrics === live.lyrics.trim() &&
     resolveField(draft.language, live.language) === live.language &&
     resolveField(isrc, live.isrc) === live.isrc &&
     resolveField(draft.album?.trim(), live.album) === live.album;
-  const lyricRows = parsed ? diffRows(before, parsed) : [];
+  const lyricRows = parsed ? diffRows(parseLines(live.lyrics, live.format), parsed) : [];
 
   let reason: PendingReason | null = null;
   if (lyric.sealed) reason = "sealed";
@@ -839,8 +839,8 @@ function evaluate(lyric: FixtureLyric, draft: RevisionDraft): PreviewResult {
     noChanges,
     rateLimit: rateLimitFor(lyric, draft.lyrics),
     diff: {
-      rows: noChanges ? [] : [...lyricRows, ...fieldRows(anchor, stored)],
-      againstRevNo: anchor.revNo,
+      rows: noChanges ? [] : [...lyricRows, ...fieldRows(live, stored)],
+      againstRevNo: live.revNo,
     },
   };
 }
