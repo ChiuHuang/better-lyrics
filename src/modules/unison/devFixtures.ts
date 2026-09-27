@@ -356,8 +356,9 @@ function isrcCheck(isrc: string | null | undefined): FieldCheck {
 const ALBUM_MAX_LENGTH = 500;
 
 function albumCheck(album: string | null | undefined): FieldCheck {
-  if (album && album.trim().length > ALBUM_MAX_LENGTH) {
-    return { field: "album", status: "bad", message: "Album names can be up to 500 characters." };
+  const value = album?.trim() ?? "";
+  if (value.length > ALBUM_MAX_LENGTH || /\p{Cc}/u.test(value)) {
+    return { field: "album", status: "bad", message: "Album names must be a single line of up to 500 characters." };
   }
   return { field: "album", status: "ok", message: album?.trim() ? `Album: ${album.trim()}.` : "No album set." };
 }
