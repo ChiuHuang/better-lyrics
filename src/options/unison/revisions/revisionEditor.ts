@@ -329,6 +329,7 @@ function createAlbumInput(current: string | undefined): HTMLInputElement {
   input.className = "unison-input";
   input.value = current ?? "";
   input.placeholder = t("unison_placeholder_album");
+  input.maxLength = 500;
   return input;
 }
 
