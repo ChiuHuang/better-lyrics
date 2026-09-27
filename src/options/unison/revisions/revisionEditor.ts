@@ -7,6 +7,7 @@ import {
   checkIssue,
   checkingOutcome,
   draftField,
+  driftLabels,
   editorOutcome,
   failureOutcome,
   hasBadLyrics,
@@ -158,15 +159,12 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   const render = (): void => {
     if (preview) {
       const lyricsBad = hasBadLyrics(preview);
+      const labels = driftLabels(preview);
       bar.top.hidden = false;
       bar.top.replaceChildren(
         createPills(preview),
-        createDriftMeter(t("unison_rev_textChanged"), lyricsBad ? null : preview.drift.text, preview.drift.textLimit),
-        createDriftMeter(
-          t("unison_rev_timingChanged"),
-          lyricsBad ? null : preview.drift.timing,
-          preview.drift.timingLimit
-        )
+        createDriftMeter(messageText(labels.text), lyricsBad ? null : preview.drift.text, preview.drift.textLimit),
+        createDriftMeter(messageText(labels.timing), lyricsBad ? null : preview.drift.timing, preview.drift.timingLimit)
       );
       const line = rateLimitLine(preview.rateLimit);
       controls.rate.hidden = false;

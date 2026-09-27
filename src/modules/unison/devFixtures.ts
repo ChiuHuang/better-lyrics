@@ -840,6 +840,7 @@ function evaluate(lyric: FixtureLyric, draft: RevisionDraft): PreviewResult {
       timingOffsetMs: timing.offsetMs,
       textLimit: TEXT_LIMIT,
       timingLimit: TIMING_LIMIT,
+      anchorRevNo: anchor.revNo,
     },
     outcome: { goesLive: reason === null, reason },
     noChanges,

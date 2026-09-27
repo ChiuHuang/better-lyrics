@@ -2313,6 +2313,26 @@
     "message": "Timing changed",
     "description": "Meter label: how much of the timing changed"
   },
+  "unison_rev_textChangedSince": {
+    "message": "Text changed since revision $rev$",
+    "description": "Meter label: how much of the text changed since an earlier revision that the limit is measured against. $rev$ is that revision",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "unison_rev_timingChangedSince": {
+    "message": "Timing changed since revision $rev$",
+    "description": "Meter label: how much of the timing changed since an earlier revision that the limit is measured against. $rev$ is that revision",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
   "unison_rev_ofLimit": {
     "message": "of $limit$% limit",
     "description": "Follows a bold percentage in a meter, like '8% of 15% limit'",

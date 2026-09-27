@@ -13,6 +13,7 @@ import {
   countDiffChanges,
   diffHeadLabel,
   draftField,
+  driftLabels,
   driftMeter,
   editorOutcome,
   failureOutcome,
@@ -434,6 +435,44 @@ const REASONS: PendingReason[] = ["sealed", "flagged", "large_text_drift", "larg
     splitDiffRows([bodySame, album, headWord]),
     { body: [bodySame], head: [headWord], fields: [album] },
     "a field row never opens the head section"
+  );
+}
+
+// -- Drift labels --------------------------
+
+{
+  const drift = preview().drift;
+  const diff = (againstRevNo: number | null) => ({ rows: [], againstRevNo });
+  const keysOf = (labels: ReturnType<typeof driftLabels>) => [keyOf(labels.text), keyOf(labels.timing)];
+
+  const since = driftLabels(preview({ drift: { ...drift, anchorRevNo: 2 }, diff: diff(5) }));
+  assert.deepEqual(keysOf(since), ["unison_rev_textChangedSince", "unison_rev_timingChangedSince"]);
+  assert.deepEqual(
+    [since.text, since.timing].map(label => "key" in label && label.subs),
+    [["2"], ["2"]]
+  );
+
+  const plain = ["unison_rev_textChanged", "unison_rev_timingChanged"];
+  assert.deepEqual(
+    keysOf(driftLabels(preview({ drift: { ...drift, anchorRevNo: 5 }, diff: diff(5) }))),
+    plain,
+    "an anchor that is the live revision keeps the plain labels"
+  );
+  assert.deepEqual(keysOf(driftLabels(preview({ drift, diff: diff(5) }))), plain, "no anchor keeps the plain labels");
+  assert.deepEqual(
+    keysOf(driftLabels(preview({ drift: { ...drift, anchorRevNo: null }, diff: diff(5) }))),
+    plain,
+    "a null anchor keeps the plain labels"
+  );
+  assert.deepEqual(
+    keysOf(driftLabels(preview({ drift: { ...drift, anchorRevNo: 2 } }))),
+    ["unison_rev_textChangedSince", "unison_rev_timingChangedSince"],
+    "without a diff the anchor still names its revision"
+  );
+  assert.deepEqual(
+    keysOf(driftLabels(preview({ drift: { ...drift, anchorRevNo: 0 }, diff: diff(null) }))),
+    ["unison_rev_textChangedSince", "unison_rev_timingChangedSince"],
+    "revision 0 is still a number"
   );
 }
 

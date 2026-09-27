@@ -49,6 +49,17 @@ export function driftMeter(value: number, limit: number): DriftMeter {
   return { valuePct: percent(value), limitPct: percent(limit), fillPct, over: value > limit };
 }
 
+export function driftLabels(preview: PreviewResult): { text: RevisionMessage; timing: RevisionMessage } {
+  const anchorRevNo = preview.drift.anchorRevNo;
+  if (typeof anchorRevNo !== "number" || anchorRevNo === preview.diff?.againstRevNo) {
+    return { text: message("unison_rev_textChanged"), timing: message("unison_rev_timingChanged") };
+  }
+  return {
+    text: message("unison_rev_textChangedSince", anchorRevNo),
+    timing: message("unison_rev_timingChangedSince", anchorRevNo),
+  };
+}
+
 // -- Draft Fields --------------------------
 
 export function draftField(next: string, current: string | null | undefined): string | null | undefined {

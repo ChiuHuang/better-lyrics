@@ -223,7 +223,14 @@ export interface FieldCheck {
 
 export interface PreviewResult {
   checks: FieldCheck[];
-  drift: { text: number; timing: number; timingOffsetMs: number; textLimit: number; timingLimit: number };
+  drift: {
+    text: number;
+    timing: number;
+    timingOffsetMs: number;
+    textLimit: number;
+    timingLimit: number;
+    anchorRevNo?: number | null;
+  };
   outcome: { goesLive: boolean; reason: PendingReason | null };
   noChanges: boolean;
   rateLimit: { lyricRemaining: number; lyricLimit: number; userRemaining: number; userLimit: number };
