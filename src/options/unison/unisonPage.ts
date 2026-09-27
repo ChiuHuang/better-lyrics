@@ -36,17 +36,17 @@ import { UnisonErrorCode } from "@modules/unison/errorCodes";
 import { appendInlineProfile, profileUrl } from "@modules/unison/gamificationRender";
 import { generatePetName, getDisplayName, getIdentity } from "@/core/keyIdentity";
 import { warnUnison } from "@core/logger";
-import { bindLyricsFileDrop } from "./lyricsFile";
-import { createFeedback, fillFeedback } from "./feedback";
-import { type IconKey, svgIcon } from "./icons";
-import { appendLanguageOptions, matchLanguageOption } from "./languages";
-import { detectFormat, renderPreviewInto } from "./lyricsPreview";
-import { appendMetaRow } from "./metaTable";
+import { bindLyricsFileDrop } from "@/options/unison/lyricsFile";
+import { createFeedback, fillFeedback } from "@/options/unison/feedback";
+import { type IconKey, svgIcon } from "@/options/unison/icons";
+import { appendLanguageOptions, matchLanguageOption } from "@/options/unison/languages";
+import { detectFormat, renderPreviewInto } from "@/options/unison/lyricsPreview";
+import { appendMetaRow } from "@/options/unison/metaTable";
 import { IS_DEV, devFixtureHint, devFixtures } from "@modules/unison/devFixtures";
-import { renderRevisionBar } from "./revisions/revisionBar";
-import { type EditorSurface, renderRevisionEditor } from "./revisions/revisionEditor";
-import { renderRevisionsPage } from "./revisions/revisionList";
-import type { RevisionHost } from "./revisions/revisionUi";
+import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
+import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revisions/revisionEditor";
+import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
+import type { RevisionHost } from "@/options/unison/revisions/revisionUi";
 
 // -- Icons --------------------------
 

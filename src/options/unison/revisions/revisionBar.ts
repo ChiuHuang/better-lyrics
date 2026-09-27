@@ -4,7 +4,7 @@ import { sealMarks } from "@modules/unison/gamification";
 import { SEALED_NOTICE, pendingNotice, rejectedNotice, revisionFailure } from "@modules/unison/revisions";
 import type { UnisonLyricsEntry } from "@modules/unison/types";
 import { withdrawPendingRevision } from "@modules/unison/unisonApi";
-import { svgIcon } from "../icons";
+import { svgIcon } from "@/options/unison/icons";
 import {
   type RevisionHost,
   bindButtonAction,
@@ -12,7 +12,7 @@ import {
   createNote,
   createStatusChip,
   messageText,
-} from "./revisionUi";
+} from "@/options/unison/revisions/revisionUi";
 
 // -- Revision Bar --------------------------
 

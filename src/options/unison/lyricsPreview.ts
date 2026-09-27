@@ -1,7 +1,7 @@
 import { t } from "@core/i18n";
 import type { UnisonFormat } from "@modules/unison/types";
 import { XMLParser } from "fast-xml-parser";
-import { parseSvgMarkup } from "./icons";
+import { parseSvgMarkup } from "@/options/unison/icons";
 
 // -- Format --------------------------
 

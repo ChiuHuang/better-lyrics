@@ -1,9 +1,15 @@
 import { t } from "@core/i18n";
 import { countDiffChanges, hasBadLyrics } from "@modules/unison/revisions";
 import type { PreviewResult } from "@modules/unison/types";
-import { createFeedback } from "../feedback";
-import { svgIcon } from "../icons";
-import { type RevisionHost, createButton, createDiffLegend, createDiffView, createLoadingLine } from "./revisionUi";
+import { createFeedback } from "@/options/unison/feedback";
+import { svgIcon } from "@/options/unison/icons";
+import {
+  type RevisionHost,
+  createButton,
+  createDiffLegend,
+  createDiffView,
+  createLoadingLine,
+} from "@/options/unison/revisions/revisionUi";
 
 // -- Types --------------------------
 

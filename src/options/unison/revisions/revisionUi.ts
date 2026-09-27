@@ -14,8 +14,8 @@ import {
   unchangedLines,
 } from "@modules/unison/revisions";
 import type { DiffRow, RevisionStatus } from "@modules/unison/types";
-import { createFeedback } from "../feedback";
-import { type IconKey, svgIcon } from "../icons";
+import { createFeedback } from "@/options/unison/feedback";
+import { type IconKey, svgIcon } from "@/options/unison/icons";
 
 // -- Host --------------------------
 

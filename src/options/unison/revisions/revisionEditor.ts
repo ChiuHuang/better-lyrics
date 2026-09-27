@@ -17,12 +17,12 @@ import {
 } from "@modules/unison/revisions";
 import type { FieldCheck, PreviewResult, RevisionDraft, UnisonLyricsEntry } from "@modules/unison/types";
 import { previewRevision, saveRevision } from "@modules/unison/unisonApi";
-import { svgIcon } from "../icons";
-import { appendLanguageOptions } from "../languages";
-import { bindLyricsFileDrop, createLyricsFileInput } from "../lyricsFile";
-import { detectFormat, renderPreviewInto } from "../lyricsPreview";
-import { appendMetaRow } from "../metaTable";
-import { mountChangesTabs } from "./revisionChanges";
+import { svgIcon } from "@/options/unison/icons";
+import { appendLanguageOptions } from "@/options/unison/languages";
+import { bindLyricsFileDrop, createLyricsFileInput } from "@/options/unison/lyricsFile";
+import { detectFormat, renderPreviewInto } from "@/options/unison/lyricsPreview";
+import { appendMetaRow } from "@/options/unison/metaTable";
+import { mountChangesTabs } from "@/options/unison/revisions/revisionChanges";
 import {
   type RevisionHost,
   createButton,
@@ -30,7 +30,7 @@ import {
   messageText,
   messagesText,
   setButtonContent,
-} from "./revisionUi";
+} from "@/options/unison/revisions/revisionUi";
 
 // -- Types --------------------------
 

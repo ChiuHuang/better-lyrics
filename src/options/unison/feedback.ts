@@ -1,4 +1,4 @@
-import { type IconKey, svgIcon } from "./icons";
+import { type IconKey, svgIcon } from "@/options/unison/icons";
 
 // -- Feedback --------------------------
 

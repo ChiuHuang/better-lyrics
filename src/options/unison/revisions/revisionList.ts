@@ -19,7 +19,7 @@ import {
   revertToRevision,
   withdrawPendingRevision,
 } from "@modules/unison/unisonApi";
-import { svgIcon } from "../icons";
+import { svgIcon } from "@/options/unison/icons";
 import {
   type RevisionHost,
   bindButtonAction,
@@ -31,7 +31,7 @@ import {
   createNote,
   createStatusChip,
   messageText,
-} from "./revisionUi";
+} from "@/options/unison/revisions/revisionUi";
 
 // -- Types --------------------------
 
