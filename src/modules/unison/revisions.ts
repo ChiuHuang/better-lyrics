@@ -418,11 +418,20 @@ export function revisionFailure(result: FailedResult): RevisionFailure {
 
 type PreviewFailure = { retry: true; hint: RevisionMessage[] } | { retry: false; failure: RevisionFailure };
 
+const CHECK_FAILED: RevisionFailure = {
+  title: message("unison_rev_checkFailed"),
+  hint: [message("unison_rev_checkFailedHint")],
+};
+
+function hasSpecificReason(result: FailedResult): boolean {
+  return Boolean(result.hint) || (result.code !== undefined && ERROR_MESSAGE_KEY.has(result.code));
+}
+
 export function previewFailure(result: FailedResult): PreviewFailure {
   if (result.status === undefined || result.code === UnisonErrorCode.RATE_LIMITED) {
     return { retry: true, hint: serverHint(result) };
   }
-  return { retry: false, failure: revisionFailure(result) };
+  return { retry: false, failure: hasSpecificReason(result) ? revisionFailure(result) : CHECK_FAILED };
 }
 
 export function previewRetryDelayMs(attempt: number): number {

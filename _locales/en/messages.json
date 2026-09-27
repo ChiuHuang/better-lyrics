@@ -2031,6 +2031,14 @@
     "message": "Updating",
     "description": "Shown while the list of changes refreshes after an edit"
   },
+  "unison_rev_checkFailed": {
+    "message": "Couldn't check your edit",
+    "description": "Editor save bar title when the edit check failed for a reason the server did not explain"
+  },
+  "unison_rev_checkFailedHint": {
+    "message": "Save turns back on once the check runs.",
+    "description": "Editor save bar hint under the failed check title, followed by a Try again link"
+  },
   "unison_rev_tryAgain": {
     "message": "Try again",
     "description": "Link or button that runs the edit check again after it failed"

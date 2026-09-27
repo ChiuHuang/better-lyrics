@@ -641,19 +641,46 @@ const REASONS: PendingReason[] = ["sealed", "flagged", "large_text_drift", "larg
 
   for (const result of [
     { code: "NOT_OWNER", status: 403 },
-    { code: "NOT_FOUND", status: 404 },
-    { code: "INVALID_PAYLOAD", status: 400, error: "Bad payload" },
-    { status: 500 },
+    { code: "INVALID_PAYLOAD", status: 400, error: "Bad payload", hint: "Line 3 has no timestamp." },
   ]) {
     const outcome = previewFailure(result);
     assert.equal(outcome.retry, false, `${result.status} is not retried`);
-    assert.deepEqual(!outcome.retry && outcome.failure, revisionFailure(result), "hard failures match save failures");
+    assert.deepEqual(
+      !outcome.retry && outcome.failure,
+      revisionFailure(result),
+      "a failure with a specific reason keeps the server message"
+    );
+  }
+
+  for (const result of [
+    { code: "NOT_FOUND", status: 404 },
+    { code: "INVALID_SIGNATURE", status: 401, error: "Invalid signature" },
+    { code: "SOMETHING_NEW", status: 422, error: "Unrecognised" },
+    { status: 500 },
+    { status: 502, error: "Bad gateway" },
+  ]) {
+    const outcome = previewFailure(result);
+    assert.equal(outcome.retry, false, `${result.status} is not retried`);
+    const failure = !outcome.retry ? outcome.failure : null;
+    assert.ok(failure, `${result.status} is a hard failure`);
+    assert.equal(keyOf(failure.title), "unison_rev_checkFailed", `${result.status} reads as a failed check`);
+    assert.deepEqual(failure.hint.map(keyOf), ["unison_rev_checkFailedHint"]);
+    const outcomeLine = failureOutcome(failure, false);
+    assert.equal(outcomeLine.canSave, false, "save waits for a check that succeeds");
   }
 }
 
 // -- Preview failures: regressions --------------------------
 
 {
+  const failed = previewFailure({ status: 500 });
+  assert.ok(!failed.retry);
+  assert.notEqual(
+    keyOf(failed.failure.title),
+    "unison_rev_error",
+    "regression: a failed check never repeats Try again in the title"
+  );
+
   const throttled = previewFailure({ code: "RATE_LIMITED", status: 429 });
   assert.equal(throttled.retry, true, "regression: a preview 429 never shows the daily limit");
   assert.equal(
