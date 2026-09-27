@@ -19,6 +19,7 @@ import type { FieldCheck, PreviewResult, RevisionDraft, UnisonLyricsEntry } from
 import { previewRevision, saveRevision } from "@modules/unison/unisonApi";
 import { svgIcon } from "../icons";
 import { appendLanguageOptions } from "../languages";
+import { bindLyricsFileDrop, createLyricsFileInput } from "../lyricsFile";
 import { detectFormat, renderPreviewInto } from "../lyricsPreview";
 import { appendMetaRow } from "../metaTable";
 import {
@@ -40,6 +41,7 @@ export interface EditorSurface {
 }
 
 interface SidebarControls {
+  upload: HTMLElement;
   languageSelect: HTMLSelectElement;
   isrcInput: HTMLInputElement;
   isrcError: HTMLElement;
@@ -64,7 +66,15 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   const id = String(entry.id);
   const liveRevNo = entry.revision?.revNo ?? 1;
 
+  const textarea = createLyricsTextarea(entry.lyrics);
+  const replaceLyrics = (text: string): void => {
+    textarea.value = text;
+    textarea.dispatchEvent(new Event("input"));
+  };
+  bindLyricsFileDrop(textarea, replaceLyrics);
+
   const controls: SidebarControls = {
+    upload: createUploadButton(replaceLyrics),
     languageSelect: createLanguageSelect(entry.language),
     isrcInput: createIsrcInput(entry.isrc),
     isrcError: createFieldError(),
@@ -72,7 +82,6 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   };
   const formatCell = renderSidebar(entry, surface.meta, host, controls);
 
-  const textarea = createLyricsTextarea(entry.lyrics);
   surface.lyrics.replaceChildren(textarea);
   renderPreviewInto(surface.preview, entry.lyrics);
 
@@ -254,7 +263,7 @@ function renderSidebar(
     createField(t("unison_isrc"), controls.isrcInput, controls.isrcError)
   );
 
-  meta.replaceChildren(back, title, artist, table, locked, fields, controls.rate);
+  meta.replaceChildren(back, title, artist, table, locked, fields, controls.upload, controls.rate);
   return formatCell;
 }
 
@@ -266,6 +275,16 @@ function createField(label: string, ...controls: HTMLElement[]): HTMLLabelElemen
   name.textContent = label;
   field.append(name, ...controls);
   return field;
+}
+
+function createUploadButton(onLoad: (text: string) => void): HTMLElement {
+  const input = createLyricsFileInput(onLoad);
+  const button = createButton({ label: t("options_editor_importFile"), icon: "upload" });
+  button.addEventListener("click", () => input.click());
+  const wrap = document.createElement("div");
+  wrap.className = "unison-rev-upload";
+  wrap.append(button, input);
+  return wrap;
 }
 
 function createLanguageSelect(current: string | undefined): HTMLSelectElement {

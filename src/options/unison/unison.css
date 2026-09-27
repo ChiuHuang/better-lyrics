@@ -2259,6 +2259,49 @@ select.unison-input {
   min-height: 60vh;
 }
 
+.unison-rev-upload {
+  display: flex;
+}
+
+@media (min-width: 769px) {
+  .unison-rev-detail-main--fit {
+    height: var(--unison-fit-height);
+    min-height: 24rem;
+  }
+
+  .unison-rev-detail-main--fit .unison-detail-columns {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .unison-rev-detail-main--fit .unison-detail-col {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .unison-rev-detail-main--fit .unison-detail-preview {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .unison-rev-detail-main--fit .unison-detail-lyrics {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .unison-rev-detail-main--fit .unison-rev-inline-textarea {
+    flex: 1;
+    min-height: 0;
+    resize: none;
+  }
+}
+
 .unison-rev-sidebar-fields {
   display: flex;
   flex-direction: column;

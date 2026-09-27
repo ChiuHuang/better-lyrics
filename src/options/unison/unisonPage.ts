@@ -36,6 +36,7 @@ import { UnisonErrorCode } from "@modules/unison/errorCodes";
 import { appendInlineProfile, profileUrl } from "@modules/unison/gamificationRender";
 import { generatePetName, getDisplayName, getIdentity } from "@/core/keyIdentity";
 import { warnUnison } from "@core/logger";
+import { bindLyricsFileDrop } from "./lyricsFile";
 import { createFeedback, fillFeedback } from "./feedback";
 import { type IconKey, svgIcon } from "./icons";
 import { appendLanguageOptions, matchLanguageOption } from "./languages";
@@ -1561,7 +1562,29 @@ async function loadEditor(id: number, view: AbortSignal): Promise<void> {
     savebar: savebarSlot,
   };
   renderRevisionEditor(loaded.entry, surface, revisionHost(view));
+  fitToViewport(detailPreview.closest(".unison-rev-detail-main") as HTMLElement, view);
   if (IS_DEV && devFixtures.has(id)) detailMeta.appendChild(createDevFixtureHint());
+}
+
+const FIT_BOTTOM_GAP_PX = 24;
+
+function fitToViewport(frame: HTMLElement, view: AbortSignal): void {
+  const update = (): void => {
+    const top = frame.getBoundingClientRect().top + window.scrollY;
+    frame.style.setProperty("--unison-fit-height", `${window.innerHeight - top - FIT_BOTTOM_GAP_PX}px`);
+  };
+  frame.classList.add("unison-rev-detail-main--fit");
+  update();
+  window.addEventListener("resize", update);
+  view.addEventListener(
+    "abort",
+    () => {
+      window.removeEventListener("resize", update);
+      frame.classList.remove("unison-rev-detail-main--fit");
+      frame.style.removeProperty("--unison-fit-height");
+    },
+    { once: true }
+  );
 }
 
 async function loadRevisions(id: number, openRevNo: number | null, view: AbortSignal): Promise<void> {
@@ -1669,34 +1692,11 @@ function setupSubmitForm(): void {
     autoDetectLanguage();
   });
 
-  lyricsTextarea.addEventListener("dragover", (e: DragEvent) => {
-    e.preventDefault();
-    lyricsTextarea.classList.add("unison-textarea--dragover");
-  });
-
-  lyricsTextarea.addEventListener("dragleave", () => {
-    lyricsTextarea.classList.remove("unison-textarea--dragover");
-  });
-
-  lyricsTextarea.addEventListener("drop", (e: DragEvent) => {
-    e.preventDefault();
-    lyricsTextarea.classList.remove("unison-textarea--dragover");
-
-    const file = e.dataTransfer?.files[0];
-    if (!file) return;
-
-    const validExts = [".lrc", ".ttml", ".xml", ".txt"];
-    const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
-    if (!validExts.includes(ext)) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      lyricsTextarea.value = reader.result as string;
-      updatePreview();
-      autoDetectFormat();
-      autoDetectLanguage();
-    };
-    reader.readAsText(file);
+  bindLyricsFileDrop(lyricsTextarea, text => {
+    lyricsTextarea.value = text;
+    updatePreview();
+    autoDetectFormat();
+    autoDetectLanguage();
   });
 }
 
