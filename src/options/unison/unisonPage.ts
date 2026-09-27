@@ -1639,7 +1639,13 @@ function fitToViewport(frame: HTMLElement, view: AbortSignal): void {
   const heightHost = layout ?? frame;
   const update = (): void => {
     const top = frame.getBoundingClientRect().top + window.scrollY;
-    heightHost.style.setProperty("--unison-fit-height", `${window.innerHeight - top - FIT_BOTTOM_GAP_PX}px`);
+    const height = window.innerHeight - top - FIT_BOTTOM_GAP_PX;
+    heightHost.style.setProperty("--unison-fit-height", `${height}px`);
+    const scroller = document.scrollingElement ?? document.documentElement;
+    const overflow = scroller.scrollHeight - window.innerHeight;
+    if (overflow > 0) {
+      heightHost.style.setProperty("--unison-fit-height", `${height - overflow}px`);
+    }
   };
   frame.classList.add("unison-rev-detail-main--fit");
   layout?.classList.add("unison-detail-layout--fit");
