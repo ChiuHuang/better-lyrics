@@ -227,6 +227,7 @@ export interface PreviewResult {
   outcome: { goesLive: boolean; reason: PendingReason | null };
   noChanges: boolean;
   rateLimit: { lyricRemaining: number; lyricLimit: number; userRemaining: number; userLimit: number };
+  diff?: RevisionDiff;
 }
 
 export interface DiffHead {
@@ -241,7 +242,8 @@ export type DiffRow =
   | { kind: "del"; lineNo: number; startMs: number | null; text: string; head?: DiffHead }
   | { kind: "word"; lineNo: number; startMs: number | null; parts: Array<["=" | "+" | "-", string]>; head?: DiffHead }
   | { kind: "timing"; lineNo: number; startMs: number; deltaMs: number; text: string }
-  | { kind: "gap"; count: number; section?: "head" };
+  | { kind: "gap"; count: number; section?: "head" }
+  | { kind: "field"; field: "language" | "isrc" | "album"; before: string | null; after: string | null };
 
 export interface RevisionDiff {
   rows: DiffRow[];

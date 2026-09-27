@@ -2013,7 +2013,39 @@
   },
   "unison_rev_viewChanges": {
     "message": "View changes",
-    "description": "Button that opens the diff of the pending edit"
+    "description": "Button that opens the diff of the pending edit, and link in the editor save bar that opens the Changes tab"
+  },
+  "unison_rev_changes": {
+    "message": "Changes",
+    "description": "Editor tab that lists what the edit changes compared with an earlier revision"
+  },
+  "unison_rev_changesTabs": {
+    "message": "Preview or changes",
+    "description": "Screen reader label for the editor tabs that switch between the lyric preview and the list of changes"
+  },
+  "unison_rev_details": {
+    "message": "Details",
+    "description": "Diff section label above changed song details: language, ISRC and album"
+  },
+  "unison_rev_updating": {
+    "message": "Updating",
+    "description": "Shown while the list of changes refreshes after an edit"
+  },
+  "unison_rev_tryAgain": {
+    "message": "Try again",
+    "description": "Link or button that runs the edit check again after it failed"
+  },
+  "unison_rev_changesError": {
+    "message": "Couldn't load changes",
+    "description": "Error title in the editor Changes tab when the edit check failed"
+  },
+  "unison_rev_changesErrorHint": {
+    "message": "Something went wrong. Your draft is safe, and the preview still works.",
+    "description": "Error hint in the editor Changes tab when the edit check failed"
+  },
+  "unison_rev_changesNeedParse": {
+    "message": "Changes return once the lyrics parse.",
+    "description": "Editor Changes tab while the lyrics have errors that stop them from being read"
   },
   "unison_rev_withdraw": {
     "message": "Withdraw",

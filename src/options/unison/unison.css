@@ -2288,6 +2288,16 @@ select.unison-input {
     max-height: none;
   }
 
+  .unison-rev-detail-main--fit .unison-rev-changes {
+    flex: 1;
+  }
+
+  .unison-rev-detail-main--fit .unison-rev-changes__diff {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+  }
+
   .unison-rev-detail-main--fit .unison-detail-lyrics {
     display: flex;
     flex-direction: column;
@@ -2538,6 +2548,166 @@ select.unison-input {
   text-align: center;
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.35);
+}
+
+/* -- Revisions: changes tab --------------------------  */
+
+.unison-detail-col-head--tabs {
+  display: flex;
+  align-items: flex-end;
+  min-height: 2rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.unison-detail-col-head--tabs .unison-detail-col-title {
+  margin: 0;
+  padding-bottom: 0.5rem;
+}
+
+.unison-rev-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: -1px;
+}
+
+.unison-rev-tab.unison-feed-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem 0.4375rem;
+  font-size: 0.8125rem;
+}
+
+.unison-rev-tab.unison-feed-tab[aria-selected="true"] {
+  color: #fff;
+  border-bottom-color: rgb(129, 140, 248);
+}
+
+.unison-rev-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.125rem;
+  height: 1rem;
+  padding: 0 0.3125rem;
+  box-sizing: border-box;
+  border-radius: 1000rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.unison-rev-count:empty {
+  display: none;
+}
+
+.unison-rev-count--bare {
+  padding: 0;
+  background: none;
+}
+
+.unison-rev-count--bare .unison-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: rgb(254, 240, 138);
+}
+
+.unison-rev-tab[aria-selected="true"] > .unison-rev-count:not(.unison-rev-count--bare) {
+  background: rgba(129, 140, 248, 0.18);
+  color: rgb(165, 180, 252);
+}
+
+.unison-rev-spin {
+  display: block;
+  flex-shrink: 0;
+  width: 0.625rem;
+  height: 0.625rem;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-top-color: rgb(165, 180, 252);
+  animation: unison-rev-spin 0.8s linear infinite;
+}
+
+@keyframes unison-rev-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .unison-rev-spin {
+    animation: none;
+  }
+}
+
+.unison-rev-tab:focus-visible,
+.unison-rev-link:focus-visible {
+  outline: 2px solid rgba(129, 140, 248, 0.7);
+  outline-offset: 2px;
+}
+
+.unison-rev-changes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-height: 0;
+}
+
+.unison-rev-changes[hidden] {
+  display: none;
+}
+
+.unison-rev-changes__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.375rem 1rem;
+}
+
+.unison-rev-changes__head:empty {
+  display: none;
+}
+
+.unison-rev-changes__updating {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.unison-rev-changes__diff {
+  max-height: 80vh;
+  overflow: auto;
+  transition: opacity 0.15s ease-out;
+}
+
+.unison-rev-changes__diff--stale {
+  opacity: 0.5;
+}
+
+.unison-rev-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: rgb(165, 180, 252);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(165, 180, 252, 0.35);
+  text-underline-offset: 2px;
+  transition:
+    color 0.15s,
+    text-decoration-color 0.15s;
+}
+
+.unison-rev-link:hover {
+  color: #fff;
+  text-decoration-color: rgba(255, 255, 255, 0.5);
 }
 
 .unison-rev-table {

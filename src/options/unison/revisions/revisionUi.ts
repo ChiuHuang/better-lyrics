@@ -1,10 +1,12 @@
 import { t } from "@core/i18n";
 import {
+  DIFF_FIELD_SECTION,
   DIFF_HEAD_SECTION,
   type RevisionMessage,
   type RevisionNote,
   diffHeadLabel,
   driftMeter,
+  fieldChange,
   formatDiffTime,
   formatTimingDelta,
   splitDiffRows,
@@ -157,6 +159,9 @@ export function createDriftMeter(label: string, value: number | null, limit: num
 
 const DIFF_MARK = { same: "", add: "+", del: "-", word: "~" } as const;
 
+type DiffLineKind = keyof typeof DIFF_MARK | "timing";
+type DiffParts = Extract<DiffRow, { kind: "word" }>["parts"];
+
 const LEGEND = [
   ["add", "unison_rev_legendAdded"],
   ["del", "unison_rev_legendRemoved"],
@@ -186,18 +191,19 @@ export function createDiffView(rows: DiffRow[], emptyText: string): HTMLElement 
     diff.appendChild(empty);
     return diff;
   }
-  const { body, head } = splitDiffRows(rows);
+  const { body, head, fields } = splitDiffRows(rows);
   diff.append(...body.map(createDiffRow));
-  if (head.length > 0) diff.appendChild(createHeadSection(head));
+  if (fields.length > 0) diff.appendChild(createDiffSection(messageText(DIFF_FIELD_SECTION), fields));
+  if (head.length > 0) diff.appendChild(createDiffSection(messageText(DIFF_HEAD_SECTION), head));
   return diff;
 }
 
-function createHeadSection(rows: DiffRow[]): HTMLElement {
+function createDiffSection(title: string, rows: DiffRow[]): HTMLElement {
   const section = document.createElement("div");
   section.className = "unison-rev-diff-section";
   const label = document.createElement("div");
   label.className = "unison-rev-diff-section-label";
-  label.textContent = messageText(DIFF_HEAD_SECTION);
+  label.textContent = title;
   section.append(label, ...rows.map(createDiffRow));
   return section;
 }
@@ -209,30 +215,39 @@ function createDiffRow(row: DiffRow): HTMLElement {
     gap.textContent = messageText(unchangedLines(row.count));
     return gap;
   }
+  if (row.kind === "field") {
+    const change = fieldChange(row);
+    return createDiffLine(change.kind, messageText(change.label), change.content);
+  }
 
+  let lead = row.startMs === null ? "" : formatDiffTime(row.startMs);
+  if ("head" in row && row.head) lead = diffHeadLabel(row.head).map(messageText).join(" · ");
+  if (row.kind === "timing") return createDiffLine(row.kind, lead, row.text, formatTimingDelta(row.deltaMs));
+  return createDiffLine(row.kind, lead, row.kind === "word" ? row.parts : row.text);
+}
+
+function createDiffLine(kind: DiffLineKind, lead: string, content: string | DiffParts, timing?: string): HTMLElement {
   const el = document.createElement("div");
-  el.className = `unison-rev-diff-row unison-rev-diff-row--${row.kind}`;
+  el.className = `unison-rev-diff-row unison-rev-diff-row--${kind}`;
 
   const time = document.createElement("span");
   time.className = "unison-rev-diff-time";
-  if ("head" in row && row.head) {
-    time.textContent = diffHeadLabel(row.head).map(messageText).join(" · ");
-  } else {
-    time.textContent = row.startMs === null ? "" : formatDiffTime(row.startMs);
-  }
+  time.textContent = lead;
 
   const mark = document.createElement("span");
   mark.className = "unison-rev-diff-mark";
-  if (row.kind === "timing") {
+  if (kind === "timing") {
     mark.appendChild(svgIcon("timing"));
   } else {
-    mark.textContent = DIFF_MARK[row.kind];
+    mark.textContent = DIFF_MARK[kind];
   }
 
   const text = document.createElement("span");
   text.className = "unison-rev-diff-text";
-  if (row.kind === "word") {
-    for (const [op, words] of row.parts) {
+  if (typeof content === "string") {
+    text.textContent = content;
+  } else {
+    for (const [op, words] of content) {
       if (op === "=") {
         text.append(words);
         continue;
@@ -241,14 +256,12 @@ function createDiffRow(row: DiffRow): HTMLElement {
       change.textContent = words;
       text.appendChild(change);
     }
-  } else {
-    text.textContent = row.text;
   }
 
   const tag = document.createElement("span");
-  if (row.kind === "timing") {
+  if (timing) {
     tag.className = "unison-rev-timing-tag";
-    tag.textContent = formatTimingDelta(row.deltaMs);
+    tag.textContent = timing;
   }
 
   el.append(time, mark, text, tag);

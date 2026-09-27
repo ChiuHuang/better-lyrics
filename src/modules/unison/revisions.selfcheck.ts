@@ -3,17 +3,20 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { getLanguageDisplayName } from "@core/i18n";
 import {
+  DIFF_FIELD_SECTION,
   DIFF_HEAD_SECTION,
   type RevisionMessage,
   SEALED_NOTICE,
   checkFieldLabel,
   checkIssue,
   checkingOutcome,
+  countDiffChanges,
   diffHeadLabel,
   draftField,
   driftMeter,
   editorOutcome,
   failureOutcome,
+  fieldChange,
   formatDiffTime,
   formatTimingDelta,
   hasBadLyrics,
@@ -400,18 +403,112 @@ const REASONS: PendingReason[] = ["sealed", "flagged", "large_text_drift", "larg
   assert.deepEqual(splitDiffRows([bodyGap, headSame, headWord, headGap]), {
     body: [bodyGap],
     head: [headSame, headWord, headGap],
+    fields: [],
   });
-  assert.deepEqual(splitDiffRows([bodySame, bodyGap]), { body: [bodySame, bodyGap], head: [] });
-  assert.deepEqual(splitDiffRows([]), { body: [], head: [] });
+  assert.deepEqual(splitDiffRows([bodySame, bodyGap]), { body: [bodySame, bodyGap], head: [], fields: [] });
+  assert.deepEqual(splitDiffRows([]), { body: [], head: [], fields: [] });
   assert.deepEqual(
     splitDiffRows([bodySame, headGap, headWord]),
-    { body: [bodySame], head: [headGap, headWord] },
+    { body: [bodySame], head: [headGap, headWord], fields: [] },
     "a head gap opens the head section"
   );
   assert.deepEqual(
     splitDiffRows([headSame, bodyGap, headWord]),
-    { body: [], head: [headSame, bodyGap, headWord] },
+    { body: [], head: [headSame, bodyGap, headWord], fields: [] },
     "a gap after the first head row stays in the head section"
+  );
+
+  const album: DiffRow = { kind: "field", field: "album", before: "Dev Fixtures", after: "Hymns" };
+  const isrc: DiffRow = { kind: "field", field: "isrc", before: null, after: "USEE17000514" };
+  assert.deepEqual(
+    splitDiffRows([bodySame, bodyGap, headWord, isrc, album]),
+    { body: [bodySame, bodyGap], head: [headWord], fields: [isrc, album] },
+    "field rows after the head rows get their own section"
+  );
+  assert.deepEqual(
+    splitDiffRows([album]),
+    { body: [], head: [], fields: [album] },
+    "unparsed lyrics leave only field rows"
+  );
+  assert.deepEqual(
+    splitDiffRows([bodySame, album, headWord]),
+    { body: [bodySame], head: [headWord], fields: [album] },
+    "a field row never opens the head section"
+  );
+}
+
+// -- Diff change count --------------------------
+
+{
+  const gap: DiffRow = { kind: "gap", count: 3 };
+  const same: DiffRow = { kind: "same", lineNo: 1, startMs: 0, text: "Amazing grace" };
+  const add: DiffRow = { kind: "add", lineNo: 2, startMs: 4_000, text: "That saved a wretch like me" };
+  const timing: DiffRow = { kind: "timing", lineNo: 3, startMs: 8_000, deltaMs: 240, text: "I once was lost" };
+  const headGap: DiffRow = { kind: "gap", count: 2, section: "head" };
+  const field: DiffRow = { kind: "field", field: "language", before: "en", after: "es" };
+
+  assert.equal(countDiffChanges([]), 0);
+  assert.equal(countDiffChanges([gap, same, headGap]), 0, "unchanged lines and gaps are not changes");
+  assert.equal(countDiffChanges([gap, same, add, timing, headGap, field]), 3);
+  assert.equal(countDiffChanges([field]), 1, "a field row counts on its own");
+}
+
+// -- Field rows --------------------------
+
+{
+  keyOf(DIFF_FIELD_SECTION);
+
+  const album = fieldChange({ kind: "field", field: "album", before: "Dev Fixtures", after: "Hymns" });
+  assert.equal(keyOf(album.label), "unison_album");
+  assert.equal(album.kind, "word");
+  assert.deepEqual(album.content, [
+    ["-", "Dev Fixtures"],
+    ["+", "Hymns"],
+  ]);
+
+  const added = fieldChange({ kind: "field", field: "isrc", before: null, after: "USEE17000514" });
+  assert.equal(keyOf(added.label), "unison_isrc");
+  assert.deepEqual([added.kind, added.content], ["add", "USEE17000514"]);
+
+  const removed = fieldChange({ kind: "field", field: "isrc", before: "USEE17000514", after: null });
+  assert.deepEqual([removed.kind, removed.content], ["del", "USEE17000514"]);
+
+  const language = fieldChange({ kind: "field", field: "language", before: "en", after: "es" });
+  assert.equal(keyOf(language.label), "unison_language");
+  assert.deepEqual(language.content, [
+    ["-", `${getLanguageDisplayName("en")} (en)`],
+    ["+", `${getLanguageDisplayName("es")} (es)`],
+  ]);
+}
+
+// -- Field rows: edge cases --------------------------
+
+{
+  assert.equal(
+    fieldChange({ kind: "field", field: "album", before: "", after: "Hymns" }).kind,
+    "add",
+    "an empty before value reads as added"
+  );
+  assert.equal(
+    fieldChange({ kind: "field", field: "album", before: "Hymns", after: "" }).kind,
+    "del",
+    "an empty after value reads as removed"
+  );
+  const unknown = fieldChange({ kind: "field", field: "language", before: null, after: "zz-unknown" });
+  assert.equal(
+    unknown.content,
+    getLanguageDisplayName("zz-unknown") === "zz-unknown"
+      ? "zz-unknown"
+      : `${getLanguageDisplayName("zz-unknown")} (zz-unknown)`,
+    "a code without a display name is shown once, not twice"
+  );
+  assert.deepEqual(
+    fieldChange({ kind: "field", field: "album", before: "Café & Co", after: "Café  & Co" }).content,
+    [
+      ["-", "Café & Co"],
+      ["+", "Café  & Co"],
+    ],
+    "album values stay verbatim, whitespace and unicode included"
   );
 }
 

@@ -22,6 +22,7 @@ import { appendLanguageOptions } from "../languages";
 import { bindLyricsFileDrop, createLyricsFileInput } from "../lyricsFile";
 import { detectFormat, renderPreviewInto } from "../lyricsPreview";
 import { appendMetaRow } from "../metaTable";
+import { mountChangesTabs } from "./revisionChanges";
 import {
   type RevisionHost,
   createButton,
@@ -35,7 +36,9 @@ import {
 
 export interface EditorSurface {
   meta: HTMLElement;
+  previewHead: HTMLElement;
   preview: HTMLElement;
+  lyricsHead: HTMLElement;
   lyrics: HTMLElement;
   savebar: HTMLElement;
 }
@@ -55,6 +58,8 @@ interface SaveBar {
   top: HTMLElement;
   issues: HTMLUListElement;
   outcome: HTMLElement;
+  viewChanges: HTMLButtonElement;
+  tryAgain: HTMLButtonElement;
   cancel: HTMLButtonElement;
   save: HTMLButtonElement;
 }
@@ -96,6 +101,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   let preview: PreviewResult | null = null;
   let failure: RevisionFailure | null = null;
   let failureRetry = false;
+  let checkFailed = false;
   let retryHint: RevisionMessage[] | null = null;
   let retryAttempt = 0;
   let requestToken = 0;
@@ -126,11 +132,27 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     return editorOutcome(preview, liveRevNo);
   };
 
+  const changes = mountChangesTabs(surface, host, {
+    retry: () => retryPreview(),
+    tabChange: () => syncViewChanges(),
+  });
+
+  const syncViewChanges = (): void => {
+    bar.viewChanges.hidden = !changes.onPreviewTab() || bar.save.disabled || changes.count() === 0;
+    syncOutcomeHint(bar);
+  };
+
+  const renderChanges = (): void => {
+    changes.update({ preview, loading: settledToken !== requestToken || retryHint !== null, failed: checkFailed });
+    syncViewChanges();
+  };
+
   const renderSaveButton = (): void => {
     const outcome = currentOutcome();
     const label = saving ? t("options_editor_saving") : messageText(outcome.saveLabel);
     setButtonContent(bar.save, label, "upload");
     bar.save.disabled = saving || settledToken !== requestToken || !outcome.canSave;
+    renderChanges();
   };
 
   const render = (): void => {
@@ -153,7 +175,8 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     }
     renderIssues(bar.issues, preview);
     markFieldErrors(preview, textarea, controls);
-    renderOutcome(bar.outcome, currentOutcome());
+    bar.tryAgain.hidden = !checkFailed;
+    renderOutcome(bar, currentOutcome());
     renderSaveButton();
   };
 
@@ -164,6 +187,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     settledToken = token;
     failure = null;
     retryHint = null;
+    checkFailed = false;
     if (result.success && result.data) {
       preview = result.data;
       retryAttempt = 0;
@@ -175,6 +199,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
       } else {
         failure = outcome.failure;
         failureRetry = false;
+        checkFailed = true;
       }
     }
     render();
@@ -184,9 +209,21 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     clearTimeout(debounceTimer);
     clearTimeout(retryTimer);
     failure = null;
+    checkFailed = false;
     const token = ++requestToken;
     debounceTimer = setTimeout(() => void runPreview(token), UNISON_REVISION_PREVIEW_DEBOUNCE_MS);
     renderSaveButton();
+  };
+
+  const retryPreview = (): void => {
+    clearTimeout(debounceTimer);
+    clearTimeout(retryTimer);
+    failure = null;
+    checkFailed = false;
+    retryHint = [];
+    const token = ++requestToken;
+    render();
+    void runPreview(token);
   };
 
   textarea.addEventListener("input", () => {
@@ -222,8 +259,12 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     setSaving(false);
     failure = revisionFailure(result);
     failureRetry = result.status === undefined;
+    checkFailed = false;
     render();
   });
+
+  bar.viewChanges.addEventListener("click", () => changes.openChanges());
+  bar.tryAgain.addEventListener("click", retryPreview);
 
   render();
   void runPreview(++requestToken);
@@ -372,6 +413,9 @@ function createSaveBar(): SaveBar {
   outcome.className = "unison-rev-outcome";
   outcome.setAttribute("aria-live", "polite");
 
+  const viewChanges = createLink(t("unison_rev_viewChanges"));
+  const tryAgain = createLink(t("unison_rev_tryAgain"));
+
   const cancel = document.createElement("button");
   cancel.type = "button";
   cancel.className = "unison-nav-btn";
@@ -392,7 +436,16 @@ function createSaveBar(): SaveBar {
   root.className = "unison-rev-savebar";
   root.append(top, issues, foot);
 
-  return { root, top, issues, outcome, cancel, save };
+  return { root, top, issues, outcome, viewChanges, tryAgain, cancel, save };
+}
+
+function createLink(label: string): HTMLButtonElement {
+  const link = document.createElement("button");
+  link.type = "button";
+  link.className = "unison-rev-link";
+  link.textContent = label;
+  link.hidden = true;
+  return link;
 }
 
 function createPills(preview: PreviewResult): HTMLElement {
@@ -457,20 +510,26 @@ function markField(
   error.textContent = check?.message ?? "";
 }
 
-function renderOutcome(el: HTMLElement, outcome: ReturnType<typeof editorOutcome>): void {
-  el.className = `unison-rev-outcome unison-rev-outcome--${outcome.kind}`;
+function renderOutcome(bar: SaveBar, outcome: ReturnType<typeof editorOutcome>): void {
+  bar.outcome.className = `unison-rev-outcome unison-rev-outcome--${outcome.kind}`;
   const text = document.createElement("div");
   text.className = "unison-rev-outcome__text";
   const title = document.createElement("span");
   title.className = "unison-rev-outcome__title";
   title.textContent = messageText(outcome.title);
-  text.appendChild(title);
+  const hint = document.createElement("span");
+  hint.className = "unison-rev-outcome__hint";
   const hintText = messagesText(outcome.hint);
-  if (hintText) {
-    const hint = document.createElement("span");
-    hint.className = "unison-rev-outcome__hint";
-    hint.textContent = hintText;
-    text.appendChild(hint);
-  }
-  el.replaceChildren(svgIcon(outcome.icon), text);
+  if (hintText) hint.append(hintText, " ");
+  hint.append(bar.viewChanges, " ", bar.tryAgain);
+  text.append(title, hint);
+  bar.outcome.replaceChildren(svgIcon(outcome.icon), text);
+  syncOutcomeHint(bar);
+}
+
+function syncOutcomeHint(bar: SaveBar): void {
+  const hint = bar.outcome.querySelector<HTMLElement>(".unison-rev-outcome__hint");
+  if (!hint) return;
+  const hasText = hint.firstChild !== bar.viewChanges;
+  hint.hidden = !hasText && bar.viewChanges.hidden && bar.tryAgain.hidden;
 }

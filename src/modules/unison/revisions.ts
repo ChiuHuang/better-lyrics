@@ -115,15 +115,55 @@ const HEAD_KIND_KEY: Record<DiffHead["kind"], string> = {
 };
 
 export const DIFF_HEAD_SECTION = message("unison_rev_headSection");
+export const DIFF_FIELD_SECTION = message("unison_rev_details");
+
+type FieldDiffRow = Extract<DiffRow, { kind: "field" }>;
+type DiffParts = Extract<DiffRow, { kind: "word" }>["parts"];
 
 function isHeadRow(row: DiffRow): boolean {
   return row.kind === "gap" ? row.section === "head" : "head" in row && row.head !== undefined;
 }
 
-export function splitDiffRows(rows: DiffRow[]): { body: DiffRow[]; head: DiffRow[] } {
-  const headStart = rows.findIndex(isHeadRow);
-  if (headStart === -1) return { body: rows, head: [] };
-  return { body: rows.slice(0, headStart), head: rows.slice(headStart) };
+function isFieldRow(row: DiffRow): row is FieldDiffRow {
+  return row.kind === "field";
+}
+
+export function splitDiffRows(rows: DiffRow[]): { body: DiffRow[]; head: DiffRow[]; fields: FieldDiffRow[] } {
+  const fields = rows.filter(isFieldRow);
+  const lines = rows.filter(row => !isFieldRow(row));
+  const headStart = lines.findIndex(isHeadRow);
+  if (headStart === -1) return { body: lines, head: [], fields };
+  return { body: lines.slice(0, headStart), head: lines.slice(headStart), fields };
+}
+
+export function countDiffChanges(rows: DiffRow[]): number {
+  return rows.filter(row => row.kind !== "same" && row.kind !== "gap").length;
+}
+
+function fieldValueText(field: FieldDiffRow["field"], value: string): string {
+  if (field !== "language") return value;
+  const name = getLanguageDisplayName(value);
+  return name === value ? value : `${name} (${value})`;
+}
+
+export function fieldChange(row: FieldDiffRow): {
+  kind: "add" | "del" | "word";
+  label: RevisionMessage;
+  content: string | DiffParts;
+} {
+  const label = checkFieldLabel(row.field);
+  const before = row.before ? fieldValueText(row.field, row.before) : null;
+  const after = row.after ? fieldValueText(row.field, row.after) : null;
+  if (before === null) return { kind: "add", label, content: after ?? "" };
+  if (after === null) return { kind: "del", label, content: before };
+  return {
+    kind: "word",
+    label,
+    content: [
+      ["-", before],
+      ["+", after],
+    ],
+  };
 }
 
 export function diffHeadLabel(head: DiffHead): RevisionMessage[] {

@@ -88,7 +88,9 @@ let feedMoreBtn: HTMLElement;
 let filterBar: HTMLElement;
 let filterLanguageSelect: HTMLSelectElement;
 let detailMeta: HTMLElement;
+let detailPreviewHead: HTMLElement;
 let detailPreview: HTMLElement;
+let detailLyricsHead: HTMLElement;
 let detailLyrics: HTMLElement;
 let revisionSlot: HTMLElement;
 let savebarSlot: HTMLElement;
@@ -301,7 +303,9 @@ export function initUnisonPage(): void {
   filterBar = document.getElementById("unison-filters") as HTMLElement;
   filterLanguageSelect = document.getElementById("unison-filter-language") as HTMLSelectElement;
   detailMeta = document.getElementById("unison-detail-meta") as HTMLElement;
+  detailPreviewHead = document.getElementById("unison-detail-preview-head") as HTMLElement;
   detailPreview = document.getElementById("unison-detail-preview") as HTMLElement;
+  detailLyricsHead = document.getElementById("unison-detail-lyrics-head") as HTMLElement;
   detailLyrics = document.getElementById("unison-detail-lyrics") as HTMLElement;
   revisionSlot = document.getElementById("unison-revision-slot") as HTMLElement;
   savebarSlot = document.getElementById("unison-revision-savebar-slot") as HTMLElement;
@@ -1557,7 +1561,9 @@ async function loadEditor(id: number, view: AbortSignal): Promise<void> {
   if (!loaded) return;
   const surface: EditorSurface = {
     meta: detailMeta,
+    previewHead: detailPreviewHead,
     preview: detailPreview,
+    lyricsHead: detailLyricsHead,
     lyrics: detailLyrics,
     savebar: savebarSlot,
   };
