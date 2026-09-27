@@ -334,6 +334,7 @@ interface SubmissionSuggestionQuery {
 export async function suggestVideosForSubmission(
   query: SubmissionSuggestionQuery
 ): Promise<ApiResult<SuggestedVideo[]>> {
+  if (IS_DEV && query.song.startsWith("[DEV]")) return devFixtures.submissionSuggestions(query.song);
   const res = await signedRequest<{ suggestions: SuggestedVideo[] }>("/lyrics/suggested-videos", "POST", { ...query });
   return { success: res.success, data: res.data?.suggestions ?? [], error: res.error };
 }
