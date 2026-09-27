@@ -1,10 +1,15 @@
+import { measureWidth, observeLayoutWidth } from "@modules/ui/layout/layoutWidth";
 import { clamp01, easeOutCubic, interpolate, pctFromClientX, type PlaybackSnapshot } from "./playhead";
 import { formatRemaining, formatTime } from "./timeFormat";
+
+type EndTimeMode = "total" | "remaining";
 
 interface ProgressBarOptions {
   doc: Document;
   getSnapshot: () => PlaybackSnapshot | null;
   onSeek: (seconds: number) => void;
+  initialEndMode?: EndTimeMode;
+  onEndModeChange?: (mode: EndTimeMode) => void;
 }
 
 export interface ProgressBarHandle {
@@ -18,7 +23,7 @@ const SEEK_LATCH_TIMEOUT_MS = 2000;
 const JUMP_GLIDE_THRESHOLD_S = 0.75;
 
 export function createProgressBar(options: ProgressBarOptions): ProgressBarHandle {
-  const { doc, getSnapshot, onSeek } = options;
+  const { doc, getSnapshot, onSeek, initialEndMode, onEndModeChange } = options;
   const win = doc.defaultView ?? window;
 
   const element = doc.createElement("div");
@@ -45,7 +50,7 @@ export function createProgressBar(options: ProgressBarOptions): ProgressBarHandl
   const endTime = doc.createElement("button");
   endTime.type = "button";
   endTime.className = "blyrics-progress__end";
-  endTime.dataset.mode = "total";
+  endTime.dataset.mode = initialEndMode ?? "total";
   times.append(elapsed, endTime);
 
   element.append(bar, times);
@@ -64,12 +69,12 @@ export function createProgressBar(options: ProgressBarOptions): ProgressBarHandl
   let frame = 0;
   let running = false;
 
-  const measure = (): void => {
-    barWidth = bar.getBoundingClientRect().width;
-  };
-
-  const resizeObserver = new win.ResizeObserver(measure);
-  resizeObserver.observe(bar);
+  const barWidthObservation = observeLayoutWidth(
+    () => bar,
+    width => {
+      barWidth = width ?? 0;
+    }
+  );
 
   const positionFor = (clientX: number): number => {
     const rect = bar.getBoundingClientRect();
@@ -129,7 +134,7 @@ export function createProgressBar(options: ProgressBarOptions): ProgressBarHandl
   const start = (): void => {
     if (running) return;
     running = true;
-    measure();
+    barWidth = measureWidth(bar) ?? barWidth;
     frame = win.requestAnimationFrame(tick);
   };
 
@@ -179,7 +184,9 @@ export function createProgressBar(options: ProgressBarOptions): ProgressBarHandl
 
   const onEndClick = (): void => {
     const first = endTime.getBoundingClientRect();
-    endTime.dataset.mode = endTime.dataset.mode === "remaining" ? "total" : "remaining";
+    const nextMode: EndTimeMode = endTime.dataset.mode === "remaining" ? "total" : "remaining";
+    endTime.dataset.mode = nextMode;
+    onEndModeChange?.(nextMode);
     const snapshot = getSnapshot();
     paint(interpolate(snapshot ?? null, win.Date.now()), snapshot?.durationS ?? 0);
     const last = endTime.getBoundingClientRect();
@@ -210,7 +217,7 @@ export function createProgressBar(options: ProgressBarOptions): ProgressBarHandl
     element,
     destroy(): void {
       stop();
-      resizeObserver.disconnect();
+      barWidthObservation.destroy();
       visibilityObserver.disconnect();
     },
   };

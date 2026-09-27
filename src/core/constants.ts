@@ -70,9 +70,17 @@ export const DISCORD_INVITE_URL = "https://discord.gg/UsHE3d5fWF" as const;
 export const SHADERS_CWS_URL =
   "https://chromewebstore.google.com/detail/better-lyrics-shaders/mffpncjphfmkppebdoaehdlnagnlpfai" as const;
 export const SHADERS_AMO_URL = "https://addons.mozilla.org/en-US/firefox/addon/better-lyrics-shaders/" as const;
+export const STORE_CWS_URL =
+  "https://chromewebstore.google.com/detail/better-lyrics/effdbpeggelllpfkjppbokhmmiinhlmg" as const;
+export const STORE_AMO_URL = "https://addons.mozilla.org/en-US/firefox/addon/better-lyrics/" as const;
+export const STORE_EDGE_URL =
+  "https://microsoftedge.microsoft.com/addons/detail/better-lyrics-lyrics-for/mjfeaklppoegooljmjicjdbiccgjdlhd" as const;
+export const RELEASES_LATEST_API_URL =
+  "https://api.github.com/repos/better-lyrics/better-lyrics/releases/latest" as const;
 export const THEME_STORE_API_URL = "https://themes.betterlyrics.org" as const;
 export const UNISON_API_BASE_URL = "https://unison.betterlyrics.org" as const;
 export const UNISON_TRANSLATE_URL = `${UNISON_API_BASE_URL}/translate` as const;
+export const UNISON_PICTURE_URL = `${UNISON_API_BASE_URL}/me` as const;
 export const THEME_STORE_TURNSTILE_URL = `${THEME_STORE_API_URL}/turnstile` as const;
 const THEME_REGISTRY_BASE = "https://raw.githubusercontent.com/better-lyrics/themes" as const;
 export const THEME_REGISTRY_URL = `${THEME_REGISTRY_BASE}/master` as const;
@@ -410,28 +418,34 @@ export const PROVIDER_CONFIGS: ProviderConfig[] = [
     priority: 1,
   },
   { key: "binimum-richsynced", displayName: "BiniLyrics", syncType: "syllable", priority: 2 },
-  { key: "portato-richsynced", displayName: "Better Lyrics Portato", syncType: "word", priority: 3 },
-  { key: "musixmatch-richsync", displayName: "Musixmatch", syncType: "word", priority: 4 },
-  { key: "bLyrics-synced", displayName: "Better Lyrics", syncType: "line", priority: 5 },
+  {
+    key: "unison-wordsynced",
+    displayName: "Unison",
+    syncType: "word",
+    priority: 3,
+  },
+  { key: "portato-richsynced", displayName: "Better Lyrics Portato", syncType: "word", priority: 4 },
+  { key: "musixmatch-richsync", displayName: "Musixmatch", syncType: "word", priority: 5 },
+  { key: "bLyrics-synced", displayName: "Better Lyrics", syncType: "line", priority: 6 },
   {
     key: "unison-synced",
     displayName: "Unison",
     syncType: "line",
-    priority: 6,
+    priority: 7,
   },
-  { key: "yt-captions", displayName: "YouTube Captions", syncType: "line", priority: 7 },
-  { key: "binimum-synced", displayName: "BiniLyrics", syncType: "line", priority: 8 },
-  { key: "lrclib-synced", displayName: "LRCLib", syncType: "line", priority: 9 },
-  { key: "legato-synced", displayName: "Better Lyrics Legato", syncType: "line", priority: 10 },
-  { key: "musixmatch-synced", displayName: "Musixmatch", syncType: "line", priority: 11 },
-  { key: "yt-lyrics", displayName: "YouTube", syncType: "unsynced", priority: 12 },
+  { key: "yt-captions", displayName: "YouTube Captions", syncType: "line", priority: 8 },
+  { key: "binimum-synced", displayName: "BiniLyrics", syncType: "line", priority: 9 },
+  { key: "lrclib-synced", displayName: "LRCLib", syncType: "line", priority: 10 },
+  { key: "legato-synced", displayName: "Better Lyrics Legato", syncType: "line", priority: 11 },
+  { key: "musixmatch-synced", displayName: "Musixmatch", syncType: "line", priority: 12 },
+  { key: "yt-lyrics", displayName: "YouTube", syncType: "unsynced", priority: 13 },
   {
     key: "unison-plain",
     displayName: "Unison",
     syncType: "unsynced",
-    priority: 13,
+    priority: 14,
   },
-  { key: "lrclib-plain", displayName: "LRCLib", syncType: "unsynced", priority: 14 },
+  { key: "lrclib-plain", displayName: "LRCLib", syncType: "unsynced", priority: 15 },
 ] as const;
 
 export const LYRIC_SOURCE_KEYS = PROVIDER_CONFIGS.map(p => p.key);
