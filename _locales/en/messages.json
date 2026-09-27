@@ -2248,7 +2248,7 @@
     }
   },
   "unison_rev_locked": {
-    "message": "Song, artist and album can't be edited.",
+    "message": "Song and artist can't be edited.",
     "description": "Editor note about fields that are locked"
   },
   "unison_rev_editsLeft": {

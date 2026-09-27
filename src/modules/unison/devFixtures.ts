@@ -100,6 +100,7 @@ export function devFixtureHint(): string {
 }
 
 const ME = { displayName: "You (dev)" };
+const FIXTURE_ALBUM = "Dev Fixtures";
 const SOMEONE_ELSE = {
   keyId: "d3f1c7a0b5e24c6f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f",
   displayName: "SomeoneElse",
@@ -352,6 +353,15 @@ function isrcCheck(isrc: string | null | undefined): FieldCheck {
   return { field: "isrc", status: "bad", message: "ISRC must look like CCXXXYYNNNNN." };
 }
 
+const ALBUM_MAX_LENGTH = 500;
+
+function albumCheck(album: string | null | undefined): FieldCheck {
+  if (album && album.trim().length > ALBUM_MAX_LENGTH) {
+    return { field: "album", status: "bad", message: "Album names can be up to 500 characters." };
+  }
+  return { field: "album", status: "ok", message: album?.trim() ? `Album: ${album.trim()}.` : "No album set." };
+}
+
 // -- Diffing --------------------------
 
 function lcsPairs<T>(a: T[], b: T[], same: (x: T, y: T) => boolean): Array<[number, number]> {
@@ -557,6 +567,7 @@ function buildLyric(spec: LyricSpec, now: number): FixtureLyric {
       format: spec.format,
       language: spec.language,
       isrc: spec.isrc,
+      album: FIXTURE_ALBUM,
       headRows: rev.headRows,
     };
   });
@@ -564,7 +575,7 @@ function buildLyric(spec: LyricSpec, now: number): FixtureLyric {
     id: spec.id,
     song: spec.song,
     artist: spec.artist ?? "Amazing Grace, John Newton",
-    album: "Dev Fixtures",
+    album: FIXTURE_ALBUM,
     videoId: "dQw4w9WgXcQ",
     ownedByMe: spec.ownedByMe,
     sealed: spec.sealed ?? false,
@@ -721,7 +732,7 @@ function anchorOf(lyric: FixtureLyric): FixtureRevision {
   return lyric.revisions.find(rev => rev.isAnchor) ?? liveOf(lyric);
 }
 
-function toSummary({ lyrics, format, language, isrc, headRows, ...summary }: FixtureRevision): RevisionSummary {
+function toSummary({ lyrics, format, language, isrc, album, headRows, ...summary }: FixtureRevision): RevisionSummary {
   return summary;
 }
 
@@ -780,6 +791,7 @@ function evaluate(lyric: FixtureLyric, draft: RevisionDraft): PreviewResult {
     lyricsCheck({ ...draft, lyrics }),
     { field: "language", status: "ok", message: "Language is valid." },
     isrcCheck(draft.isrc),
+    albumCheck(draft.album),
   ];
   const parsed = checks[0].status === "bad" ? null : parseLines(lyrics, draft.format);
   const before = parseLines(anchor.lyrics, anchor.format);
@@ -805,7 +817,8 @@ function evaluate(lyric: FixtureLyric, draft: RevisionDraft): PreviewResult {
     noChanges:
       lyrics === live.lyrics.trim() &&
       resolveField(draft.language, live.language) === live.language &&
-      resolveField(isrc, live.isrc) === live.isrc,
+      resolveField(isrc, live.isrc) === live.isrc &&
+      resolveField(draft.album?.trim(), live.album) === live.album,
     rateLimit: rateLimitFor(lyric, draft.lyrics),
   };
 }
@@ -856,6 +869,7 @@ function commit(
     format: draft.format,
     language: resolveField(draft.language, live.language),
     isrc: resolveField(draft.isrc ? normalizeIsrc(draft.isrc) : draft.isrc, live.isrc),
+    album: resolveField(draft.album?.trim(), live.album),
   };
   lyric.revisions.push(revision);
   return ok({ revision: toSummary(revision) });
@@ -868,6 +882,7 @@ function lyricsEntry(lyric: FixtureLyric, myKeyId: string): UnisonLyricsEntry {
   return {
     ...feedEntry(lyric),
     isrc: live.isrc ?? undefined,
+    album: live.album ?? undefined,
     lyrics: live.lyrics,
     submitter: lyric.ownedByMe
       ? { keyId: myKeyId, reputation: 1.2, displayName: ME.displayName }
@@ -985,8 +1000,8 @@ export const devFixtures = {
       return fail(404, UnisonErrorCode.NOT_FOUND, "Revision not found.");
     }
     if (target.status === "live") return fail(409, UnisonErrorCode.NO_CHANGES, "No changes.");
-    const { lyrics, format, language, isrc } = target;
-    return commit(lyric, { lyrics, format, language, isrc }, target.revNo);
+    const { lyrics, format, language, isrc, album } = target;
+    return commit(lyric, { lyrics, format, language, isrc, album }, target.revNo);
   },
 
   async submit(): Promise<FixtureResult<{ id: number; created: boolean }>> {

@@ -45,6 +45,8 @@ interface SidebarControls {
   languageSelect: HTMLSelectElement;
   isrcInput: HTMLInputElement;
   isrcError: HTMLElement;
+  albumInput: HTMLInputElement;
+  albumError: HTMLElement;
   rate: HTMLElement;
 }
 
@@ -57,7 +59,7 @@ interface SaveBar {
   save: HTMLButtonElement;
 }
 
-const CHECK_FIELDS: FieldCheck["field"][] = ["lyrics", "language", "isrc"];
+const CHECK_FIELDS: FieldCheck["field"][] = ["lyrics", "language", "isrc", "album"];
 const CHECK_ICON = { ok: "ok", warn: "warn", bad: "bad", idle: "ok" } as const;
 
 // -- Editor --------------------------
@@ -78,6 +80,8 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     languageSelect: createLanguageSelect(entry.language),
     isrcInput: createIsrcInput(entry.isrc),
     isrcError: createFieldError(),
+    albumInput: createAlbumInput(entry.album),
+    albumError: createFieldError(),
     rate: createRateLine(),
   };
   const formatCell = renderSidebar(entry, surface.meta, host, controls);
@@ -111,6 +115,8 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     const isrc = draftField(controls.isrcInput.value, entry.isrc);
     if (language !== undefined) body.language = language;
     if (isrc !== undefined) body.isrc = isrc;
+    const album = draftField(controls.albumInput.value, entry.album);
+    if (album !== undefined) body.album = album;
     return body;
   };
 
@@ -190,12 +196,14 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   });
   controls.languageSelect.addEventListener("change", schedulePreview);
   controls.isrcInput.addEventListener("input", schedulePreview);
+  controls.albumInput.addEventListener("input", schedulePreview);
 
   const setSaving = (value: boolean): void => {
     saving = value;
     textarea.disabled = value;
     controls.languageSelect.disabled = value;
     controls.isrcInput.disabled = value;
+    controls.albumInput.disabled = value;
   };
 
   bar.save.addEventListener("click", async () => {
@@ -245,7 +253,6 @@ function renderSidebar(
 
   const table = document.createElement("table");
   table.className = "unison-detail-table";
-  if (entry.album) appendMetaRow(table, t("unison_album"), entry.album);
   const formatCell = appendMetaRow(table, t("unison_format"), t(`unison_format_${entry.format}`));
   appendMetaRow(table, t("unison_rev_revision"), String(entry.revision?.revNo ?? 1));
 
@@ -260,7 +267,8 @@ function renderSidebar(
   fields.className = "unison-rev-sidebar-fields";
   fields.append(
     createField(t("unison_language"), controls.languageSelect),
-    createField(t("unison_isrc"), controls.isrcInput, controls.isrcError)
+    createField(t("unison_isrc"), controls.isrcInput, controls.isrcError),
+    createField(t("unison_album"), controls.albumInput, controls.albumError)
   );
 
   meta.replaceChildren(back, title, artist, table, locked, fields, controls.upload, controls.rate);
@@ -312,6 +320,15 @@ function createIsrcInput(current: string | undefined): HTMLInputElement {
   input.value = current ?? "";
   input.placeholder = t("unison_placeholder_isrc");
   input.spellcheck = false;
+  return input;
+}
+
+function createAlbumInput(current: string | undefined): HTMLInputElement {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "unison-input";
+  input.value = current ?? "";
+  input.placeholder = t("unison_placeholder_album");
   return input;
 }
 
@@ -422,11 +439,21 @@ function markFieldErrors(
   textarea: HTMLTextAreaElement,
   controls: SidebarControls
 ): void {
-  const isrcCheck = preview?.checks.find(check => check.field === "isrc" && check.status === "bad");
-  toggleInvalid(controls.isrcInput, Boolean(isrcCheck));
-  controls.isrcError.hidden = !isrcCheck;
-  controls.isrcError.textContent = isrcCheck?.message ?? "";
+  markField(preview, "isrc", controls.isrcInput, controls.isrcError);
+  markField(preview, "album", controls.albumInput, controls.albumError);
   toggleInvalid(textarea, preview ? hasBadLyrics(preview) : false);
+}
+
+function markField(
+  preview: PreviewResult | null,
+  field: FieldCheck["field"],
+  input: HTMLInputElement,
+  error: HTMLElement
+): void {
+  const check = preview?.checks.find(candidate => candidate.field === field && candidate.status === "bad");
+  toggleInvalid(input, Boolean(check));
+  error.hidden = !check;
+  error.textContent = check?.message ?? "";
 }
 
 function renderOutcome(el: HTMLElement, outcome: ReturnType<typeof editorOutcome>): void {

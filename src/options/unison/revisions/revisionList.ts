@@ -264,12 +264,13 @@ async function fillBrowse(detail: HTMLElement, rev: RevisionSummary, ctx: ListCo
 async function previewRevert(entry: UnisonLyricsEntry, revisionId: number): Promise<PreviewResult | null> {
   const content = await getRevision(entry.id, revisionId);
   if (!content.success || !content.data) return null;
-  const { lyrics, format, language, isrc } = content.data;
+  const { lyrics, format, language, isrc, album } = content.data;
   const result = await previewRevision(entry.id, {
     lyrics,
     format,
     language: draftField(language ?? "", entry.language),
     isrc: draftField(isrc ?? "", entry.isrc),
+    album: draftField(album ?? "", entry.album),
   });
   return result.success ? result.data : null;
 }

@@ -87,6 +87,7 @@ const FIELD_LABEL_KEY: Record<FieldCheck["field"], string> = {
   lyrics: "unison_lyrics",
   language: "unison_language",
   isrc: "unison_isrc",
+  album: "unison_album",
 };
 
 export function checkFieldLabel(field: FieldCheck["field"]): RevisionMessage {

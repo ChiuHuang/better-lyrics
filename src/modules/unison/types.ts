@@ -203,6 +203,7 @@ export interface RevisionContent extends RevisionSummary {
   format: UnisonFormat;
   language: string | null;
   isrc: string | null;
+  album: string | null;
 }
 
 export type RevisionDraft = {
@@ -210,10 +211,11 @@ export type RevisionDraft = {
   format: UnisonFormat;
   language?: string | null;
   isrc?: string | null;
+  album?: string | null;
 };
 
 export interface FieldCheck {
-  field: "lyrics" | "language" | "isrc";
+  field: "lyrics" | "language" | "isrc" | "album";
   status: "ok" | "warn" | "bad";
   message: string;
   line?: number;
