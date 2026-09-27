@@ -1076,6 +1076,15 @@ export const devFixtures = {
     return ok({ videos: [...videos] });
   },
 
+  async delete(id: number): Promise<FixtureResult<{ message: string } | null>> {
+    await latency();
+    const lyric = find(id);
+    if (!lyric.ownedByMe) return fail(403, UnisonErrorCode.NOT_OWNER, "Only the owner can delete these lyrics.");
+    store = fixtures().filter(candidate => candidate.id !== id);
+    linkedVideos.delete(id);
+    return ok({ message: "Lyrics deleted." });
+  },
+
   async withdraw(id: number): Promise<FixtureResult<{ revision: RevisionSummary } | null>> {
     await latency();
     const lyric = find(id);

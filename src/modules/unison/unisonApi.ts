@@ -278,6 +278,7 @@ export async function removeVote(lyricsId: number): Promise<ApiResult<{ message:
 }
 
 export async function deleteLyrics(lyricsId: number): Promise<ApiResult<{ message: string } | null>> {
+  if (IS_DEV && devFixtures.has(lyricsId)) return devFixtures.delete(lyricsId);
   return signedRequest<{ message: string } | null>(`/lyrics/${lyricsId}`, "DELETE", {});
 }
 
