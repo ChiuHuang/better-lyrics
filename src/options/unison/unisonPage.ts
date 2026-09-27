@@ -462,8 +462,7 @@ function autoDetectLanguage(): void {
   if (matched) submitLanguageSelect.value = matched;
 }
 
-function onFilterChange(): void {
-  const cache = feedTabCache[activeFeedTab];
+function clearFeedTabCache(cache: FeedTabCache): void {
   cache.requestId++;
   cache.loading = false;
   cache.cursor = undefined;
@@ -471,6 +470,10 @@ function onFilterChange(): void {
   cache.loaded = false;
   cache.scrollY = 0;
   while (cache.fragment.firstChild) cache.fragment.removeChild(cache.fragment.firstChild);
+}
+
+function onFilterChange(): void {
+  clearFeedTabCache(feedTabCache[activeFeedTab]);
   if (!feedContainer.hidden) feedContainer.replaceChildren();
   void loadActiveTabPage();
 }
@@ -1190,6 +1193,7 @@ function createDetailDeleteButton(unisonId: number): HTMLButtonElement {
     const result = await deleteLyrics(unisonId);
 
     if (result.success || result.code === UnisonErrorCode.NOT_FOUND) {
+      clearFeedTabCache(feedTabCache.mine);
       navigateTo({ tab: "mine" });
       return;
     }
