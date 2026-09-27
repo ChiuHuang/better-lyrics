@@ -53,6 +53,8 @@ interface LyricLine {
   text: string;
 }
 
+type FieldValues = Pick<RevisionContent, "language" | "isrc" | "album">;
+
 interface TimedLine {
   seconds: number;
   text: string;
@@ -502,6 +504,14 @@ function diffRows(before: LyricLine[], after: LyricLine[]): DiffRow[] {
   return collapseUnchanged(rows);
 }
 
+const DIFF_FIELDS = ["language", "isrc", "album"] as const;
+
+function fieldRows(before: FieldValues, after: FieldValues): DiffRow[] {
+  return DIFF_FIELDS.flatMap((field): DiffRow[] =>
+    before[field] === after[field] ? [] : [{ kind: "field", field, before: before[field], after: after[field] }]
+  );
+}
+
 // -- Fixtures --------------------------
 
 // -- Videos --------------------------
@@ -799,6 +809,17 @@ function evaluate(lyric: FixtureLyric, draft: RevisionDraft): PreviewResult {
   const text = parsed ? textDrift(before, parsed) : 0;
   const timing = parsed ? timingDrift(before, parsed) : { drift: 0, offsetMs: 0 };
   const isrc = draft.isrc ? normalizeIsrc(draft.isrc) : draft.isrc;
+  const stored: FieldValues = {
+    language: resolveField(draft.language, live.language),
+    isrc: checks[2].status === "bad" ? anchor.isrc : resolveField(isrc, live.isrc),
+    album: checks[3].status === "bad" ? anchor.album : resolveField(draft.album?.trim(), live.album),
+  };
+  const noChanges =
+    lyrics === live.lyrics.trim() &&
+    resolveField(draft.language, live.language) === live.language &&
+    resolveField(isrc, live.isrc) === live.isrc &&
+    resolveField(draft.album?.trim(), live.album) === live.album;
+  const lyricRows = parsed ? diffRows(before, parsed) : [];
 
   let reason: PendingReason | null = null;
   if (lyric.sealed) reason = "sealed";
@@ -815,12 +836,12 @@ function evaluate(lyric: FixtureLyric, draft: RevisionDraft): PreviewResult {
       timingLimit: TIMING_LIMIT,
     },
     outcome: { goesLive: reason === null, reason },
-    noChanges:
-      lyrics === live.lyrics.trim() &&
-      resolveField(draft.language, live.language) === live.language &&
-      resolveField(isrc, live.isrc) === live.isrc &&
-      resolveField(draft.album?.trim(), live.album) === live.album,
+    noChanges,
     rateLimit: rateLimitFor(lyric, draft.lyrics),
+    diff: {
+      rows: noChanges ? [] : [...lyricRows, ...fieldRows(anchor, stored)],
+      againstRevNo: anchor.revNo,
+    },
   };
 }
 
@@ -977,7 +998,7 @@ export const devFixtures = {
     if (!against) return ok({ rows: [], againstRevNo: null });
     const rows = diffRows(parseLines(against.lyrics, against.format), parseLines(rev.lyrics, rev.format));
     const headRows = againstId === undefined ? (rev.headRows ?? []) : [];
-    return ok({ rows: [...rows, ...headRows], againstRevNo: against.revNo });
+    return ok({ rows: [...rows, ...headRows, ...fieldRows(against, rev)], againstRevNo: against.revNo });
   },
 
   async preview(id: number, draft: RevisionDraft): Promise<FixtureResult<PreviewResult | null>> {
