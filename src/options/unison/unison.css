@@ -922,6 +922,14 @@ kbd {
   color: rgba(255, 255, 255, 0.4);
 }
 
+.unison-video-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: rgb(252, 165, 165);
+}
+
 .unison-suggest-info {
   display: flex;
   flex-direction: column;
@@ -956,7 +964,8 @@ kbd {
 }
 
 .unison-video-remove,
-.unison-video-add {
+.unison-video-add,
+.unison-video-retry {
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -973,7 +982,8 @@ kbd {
 }
 
 .unison-video-remove:hover:not(:disabled),
-.unison-video-add:hover:not(:disabled) {
+.unison-video-add:hover:not(:disabled),
+.unison-video-retry:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
@@ -984,7 +994,8 @@ kbd {
 }
 
 .unison-video-remove:disabled,
-.unison-video-add:disabled {
+.unison-video-add:disabled,
+.unison-video-retry:disabled {
   cursor: default;
   opacity: 0.5;
 }

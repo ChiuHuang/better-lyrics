@@ -1947,6 +1947,10 @@
     "message": "Couldn't remove this video",
     "description": "Generic error shown when unlinking a video from a Unison lyric fails"
   },
+  "unison_videosLoadFailed": {
+    "message": "Couldn't load videos",
+    "description": "Shown in place of the linked or suggested videos list when Unison could not load it; a retry button follows"
+  },
   "unison_showMore": {
     "message": "Show more",
     "description": "Button that reveals the rest of the suggested videos list beyond the first few"

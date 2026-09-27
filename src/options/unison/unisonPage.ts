@@ -1370,6 +1370,24 @@ function renderLinkedVideoList(
   }
 }
 
+function renderVideoListError(listEl: HTMLElement, onRetry: () => void): void {
+  const row = document.createElement("li");
+  row.className = "unison-video-empty unison-video-error";
+  row.append(t("unison_videosLoadFailed"));
+
+  const retryBtn = document.createElement("button");
+  retryBtn.type = "button";
+  retryBtn.className = "unison-video-retry";
+  retryBtn.textContent = t("marketplace_retry");
+  retryBtn.addEventListener("click", () => {
+    retryBtn.disabled = true;
+    onRetry();
+  });
+  row.appendChild(retryBtn);
+
+  listEl.replaceChildren(row);
+}
+
 const SUGGESTED_VIDEO_PAGE_SIZE = 5;
 
 function normalizeTitle(title: string): string {
@@ -1568,7 +1586,15 @@ async function renderOwnerVideoTools(entry: UnisonLyricsEntry, token: number): P
 
   async function refresh(): Promise<void> {
     const [linkedRes, suggestRes] = await Promise.all([listVideos(entry.id), suggestedVideos(entry.id)]);
-    renderLinkedVideoList(entry.id, linkedList, linkedRes.data, refresh);
+    const retry = (): void => void refresh();
+
+    if (linkedRes.success) renderLinkedVideoList(entry.id, linkedList, linkedRes.data, refresh);
+    else renderVideoListError(linkedList, retry);
+
+    if (!suggestRes.success) {
+      renderVideoListError(suggestList, retry);
+      return;
+    }
     renderSuggestedVideoList(suggestList, entry.song, suggestRes.data, async suggestion => {
       const result = await linkVideo(entry.id, suggestion.videoId);
       if (!result.success) return videoLinkErrorMessage(result.code, t("unison_linkFailed"));
@@ -1766,6 +1792,12 @@ async function refreshSubmitSuggestions(): Promise<void> {
     videoId: videoId ?? undefined,
   });
   if (token !== submitSuggestionToken) return;
+
+  if (!result.success) {
+    section.hidden = false;
+    renderVideoListError(list, () => void refreshSubmitSuggestions());
+    return;
+  }
 
   const suggestions = result.data.filter(suggestion => !additionalVideosInput?.getIds().includes(suggestion.videoId));
   section.hidden = suggestions.length === 0;
