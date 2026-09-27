@@ -101,7 +101,7 @@ const LATENCY_MS = 400;
 const MAGIC = { rateLimit: "#ratelimit", throttle: "#throttle", flag: "#flag" } as const;
 
 export function devFixtureHint(): string {
-  return `Resets on reload. Type in the editor: ${MAGIC.rateLimit} (daily limit), ${MAGIC.throttle} (preview 429, retries), ${MAGIC.flag} (preview goes live, save is flagged). Break the TTML or an LRC stamp for a parse error; change more than 15% of the words to go over the limit. Videos: ${VIDEO_DURATION_MISMATCH} fails the length check, ${VIDEO_UNVERIFIABLE} fails verification, ${VIDEO_RATE_LIMITED} hits the rate limit, and a lyric holds ${VIDEO_CAP} videos. Submitting a song titled "[DEV] ..." creates a new fixture lyric you own.`;
+  return `Resets on reload. Type in the editor: ${MAGIC.rateLimit} (daily limit), ${MAGIC.throttle} (preview 429, retries), ${MAGIC.flag} (preview goes live, save is flagged). Break the TTML or an LRC stamp for a parse error; change more than 15% of the words to go over the limit. Videos: ${VIDEO_DURATION_MISMATCH} fails the length check, ${VIDEO_UNVERIFIABLE} fails verification, ${VIDEO_RATE_LIMITED} hits the rate limit, and a lyric holds ${VIDEO_CAP} videos. A song titled "${VIDEO_OFFLINE_SONG} ..." fails to load its videos and suggestions. Submitting a song titled "[DEV] ..." creates a new fixture lyric you own.`;
 }
 
 const ME = { displayName: "You (dev)" };
@@ -523,19 +523,38 @@ const VIDEO_CAP = 5;
 const VIDEO_DURATION_MISMATCH = "devLength01";
 const VIDEO_UNVERIFIABLE = "devVerify01";
 const VIDEO_RATE_LIMITED = "devLimits01";
+const VIDEO_OFFLINE_SONG = "[DEV] offline";
 
 const SUGGESTIONS: SuggestedVideo[] = [
-  suggestion("devSuggest1", "Amazing Grace (Official Video)", "video", 0.94),
-  suggestion("devSuggest2", "Amazing Grace (Live)", "video", 0.81),
-  suggestion("devSuggest3", "Amazing Grace (Remastered)", "song", 0.77),
-  suggestion(VIDEO_DURATION_MISMATCH, "Amazing Grace (Extended Mix)", "song", 0.66),
-  suggestion(VIDEO_UNVERIFIABLE, "Amazing Grace (Private Upload)", "video", 0.61),
-  suggestion("devSuggest4", "Amazing Grace (Lyric Video)", "video", 0.58),
-  suggestion("devSuggest5", "Amazing Grace (Acoustic)", "song", 0.52),
+  suggestion("devSuggest3", "Amazing Grace (Remastered)", "song", 0.77, { level: "same", score: 1.9 }),
+  suggestion("devSuggest4", "Amazing Grace (Lyric Video)", "video", 0.58, { level: "same", score: 1.7 }),
+  suggestion(VIDEO_DURATION_MISMATCH, "Amazing Grace (Extended Mix)", "song", 0.66, { level: "related", score: 1.1 }),
+  suggestion("devSuggest1", "Amazing Grace (Official Video)", "video", 0.94, { level: "related", score: 0.9 }),
+  suggestion(VIDEO_UNVERIFIABLE, "Amazing Grace (Private Upload)", "video", 0.61, null),
+  suggestion("devSuggest2", "Amazing Grace (Live)", "video", 0.81, { level: "different", score: 0.2 }),
+  suggestion("devSuggest5", "Amazing Grace (Acoustic)", "song", 0.52, { level: "different", score: 0.1 }),
 ];
 
-function suggestion(videoId: string, title: string, videoType: SuggestedVideo["videoType"], matchScore: number) {
-  return { videoId, title, artist: "John Newton", videoType, durationSeconds: 240, matchScore };
+function suggestion(
+  videoId: string,
+  title: string,
+  videoType: SuggestedVideo["videoType"],
+  matchScore: number,
+  match: SuggestedVideo["match"]
+): SuggestedVideo {
+  return { videoId, title, artist: "John Newton", videoType, durationSeconds: 240, matchScore, match };
+}
+
+function exactSuggestion(song: string): SuggestedVideo {
+  return suggestion("devSameName", song, "song", 1, { level: "same", score: 2 });
+}
+
+function isOfflineSong(song: string): boolean {
+  return song.toLowerCase().startsWith(VIDEO_OFFLINE_SONG.toLowerCase());
+}
+
+function unavailable<T>(empty: T): FixtureResult<T> {
+  return { success: false, data: empty, error: "Network error" };
 }
 
 const linkedVideos = new Map<number, LinkedVideo[]>();
@@ -1055,20 +1074,27 @@ export const devFixtures = {
 
   async submissionSuggestions(song: string): Promise<FixtureResult<SuggestedVideo[]>> {
     await latency();
-    return ok([suggestion("devSameName", song, "song", 1), ...SUGGESTIONS]);
+    if (isOfflineSong(song)) return unavailable([]);
+    return ok([exactSuggestion(song), ...SUGGESTIONS]);
   },
 
   async videos(id: number): Promise<FixtureResult<LinkedVideo[]>> {
     await latency();
-    return ok([...videosOf(find(id))]);
+    const lyric = find(id);
+    if (isOfflineSong(lyric.song)) return unavailable([]);
+    return ok([...videosOf(lyric)]);
   },
 
   async suggestions(id: number): Promise<FixtureResult<SuggestedVideo[]>> {
     await latency();
     const lyric = find(id);
+    if (isOfflineSong(lyric.song)) return unavailable([]);
     const linked = videosOf(lyric);
-    const exact = suggestion("devSameName", lyric.song, "song", 1);
-    return ok([exact, ...SUGGESTIONS].filter(candidate => !linked.some(video => video.videoId === candidate.videoId)));
+    return ok(
+      [exactSuggestion(lyric.song), ...SUGGESTIONS].filter(
+        candidate => !linked.some(video => video.videoId === candidate.videoId)
+      )
+    );
   },
 
   async link(id: number, videoId: string): Promise<FixtureResult<{ videos: LinkedVideo[] } | null>> {
