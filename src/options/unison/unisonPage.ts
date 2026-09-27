@@ -1635,11 +1635,14 @@ async function loadEditor(id: number, view: AbortSignal): Promise<void> {
 const FIT_BOTTOM_GAP_PX = 24;
 
 function fitToViewport(frame: HTMLElement, view: AbortSignal): void {
+  const layout = frame.parentElement;
+  const heightHost = layout ?? frame;
   const update = (): void => {
     const top = frame.getBoundingClientRect().top + window.scrollY;
-    frame.style.setProperty("--unison-fit-height", `${window.innerHeight - top - FIT_BOTTOM_GAP_PX}px`);
+    heightHost.style.setProperty("--unison-fit-height", `${window.innerHeight - top - FIT_BOTTOM_GAP_PX}px`);
   };
   frame.classList.add("unison-rev-detail-main--fit");
+  layout?.classList.add("unison-detail-layout--fit");
   update();
   window.addEventListener("resize", update);
   view.addEventListener(
@@ -1647,7 +1650,8 @@ function fitToViewport(frame: HTMLElement, view: AbortSignal): void {
     () => {
       window.removeEventListener("resize", update);
       frame.classList.remove("unison-rev-detail-main--fit");
-      frame.style.removeProperty("--unison-fit-height");
+      layout?.classList.remove("unison-detail-layout--fit");
+      heightHost.style.removeProperty("--unison-fit-height");
     },
     { once: true }
   );

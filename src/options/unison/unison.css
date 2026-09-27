@@ -2378,6 +2378,12 @@ select.unison-input {
     min-height: 0;
     resize: none;
   }
+
+  .unison-detail-layout--fit > .unison-detail-meta {
+    max-height: var(--unison-fit-height);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
 }
 
 .unison-rev-sidebar-fields {
