@@ -83,6 +83,10 @@
     "message": "Mostrar fondo difuminado con portada del álbum",
     "description": "Show album art background setting label"
   },
+  "options_display_fullscreenControls": {
+    "message": "Mostrar los controles de reproductor en pantalla completa",
+    "description": "Toggle label for the playback controls strip (progress bar, transport, like and dislike) shown under the album art in the fullscreen lyrics view"
+  },
   "options_display_stylizedAnimations": {
     "message": "Mostrar animaciones estilizadas",
     "description": "Show stylized animations setting label"
@@ -100,7 +104,7 @@
     "description": "Tooltip explaining the letter wave animation and its performance impact"
   },
   "options_display_letterWaveTooltipStates": {
-    "message": "Automático permanece apagado a menos que un Tema lo encienda. Activado o desactivado anual cualquier tema",
+    "message": "Automático permanece apagado a menos que un Tema lo encienda. Activado o desactivado anual cualquier tema.",
     "description": "Appended to the letter wave tooltip, explaining the three switch states"
   },
   "options_display_passiveScroll": {
@@ -139,6 +143,18 @@
     "message": "Evita que la letra en ventana flotante se cierre para bien cuando actualizas o cambias de canciones o páginas. Los navegadores solo dejan una ventana flotante abierta después de interactuar con la página, por lo que se reabre en tu primer clic o pulso de tecla en vez de instantáneamente.",
     "description": "Help tooltip explaining what automatic floating-lyrics reopening does and why it waits for the first interaction"
   },
+  "options_display_pipWindowLayout": {
+    "message": "Diseño de ventanas",
+    "description": "Setting label, shown inside the floating lyrics window settings, for choosing whether the window opens wide or tall"
+  },
+  "options_pipWindowLayout_horizontal": {
+    "message": "Horizontal",
+    "description": "Floating lyrics window layout option: a wide window with the album art beside the lyrics"
+  },
+  "options_pipWindowLayout_vertical": {
+    "message": "Vertical",
+    "description": "Floating lyrics window layout option: a tall window with the album art above the lyrics"
+  },
   "options_display_pipArtworkTransition": {
     "message": "Transición de carátula",
     "description": "Setting label, shown inside the floating lyrics window settings, for choosing how album art changes between songs"
@@ -174,6 +190,10 @@
   "options_display_pipMarquee": {
     "message": "Desplazar títulos largos",
     "description": "Toggle label for whether a song title too long for the floating lyrics window scrolls across so it can be read in full"
+  },
+  "options_display_pipProgressBar": {
+    "message": "Mostrar la barra de progreso",
+    "description": "Toggle label, shown inside the floating lyrics window settings, for the seekable playback progress bar under the album art"
   },
   "options_display_shadersPromo": {
     "message": "Mostrar enlace a Shaders de Better Lyrics",
@@ -688,7 +708,7 @@
     "description": "Download shader link text"
   },
   "options_detail_shaderImportSuffix": {
-    "message": "e impórtalo en",
+    "message": "E impórtalo en",
     "description": "Shader import suffix text before Better Lyrics Shaders link"
   },
   "marketplace_pageTitle": {
@@ -828,7 +848,7 @@
     "description": "URL install modal message"
   },
   "marketplace_urlModalPlaceholder": {
-    "message": "github.com/usuario/repo o github.com/usuario/repo/tree/rama",
+    "message": "github.com/usuario/repo O github.com/usuario/repo/tree/rama",
     "description": "URL input placeholder"
   },
   "marketplace_urlModalError": {
@@ -848,7 +868,7 @@
     "description": "URL permission explanation title"
   },
   "marketplace_urlPermissionDesc": {
-    "message": "Instalar temas desde URLs de GitHub personalizadas requiere un acceso más amplio que la tienda. Esto permite a Better Lyrics:",
+    "message": "Instalar temas desde URL de GitHub personalizadas requiere un acceso más amplio que la tienda. Esto permite a Better Lyrics:",
     "description": "URL permission description"
   },
   "marketplace_urlPermissionItem1": {
@@ -892,7 +912,7 @@
     "description": "Sort shortcuts group"
   },
   "marketplace_shortcutsSortHint": {
-    "message": "pulsa de nuevo para invertir",
+    "message": "Pulsa de nuevo para invertir",
     "description": "Sort toggle hint"
   },
   "marketplace_shortcutsByRating": {
@@ -1003,6 +1023,28 @@
       }
     }
   },
+  "blUpdate_available": {
+    "message": "Better Lyrics $version$ está disponible",
+    "description": "Banner shown to pre-release (canary) users when the matching stable release ships",
+    "placeholders": {
+      "version": {
+        "content": "$1",
+        "example": "2.4.0"
+      }
+    }
+  },
+  "blUpdate_storeDelay": {
+    "message": "la tienda puede demorarse un poco",
+    "description": "Trailing note on the update banner for Chrome and Edge, whose store approval can lag the release"
+  },
+  "blUpdate_action": {
+    "message": "Actualización",
+    "description": "Action link on the update banner that opens the browser's extension store listing"
+  },
+  "blUpdate_dismiss": {
+    "message": "Descartar",
+    "description": "Accessible label for the button that closes the update banner"
+  },
   "marketplace_discussion": {
     "message": "Discusión",
     "description": "Footer link in the theme detail modal that opens the theme's discussion thread"
@@ -1080,6 +1122,10 @@
   "lyrics_adPlaying": {
     "message": "[música de ascensor]",
     "description": "Message shown during ad playback"
+  },
+  "lyrics_writtenBy": {
+    "message": "Escrito por",
+    "description": "Label shown before the songwriter names after the last lyric line"
   },
   "lyrics_notFound": {
     "message": "No se encontraron letras para esta canción",
@@ -1184,7 +1230,7 @@
     }
   },
   "theme_author_prefix": {
-    "message": "por $AUTHOR$",
+    "message": "Por $AUTHOR$",
     "description": "Author prefix shown on theme selector button",
     "placeholders": {
       "author": {
@@ -1194,7 +1240,7 @@
     }
   },
   "theme_author_you": {
-    "message": "por Tú",
+    "message": "Por Ti",
     "description": "Author label for custom user themes on theme selector button"
   },
   "symlink_installFailed": {
@@ -1272,7 +1318,7 @@
     "description": "Secondary button: reject the sign-in request"
   },
   "auth_invalidRequest": {
-    "message": "Solicitud de inicio de sesión inválida",
+    "message": "Solicitud de inicio de sesión inválida.",
     "description": "Error state shown when the popup receives malformed parameters"
   },
   "auth_sessionExpired": {
@@ -1438,7 +1484,7 @@
     "description": "Sort by effective score, lowest first"
   },
   "unison_sortMostVoted": {
-    "message": "Mas votadas",
+    "message": "Más votadas",
     "description": "Sort by vote count, most first"
   },
   "unison_sortLeastVoted": {
@@ -1482,11 +1528,11 @@
     "description": "Plain text format badge"
   },
   "unison_autoDetect": {
-    "message": "Auto detectar",
+    "message": "Autodetectar",
     "description": "Auto-detect format option"
   },
   "unison_noResults": {
-    "message": "No se han encontrado letras. Prueba con una busqueda diferente.",
+    "message": "No se han encontrado letras. Prueba con una búsqueda diferente.",
     "description": "No search results message"
   },
   "unison_interactingAs": {
@@ -1514,7 +1560,7 @@
     "description": "Artist field label"
   },
   "unison_album": {
-    "message": "Album",
+    "message": "Álbum",
     "description": "Album field label"
   },
   "unison_duration": {
@@ -1542,7 +1588,7 @@
     "description": "Back button text in detail view"
   },
   "unison_noPreview": {
-    "message": "Pega o arrestra una letra para ver una vista previa",
+    "message": "Pega o arrastra una letra para ver una vista previa",
     "description": "Empty state text shown in submit preview before lyrics are entered"
   },
   "unison_preview": {
@@ -1765,8 +1811,16 @@
     "message": "Ver perfil completo",
     "description": "Link on the Identity tab that opens the user's full Unison profile in a new tab"
   },
+  "unison_changePicture": {
+    "message": "Cambiar imagen",
+    "description": "Link on the Identity tab, shown when the user has a Unison profile picture, that opens the Unison website where they can pick a different one"
+  },
+  "unison_addPicture": {
+    "message": "Añadir imagen",
+    "description": "Link on the Identity tab, shown when the user has no Unison profile picture, that opens the Unison website where they can pick one"
+  },
   "unison_submitted_this": {
-    "message": "letra enviada",
+    "message": "Letra enviada",
     "description": "Sub-label under the submitter name in the Unison footer card"
   },
   "unison_score_label": {
