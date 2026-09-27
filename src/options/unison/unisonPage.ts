@@ -1462,9 +1462,13 @@ function createSuggestedVideoRow(song: string, suggestion: SuggestedVideo, onAdd
   const info = document.createElement("div");
   info.className = "unison-suggest-info";
 
-  const title = document.createElement("span");
+  const title = document.createElement("a");
   title.className = "unison-suggest-title";
-  title.textContent = suggestion.title;
+  title.href = `https://music.youtube.com/watch?v=${encodeURIComponent(suggestion.videoId)}`;
+  title.target = "_blank";
+  title.rel = "noreferrer noopener";
+  title.title = suggestion.videoId;
+  title.append(suggestion.title, svgIcon("externalLink"));
   info.appendChild(title);
 
   const meta = document.createElement("span");
