@@ -191,6 +191,7 @@ export const MUSIC_NOTES = "♪𝅘𝅥𝅮𝅘𝅥𝅯𝅘𝅥𝅰𝅘𝅥𝅱𝅘𝅥𝅲" as const;
 export const LYRICS_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const LYRICS_NEGATIVE_CACHE_TTL_MS = 30 * 60 * 1000;
 export const UNISON_NEGATIVE_CACHE_TTL_MS = 5 * 60 * 1000;
+export const UNISON_MAX_VIDEOS_PER_LYRIC = 20;
 
 export const OFFSET_STORAGE_PREFIX = "blyricsOffset_";
 

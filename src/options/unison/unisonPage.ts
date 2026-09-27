@@ -1,5 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
-import { UNISON_API_BASE_URL } from "@constants";
+import { UNISON_API_BASE_URL, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
 import { t } from "@core/i18n";
 import {
   DEFAULT_FEED_FILTERS,
@@ -7,6 +7,7 @@ import {
   type LinkedVideo,
   type ReportReason,
   type SuggestedVideo,
+  type SuggestedVideoMatchLevel,
   type UnisonConfidence,
   type UnisonFeedEntry,
   type UnisonFormat,
@@ -145,7 +146,7 @@ let activeFeedTab: FeedTabName = "recent";
 let feedSentinelObserver: IntersectionObserver | undefined;
 interface VideoIdTokenInput {
   getIds(): string[];
-  add(videoId: string): void;
+  add(videoId: string, options?: { suggested?: boolean }): void;
   hasInvalid(): boolean;
   focus(): void;
 }
@@ -1474,6 +1475,11 @@ function confirmLinkVideo(song: string, suggestion: SuggestedVideo): Promise<boo
 
 type AddSuggestion = (suggestion: SuggestedVideo) => Promise<string | null>;
 
+const MATCH_BADGE_KEY: Partial<Record<SuggestedVideoMatchLevel, string>> = {
+  same: "unison_suggestMatchSame",
+  related: "unison_suggestMatchRelated",
+};
+
 function createSuggestedVideoRow(song: string, suggestion: SuggestedVideo, onAdd: AddSuggestion): HTMLLIElement {
   const row = document.createElement("li");
   row.className = "unison-suggest-row";
@@ -1497,13 +1503,22 @@ function createSuggestedVideoRow(song: string, suggestion: SuggestedVideo, onAdd
   info.appendChild(meta);
   row.appendChild(info);
 
+  const level = suggestion.match?.level;
+  const badgeKey = level && MATCH_BADGE_KEY[level];
+  if (badgeKey) {
+    const badge = document.createElement("span");
+    badge.className = `unison-suggest-badge unison-suggest-badge--${level}`;
+    badge.textContent = t(badgeKey);
+    row.appendChild(badge);
+  }
+
   const addBtn = document.createElement("button");
   addBtn.type = "button";
   addBtn.className = "unison-video-add";
   addBtn.textContent = t("unison_addVideo");
   addBtn.addEventListener("click", async () => {
-    if (normalizeTitle(suggestion.title) !== normalizeTitle(song) && !(await confirmLinkVideo(song, suggestion)))
-      return;
+    const titleDiffers = normalizeTitle(suggestion.title) !== normalizeTitle(song);
+    if (level !== "same" && titleDiffers && !(await confirmLinkVideo(song, suggestion))) return;
     addBtn.disabled = true;
     const error = await onAdd(suggestion);
     if (error === null) return;
@@ -1530,31 +1545,42 @@ function renderSuggestedVideoList(
     return;
   }
 
-  const appendRows = (items: SuggestedVideo[]): void => {
-    for (const suggestion of items) {
-      listEl.appendChild(createSuggestedVideoRow(song, suggestion, onAdd));
-    }
-  };
+  const createRows = (items: SuggestedVideo[]): HTMLLIElement[] =>
+    items.map(suggestion => createSuggestedVideoRow(song, suggestion, onAdd));
 
-  if (suggestions.length <= SUGGESTED_VIDEO_PAGE_SIZE) {
-    appendRows(suggestions);
-    return;
+  const likely = suggestions.filter(suggestion => suggestion.match?.level !== "different");
+  const others = suggestions.filter(suggestion => suggestion.match?.level === "different");
+
+  listEl.append(...createRows(likely.slice(0, SUGGESTED_VIDEO_PAGE_SIZE)));
+
+  if (likely.length > SUGGESTED_VIDEO_PAGE_SIZE) {
+    const moreRow = document.createElement("li");
+    moreRow.className = "unison-suggest-more";
+    const moreBtn = document.createElement("button");
+    moreBtn.type = "button";
+    moreBtn.className = "unison-suggest-more-btn";
+    moreBtn.textContent = t("unison_showMore");
+    moreBtn.addEventListener("click", () => {
+      moreRow.replaceWith(...createRows(likely.slice(SUGGESTED_VIDEO_PAGE_SIZE)));
+    });
+    moreRow.appendChild(moreBtn);
+    listEl.appendChild(moreRow);
   }
 
-  appendRows(suggestions.slice(0, SUGGESTED_VIDEO_PAGE_SIZE));
+  if (!others.length) return;
 
-  const moreRow = document.createElement("li");
-  moreRow.className = "unison-suggest-more";
-  const moreBtn = document.createElement("button");
-  moreBtn.type = "button";
-  moreBtn.className = "unison-suggest-more-btn";
-  moreBtn.textContent = t("unison_showMore");
-  moreBtn.addEventListener("click", () => {
-    moreRow.remove();
-    appendRows(suggestions.slice(SUGGESTED_VIDEO_PAGE_SIZE));
-  });
-  moreRow.appendChild(moreBtn);
-  listEl.appendChild(moreRow);
+  const othersRow = document.createElement("li");
+  othersRow.className = "unison-suggest-others";
+  const othersDetails = document.createElement("details");
+  const othersToggle = document.createElement("summary");
+  othersToggle.className = "unison-suggest-more-btn unison-suggest-others-toggle";
+  othersToggle.textContent = t("unison_suggestOtherVersions", [String(others.length)]);
+  const othersList = document.createElement("ul");
+  othersList.className = "unison-video-list";
+  othersList.append(...createRows(others));
+  othersDetails.append(othersToggle, othersList);
+  othersRow.appendChild(othersDetails);
+  listEl.appendChild(othersRow);
 }
 
 async function renderOwnerVideoTools(entry: UnisonLyricsEntry, token: number): Promise<void> {
@@ -1648,8 +1674,10 @@ function setupSubmitForm(): void {
 
   const additionalMount = document.getElementById("unison-additional-videos-mount");
   if (additionalMount) {
-    additionalVideosInput = createVideoIdTokenInput(additionalMount, () =>
-      (document.getElementById("unison-field-videoId") as HTMLInputElement).value.trim()
+    additionalVideosInput = createVideoIdTokenInput(
+      additionalMount,
+      () => (document.getElementById("unison-field-videoId") as HTMLInputElement).value.trim(),
+      onAdditionalVideoRemoved
     );
   }
   for (const id of SUBMIT_SUGGESTION_FIELDS) {
@@ -1768,6 +1796,15 @@ const SUBMIT_SUGGESTION_FIELDS = [
 
 let submitSuggestionToken = 0;
 
+interface SubmitSuggestionState {
+  queryKey: string;
+  song: string;
+  suggestions: SuggestedVideo[];
+  dismissedIds: Set<string>;
+}
+
+let submitSuggestionState: SubmitSuggestionState | null = null;
+
 async function refreshSubmitSuggestions(): Promise<void> {
   const section = document.getElementById("unison-submit-suggestions");
   const list = document.getElementById("unison-submit-suggestions-list");
@@ -1780,33 +1817,74 @@ async function refreshSubmitSuggestions(): Promise<void> {
   const duration = parseDurationInput(value("unison-field-duration"));
   const videoId = parseVideoId(value("unison-field-videoId"));
   if (!song || !artist || !duration) {
+    submitSuggestionState = null;
     section.hidden = true;
     return;
   }
 
-  const result = await suggestVideosForSubmission({
+  const query = {
     song,
     artist,
     album: value("unison-field-album") || null,
     duration,
     videoId: videoId ?? undefined,
-  });
+  };
+  const queryKey = JSON.stringify(query);
+  const result = await suggestVideosForSubmission(query);
   if (token !== submitSuggestionToken) return;
 
   if (!result.success) {
+    if (submitSuggestionState?.queryKey !== queryKey) submitSuggestionState = null;
     section.hidden = false;
     renderVideoListError(list, () => void refreshSubmitSuggestions());
     return;
   }
 
-  const suggestions = result.data.filter(suggestion => !additionalVideosInput?.getIds().includes(suggestion.videoId));
+  if (submitSuggestionState?.queryKey !== queryKey) {
+    submitSuggestionState = { queryKey, song, suggestions: [], dismissedIds: new Set() };
+  }
+  submitSuggestionState.suggestions = result.data;
+  addSameSuggestions(submitSuggestionState);
+  renderSubmitSuggestions();
+}
+
+function addSameSuggestions(state: SubmitSuggestionState): void {
+  const input = additionalVideosInput;
+  if (!input) return;
+  const linkedIds = input.getIds();
+  const room = UNISON_MAX_VIDEOS_PER_LYRIC - 1 - linkedIds.length;
+  if (room <= 0) return;
+
+  const sameSuggestions = state.suggestions
+    .filter(
+      suggestion =>
+        suggestion.match?.level === "same" &&
+        !state.dismissedIds.has(suggestion.videoId) &&
+        !linkedIds.includes(suggestion.videoId)
+    )
+    .slice(0, room);
+  for (const suggestion of sameSuggestions) input.add(suggestion.videoId, { suggested: true });
+}
+
+function renderSubmitSuggestions(): void {
+  const section = document.getElementById("unison-submit-suggestions");
+  const list = document.getElementById("unison-submit-suggestions-list");
+  const state = submitSuggestionState;
+  if (!section || !list || !state) return;
+
+  const linkedIds = additionalVideosInput?.getIds() ?? [];
+  const suggestions = state.suggestions.filter(suggestion => !linkedIds.includes(suggestion.videoId));
   section.hidden = suggestions.length === 0;
-  renderSuggestedVideoList(list, song, suggestions, async suggestion => {
+  renderSuggestedVideoList(list, state.song, suggestions, async suggestion => {
     additionalVideosInput?.add(suggestion.videoId);
-    list.querySelector(`[data-video-id="${suggestion.videoId}"]`)?.remove();
-    if (!list.querySelector(".unison-suggest-row, .unison-suggest-more")) section.hidden = true;
+    renderSubmitSuggestions();
     return null;
   });
+}
+
+function onAdditionalVideoRemoved(videoId: string, wasSuggested: boolean): void {
+  if (wasSuggested) submitSuggestionState?.dismissedIds.add(videoId);
+  renderSubmitSuggestions();
 }
 
 function updateComposerLink(): void {
@@ -2009,8 +2087,18 @@ function parseVideoId(raw: string): string | null {
   }
 }
 
-function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => string): VideoIdTokenInput {
-  const tokens: { id: string | null; text: string }[] = [];
+interface VideoIdToken {
+  id: string | null;
+  text: string;
+  suggested: boolean;
+}
+
+function createVideoIdTokenInput(
+  container: HTMLElement,
+  getPrimaryId: () => string,
+  onRemove: (videoId: string, wasSuggested: boolean) => void
+): VideoIdTokenInput {
+  const tokens: VideoIdToken[] = [];
 
   container.classList.add("unison-token-input");
 
@@ -2026,11 +2114,19 @@ function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => str
     setTimeout(() => pill.classList.remove("unison-token--flash"), 500);
   };
 
+  const removeToken = (index: number): void => {
+    const [removed] = tokens.splice(index, 1);
+    render();
+    if (removed?.id) onRemove(removed.id, removed.suggested);
+  };
+
   const render = (): void => {
     for (const pill of container.querySelectorAll(".unison-token")) pill.remove();
     tokens.forEach((token, index) => {
       const pill = document.createElement("span");
-      pill.className = token.id ? "unison-token" : "unison-token unison-token--invalid";
+      pill.className = "unison-token";
+      pill.classList.toggle("unison-token--invalid", !token.id);
+      pill.classList.toggle("unison-token--suggested", token.suggested);
       if (token.id) pill.dataset.tokenId = token.id;
 
       const label = document.createElement("span");
@@ -2038,14 +2134,20 @@ function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => str
       label.textContent = token.text;
       pill.appendChild(label);
 
+      if (token.suggested) {
+        const tag = document.createElement("span");
+        tag.className = "unison-token-tag";
+        tag.textContent = t("unison_suggestMatchSame");
+        pill.appendChild(tag);
+      }
+
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "unison-token-remove";
       remove.setAttribute("aria-label", t("unison_removeVideo"));
       remove.textContent = "×";
       remove.addEventListener("click", () => {
-        tokens.splice(index, 1);
-        render();
+        removeToken(index);
         field.focus();
       });
       pill.appendChild(remove);
@@ -2054,14 +2156,14 @@ function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => str
     });
   };
 
-  const commit = (raw: string): void => {
+  const commit = (raw: string, suggested = false): void => {
     const primaryId = parseVideoId(getPrimaryId());
     for (const part of raw.split(/[\s,]+/)) {
       const piece = part.trim();
       if (!piece) continue;
       const id = parseVideoId(piece);
       if (!id) {
-        tokens.push({ id: null, text: piece });
+        tokens.push({ id: null, text: piece, suggested: false });
         continue;
       }
       if (id === primaryId) continue;
@@ -2069,7 +2171,7 @@ function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => str
         flashPill(id);
         continue;
       }
-      tokens.push({ id, text: id });
+      tokens.push({ id, text: id, suggested });
     }
     render();
   };
@@ -2081,8 +2183,7 @@ function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => str
       commit(field.value);
       field.value = "";
     } else if (event.key === "Backspace" && !field.value && tokens.length) {
-      tokens.pop();
-      render();
+      removeToken(tokens.length - 1);
     }
   });
 
@@ -2115,7 +2216,7 @@ function createVideoIdTokenInput(container: HTMLElement, getPrimaryId: () => str
       for (const token of tokens) if (token.id) ids.push(token.id);
       return ids;
     },
-    add: commit,
+    add: (videoId, options) => commit(videoId, options?.suggested ?? false),
     hasInvalid: () => tokens.some(token => !token.id),
     focus: () => field.focus(),
   };

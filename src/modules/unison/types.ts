@@ -87,6 +87,8 @@ export interface LinkedVideo {
   isPrimary: boolean;
 }
 
+export type SuggestedVideoMatchLevel = "same" | "related" | "different";
+
 export interface SuggestedVideo {
   videoId: string;
   title: string;
@@ -95,6 +97,7 @@ export interface SuggestedVideo {
   videoType: "song" | "video";
   durationSeconds: number;
   matchScore: number;
+  match?: { level: SuggestedVideoMatchLevel; score: number } | null;
 }
 
 export interface UnisonApiResponse<T> {

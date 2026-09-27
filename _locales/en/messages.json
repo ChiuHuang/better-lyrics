@@ -1947,6 +1947,24 @@
     "message": "Couldn't remove this video",
     "description": "Generic error shown when unlinking a video from a Unison lyric fails"
   },
+  "unison_suggestMatchSame": {
+    "message": "Suggested",
+    "description": "Badge on a suggested video judged to be the same recording as the lyric; also marks videos added to the additional videos field automatically"
+  },
+  "unison_suggestMatchRelated": {
+    "message": "Check version",
+    "description": "Badge on a suggested video that may be a different version of the song (an edit or variant), asking the user to check before linking"
+  },
+  "unison_suggestOtherVersions": {
+    "message": "Show $count$ other versions",
+    "description": "Toggle that reveals suggested videos judged to be different recordings, such as remixes or live versions. $count$ is how many are hidden",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
   "unison_videosLoadFailed": {
     "message": "Couldn't load videos",
     "description": "Shown in place of the linked or suggested videos list when Unison could not load it; a retry button follows"
