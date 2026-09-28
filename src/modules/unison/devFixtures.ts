@@ -304,6 +304,17 @@ function clockMs(value: string): number {
   return Math.round(seconds * 1000);
 }
 
+function textOutsideTags(markup: string): string {
+  let text = "";
+  let inTag = false;
+  for (const char of markup) {
+    if (char === "<") inTag = true;
+    else if (char === ">") inTag = false;
+    else if (!inTag) text += char;
+  }
+  return text;
+}
+
 function parseLines(lyrics: string, format: UnisonFormat): LyricLine[] {
   if (format === "lrc") {
     return lyrics.split("\n").flatMap(line => {
@@ -314,11 +325,7 @@ function parseLines(lyrics: string, format: UnisonFormat): LyricLine[] {
   if (format === "ttml") {
     return Array.from(lyrics.matchAll(TTML_LINE), match => ({
       startMs: clockMs(match[1]),
-      text: match[2]
-        .replace(/<[^>]+>/g, "")
-        .replace(/[<>]/g, "")
-        .replace(/\s+/g, " ")
-        .trim(),
+      text: textOutsideTags(match[2]).replace(/\s+/g, " ").trim(),
     }));
   }
   return lyrics
