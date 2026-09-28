@@ -979,8 +979,9 @@ kbd {
 }
 
 .unison-suggest-badge--same {
-  background: rgba(134, 239, 172, 0.08);
-  border: 1px solid rgba(134, 239, 172, 0.18);
+  padding: 0;
+  height: auto;
+  font-size: 1rem;
   color: rgb(134, 239, 172);
 }
 
@@ -1475,15 +1476,9 @@ kbd {
 }
 
 .unison-token-tag {
-  padding: 0 0.3125rem;
-  border-radius: 1000rem;
-  background: rgba(134, 239, 172, 0.12);
+  display: inline-flex;
+  font-size: 0.875rem;
   color: rgb(134, 239, 172);
-  font-family: inherit;
-  font-size: 0.5625rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .unison-token--flash {

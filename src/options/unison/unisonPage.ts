@@ -7,7 +7,6 @@ import {
   type LinkedVideo,
   type ReportReason,
   type SuggestedVideo,
-  type SuggestedVideoMatchLevel,
   type UnisonConfidence,
   type UnisonFeedEntry,
   type UnisonFormat,
@@ -1416,10 +1415,15 @@ function confirmLinkVideo(song: string, suggestion: SuggestedVideo): Promise<boo
 
 type AddSuggestion = (suggestion: SuggestedVideo) => Promise<string | null>;
 
-const MATCH_BADGE_KEY: Partial<Record<SuggestedVideoMatchLevel, string>> = {
-  same: "unison_suggestMatchSame",
-  related: "unison_suggestMatchRelated",
-};
+function createSameRecordingMark(className: string): HTMLSpanElement {
+  const mark = document.createElement("span");
+  mark.className = className;
+  mark.setAttribute("role", "img");
+  mark.title = t("unison_suggestMatchSameHint");
+  mark.setAttribute("aria-label", mark.title);
+  mark.appendChild(svgIcon("lightbulb"));
+  return mark;
+}
 
 function createSuggestedVideoRow(song: string, suggestion: SuggestedVideo, onAdd: AddSuggestion): HTMLLIElement {
   const row = document.createElement("li");
@@ -1445,11 +1449,12 @@ function createSuggestedVideoRow(song: string, suggestion: SuggestedVideo, onAdd
   row.appendChild(info);
 
   const level = suggestion.match?.level;
-  const badgeKey = level && MATCH_BADGE_KEY[level];
-  if (badgeKey) {
+  if (level === "same") {
+    row.appendChild(createSameRecordingMark("unison-suggest-badge unison-suggest-badge--same"));
+  } else if (level === "related") {
     const badge = document.createElement("span");
-    badge.className = `unison-suggest-badge unison-suggest-badge--${level}`;
-    badge.textContent = t(badgeKey);
+    badge.className = "unison-suggest-badge unison-suggest-badge--related";
+    badge.textContent = t("unison_suggestMatchRelated");
     row.appendChild(badge);
   }
 
@@ -2010,12 +2015,7 @@ function createVideoIdTokenInput(
       label.textContent = token.text;
       pill.appendChild(label);
 
-      if (token.suggested) {
-        const tag = document.createElement("span");
-        tag.className = "unison-token-tag";
-        tag.textContent = t("unison_suggestMatchSame");
-        pill.appendChild(tag);
-      }
+      if (token.suggested) pill.appendChild(createSameRecordingMark("unison-token-tag"));
 
       const remove = document.createElement("button");
       remove.type = "button";

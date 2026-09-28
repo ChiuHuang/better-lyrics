@@ -1947,9 +1947,9 @@
     "message": "Couldn't remove this video",
     "description": "Generic error shown when unlinking a video from a Unison lyric fails"
   },
-  "unison_suggestMatchSame": {
-    "message": "Suggested",
-    "description": "Badge on a suggested video judged to be the same recording as the lyric; also marks videos added to the additional videos field automatically"
+  "unison_suggestMatchSameHint": {
+    "message": "Likely the same recording",
+    "description": "Tooltip and accessible label for the lightbulb icon on a suggested video judged to be the same recording as the lyric; also marks videos added to the additional videos field automatically"
   },
   "unison_suggestMatchRelated": {
     "message": "Check version",
