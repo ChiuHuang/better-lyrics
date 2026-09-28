@@ -4,47 +4,47 @@
     "description": "The name of the extension"
   },
   "extensionDescription": {
-    "message": "Enhance YouTube Music with beautiful time-synced lyrics, multilingual support, real-time translations and more",
+    "message": "Melhore o YouTube Music com belas letras sincronizadas, suporte multilíngue, traduções em tempo real e mais",
     "description": "The description of the extension"
   },
   "options_tab_general": {
-    "message": "General",
+    "message": "Geral",
     "description": "General settings tab label"
   },
   "options_tab_display": {
-    "message": "Display",
+    "message": "Exibição",
     "description": "Display settings tab label"
   },
   "options_tab_language": {
-    "message": "Language",
+    "message": "Idioma",
     "description": "Language settings tab label"
   },
   "options_tab_sources": {
-    "message": "Sources",
+    "message": "Fontes",
     "description": "Sources settings tab label"
   },
   "options_tab_identity": {
-    "message": "Identity",
+    "message": "Identidade",
     "description": "Identity settings tab label"
   },
   "options_tab_themes": {
-    "message": "Themes",
+    "message": "Temas",
     "description": "Themes settings tab label"
   },
   "options_general_title": {
-    "message": "General Settings",
+    "message": "Configurações gerais",
     "description": "General settings section title"
   },
   "options_general_description": {
-    "message": "Settings that affect the general behavior of Better Lyrics.",
+    "message": "Configurações que afetam o comportamento geral do Better Lyrics.",
     "description": "General settings section description"
   },
   "options_general_showLogs": {
-    "message": "Show logs",
+    "message": "Mostrar logs",
     "description": "Show logs setting label"
   },
   "options_general_autoSwitch": {
-    "message": "Auto switch to lyrics tab",
+    "message": "Mudar automaticamente para a aba de letras",
     "description": "Auto switch to lyrics tab setting label"
   },
   "options_general_cache": {
@@ -52,35 +52,35 @@
     "description": "Cache section label"
   },
   "options_general_clearCache": {
-    "message": "Clear Cache",
+    "message": "Limpar cache",
     "description": "Clear cache button label"
   },
   "options_general_totalLyrics": {
-    "message": "Total lyrics in cache",
+    "message": "Total de letras em cache",
     "description": "Total lyrics in cache label"
   },
   "options_general_cacheSize": {
-    "message": "Cache size",
+    "message": "Tamanho do cache",
     "description": "Cache size label"
   },
   "options_display_title": {
-    "message": "Display Settings",
+    "message": "Configurações de exibição",
     "description": "Display settings section title"
   },
   "options_display_description": {
-    "message": "Fine-tune the appearance of Better Lyrics.",
+    "message": "Ajuste a aparência do Better Lyrics.",
     "description": "Display settings section description"
   },
   "options_display_disableFullscreen": {
-    "message": "Disable fullscreen mode",
+    "message": "Desativar modo tela cheia",
     "description": "Disable fullscreen mode setting label"
   },
   "options_display_autoHideCursor": {
-    "message": "Auto-hide cursor in fullscreen mode",
+    "message": "Ocultar cursor automaticamente em tela cheia",
     "description": "Auto-hide cursor setting label"
   },
   "options_display_albumArt": {
-    "message": "Show blurred album art background",
+    "message": "Mostrar capa do álbum desfocada como fundo",
     "description": "Show album art background setting label"
   },
   "options_display_fullscreenControls": {
@@ -88,7 +88,7 @@
     "description": "Toggle label for the playback controls strip (progress bar, transport, like and dislike) shown under the album art in the fullscreen lyrics view"
   },
   "options_display_stylizedAnimations": {
-    "message": "Show stylized animations",
+    "message": "Mostrar animações estilizadas",
     "description": "Show stylized animations setting label"
   },
   "options_display_letterWave": {
@@ -320,31 +320,31 @@
     "description": "Option label for automatic language detection based on browser settings"
   },
   "options_language_title": {
-    "message": "Language Settings",
+    "message": "Configurações de idioma",
     "description": "Language settings section title"
   },
   "options_language_description": {
-    "message": "Language and translation settings for Better Lyrics.",
+    "message": "Configurações de idioma e tradução para Better Lyrics.",
     "description": "Language settings section description"
   },
   "options_language_romanization": {
-    "message": "Romanization",
+    "message": "Romanização",
     "description": "Romanization setting label"
   },
   "options_language_translate": {
-    "message": "Translate song lyrics",
+    "message": "Traduzir letras das músicas",
     "description": "Translate song lyrics setting label"
   },
   "options_language_translationLanguage": {
-    "message": "Translation language",
+    "message": "Idioma de tradução",
     "description": "Translation language setting label"
   },
   "options_sources_title": {
-    "message": "Lyric Source Preference",
+    "message": "Preferência de fonte de letras",
     "description": "Sources settings section title"
   },
   "options_sources_description": {
-    "message": "Drag to reorder priority. Higher sources are tried first. Uncheck to disable.",
+    "message": "Arraste para reordenar a prioridade. Fontes superiores são tentadas primeiro. Desmarque para desativar.",
     "description": "Sources settings section description"
   },
   "options_sources_openUnison": {
@@ -352,19 +352,19 @@
     "description": "Label on the small button in the Sources section header that opens the Unison page"
   },
   "options_themes_title": {
-    "message": "Theme Settings",
+    "message": "Configurações de tema",
     "description": "Theme settings section title"
   },
   "options_themes_description": {
-    "message": "Customize the appearance of Better Lyrics.",
+    "message": "Personalize a aparência do Better Lyrics.",
     "description": "Theme settings section description"
   },
   "options_themes_theme": {
-    "message": "Theme",
+    "message": "Tema",
     "description": "Theme label"
   },
   "options_themes_chooseTheme": {
-    "message": "Choose a theme",
+    "message": "Escolher um tema",
     "description": "Choose a theme button label"
   },
   "options_themes_change": {
@@ -376,11 +376,11 @@
     "description": "Display name for unnamed custom themes"
   },
   "options_themes_customStyles": {
-    "message": "Custom Styles",
+    "message": "Estilos personalizados",
     "description": "Custom styles label"
   },
   "options_themes_create": {
-    "message": "Create",
+    "message": "Criar",
     "description": "Button to open the style editor if there are no styles"
   },
   "options_themes_edit": {
@@ -388,19 +388,19 @@
     "description": "Button to open the style editor"
   },
   "options_themes_marketplace": {
-    "message": "Theme Marketplace",
+    "message": "Loja de temas",
     "description": "Theme marketplace button label"
   },
   "options_themes_installedThemes": {
-    "message": "Installed Themes",
+    "message": "Temas instalados",
     "description": "Installed themes button label"
   },
   "options_identity_title": {
-    "message": "Identity",
+    "message": "Identidade",
     "description": "Identity settings section title"
   },
   "options_identity_description": {
-    "message": "Your unique anonymous identity for Better Lyrics.",
+    "message": "Sua identidade anônima única para Better Lyrics.",
     "description": "Identity settings section description"
   },
   "options_identity_warning": {
@@ -408,7 +408,7 @@
     "description": "Security warning in the Identity settings tab: keep the identity private and back it up because it is unrecoverable"
   },
   "options_identity_yourIdentity": {
-    "message": "Your identity",
+    "message": "Sua identidade",
     "description": "Your identity label"
   },
   "options_identity_unisonStats": {
@@ -416,19 +416,19 @@
     "description": "Section title above the user's own Unison level, tier, rank and badges on the Identity tab"
   },
   "options_identity_loading": {
-    "message": "Loading...",
+    "message": "Carregando...",
     "description": "Loading identity placeholder"
   },
   "options_identity_exportImport": {
-    "message": "Export/Import",
+    "message": "Exportar/Importar",
     "description": "Export/Import section label"
   },
   "options_identity_exportKey": {
-    "message": "Export Key",
+    "message": "Exportar chave",
     "description": "Export key button label"
   },
   "options_identity_importKey": {
-    "message": "Import Key",
+    "message": "Importar chave",
     "description": "Import key button label"
   },
   "options_identityImport_title": {
@@ -524,99 +524,99 @@
     "description": "Shown when the user clicks Import with no JSON provided"
   },
   "options_modal_selectTheme": {
-    "message": "Select a Theme",
+    "message": "Selecionar um tema",
     "description": "Theme modal title"
   },
   "options_modal_cancel": {
-    "message": "Cancel",
+    "message": "Cancelar",
     "description": "Cancel button label"
   },
   "options_modal_confirm": {
-    "message": "Confirm",
+    "message": "Confirmar",
     "description": "Confirm button label"
   },
   "options_alert_cacheCleared": {
-    "message": "Cache cleared successfully!",
+    "message": "Cache limpo com sucesso!",
     "description": "Cache cleared success message"
   },
   "options_alert_cacheClearFailed": {
-    "message": "Failed to clear cache!",
+    "message": "Falha ao limpar o cache!",
     "description": "Cache clear failed message"
   },
   "options_alert_nothingToClear": {
-    "message": "Nothing to clear!",
+    "message": "Nada para limpar!",
     "description": "Nothing to clear message"
   },
   "options_alert_exportFailed": {
-    "message": "Failed to export identity",
+    "message": "Falha ao exportar a identidade",
     "description": "Export identity failed message"
   },
   "options_alert_fileSaveDialogOpened": {
-    "message": "Identity file save dialog opened.",
+    "message": "Diálogo de salvamento aberto.",
     "description": "File save dialog opened message"
   },
   "options_alert_fileSaveFailed": {
-    "message": "Error saving file. Please try again.",
+    "message": "Erro ao salvar o arquivo. Por favor, tente novamente.",
     "description": "File save failed message"
   },
   "options_alert_downloadInitiated": {
-    "message": "Identity file download initiated.",
+    "message": "Download do arquivo de identidade iniciado.",
     "description": "Download initiated message"
   },
   "options_alert_importSuccess": {
-    "message": "Identity imported successfully!",
+    "message": "Identidade importada com sucesso!",
     "description": "Import success message"
   },
   "options_alert_identityLoadError": {
-    "message": "Error loading identity",
+    "message": "Erro ao carregar a identidade",
     "description": "Identity load error message"
   },
   "options_editor_saving": {
-    "message": "Saving...",
+    "message": "Salvando...",
     "description": "Saving indicator text"
   },
   "options_editor_importFile": {
-    "message": "Import from file",
+    "message": "Importar de arquivo",
     "description": "Import from file tooltip"
   },
   "options_editor_exportFile": {
-    "message": "Export to file",
+    "message": "Exportar para arquivo",
     "description": "Export to file tooltip"
   },
   "options_editor_saveAsTheme": {
-    "message": "Save as theme",
+    "message": "Salvar como tema",
     "description": "Save as theme tooltip"
   },
   "options_editor_openInNewTab": {
-    "message": "Open in new tab",
+    "message": "Abrir em nova aba",
     "description": "Open in new tab tooltip"
   },
   "options_editor_backToSettings": {
-    "message": "Back to Settings",
+    "message": "Voltar para configurações",
     "description": "Back to settings button label"
   },
   "options_editor_fullExperienceNote": {
-    "message": "For the full editor experience, ",
+    "message": "Para a experiência completa do editor, ",
     "description": "Full editor experience note prefix"
   },
   "options_editor_openInNewTabLink": {
-    "message": "open this editor in a new tab",
+    "message": "abra este editor em uma nova aba",
     "description": "Open in new tab link text"
   },
   "options_editor_stylingGuide": {
-    "message": "Styling Guide",
+    "message": "Guia de estilo",
     "description": "Styling guide link text"
   },
   "options_editor_renameTheme": {
-    "message": "Rename custom theme",
+    "message": "Renomear tema personalizado",
     "description": "Rename theme button title"
   },
   "options_editor_deleteTheme": {
-    "message": "Delete custom theme",
+    "message": "Excluir tema personalizado",
     "description": "Delete theme button title"
   },
   "options_editor_doubleClickRename": {
-    "message": "Double-click to rename",
+    "message": "Clique duplo para renomear",
     "description": "Double-click to rename tooltip"
   },
   "options_provider_betterLyrics": {
@@ -656,179 +656,179 @@
     "description": "BiniLyrics provider name"
   },
   "options_syncType_syllable": {
-    "message": "Syllable",
+    "message": "Sílaba",
     "description": "Syllable sync type label"
   },
   "options_syncType_syllable_tooltip": {
-    "message": "Highlights individual syllables as they're sung. Syllable syncing provides the best experience.",
+    "message": "Destaca sílabas individuais conforme são cantadas. A sincronização por sílaba oferece a melhor experiência.",
     "description": "Syllable sync type tooltip"
   },
   "options_syncType_word": {
-    "message": "Word",
+    "message": "Palavra",
     "description": "Word sync type label"
   },
   "options_syncType_word_tooltip": {
-    "message": "Highlights individual words as they're sung. Word syncing provides a good experience.",
+    "message": "Destaca palavras individuais conforme são cantadas. A sincronização por palavra oferece uma boa experiência.",
     "description": "Word sync type tooltip"
   },
   "options_syncType_line": {
-    "message": "Line",
+    "message": "Linha",
     "description": "Line sync type label"
   },
   "options_syncType_line_tooltip": {
-    "message": "Highlights entire lines as they're sung. Line syncing provides a basic experience.",
+    "message": "Destaca linhas inteiras conforme são cantadas. A sincronização por linha oferece uma experiência básica.",
     "description": "Line sync type tooltip"
   },
   "options_syncType_unsynced": {
-    "message": "Unsynced",
+    "message": "Não sincronizado",
     "description": "Unsynced sync type label"
   },
   "options_syncType_unsynced_tooltip": {
-    "message": "Lyrics without timing information. Unsynced lyrics provide a minimal experience.",
+    "message": "Letras sem informações de tempo. Letras não sincronizadas oferecem uma experiência mínima.",
     "description": "Unsynced sync type tooltip"
   },
   "options_detail_rateTheme": {
-    "message": "Rate this theme",
+    "message": "Avaliar este tema",
     "description": "Rate theme label"
   },
   "options_detail_install": {
-    "message": "Install",
+    "message": "Instalar",
     "description": "Install button label"
   },
   "options_detail_viewOnGitHub": {
-    "message": "View on GitHub",
+    "message": "Ver no GitHub",
     "description": "View on GitHub link text"
   },
   "options_detail_shaderInfo": {
-    "message": "This theme includes a shader config.",
+    "message": "Este tema inclui uma configuração de shader.",
     "description": "Shader info text prefix"
   },
   "options_detail_downloadShader": {
-    "message": "Download shader.json",
+    "message": "Baixar shader.json",
     "description": "Download shader link text"
   },
   "options_detail_shaderImportSuffix": {
-    "message": "and import it in",
+    "message": "e importe em",
     "description": "Shader import suffix text before Better Lyrics Shaders link"
   },
   "marketplace_pageTitle": {
-    "message": "Better Lyrics Theme Marketplace",
+    "message": "Loja de temas Better Lyrics",
     "description": "Page title"
   },
   "marketplace_title": {
-    "message": "Theme Marketplace",
+    "message": "Loja de temas",
     "description": "Header title"
   },
   "marketplace_subtitle": {
-    "message": "Discover and install community themes",
+    "message": "Descubra e instale temas da comunidade",
     "description": "Header subtitle"
   },
   "marketplace_searchPlaceholder": {
-    "message": "Search themes...",
+    "message": "Pesquisar temas...",
     "description": "Search input placeholder"
   },
   "marketplace_refresh": {
-    "message": "Refresh",
+    "message": "Atualizar",
     "description": "Refresh button label"
   },
   "marketplace_keyboardShortcuts": {
-    "message": "Keyboard shortcuts",
+    "message": "Atalhos de teclado",
     "description": "Keyboard shortcuts button label"
   },
   "marketplace_sortBy": {
-    "message": "Sort by",
+    "message": "Ordenar por",
     "description": "Sort filter group label"
   },
   "marketplace_sortRatingDesc": {
-    "message": "Highest rated",
+    "message": "Mais bem avaliados",
     "description": "Sort by highest rating"
   },
   "marketplace_sortRatingAsc": {
-    "message": "Lowest rated",
+    "message": "Menos bem avaliados",
     "description": "Sort by lowest rating"
   },
   "marketplace_sortDownloadsDesc": {
-    "message": "Most downloaded",
+    "message": "Mais baixados",
     "description": "Sort by most downloads"
   },
   "marketplace_sortDownloadsAsc": {
-    "message": "Least downloaded",
+    "message": "Menos baixados",
     "description": "Sort by least downloads"
   },
   "marketplace_sortNewest": {
-    "message": "Newest",
+    "message": "Mais recentes",
     "description": "Sort by newest"
   },
   "marketplace_sortOldest": {
-    "message": "Oldest",
+    "message": "Mais antigos",
     "description": "Sort by oldest"
   },
   "marketplace_show": {
-    "message": "Show",
+    "message": "Mostrar",
     "description": "Show filter group label"
   },
   "marketplace_showAll": {
-    "message": "All",
+    "message": "Todos",
     "description": "Show all themes"
   },
   "marketplace_showInstalled": {
-    "message": "Installed",
+    "message": "Instalados",
     "description": "Show installed themes"
   },
   "marketplace_showNotInstalled": {
-    "message": "Not installed",
+    "message": "Não instalados",
     "description": "Show not installed themes"
   },
   "marketplace_options": {
-    "message": "Options",
+    "message": "Opções",
     "description": "Options filter group label"
   },
   "marketplace_hasShaders": {
-    "message": "Has shaders",
+    "message": "Com shaders",
     "description": "Filter for themes with shaders"
   },
   "marketplace_compatibleOnly": {
-    "message": "Compatible only",
+    "message": "Apenas compatíveis",
     "description": "Filter for compatible themes"
   },
   "marketplace_installFromUrl": {
-    "message": "Install from URL",
+    "message": "Instalar de URL",
     "description": "Install from URL button"
   },
   "marketplace_submitTheme": {
-    "message": "Submit a theme",
+    "message": "Enviar um tema",
     "description": "Submit a theme link"
   },
   "marketplace_loading": {
-    "message": "Loading themes...",
+    "message": "Carregando temas...",
     "description": "Loading message"
   },
   "marketplace_retry": {
-    "message": "Retry",
+    "message": "Tentar novamente",
     "description": "Retry button"
   },
   "marketplace_noThemesMatch": {
-    "message": "No themes match your filters",
+    "message": "Nenhum tema corresponde aos seus filtros",
     "description": "Empty state message"
   },
   "marketplace_grantPermission": {
-    "message": "Grant Permission",
+    "message": "Conceder permissão",
     "description": "Grant permission button"
   },
   "marketplace_install": {
-    "message": "Install",
+    "message": "Instalar",
     "description": "Install button"
   },
   "marketplace_remove": {
-    "message": "Remove",
+    "message": "Remover",
     "description": "Remove button"
   },
   "marketplace_apply": {
-    "message": "Apply",
+    "message": "Aplicar",
     "description": "Apply button"
   },
   "marketplace_active": {
-    "message": "Active",
+    "message": "Ativo",
     "description": "Active theme indicator"
   },
   "marketplace_shadersBadge": {
@@ -840,123 +840,123 @@
     "description": "GitHub badge text"
   },
   "marketplace_urlModalTitle": {
-    "message": "Install from URL",
+    "message": "Instalar de URL",
     "description": "URL install modal title"
   },
   "marketplace_urlModalMessage": {
-    "message": "Enter a GitHub repository URL to install a theme directly:",
+    "message": "Digite a URL de um repositório do GitHub para instalar um tema diretamente:",
     "description": "URL install modal message"
   },
   "marketplace_urlModalPlaceholder": {
-    "message": "github.com/user/repo or github.com/user/repo/tree/branch",
+    "message": "github.com/usuario/repo ou github.com/usuario/repo/tree/branch",
     "description": "URL input placeholder"
   },
   "marketplace_urlModalError": {
-    "message": "Please enter a GitHub repository URL",
+    "message": "Por favor, digite a URL de um repositório do GitHub",
     "description": "URL validation error"
   },
   "marketplace_cancel": {
-    "message": "Cancel",
+    "message": "Cancelar",
     "description": "Cancel button"
   },
   "marketplace_urlPermissionTitle": {
-    "message": "Additional Permission Required",
+    "message": "Permissão adicional necessária",
     "description": "URL permission modal title"
   },
   "marketplace_urlPermissionWhy": {
-    "message": "Why is this needed?",
+    "message": "Por que isso é necessário?",
     "description": "URL permission explanation title"
   },
   "marketplace_urlPermissionDesc": {
-    "message": "Installing themes from custom GitHub URLs requires broader access than the marketplace. This allows Better Lyrics to:",
+    "message": "Instalar temas de URLs personalizadas do GitHub requer um acesso mais amplo do que a loja. Isso permite que Better Lyrics:",
     "description": "URL permission description"
   },
   "marketplace_urlPermissionItem1": {
-    "message": "Fetch theme files from any GitHub repository",
+    "message": "Buscar arquivos de tema de qualquer repositório do GitHub",
     "description": "URL permission list item 1"
   },
   "marketplace_urlPermissionItem2": {
-    "message": "Detect the default branch of the repository",
+    "message": "Detectar o branch padrão do repositório",
     "description": "URL permission list item 2"
   },
   "marketplace_urlPermissionItem3": {
-    "message": "Validate the theme structure before installation",
+    "message": "Validar a estrutura do tema antes da instalação",
     "description": "URL permission list item 3"
   },
   "marketplace_urlPermissionNote": {
-    "message": "This permission is only used when you install themes via URL. Marketplace themes don't require this.",
+    "message": "Esta permissão só é usada ao instalar temas via URL. Temas da loja não precisam dela.",
     "description": "URL permission note"
   },
   "marketplace_shortcutsTitle": {
-    "message": "Keyboard Shortcuts",
+    "message": "Atalhos de teclado",
     "description": "Shortcuts modal title"
   },
   "marketplace_shortcutsNavigation": {
-    "message": "Navigation",
+    "message": "Navegação",
     "description": "Navigation shortcuts group"
   },
   "marketplace_shortcutsSearch": {
-    "message": "Search themes",
+    "message": "Pesquisar temas",
     "description": "Search shortcut label"
   },
   "marketplace_shortcutsRefresh": {
-    "message": "Refresh marketplace",
+    "message": "Atualizar loja",
     "description": "Refresh shortcut label"
   },
   "marketplace_shortcutsInstallUrl": {
-    "message": "Install from URL",
+    "message": "Instalar de URL",
     "description": "Install from URL shortcut label"
   },
   "marketplace_shortcutsSort": {
-    "message": "Sort",
+    "message": "Ordenar",
     "description": "Sort shortcuts group"
   },
   "marketplace_shortcutsSortHint": {
-    "message": "press again to toggle direction",
+    "message": "pressione novamente para inverter",
     "description": "Sort toggle hint"
   },
   "marketplace_shortcutsByRating": {
-    "message": "By rating",
+    "message": "Por avaliação",
     "description": "Sort by rating shortcut"
   },
   "marketplace_shortcutsByDownloads": {
-    "message": "By downloads",
+    "message": "Por downloads",
     "description": "Sort by downloads shortcut"
   },
   "marketplace_shortcutsByDate": {
-    "message": "By date",
+    "message": "Por data",
     "description": "Sort by date shortcut"
   },
   "marketplace_shortcutsFilters": {
-    "message": "Filters",
+    "message": "Filtros",
     "description": "Filters shortcuts group"
   },
   "marketplace_shortcutsShowAll": {
-    "message": "Show all",
+    "message": "Mostrar todos",
     "description": "Show all shortcut"
   },
   "marketplace_shortcutsShowInstalled": {
-    "message": "Show installed",
+    "message": "Mostrar instalados",
     "description": "Show installed shortcut"
   },
   "marketplace_shortcutsShowNotInstalled": {
-    "message": "Show not installed",
+    "message": "Mostrar não instalados",
     "description": "Show not installed shortcut"
   },
   "marketplace_shortcutsToggleShaders": {
-    "message": "Toggle shaders",
+    "message": "Alternar shaders",
     "description": "Toggle shaders shortcut"
   },
   "marketplace_shortcutsToggleCompatible": {
-    "message": "Toggle compatible",
+    "message": "Alternar compatível",
     "description": "Toggle compatible shortcut"
   },
   "marketplace_shortcutsDetails": {
-    "message": "Theme Details",
+    "message": "Detalhes do tema",
     "description": "Theme details shortcuts group"
   },
   "marketplace_shortcutsInstallRemove": {
-    "message": "Install / Remove",
+    "message": "Instalar / Remover",
     "description": "Install/remove shortcut"
   },
   "marketplace_shortcutsApply": {
@@ -964,43 +964,43 @@
     "description": "Apply theme shortcut label"
   },
   "marketplace_shortcutsPrevImage": {
-    "message": "Previous image",
+    "message": "Imagem anterior",
     "description": "Previous image shortcut"
   },
   "marketplace_shortcutsNextImage": {
-    "message": "Next image",
+    "message": "Próxima imagem",
     "description": "Next image shortcut"
   },
   "marketplace_shortcutsGeneral": {
-    "message": "General",
+    "message": "Geral",
     "description": "General shortcuts group"
   },
   "marketplace_shortcutsCloseModal": {
-    "message": "Close modal",
+    "message": "Fechar janela",
     "description": "Close modal shortcut"
   },
   "marketplace_shortcutsShowShortcuts": {
-    "message": "Show shortcuts",
+    "message": "Mostrar atalhos",
     "description": "Show shortcuts shortcut"
   },
   "marketplace_shortcutsApplyTheme": {
-    "message": "Apply theme (after install)",
+    "message": "Aplicar tema (após instalar)",
     "description": "Apply theme shortcut"
   },
   "marketplace_ratingFailed": {
-    "message": "Failed to submit rating",
+    "message": "Falha ao enviar avaliação",
     "description": "Rating submission error"
   },
   "marketplace_shaderFetchFailed": {
-    "message": "Failed to fetch shader config",
+    "message": "Falha ao buscar configuração do shader",
     "description": "Shader fetch error"
   },
   "marketplace_applyFailed": {
-    "message": "Failed to apply theme",
+    "message": "Falha ao aplicar o tema",
     "description": "Theme apply error"
   },
   "marketplace_noThemesInstalled": {
-    "message": "No themes installed yet",
+    "message": "Nenhum tema instalado",
     "description": "Empty installed themes message"
   },
   "marketplace_lastUpdatedOn": {
@@ -1060,31 +1060,31 @@
     }
   },
   "editor_pageTitle": {
-    "message": "Better Lyrics Styles Editor",
+    "message": "Editor CSS Better Lyrics",
     "description": "Standalone editor page title"
   },
   "editor_importFromFile": {
-    "message": "Import from file",
+    "message": "Importar de arquivo",
     "description": "Import from file button"
   },
   "editor_exportToFile": {
-    "message": "Export to file",
+    "message": "Exportar para arquivo",
     "description": "Export to file button"
   },
   "editor_saveAsTheme": {
-    "message": "Save as theme",
+    "message": "Salvar como tema",
     "description": "Save as theme button"
   },
   "editor_stylingGuide": {
-    "message": "Styling guide",
+    "message": "Guia de estilo",
     "description": "Styling guide button"
   },
   "editor_tip": {
-    "message": "Tip: This is a standalone tab, you can move this editor to a separate window or use split-screen view alongside YouTube Music to see your changes in real-time. For more info, visit the",
+    "message": "Dica: Esta aba independente pode ser movida para uma janela separada ou usada em tela dividida junto com YouTube Music para ver suas alterações em tempo real. Para mais informações, visite o",
     "description": "Editor tip text"
   },
   "editor_poweredBy": {
-    "message": "Powered by",
+    "message": "Desenvolvido por",
     "description": "Powered by label"
   },
   "editor_playground": {
@@ -1092,15 +1092,15 @@
     "description": "Playground link text"
   },
   "editor_docs": {
-    "message": "Docs",
+    "message": "Documentação",
     "description": "Docs link text"
   },
   "lyrics_source": {
-    "message": "Source: ",
+    "message": "Fonte: ",
     "description": "Lyrics source label"
   },
   "lyrics_searchOnGenius": {
-    "message": "Search on Genius",
+    "message": "Pesquisar no Genius",
     "description": "Search on Genius button text"
   },
   "lyrics_getShaders": {
@@ -1108,19 +1108,19 @@
     "description": "Footer button text linking to the Better Lyrics Shaders companion extension"
   },
   "lyrics_searching": {
-    "message": "Better Lyrics is searching for lyrics...",
+    "message": "Better Lyrics está buscando letras...",
     "description": "Loading message while searching for lyrics"
   },
   "lyrics_stillSearching": {
-    "message": "Still searching for synced lyrics...",
+    "message": "Ainda buscando letras sincronizadas...",
     "description": "Loading message while still searching"
   },
   "lyrics_noSyncedLyrics": {
-    "message": "Better Lyrics could not find synced lyrics",
+    "message": "Better Lyrics não conseguiu encontrar letras sincronizadas",
     "description": "Message when no synced lyrics found"
   },
   "lyrics_adPlaying": {
-    "message": "[elevator music]",
+    "message": "[música de elevador]",
     "description": "Message shown during ad playback"
   },
   "lyrics_writtenBy": {
@@ -1128,7 +1128,7 @@
     "description": "Label shown before the songwriter names after the last lyric line"
   },
   "lyrics_notFound": {
-    "message": "No lyrics found for this song",
+    "message": "Nenhuma letra encontrada para esta música",
     "description": "Message when no lyrics are available"
   },
   "lyrics_resumeAutoscroll": {
@@ -1136,27 +1136,27 @@
     "description": "Resume Autoscroll button label"
   },
   "options_language_exclusions": {
-    "message": "Language exclusions",
+    "message": "Exclusões de idioma",
     "description": "Label for language exclusions setting"
   },
   "options_manage": {
-    "message": "Manage",
+    "message": "Gerenciar",
     "description": "Manage button label"
   },
   "options_language_exclusionsTitle": {
-    "message": "Language Exclusions",
+    "message": "Exclusões de Idioma",
     "description": "Modal title for language exclusions"
   },
   "options_romanization_tab": {
-    "message": "Romanization",
+    "message": "Romanização",
     "description": "Romanization tab label"
   },
   "options_translation_tab": {
-    "message": "Translation",
+    "message": "Tradução",
     "description": "Translation tab label"
   },
   "options_searchLanguages": {
-    "message": "Search languages...",
+    "message": "Pesquisar idiomas...",
     "description": "Search input placeholder"
   },
   "options_romanization_hint": {
@@ -1639,6 +1639,32 @@
     "message": "11-character ID from the YouTube Music URL",
     "description": "Hint text below video ID field label"
   },
+  "unison_additionalVideos": {
+    "message": "Additional videos",
+    "description": "Label for the optional submit-form field where the user lists other videos of the same song to link to this lyric"
+  },
+  "unison_additionalVideosHint": {
+    "message": "Optional. Other uploads of this song to link, videoIds or URLs separated by spaces or commas. Each is verified; ones that don't match are skipped.",
+    "description": "Hint text below the additional videos field on the submit form"
+  },
+  "unison_additionalVideosSkipped": {
+    "message": "Submitted, but these videos weren't linked: $videos$",
+    "description": "Feedback after submitting when some additional videos could not be linked. $videos$ is a comma-separated list of videoIds",
+    "placeholders": {
+      "videos": {
+        "content": "$1",
+        "example": "dQw4w9WgXcQ, abcdEFGH123"
+      }
+    }
+  },
+  "unison_additionalVideosInvalid": {
+    "message": "Some additional videos aren't valid video IDs or URLs. Fix or remove them to submit.",
+    "description": "Error shown on submit when the additional videos field contains entries that are not valid YouTube video IDs or URLs"
+  },
+  "unison_viewSubmittedLyrics": {
+    "message": "View lyrics",
+    "description": "Button in the submit feedback that opens the lyric that was just submitted, shown when some additional videos could not be linked"
+  },
   "unison_formatHint": {
     "message": "Auto-detected from lyrics content",
     "description": "Hint text below format field label"
@@ -1834,5 +1860,547 @@
   "unison_vote_plural": {
     "message": "votes",
     "description": "Plural noun used after numbers other than 1 in the Unison vote count (e.g. '5 votes')"
+  },
+  "unison_linkedVideos": {
+    "message": "Linked videos",
+    "description": "Heading for the list of YouTube videos a Unison lyric is linked to, on the lyric detail page"
+  },
+  "unison_noLinkedVideos": {
+    "message": "No linked videos yet",
+    "description": "Shown under the linked-videos heading when a lyric has no linked videos"
+  },
+  "unison_videoPrimary": {
+    "message": "Primary",
+    "description": "Badge marking the primary (home) video of a Unison lyric, which cannot be unlinked"
+  },
+  "unison_removeVideo": {
+    "message": "Remove",
+    "description": "Button that unlinks a video from a Unison lyric"
+  },
+  "unison_suggestedVideos": {
+    "message": "Suggested videos",
+    "description": "Heading for the list of videos Unison suggests linking to a lyric"
+  },
+  "unison_noMatchingVideos": {
+    "message": "No matching videos found",
+    "description": "Suggested videos list when every suggestion is judged a different recording; those stay behind the other versions toggle below it"
+  },
+  "unison_noSuggestions": {
+    "message": "No suggestions right now",
+    "description": "Shown under the suggested-videos heading when Unison has no suggestions"
+  },
+  "unison_linkConfirmTitle": {
+    "message": "Link this video?",
+    "description": "Title of the confirmation shown before linking a suggested video whose title differs from the lyric's song title"
+  },
+  "unison_linkConfirmBody": {
+    "message": "\"$video$\" isn't titled exactly \"$song$\". Check it's the same recording before linking, since remixes, live and sped-up versions usually need their own lyrics.",
+    "description": "Body of the confirmation before linking a suggested video. $video$ is the suggested video's title, $song$ is the lyric's song title",
+    "placeholders": {
+      "video": {
+        "content": "$1",
+        "example": "Blinding Lights (Major Lazer Remix)"
+      },
+      "song": {
+        "content": "$2",
+        "example": "Blinding Lights"
+      }
+    }
+  },
+  "unison_addVideo": {
+    "message": "Add",
+    "description": "Button that links a suggested video to a Unison lyric"
+  },
+  "unison_linkFailed": {
+    "message": "Couldn't link this video",
+    "description": "Generic error shown when linking a video to a Unison lyric fails"
+  },
+  "unison_unlinkFailed": {
+    "message": "Couldn't remove this video",
+    "description": "Generic error shown when unlinking a video from a Unison lyric fails"
+  },
+  "unison_suggestMatchSameHint": {
+    "message": "Likely the same recording",
+    "description": "Tooltip and accessible label for the lightbulb icon on a suggested video judged to be the same recording as the lyric; also marks videos added to the additional videos field automatically"
+  },
+  "unison_suggestMatchRelated": {
+    "message": "Might be a different version. Check before adding",
+    "description": "Tooltip and accessible label for the question mark icon on a suggested video that may be a different version of the song (an edit or variant), asking the user to check before linking"
+  },
+  "unison_suggestMatchDifferentHint": {
+    "message": "A different version, or another song",
+    "description": "Tooltip and accessible label for the layers icon on a suggested video judged to be a different recording of the song, such as a remix or live version"
+  },
+  "unison_suggestOtherVersions": {
+    "message": "Show $count$ other versions",
+    "description": "Toggle that reveals suggested videos judged to be different recordings, such as remixes or live versions. $count$ is how many are hidden",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "unison_suggestHideOtherVersions": {
+    "message": "Hide other versions",
+    "description": "Label of the other versions toggle while it is open; clicking it hides the suggested videos judged to be different recordings again"
+  },
+  "unison_videosLoadFailed": {
+    "message": "Couldn't load videos",
+    "description": "Shown in place of the linked or suggested videos list when Unison could not load it; a retry button follows"
+  },
+  "unison_showMore": {
+    "message": "Show more",
+    "description": "Button that reveals the rest of the suggested videos list beyond the first few"
+  },
+  "unison_error_linkCapReached": {
+    "message": "Link limit reached for this lyric",
+    "description": "Error shown when a lyric already has the maximum number of linked videos"
+  },
+  "unison_error_durationMismatch": {
+    "message": "That video's length doesn't match",
+    "description": "Error shown when a video cannot be linked because its duration differs too much from the lyric"
+  },
+  "unison_error_videoUnverifiable": {
+    "message": "That video couldn't be verified",
+    "description": "Error shown when a video cannot be linked because Unison could not fetch it"
+  },
+  "unison_error_cannotUnlinkPrimary": {
+    "message": "The primary video can't be removed",
+    "description": "Error shown when the user tries to unlink the primary video of a lyric"
+  },
+  "unison_rev_number": {
+    "message": "Revision $rev$",
+    "description": "Revision label. $rev$ is the revision number",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "unison_rev_original": {
+    "message": "Original",
+    "description": "Label for revision 1 of a Unison lyric, the original upload"
+  },
+  "unison_rev_neverEdited": {
+    "message": "Uploaded $when$, never edited",
+    "description": "Revision bar text for a lyric with no edits. $when$ is a relative time",
+    "placeholders": {
+      "when": {
+        "content": "$1",
+        "example": "3 months ago"
+      }
+    }
+  },
+  "unison_rev_editedAgo": {
+    "message": "Edited $when$",
+    "description": "Revision bar text for the live revision. $when$ is a relative time",
+    "placeholders": {
+      "when": {
+        "content": "$1",
+        "example": "2 days ago"
+      }
+    }
+  },
+  "unison_rev_pendingChip": {
+    "message": "Revision $rev$ pending",
+    "description": "Chip for an edit waiting for council review",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "7"
+      }
+    }
+  },
+  "unison_rev_revisions": {
+    "message": "Revisions",
+    "description": "Button and page title for the list of a lyric's revisions"
+  },
+  "unison_rev_editLyrics": {
+    "message": "Edit lyrics",
+    "description": "Button that opens the lyric editor"
+  },
+  "unison_rev_viewChanges": {
+    "message": "View changes",
+    "description": "Button that opens the diff of the pending edit, and link in the editor save bar that opens the Changes tab"
+  },
+  "unison_rev_changes": {
+    "message": "Changes",
+    "description": "Editor tab that lists what the edit changes compared with an earlier revision"
+  },
+  "unison_rev_changesTabs": {
+    "message": "Preview or changes",
+    "description": "Screen reader label for the editor tabs that switch between the lyric preview and the list of changes"
+  },
+  "unison_rev_details": {
+    "message": "Details",
+    "description": "Diff section label above changed song details: language, ISRC and album"
+  },
+  "unison_rev_updating": {
+    "message": "Updating",
+    "description": "Shown while the list of changes refreshes after an edit"
+  },
+  "unison_rev_checkFailed": {
+    "message": "Couldn't check your edit",
+    "description": "Editor save bar title when the edit check failed for a reason the server did not explain"
+  },
+  "unison_rev_checkFailedHint": {
+    "message": "Save turns back on once the check runs.",
+    "description": "Editor save bar hint under the failed check title, followed by a Try again link"
+  },
+  "unison_rev_tryAgain": {
+    "message": "Try again",
+    "description": "Link or button that runs the edit check again after it failed"
+  },
+  "unison_rev_changesError": {
+    "message": "Couldn't load changes",
+    "description": "Error title in the editor Changes tab when the edit check failed"
+  },
+  "unison_rev_changesErrorHint": {
+    "message": "Something went wrong. Your draft is safe, and the preview still works.",
+    "description": "Error hint in the editor Changes tab when the edit check failed"
+  },
+  "unison_rev_changesNeedParse": {
+    "message": "Changes return once the lyrics parse.",
+    "description": "Editor Changes tab while the lyrics have errors that stop them from being read"
+  },
+  "unison_rev_withdraw": {
+    "message": "Withdraw",
+    "description": "Button that withdraws a pending edit before the council reviews it"
+  },
+  "unison_rev_reason_sealed": {
+    "message": "Sealed lyric",
+    "description": "Why an edit needs council review: the council approved (sealed) this lyric"
+  },
+  "unison_rev_reason_flagged": {
+    "message": "Flagged for review",
+    "description": "Why an edit needs council review: an automatic check flagged it"
+  },
+  "unison_rev_reason_largeText": {
+    "message": "Large text change",
+    "description": "Why an edit needs council review: too much of the text changed"
+  },
+  "unison_rev_reason_largeTiming": {
+    "message": "Large timing change",
+    "description": "Why an edit needs council review: too much of the timing changed"
+  },
+  "unison_rev_goesToReview": {
+    "message": "Goes to council review: $reason$",
+    "description": "Editor outcome before saving. $reason$ is a review reason, like 'Large text change'",
+    "placeholders": {
+      "reason": {
+        "content": "$1",
+        "example": "Large text change"
+      }
+    }
+  },
+  "unison_rev_pendingTitle": {
+    "message": "Waiting for council review: $reason$",
+    "description": "Title for a saved edit that waits for review. $reason$ is a review reason, like 'Large text change'",
+    "placeholders": {
+      "reason": {
+        "content": "$1",
+        "example": "Large text change"
+      }
+    }
+  },
+  "unison_rev_staysLive": {
+    "message": "Revision $rev$ stays live until the council decides.",
+    "description": "Names the revision listeners keep seeing during review",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "unison_rev_rejectedTitle": {
+    "message": "Revision $rev$ was rejected",
+    "description": "Title when the council rejected an edit",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "6"
+      }
+    }
+  },
+  "unison_rev_councilNote": {
+    "message": "Council note: “$note$”",
+    "description": "The note the council left when it rejected an edit",
+    "placeholders": {
+      "note": {
+        "content": "$1",
+        "example": "Timing drifts after the bridge."
+      }
+    }
+  },
+  "unison_rev_sealedHint": {
+    "message": "Every edit goes to council review before it goes live.",
+    "description": "Explains what editing a sealed lyric means"
+  },
+  "unison_rev_status_live": {
+    "message": "Live",
+    "description": "Revision status: the version listeners see"
+  },
+  "unison_rev_status_pending": {
+    "message": "Pending",
+    "description": "Revision status: waiting for council review"
+  },
+  "unison_rev_status_past": {
+    "message": "Past",
+    "description": "Revision status: was live before"
+  },
+  "unison_rev_status_superseded": {
+    "message": "Superseded",
+    "description": "Revision status: replaced by a newer save before review"
+  },
+  "unison_rev_status_rejected": {
+    "message": "Rejected",
+    "description": "Revision status: the council rejected it"
+  },
+  "unison_rev_status_withdrawn": {
+    "message": "Withdrawn",
+    "description": "Revision status: the owner withdrew it"
+  },
+  "unison_rev_anchor": {
+    "message": "Anchor",
+    "description": "Chip on the revision that edits are measured against"
+  },
+  "unison_rev_approved": {
+    "message": "Approved by the council",
+    "description": "Revisions list reason for a council-approved revision"
+  },
+  "unison_rev_withinLimits": {
+    "message": "Within limits",
+    "description": "Revisions list reason for an edit that went live without review"
+  },
+  "unison_rev_reverted": {
+    "message": "Reverted to revision $rev$",
+    "description": "Revisions list reason and success message for a revert",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "unison_rev_driftValues": {
+    "message": "Text $text$% · Timing $timing$%",
+    "description": "How much text and timing an edit changed, as whole numbers",
+    "placeholders": {
+      "text": {
+        "content": "$1",
+        "example": "8"
+      },
+      "timing": {
+        "content": "$2",
+        "example": "4"
+      }
+    }
+  },
+  "unison_rev_colStatus": {
+    "message": "Status",
+    "description": "Revisions list column header"
+  },
+  "unison_rev_colChange": {
+    "message": "Change",
+    "description": "Revisions list column header (noun): how much an edit changed"
+  },
+  "unison_rev_colReason": {
+    "message": "Reason",
+    "description": "Revisions list column header"
+  },
+  "unison_rev_colWhen": {
+    "message": "When",
+    "description": "Revisions list column header: relative time"
+  },
+  "unison_rev_revision": {
+    "message": "Revision",
+    "description": "Column header and editor sidebar label"
+  },
+  "unison_rev_comparedWith": {
+    "message": "Compared with revision $rev$",
+    "description": "Line above a diff. $rev$ is the compared revision",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "unison_rev_legendAdded": {
+    "message": "Added",
+    "description": "Diff legend: added lines or words"
+  },
+  "unison_rev_legendRemoved": {
+    "message": "Removed",
+    "description": "Diff legend: removed lines or words"
+  },
+  "unison_rev_legendTiming": {
+    "message": "Timing only",
+    "description": "Diff legend: lines whose timing changed but text did not"
+  },
+  "unison_rev_unchangedLines": {
+    "message": "Unchanged lines: $count$",
+    "description": "Collapsed part of a diff",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "13"
+      }
+    }
+  },
+  "unison_rev_headSection": {
+    "message": "Translations, romanization and credits",
+    "description": "Label above the diff rows for text stored outside the lyric lines: translations, romanizations and credits"
+  },
+  "unison_rev_headCredits": {
+    "message": "Credits",
+    "description": "Diff row label for a changed credit, such as a songwriter or singer name"
+  },
+  "unison_rev_headLine": {
+    "message": "line $line$",
+    "description": "Part of a diff row label that names the lyric line a translation or romanization belongs to, e.g. 'Translation · Spanish · line 3'",
+    "placeholders": {
+      "line": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "unison_rev_noDiff": {
+    "message": "No changes to show",
+    "description": "Diff area when there is nothing to compare"
+  },
+  "unison_rev_revertToThis": {
+    "message": "Revert to this",
+    "description": "Button that starts a revert to a past revision"
+  },
+  "unison_rev_revertLive": {
+    "message": "Reverting goes live now as revision $rev$",
+    "description": "Note before a revert that skips review",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "6"
+      }
+    }
+  },
+  "unison_rev_revertCheckFailed": {
+    "message": "Couldn't check whether reverting goes live or to council review",
+    "description": "Note on a past revision when the check of where a revert would land failed; the owner can still revert and the server decides"
+  },
+  "unison_rev_revertReview": {
+    "message": "Reverting goes to council review as revision $rev$",
+    "description": "Note before a revert that needs review",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "6"
+      }
+    }
+  },
+  "unison_rev_locked": {
+    "message": "Song and artist can't be edited.",
+    "description": "Editor note about fields that are locked"
+  },
+  "unison_rev_editsLeft": {
+    "message": "$remaining$ of $limit$ edits left today",
+    "description": "Edits left in the last 24 hours",
+    "placeholders": {
+      "remaining": {
+        "content": "$1",
+        "example": "3"
+      },
+      "limit": {
+        "content": "$2",
+        "example": "5"
+      }
+    }
+  },
+  "unison_rev_textChanged": {
+    "message": "Text changed",
+    "description": "Meter label: how much of the text changed"
+  },
+  "unison_rev_timingChanged": {
+    "message": "Timing changed",
+    "description": "Meter label: how much of the timing changed"
+  },
+  "unison_rev_textChangedSince": {
+    "message": "Text changed since revision $rev$",
+    "description": "Meter label: how much of the text changed since an earlier revision that the limit is measured against. $rev$ is that revision",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "unison_rev_timingChangedSince": {
+    "message": "Timing changed since revision $rev$",
+    "description": "Meter label: how much of the timing changed since an earlier revision that the limit is measured against. $rev$ is that revision",
+    "placeholders": {
+      "rev": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "unison_rev_ofLimit": {
+    "message": "of $limit$% limit",
+    "description": "Follows a bold percentage in a meter, like '8% of 15% limit'",
+    "placeholders": {
+      "limit": {
+        "content": "$1",
+        "example": "15"
+      }
+    }
+  },
+  "unison_rev_checkLine": {
+    "message": "Line $line$: $message$",
+    "description": "A server check message tied to a line. $message$ comes from the server",
+    "placeholders": {
+      "line": {
+        "content": "$1",
+        "example": "13"
+      },
+      "message": {
+        "content": "$2",
+        "example": "This is not a timestamp."
+      }
+    }
+  },
+  "unison_rev_checking": {
+    "message": "Checking your edit...",
+    "description": "Editor status while the server checks the edit"
+  },
+  "unison_rev_fixErrors": {
+    "message": "Fix the errors to save",
+    "description": "Editor status when the edit has errors"
+  },
+  "unison_rev_limitReached": {
+    "message": "Edit limit reached",
+    "description": "Shown when the daily edit limit is used up"
+  },
+  "unison_rev_noChanges": {
+    "message": "No changes from the live revision",
+    "description": "Shown when an edit or revert would change nothing"
+  },
+  "unison_rev_goesLive": {
+    "message": "Goes live when you save",
+    "description": "Editor status when the edit skips review"
+  },
+  "unison_rev_submitForReview": {
+    "message": "Submit for review",
+    "description": "Save button label when the edit needs review"
+  },
+  "unison_rev_noEdits": {
+    "message": "No edits yet",
+    "description": "Revisions page notice for a lyric that was never edited"
+  },
+  "unison_rev_error": {
+    "message": "Something went wrong. Try again.",
+    "description": "Fallback error for revision actions"
   }
 }
