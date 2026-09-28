@@ -1977,15 +1977,12 @@ function parseVideoId(raw: string): string | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
   const idPattern = /^[\w-]{11}$/;
-  try {
-    const url = new URL(trimmed);
-    const v = url.searchParams.get("v");
-    if (v) return idPattern.test(v) ? v : null;
-    const segment = url.pathname.split("/").filter(Boolean).pop();
-    return segment && idPattern.test(segment) ? segment : null;
-  } catch {
-    return idPattern.test(trimmed) ? trimmed : null;
-  }
+  const url = URL.parse(trimmed);
+  if (!url) return idPattern.test(trimmed) ? trimmed : null;
+  const v = url.searchParams.get("v");
+  if (v) return idPattern.test(v) ? v : null;
+  const segment = url.pathname.split("/").filter(Boolean).pop();
+  return segment && idPattern.test(segment) ? segment : null;
 }
 
 interface VideoIdToken {
