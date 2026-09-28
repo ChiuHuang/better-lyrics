@@ -38,7 +38,7 @@ import { appendInlineProfile, profileUrl } from "@modules/unison/gamificationRen
 import { generatePetName, getDisplayName, getIdentity } from "@/core/keyIdentity";
 import { warnUnison } from "@core/logger";
 import { observeResize } from "@modules/ui/layout/layoutWidth";
-import { bindLyricsFileDrop } from "@/options/unison/lyricsFile";
+import { bindLyricsFileDrop, LYRICS_FILE_READING_EVENT } from "@/options/unison/lyricsFile";
 import { createFeedback, fillFeedback } from "@/options/unison/feedback";
 import { type IconKey, svgIcon } from "@/options/unison/icons";
 import { appendLanguageOptions, matchLanguageOption } from "@/options/unison/languages";
@@ -1793,6 +1793,7 @@ function setupSubmitForm(): void {
     autoDetectLanguage();
   });
 
+  lyricsTextarea.addEventListener(LYRICS_FILE_READING_EVENT, syncSubmitButton);
   bindLyricsFileDrop(lyricsTextarea, text => {
     lyricsTextarea.value = text;
     updatePreview();
@@ -2139,8 +2140,13 @@ async function linkAdditionalVideos(lyricsId: number, ids: string[]): Promise<st
   return skipped;
 }
 
+let submitting = false;
+
+function syncSubmitButton(): void {
+  submitBtn.disabled = submitting || lyricsTextarea.readOnly;
+}
+
 async function handleSubmit(): Promise<void> {
-  if (lyricsTextarea.readOnly) return;
   const song = (document.getElementById("unison-field-song") as HTMLInputElement).value.trim();
   const artist = (document.getElementById("unison-field-artist") as HTMLInputElement).value.trim();
   const album = (document.getElementById("unison-field-album") as HTMLInputElement).value.trim();
@@ -2166,7 +2172,8 @@ async function handleSubmit(): Promise<void> {
     format = detectFormat(lyrics);
   }
 
-  submitBtn.disabled = true;
+  submitting = true;
+  syncSubmitButton();
 
   const result = await submitLyrics({
     videoId,
@@ -2181,7 +2188,8 @@ async function handleSubmit(): Promise<void> {
   });
 
   if (!result.success) {
-    submitBtn.disabled = false;
+    submitting = false;
+    syncSubmitButton();
     showFeedback(submitFeedback, {
       title: result.error ?? t("unison_submitFailed"),
       hint: result.hint,
@@ -2194,7 +2202,8 @@ async function handleSubmit(): Promise<void> {
   const additionalIds = additionalVideosInput?.getIds().filter(id => id !== videoId) ?? [];
   const skipped = newId != null && additionalIds.length ? await linkAdditionalVideos(newId, additionalIds) : [];
 
-  submitBtn.disabled = false;
+  submitting = false;
+  syncSubmitButton();
 
   if (skipped.length && newId != null) {
     showFeedback(submitFeedback, {

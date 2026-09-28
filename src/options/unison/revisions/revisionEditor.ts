@@ -20,7 +20,7 @@ import type { FieldCheck, PreviewResult, RevisionDraft, UnisonLyricsEntry } from
 import { previewRevision, saveRevision } from "@modules/unison/unisonApi";
 import { svgIcon } from "@/options/unison/icons";
 import { appendLanguageOptions } from "@/options/unison/languages";
-import { bindLyricsFileDrop, createLyricsFileInput } from "@/options/unison/lyricsFile";
+import { bindLyricsFileDrop, createLyricsFileInput, LYRICS_FILE_READING_EVENT } from "@/options/unison/lyricsFile";
 import { detectFormat, renderPreviewInto } from "@/options/unison/lyricsPreview";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { mountChangesTabs } from "@/options/unison/revisions/revisionChanges";
@@ -152,9 +152,11 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     const outcome = currentOutcome();
     const label = saving ? t("options_editor_saving") : messageText(outcome.saveLabel);
     setButtonContent(bar.save, label, "upload");
-    bar.save.disabled = saving || settledToken !== requestToken || !outcome.canSave;
+    bar.save.disabled = saving || textarea.readOnly || settledToken !== requestToken || !outcome.canSave;
     renderChanges();
   };
+
+  textarea.addEventListener(LYRICS_FILE_READING_EVENT, renderSaveButton);
 
   const render = (): void => {
     if (preview) {
@@ -242,7 +244,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   };
 
   bar.save.addEventListener("click", async () => {
-    if (bar.save.disabled || textarea.readOnly) return;
+    if (bar.save.disabled) return;
     const body = draft();
     setSaving(true);
     renderSaveButton();

@@ -1,5 +1,7 @@
 import { warnUnison } from "@core/logger";
 
+export const LYRICS_FILE_READING_EVENT = "unison-lyrics-file-reading";
+
 const LYRICS_FILE_EXTENSIONS = [".lrc", ".ttml", ".xml", ".txt"];
 
 const pendingReads = new WeakMap<HTMLTextAreaElement, { wasReadOnly: boolean }>();
@@ -15,6 +17,7 @@ function readLyricsFile(file: File, textarea: HTMLTextAreaElement, onLoad: (text
   const isLatest = () => pendingReads.get(textarea) === read;
   pendingReads.set(textarea, read);
   textarea.readOnly = true;
+  textarea.dispatchEvent(new Event(LYRICS_FILE_READING_EVENT));
   file
     .text()
     .then(
@@ -27,6 +30,7 @@ function readLyricsFile(file: File, textarea: HTMLTextAreaElement, onLoad: (text
       if (!isLatest()) return;
       pendingReads.delete(textarea);
       textarea.readOnly = read.wasReadOnly;
+      textarea.dispatchEvent(new Event(LYRICS_FILE_READING_EVENT));
     });
 }
 
