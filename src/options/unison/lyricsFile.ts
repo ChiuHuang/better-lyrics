@@ -2,7 +2,7 @@ import { warnUnison } from "@core/logger";
 
 const LYRICS_FILE_EXTENSIONS = [".lrc", ".ttml", ".xml", ".txt"];
 
-const pendingReads = new WeakSet<HTMLTextAreaElement>();
+const pendingReads = new WeakMap<HTMLTextAreaElement, { wasReadOnly: boolean }>();
 
 function isLyricsFile(file: File): boolean {
   const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
@@ -10,16 +10,23 @@ function isLyricsFile(file: File): boolean {
 }
 
 function readLyricsFile(file: File, textarea: HTMLTextAreaElement, onLoad: (text: string) => void): void {
-  if (!isLyricsFile(file) || pendingReads.has(textarea)) return;
-  const wasReadOnly = textarea.readOnly;
-  pendingReads.add(textarea);
+  if (!isLyricsFile(file)) return;
+  const read = { wasReadOnly: pendingReads.get(textarea)?.wasReadOnly ?? textarea.readOnly };
+  const isLatest = () => pendingReads.get(textarea) === read;
+  pendingReads.set(textarea, read);
   textarea.readOnly = true;
   file
     .text()
-    .then(onLoad, err => warnUnison(`Failed to read lyrics file ${file.name}`, err))
+    .then(
+      text => {
+        if (isLatest()) onLoad(text);
+      },
+      err => warnUnison(`Failed to read lyrics file ${file.name}`, err)
+    )
     .finally(() => {
+      if (!isLatest()) return;
       pendingReads.delete(textarea);
-      textarea.readOnly = wasReadOnly;
+      textarea.readOnly = read.wasReadOnly;
     });
 }
 
