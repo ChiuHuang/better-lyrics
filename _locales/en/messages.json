@@ -1913,6 +1913,10 @@
     "message": "Suggested videos",
     "description": "Heading for the list of videos Unison suggests linking to a lyric"
   },
+  "unison_noMatchingVideos": {
+    "message": "No matching videos found",
+    "description": "Suggested videos list when every suggestion is judged a different recording; those stay behind the other versions toggle below it"
+  },
   "unison_noSuggestions": {
     "message": "No suggestions right now",
     "description": "Shown under the suggested-videos heading when Unison has no suggestions"
@@ -1956,7 +1960,7 @@
     "description": "Tooltip and accessible label for the question mark icon on a suggested video that may be a different version of the song (an edit or variant), asking the user to check before linking"
   },
   "unison_suggestMatchDifferentHint": {
-    "message": "A different version of this song",
+    "message": "A different version, or another song",
     "description": "Tooltip and accessible label for the layers icon on a suggested video judged to be a different recording of the song, such as a remix or live version"
   },
   "unison_suggestOtherVersions": {

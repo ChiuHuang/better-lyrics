@@ -993,13 +993,24 @@ kbd {
   color: rgba(255, 255, 255, 0.55);
 }
 
-.unison-suggest-others {
-  text-align: center;
-}
-
 .unison-suggest-others-toggle {
   display: inline-block;
   list-style: none;
+  padding: 0.125rem 0;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.6875rem;
+  cursor: pointer;
+}
+
+.unison-suggest-others-toggle:hover {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: underline;
+}
+
+.unison-suggest-others-toggle:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
 }
 
 .unison-suggest-others-toggle::-webkit-details-marker {

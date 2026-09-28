@@ -1491,11 +1491,14 @@ function renderSuggestedVideoList(
   onAdd: AddSuggestion
 ): void {
   listEl.replaceChildren();
-  if (!suggestions.length) {
+  const createEmptyRow = (key: string): HTMLLIElement => {
     const empty = document.createElement("li");
     empty.className = "unison-video-empty";
-    empty.textContent = t("unison_noSuggestions");
-    listEl.appendChild(empty);
+    empty.textContent = t(key);
+    return empty;
+  };
+  if (!suggestions.length) {
+    listEl.appendChild(createEmptyRow("unison_noSuggestions"));
     return;
   }
 
@@ -1505,6 +1508,7 @@ function renderSuggestedVideoList(
   const likely = suggestions.filter(suggestion => suggestion.match?.level !== "different");
   const others = suggestions.filter(suggestion => suggestion.match?.level === "different");
 
+  if (!likely.length) listEl.appendChild(createEmptyRow("unison_noMatchingVideos"));
   listEl.append(...createRows(likely.slice(0, SUGGESTED_VIDEO_PAGE_SIZE)));
 
   if (likely.length > SUGGESTED_VIDEO_PAGE_SIZE) {
@@ -1527,7 +1531,7 @@ function renderSuggestedVideoList(
   othersRow.className = "unison-suggest-others";
   const othersDetails = document.createElement("details");
   const othersToggle = document.createElement("summary");
-  othersToggle.className = "unison-suggest-more-btn unison-suggest-others-toggle";
+  othersToggle.className = "unison-suggest-others-toggle";
   const closedLabel = t("unison_suggestOtherVersions", [String(others.length)]);
   othersToggle.textContent = closedLabel;
   othersDetails.addEventListener("toggle", () => {
