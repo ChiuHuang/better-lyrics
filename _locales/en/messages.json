@@ -2315,6 +2315,10 @@
       }
     }
   },
+  "unison_rev_revertCheckFailed": {
+    "message": "Couldn't check whether reverting goes live or to council review",
+    "description": "Note on a past revision when the check of where a revert would land failed; the owner can still revert and the server decides"
+  },
   "unison_rev_revertReview": {
     "message": "Reverting goes to council review as revision $rev$",
     "description": "Note before a revert that needs review",

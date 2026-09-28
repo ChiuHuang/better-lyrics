@@ -37,8 +37,15 @@ import {
   splitDiffRows,
   statusLabel,
   unchangedLines,
-} from "./revisions";
-import type { DiffRow, FieldCheck, PendingReason, PreviewResult, RevisionStatus, RevisionSummary } from "./types";
+} from "@modules/unison/revisions";
+import type {
+  DiffRow,
+  FieldCheck,
+  PendingReason,
+  PreviewResult,
+  RevisionStatus,
+  RevisionSummary,
+} from "@modules/unison/types";
 
 const messages: Record<string, { message: string }> = JSON.parse(
   readFileSync(join(process.cwd(), "_locales/en/messages.json"), "utf8")
@@ -602,7 +609,11 @@ const REASONS: PendingReason[] = ["sealed", "flagged", "large_text_drift", "larg
 
 {
   const unknown = revertNote(null, 6, false);
-  assert.equal(unknown.note, null);
+  assert.equal(
+    keyOf(unknown.note?.title ?? { text: "" }),
+    "unison_rev_revertCheckFailed",
+    "a failed check is disclosed"
+  );
   assert.equal(unknown.canRevert, true, "a failed check still lets the server decide");
 
   const same = revertNote(preview({ noChanges: true }), 6, false);

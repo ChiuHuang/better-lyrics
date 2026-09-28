@@ -242,7 +242,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   };
 
   bar.save.addEventListener("click", async () => {
-    if (bar.save.disabled) return;
+    if (bar.save.disabled || textarea.readOnly) return;
     const body = draft();
     setSaving(true);
     renderSaveButton();

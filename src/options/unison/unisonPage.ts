@@ -2140,6 +2140,7 @@ async function linkAdditionalVideos(lyricsId: number, ids: string[]): Promise<st
 }
 
 async function handleSubmit(): Promise<void> {
+  if (lyricsTextarea.readOnly) return;
   const song = (document.getElementById("unison-field-song") as HTMLInputElement).value.trim();
   const artist = (document.getElementById("unison-field-artist") as HTMLInputElement).value.trim();
   const album = (document.getElementById("unison-field-album") as HTMLInputElement).value.trim();

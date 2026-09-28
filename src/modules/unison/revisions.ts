@@ -1,6 +1,6 @@
 import { UNISON_REVISION_PREVIEW_RETRY_MAX_MS, UNISON_REVISION_PREVIEW_RETRY_MS } from "@constants";
 import { getLanguageDisplayName } from "@core/i18n";
-import { UnisonErrorCode } from "./errorCodes";
+import { UnisonErrorCode } from "@modules/unison/errorCodes";
 import type {
   DiffHead,
   DiffRow,
@@ -9,7 +9,7 @@ import type {
   PreviewResult,
   RevisionStatus,
   RevisionSummary,
-} from "./types";
+} from "@modules/unison/types";
 
 // -- Messages --------------------------
 
@@ -271,7 +271,12 @@ export function revertNote(
   nextRevNo: number,
   confirming: boolean
 ): { note: RevisionNote | null; canRevert: boolean } {
-  if (!preview) return { note: null, canRevert: true };
+  if (!preview) {
+    return {
+      note: { kind: "neutral", icon: "info", title: message("unison_rev_revertCheckFailed"), hint: [] },
+      canRevert: true,
+    };
+  }
   if (preview.noChanges) {
     return {
       note: { kind: "neutral", icon: "info", title: message("unison_rev_noChanges"), hint: [] },
