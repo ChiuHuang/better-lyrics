@@ -388,8 +388,6 @@ async function processBatchTranslationsAndRomanizations(
           logCore("Determined language via translation batch: " + sourceLanguage);
         }
 
-        if (isTranslationDisabledForLang(sourceLanguage || "")) return;
-
         response.results.forEach((result, i) => {
           if (result && !isTranslationDisabledForLang(result.originalLanguage)) {
             const originalIndex = translationBatch[i].index;

@@ -52,6 +52,10 @@ interface UnisonTranslateLine {
   needsTranslation: boolean;
 }
 
+function resolveLineLanguage(text: string, declaredLanguage: string | undefined, batchLanguage: string): string {
+  return detectNonLatinLanguage(text) || declaredLanguage || batchLanguage;
+}
+
 const inFlightUnison = new Map<string, Promise<string | undefined>>();
 
 // Coalesce the concurrent translate and romanize passes so a song hits /translate once, not twice.
@@ -66,7 +70,7 @@ function enrichViaUnison(
   const body = JSON.stringify({ lines: items.map(item => item.text), to, from, videoId });
   const existing = inFlightUnison.get(body);
   if (existing) return existing;
-  const request = fetchUnison(body, items, to, signal);
+  const request = fetchUnison(body, items, to, from, signal);
   inFlightUnison.set(body, request);
   return request.finally(() => inFlightUnison.delete(body));
 }
@@ -75,6 +79,7 @@ async function fetchUnison(
   body: string,
   items: { index: number; text: string }[],
   to: string,
+  from: string | undefined,
   signal?: AbortSignal
 ): Promise<string | undefined> {
   try {
@@ -93,7 +98,7 @@ async function fetchUnison(
       const lower = item.text.toLowerCase();
       if (line?.translation && line.needsTranslation && line.translation.toLowerCase() !== lower) {
         cache.translation.set(`${to}_${item.text}`, {
-          originalLanguage: detectNonLatinLanguage(item.text) || data.detectedLang || "",
+          originalLanguage: resolveLineLanguage(item.text, from, data.detectedLang || ""),
           translatedText: line.translation,
         });
       }
@@ -222,7 +227,10 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
       chunk.forEach((item, i) => {
         const translatedText = translatedLines[i]?.trim();
         if (translatedText && translatedText.toLowerCase() !== item.text.toLowerCase()) {
-          const result = { originalLanguage: detectNonLatinLanguage(item.text) || detectedLanguage, translatedText };
+          const result = {
+            originalLanguage: resolveLineLanguage(item.text, request.sourceLanguage, detectedLanguage),
+            translatedText,
+          };
           cache.translation.set(`${targetLanguage}_${item.text}`, result);
           results[item.index] = result;
         }
