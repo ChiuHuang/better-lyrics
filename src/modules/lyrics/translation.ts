@@ -52,10 +52,6 @@ interface UnisonTranslateLine {
   needsTranslation: boolean;
 }
 
-function resolveLineLanguage(text: string, declaredLanguage: string | undefined, batchLanguage: string): string {
-  return detectNonLatinLanguage(text) || declaredLanguage || batchLanguage;
-}
-
 const inFlightUnison = new Map<string, Promise<string | undefined>>();
 
 // Coalesce the concurrent translate and romanize passes so a song hits /translate once, not twice.
@@ -70,7 +66,7 @@ function enrichViaUnison(
   const body = JSON.stringify({ lines: items.map(item => item.text), to, from, videoId });
   const existing = inFlightUnison.get(body);
   if (existing) return existing;
-  const request = fetchUnison(body, items, to, from, signal);
+  const request = fetchUnison(body, items, to, signal);
   inFlightUnison.set(body, request);
   return request.finally(() => inFlightUnison.delete(body));
 }
@@ -79,7 +75,6 @@ async function fetchUnison(
   body: string,
   items: { index: number; text: string }[],
   to: string,
-  from: string | undefined,
   signal?: AbortSignal
 ): Promise<string | undefined> {
   try {
@@ -93,12 +88,15 @@ async function fetchUnison(
     const data = (await response.json()) as { lines: UnisonTranslateLine[]; detectedLang: string };
     if (!Array.isArray(data.lines) || data.lines.length !== items.length) return;
 
+    // A mixed-script batch's detected language says nothing about its Latin lines, so leave those to the Latin-only Google batch.
+    const batchHasNonLatin = items.some(item => containsNonLatin(item.text));
     items.forEach((item, i) => {
       const line = data.lines[i];
       const lower = item.text.toLowerCase();
-      if (line?.translation && line.needsTranslation && line.translation.toLowerCase() !== lower) {
+      const isLanguageKnown = containsNonLatin(item.text) || !batchHasNonLatin;
+      if (line?.translation && line.needsTranslation && line.translation.toLowerCase() !== lower && isLanguageKnown) {
         cache.translation.set(`${to}_${item.text}`, {
-          originalLanguage: resolveLineLanguage(item.text, from, data.detectedLang || ""),
+          originalLanguage: detectNonLatinLanguage(item.text) || data.detectedLang || "",
           translatedText: line.translation,
         });
       }
@@ -172,21 +170,31 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
   const baseUrl = TRANSLATE_LYRICS_URL(targetLanguage, "");
   const separatorEncoded = encodeURIComponent(BATCH_SEPARATOR);
 
-  for (const item of toTranslate) {
-    const itemEncoded = encodeURIComponent(item.text);
-    const addedLength = (currentChunk.length > 0 ? separatorEncoded.length : 0) + itemEncoded.length;
+  // Latin lines get their own chunks so Google's detected language describes them, not the song's other script.
+  const scriptGroups = [
+    toTranslate.filter(item => containsNonLatin(item.text)),
+    toTranslate.filter(item => !containsNonLatin(item.text)),
+  ].sort((a, b) => b.length - a.length);
 
-    if (currentChunk.length > 0 && baseUrl.length + currentEncodedLength + addedLength > MAX_URL_LENGTH) {
+  for (const group of scriptGroups) {
+    for (const item of group) {
+      const itemEncoded = encodeURIComponent(item.text);
+      const addedLength = (currentChunk.length > 0 ? separatorEncoded.length : 0) + itemEncoded.length;
+
+      if (currentChunk.length > 0 && baseUrl.length + currentEncodedLength + addedLength > MAX_URL_LENGTH) {
+        chunks.push(currentChunk);
+        currentChunk = [];
+        currentEncodedLength = 0;
+      }
+
+      currentChunk.push(item);
+      currentEncodedLength += (currentChunk.length > 1 ? separatorEncoded.length : 0) + itemEncoded.length;
+    }
+    if (currentChunk.length > 0) {
       chunks.push(currentChunk);
       currentChunk = [];
       currentEncodedLength = 0;
     }
-
-    currentChunk.push(item);
-    currentEncodedLength += (currentChunk.length > 1 ? separatorEncoded.length : 0) + itemEncoded.length;
-  }
-  if (currentChunk.length > 0) {
-    chunks.push(currentChunk);
   }
 
   for (const chunk of chunks) {
@@ -197,8 +205,9 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
       const response = await fetch(url, { cache: "force-cache", signal });
       const data = await response.json();
 
+      const chunkLanguage: string = data[2] || "";
       if (!detectedLanguage) {
-        detectedLanguage = data[2] || "";
+        detectedLanguage = chunkLanguage;
       }
 
       let fullTranslatedText = "";
@@ -228,7 +237,7 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
         const translatedText = translatedLines[i]?.trim();
         if (translatedText && translatedText.toLowerCase() !== item.text.toLowerCase()) {
           const result = {
-            originalLanguage: resolveLineLanguage(item.text, request.sourceLanguage, detectedLanguage),
+            originalLanguage: detectNonLatinLanguage(item.text) || chunkLanguage,
             translatedText,
           };
           cache.translation.set(`${targetLanguage}_${item.text}`, result);
