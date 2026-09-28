@@ -1965,6 +1965,10 @@
       }
     }
   },
+  "unison_suggestHideOtherVersions": {
+    "message": "Hide other versions",
+    "description": "Label of the other versions toggle while it is open; clicking it hides the suggested videos judged to be different recordings again"
+  },
   "unison_videosLoadFailed": {
     "message": "Couldn't load videos",
     "description": "Shown in place of the linked or suggested videos list when Unison could not load it; a retry button follows"

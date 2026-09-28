@@ -1520,7 +1520,11 @@ function renderSuggestedVideoList(
   const othersDetails = document.createElement("details");
   const othersToggle = document.createElement("summary");
   othersToggle.className = "unison-suggest-more-btn unison-suggest-others-toggle";
-  othersToggle.textContent = t("unison_suggestOtherVersions", [String(others.length)]);
+  const closedLabel = t("unison_suggestOtherVersions", [String(others.length)]);
+  othersToggle.textContent = closedLabel;
+  othersDetails.addEventListener("toggle", () => {
+    othersToggle.textContent = othersDetails.open ? t("unison_suggestHideOtherVersions") : closedLabel;
+  });
   const othersList = document.createElement("ul");
   othersList.className = "unison-video-list";
   othersList.append(...createRows(others));
