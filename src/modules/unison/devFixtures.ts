@@ -316,6 +316,7 @@ function parseLines(lyrics: string, format: UnisonFormat): LyricLine[] {
       startMs: clockMs(match[1]),
       text: match[2]
         .replace(/<[^>]+>/g, "")
+        .replace(/[<>]/g, "")
         .replace(/\s+/g, " ")
         .trim(),
     }));
