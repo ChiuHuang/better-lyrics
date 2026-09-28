@@ -101,7 +101,7 @@ const LATENCY_MS = 400;
 const MAGIC = { rateLimit: "#ratelimit", throttle: "#throttle", flag: "#flag" } as const;
 
 export function devFixtureHint(): string {
-  return `Resets on reload. Type in the editor: ${MAGIC.rateLimit} (daily limit), ${MAGIC.throttle} (preview 429, retries), ${MAGIC.flag} (preview goes live, save is flagged). Break the TTML or an LRC stamp for a parse error; change more than 15% of the words to go over the limit. Videos: ${VIDEO_DURATION_MISMATCH} fails the length check, ${VIDEO_UNVERIFIABLE} fails verification, ${VIDEO_RATE_LIMITED} hits the rate limit, and a lyric holds ${VIDEO_CAP} videos. A song titled "${VIDEO_OFFLINE_SONG} ..." fails to load its videos and suggestions. Submitting a song titled "[DEV] ..." creates a new fixture lyric you own.`;
+  return `Resets on reload. Type in the editor: ${MAGIC.rateLimit} (daily limit), ${MAGIC.throttle} (preview 429, retries), ${MAGIC.flag} (preview goes live, save is flagged). Break the TTML or an LRC stamp for a parse error; change more than 15% of the words to go over the limit. Videos: ${VIDEO_DURATION_MISMATCH} fails the length check, ${VIDEO_UNVERIFIABLE} fails verification, ${VIDEO_RATE_LIMITED} hits the rate limit, and a lyric holds ${VIDEO_CAP} videos. A song titled "${VIDEO_OFFLINE_SONG} ..." fails to load its videos and suggestions, and one titled "${VIDEO_NO_MATCH_SONG} ..." only gets other versions. Submitting a song titled "[DEV] ..." creates a new fixture lyric you own.`;
 }
 
 const ME = { displayName: "You (dev)" };
@@ -532,6 +532,7 @@ const VIDEO_DURATION_MISMATCH = "devLength01";
 const VIDEO_UNVERIFIABLE = "devVerify01";
 const VIDEO_RATE_LIMITED = "devLimits01";
 const VIDEO_OFFLINE_SONG = "[DEV] offline";
+const VIDEO_NO_MATCH_SONG = "[DEV] no match";
 
 const SUGGESTIONS: SuggestedVideo[] = [
   suggestion("devSuggest3", "Amazing Grace (Remastered)", "song", 0.77, { level: "same", score: 1.9 }),
@@ -1083,6 +1084,9 @@ export const devFixtures = {
   async submissionSuggestions(song: string): Promise<FixtureResult<SuggestedVideo[]>> {
     await latency();
     if (isOfflineSong(song)) return unavailable([]);
+    if (song.toLowerCase().startsWith(VIDEO_NO_MATCH_SONG.toLowerCase())) {
+      return ok(SUGGESTIONS.filter(suggestion => suggestion.match?.level === "different"));
+    }
     return ok([exactSuggestion(song), ...SUGGESTIONS]);
   },
 
