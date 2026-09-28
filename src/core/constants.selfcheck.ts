@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { LYRICS_NEGATIVE_CACHE_TTL_MS, UNISON_NEGATIVE_CACHE_TTL_MS } from "./constants";
+import { LYRICS_NEGATIVE_CACHE_TTL_MS, UNISON_NEGATIVE_CACHE_TTL_MS } from "@constants";
 
 {
   assert.ok(UNISON_NEGATIVE_CACHE_TTL_MS > 0, "unison negative TTL is positive");
