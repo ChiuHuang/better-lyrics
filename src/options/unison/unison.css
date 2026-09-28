@@ -533,7 +533,7 @@ kbd {
 
 .unison-detail-layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: clamp(280px, 26vw, 360px) 1fr;
   gap: 2rem;
   align-items: start;
 }
