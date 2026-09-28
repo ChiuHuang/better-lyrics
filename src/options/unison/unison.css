@@ -972,22 +972,18 @@ kbd {
   flex-shrink: 0;
   width: 1.5rem;
   height: 1.25rem;
-  border-radius: 1000rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .unison-match-mark--same {
-  background: rgba(134, 239, 172, 0.1);
   color: rgb(134, 239, 172);
 }
 
 .unison-match-mark--related {
-  background: rgba(254, 240, 138, 0.1);
   color: rgb(254, 240, 138);
 }
 
 .unison-match-mark--different {
-  background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.55);
 }
 
