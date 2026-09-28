@@ -34,6 +34,7 @@ import {
 } from "@constants";
 import { AppState } from "@core/appState";
 import { getBrowserVendor } from "@core/browser";
+import { versionedStylesheetUrl } from "@core/extensionStylesheet";
 import { t } from "@core/i18n";
 import type { ThumbnailElement } from "@modules/lyrics/requestSniffer/NextResponse";
 import { getArtworkMetadata } from "@modules/lyrics/requestSniffer/requestSniffer";
@@ -1576,7 +1577,7 @@ export async function injectHeadTags(): Promise<void> {
     if (document.getElementById(id)) continue;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = chrome.runtime.getURL(file);
+    link.href = versionedStylesheetUrl(file);
     link.id = id;
     document.head.appendChild(link);
   }
