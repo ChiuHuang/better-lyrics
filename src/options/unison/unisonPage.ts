@@ -1781,7 +1781,6 @@ function prefillSubmitForm(params: URLSearchParams): void {
     if (value && el) el.value = param === "duration" ? String(parseDurationInput(value)) : value;
   }
 
-  submitDismissedIds.clear();
   updateComposerLink();
   void refreshSubmitSuggestions();
 }
