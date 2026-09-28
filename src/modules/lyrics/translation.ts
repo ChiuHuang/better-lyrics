@@ -17,11 +17,13 @@ interface TranslationResult {
 interface TranslationCache {
   romanization: Map<string, string>;
   translation: Map<string, TranslationResult>;
+  unisonLatinFallback: Map<string, TranslationResult>;
 }
 
 const cache: TranslationCache = {
   romanization: new Map(),
   translation: new Map(),
+  unisonLatinFallback: new Map(),
 };
 
 interface BatchRequest {
@@ -88,14 +90,13 @@ async function fetchUnison(
     const data = (await response.json()) as { lines: UnisonTranslateLine[]; detectedLang: string };
     if (!Array.isArray(data.lines) || data.lines.length !== items.length) return;
 
-    // A mixed-script batch's detected language says nothing about its Latin lines, so leave those to the Latin-only Google batch.
     const batchHasNonLatin = items.some(item => containsNonLatin(item.text));
     items.forEach((item, i) => {
       const line = data.lines[i];
       const lower = item.text.toLowerCase();
-      const isLanguageKnown = containsNonLatin(item.text) || !batchHasNonLatin;
-      if (line?.translation && line.needsTranslation && line.translation.toLowerCase() !== lower && isLanguageKnown) {
-        cache.translation.set(`${to}_${item.text}`, {
+      if (line?.translation && line.needsTranslation && line.translation.toLowerCase() !== lower) {
+        const isLanguageKnown = containsNonLatin(item.text) || !batchHasNonLatin;
+        (isLanguageKnown ? cache.translation : cache.unisonLatinFallback).set(`${to}_${item.text}`, {
           originalLanguage: detectNonLatinLanguage(item.text) || data.detectedLang || "",
           translatedText: line.translation,
         });
@@ -170,7 +171,6 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
   const baseUrl = TRANSLATE_LYRICS_URL(targetLanguage, "");
   const separatorEncoded = encodeURIComponent(BATCH_SEPARATOR);
 
-  // Latin lines get their own chunks so Google's detected language describes them, not the song's other script.
   const scriptGroups = [
     toTranslate.filter(item => containsNonLatin(item.text)),
     toTranslate.filter(item => !containsNonLatin(item.text)),
@@ -249,6 +249,10 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
         logCore(TRANSLATION_ERROR_LOG, error);
       }
     }
+  }
+
+  for (const { index, text } of toTranslate) {
+    results[index] ??= cache.unisonLatinFallback.get(`${targetLanguage}_${text}`) ?? null;
   }
 
   return { results, detectedLanguage };
@@ -420,6 +424,7 @@ export async function romanizeBatch(request: BatchRequest): Promise<BatchRomaniz
 export function clearCache(): void {
   cache.romanization.clear();
   cache.translation.clear();
+  cache.unisonLatinFallback.clear();
 }
 
 export function getTranslationFromCache(text: string, targetLanguage: string): TranslationResult | null {
