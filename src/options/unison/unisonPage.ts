@@ -1417,7 +1417,7 @@ function confirmLinkVideo(song: string, suggestion: SuggestedVideo): Promise<boo
 type AddSuggestion = (suggestion: SuggestedVideo) => Promise<string | null>;
 
 const MATCH_MARKS: Record<SuggestedVideoMatchLevel, { icon: IconKey; hintKey: string }> = {
-  same: { icon: "lightbulb", hintKey: "unison_suggestMatchSameHint" },
+  same: { icon: "verified", hintKey: "unison_suggestMatchSameHint" },
   related: { icon: "question", hintKey: "unison_suggestMatchRelated" },
   different: { icon: "layers", hintKey: "unison_suggestMatchDifferentHint" },
 };
