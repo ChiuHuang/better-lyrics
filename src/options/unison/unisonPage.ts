@@ -1822,6 +1822,7 @@ function prefillSubmitForm(params: URLSearchParams): void {
     if (value && el) el.value = param === "duration" ? String(parseDurationInput(value)) : value;
   }
 
+  submitDismissedIds.clear();
   updateComposerLink();
   void refreshSubmitSuggestions();
 }
@@ -1842,10 +1843,10 @@ interface SubmitSuggestionState {
   queryKey: string;
   song: string;
   suggestions: SuggestedVideo[];
-  dismissedIds: Set<string>;
 }
 
 let submitSuggestionState: SubmitSuggestionState | null = null;
+const submitDismissedIds = new Set<string>();
 
 async function refreshSubmitSuggestions(): Promise<void> {
   const section = document.getElementById("unison-submit-suggestions");
@@ -1883,7 +1884,7 @@ async function refreshSubmitSuggestions(): Promise<void> {
     return;
   }
 
-  submitSuggestionState ??= { queryKey, song, suggestions: [], dismissedIds: new Set() };
+  submitSuggestionState ??= { queryKey, song, suggestions: [] };
   submitSuggestionState.suggestions = result.data;
   addSameSuggestions(submitSuggestionState);
   renderSubmitSuggestions();
@@ -1905,7 +1906,7 @@ function addSameSuggestions(state: SubmitSuggestionState): void {
     .filter(
       suggestion =>
         suggestion.match?.level === "same" &&
-        !state.dismissedIds.has(suggestion.videoId) &&
+        !submitDismissedIds.has(suggestion.videoId) &&
         !linkedIds.includes(suggestion.videoId)
     )
     .slice(0, room);
@@ -1929,7 +1930,7 @@ function renderSubmitSuggestions(): void {
 }
 
 function onAdditionalVideoRemoved(videoId: string, wasSuggested: boolean): void {
-  if (wasSuggested) submitSuggestionState?.dismissedIds.add(videoId);
+  if (wasSuggested) submitDismissedIds.add(videoId);
   renderSubmitSuggestions();
 }
 
