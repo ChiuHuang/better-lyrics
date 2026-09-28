@@ -37,6 +37,7 @@ import { UnisonErrorCode } from "@modules/unison/errorCodes";
 import { appendInlineProfile, profileUrl } from "@modules/unison/gamificationRender";
 import { generatePetName, getDisplayName, getIdentity } from "@/core/keyIdentity";
 import { warnUnison } from "@core/logger";
+import { observeResize } from "@modules/ui/layout/layoutWidth";
 import { bindLyricsFileDrop } from "@/options/unison/lyricsFile";
 import { createFeedback, fillFeedback } from "@/options/unison/feedback";
 import { type IconKey, svgIcon } from "@/options/unison/icons";
@@ -89,6 +90,7 @@ let feedMoreBtn: HTMLElement;
 let filterBar: HTMLElement;
 let filterLanguageSelect: HTMLSelectElement;
 let detailMeta: HTMLElement;
+let detailFrame: HTMLElement;
 let detailPreviewHead: HTMLElement;
 let detailPreview: HTMLElement;
 let detailLyricsHead: HTMLElement;
@@ -307,6 +309,7 @@ export function initUnisonPage(): void {
   filterBar = document.getElementById("unison-filters") as HTMLElement;
   filterLanguageSelect = document.getElementById("unison-filter-language") as HTMLSelectElement;
   detailMeta = document.getElementById("unison-detail-meta") as HTMLElement;
+  detailFrame = viewDetail.querySelector(".unison-rev-detail-main") as HTMLElement;
   detailPreviewHead = document.getElementById("unison-detail-preview-head") as HTMLElement;
   detailPreview = document.getElementById("unison-detail-preview") as HTMLElement;
   detailLyricsHead = document.getElementById("unison-detail-lyrics-head") as HTMLElement;
@@ -1025,6 +1028,7 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   pre.className = "unison-detail-pre";
   pre.textContent = entry.lyrics;
   detailLyrics.appendChild(pre);
+  fitToViewport(detailFrame, view);
 }
 
 function createConfidenceBadge(confidence: UnisonConfidence): HTMLElement {
@@ -1638,7 +1642,7 @@ async function loadEditor(id: number, view: AbortSignal): Promise<void> {
     savebar: savebarSlot,
   };
   renderRevisionEditor(loaded.entry, surface, revisionHost(view));
-  fitToViewport(detailPreview.closest(".unison-rev-detail-main") as HTMLElement, view);
+  fitToViewport(detailFrame, view);
   if (IS_DEV && devFixtures.has(id)) detailMeta.appendChild(createDevFixtureHint());
 }
 
@@ -1661,10 +1665,16 @@ function fitToViewport(frame: HTMLElement, view: AbortSignal): void {
   layout?.classList.add("unison-detail-layout--fit");
   update();
   window.addEventListener("resize", update);
+  const pageResize = observeResize([document.body], () => {
+    requestAnimationFrame(() => {
+      if (!view.aborted) update();
+    });
+  });
   view.addEventListener(
     "abort",
     () => {
       window.removeEventListener("resize", update);
+      pageResize.destroy();
       frame.classList.remove("unison-rev-detail-main--fit");
       layout?.classList.remove("unison-detail-layout--fit");
       heightHost.style.removeProperty("--unison-fit-height");

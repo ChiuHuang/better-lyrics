@@ -1292,6 +1292,14 @@ kbd {
   font-family: inherit;
 }
 
+.unison-detail-preview,
+.unison-detail-pre,
+.unison-detail-meta {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  scrollbar-gutter: stable;
+}
+
 /* -- Submit View --------------------------  */
 
 .unison-submit-layout {
@@ -2364,6 +2372,12 @@ select.unison-input {
     min-height: 0;
   }
 
+  .unison-rev-detail-main--fit .unison-detail-pre {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+  }
+
   .unison-rev-detail-main--fit .unison-rev-inline-textarea {
     flex: 1;
     min-height: 0;
@@ -2372,6 +2386,8 @@ select.unison-input {
 
   .unison-detail-layout--fit > .unison-detail-meta {
     max-height: var(--unison-fit-height);
+    margin-right: -0.5rem;
+    padding-right: 0.5rem;
     overflow-y: auto;
     overscroll-behavior: contain;
   }
