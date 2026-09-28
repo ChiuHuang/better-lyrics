@@ -1977,8 +1977,14 @@ function parseVideoId(raw: string): string | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
   const idPattern = /^[\w-]{11}$/;
-  const url = URL.parse(trimmed);
-  if (!url) return idPattern.test(trimmed) ? trimmed : null;
+  if (idPattern.test(trimmed)) return trimmed;
+  let url: URL;
+  try {
+    url = new URL(trimmed);
+  } catch (err) {
+    warnUnison(`Not a video ID or link: ${trimmed}`, err);
+    return null;
+  }
   const v = url.searchParams.get("v");
   if (v) return idPattern.test(v) ? v : null;
   const segment = url.pathname.split("/").filter(Boolean).pop();
