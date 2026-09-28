@@ -932,11 +932,13 @@ kbd {
 
 .unison-suggest-info {
   display: flex;
+  flex: 1;
   flex-direction: column;
   min-width: 0;
 }
 
 .unison-suggest-title {
+  min-width: 0;
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.85);
   overflow: hidden;
@@ -963,32 +965,30 @@ kbd {
   color: rgba(255, 255, 255, 0.4);
 }
 
-.unison-suggest-badge {
+.unison-match-mark {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  margin-left: auto;
-  padding: 0 0.5rem;
+  width: 1.5rem;
   height: 1.25rem;
   border-radius: 1000rem;
-  font-size: 0.625rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
+  font-size: 0.875rem;
 }
 
-.unison-suggest-badge--same {
-  padding: 0;
-  height: auto;
-  font-size: 1rem;
+.unison-match-mark--same {
+  background: rgba(134, 239, 172, 0.1);
   color: rgb(134, 239, 172);
 }
 
-.unison-suggest-badge--related {
-  background: rgba(254, 240, 138, 0.08);
-  border: 1px solid rgba(254, 240, 138, 0.18);
+.unison-match-mark--related {
+  background: rgba(254, 240, 138, 0.1);
   color: rgb(254, 240, 138);
+}
+
+.unison-match-mark--different {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .unison-suggest-others {
@@ -1475,10 +1475,10 @@ kbd {
   color: rgb(252, 165, 165);
 }
 
-.unison-token-tag {
-  display: inline-flex;
-  font-size: 0.875rem;
-  color: rgb(134, 239, 172);
+.unison-token .unison-match-mark {
+  width: 1.125rem;
+  height: 0.9375rem;
+  font-size: 0.6875rem;
 }
 
 .unison-token--flash {
