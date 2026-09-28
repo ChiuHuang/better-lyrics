@@ -1,3 +1,4 @@
 export function versionedStylesheetUrl(path: string): string {
-  return `${chrome.runtime.getURL(path)}?v=${chrome.runtime.getManifest().version}`;
+  const { version, version_name } = chrome.runtime.getManifest();
+  return `${chrome.runtime.getURL(path)}?v=${encodeURIComponent(version_name ?? version)}`;
 }

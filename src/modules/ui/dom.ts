@@ -1574,10 +1574,15 @@ export async function injectHeadTags(): Promise<void> {
 
   for (const file of cssFiles) {
     const id = `blyrics-style-${file.replace(/(\/index)?\.css$/, "")}`;
-    if (document.getElementById(id)) continue;
+    const href = versionedStylesheetUrl(file);
+    const existing = document.getElementById(id);
+    if (existing) {
+      if (existing instanceof HTMLLinkElement && existing.href !== href) existing.href = href;
+      continue;
+    }
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = versionedStylesheetUrl(file);
+    link.href = href;
     link.id = id;
     document.head.appendChild(link);
   }

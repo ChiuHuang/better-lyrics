@@ -73,17 +73,17 @@ const emitRendererStyles = {
   },
 };
 
-// Firefox keeps imported sheets by URL until it quits, so an in-place update served the old CSS.
 const versionStylesheetImports = {
   apply: compiler => {
     compiler.hooks.emit.tap("VersionStylesheetImports", compilation => {
-      const { version } = JSON.parse(compilation.getAsset("manifest.json").source.source().toString());
+      const { version, version_name } = JSON.parse(compilation.getAsset("manifest.json").source.source().toString());
+      const cacheKey = encodeURIComponent(version_name ?? version);
       for (const { name, source } of compilation.getAssets()) {
         if (!name.endsWith(".css")) continue;
         const css = source.source().toString();
         const versioned = css.replace(
           /@import\s+(url\(\s*)?(["'])([^"']+)\2/g,
-          (_, url = "", quote, path) => `@import ${url}${quote}${path}?v=${version}${quote}`
+          (_, url = "", quote, path) => `@import ${url}${quote}${path}?v=${cacheKey}${quote}`
         );
         if (versioned === css) continue;
         compilation.updateAsset(name, new compiler.webpack.sources.RawSource(versioned));
