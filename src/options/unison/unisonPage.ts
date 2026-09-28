@@ -49,6 +49,7 @@ import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
 import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revisions/revisionEditor";
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
+import { initTooltips } from "@/options/unison/tooltip";
 
 // -- Icons --------------------------
 
@@ -331,6 +332,7 @@ export function initUnisonPage(): void {
   setupFeedMore();
   setupSubmitForm();
   setupNavButtons();
+  initTooltips(document.querySelector(".unison-page") as HTMLElement);
   loadIdentity();
   routeFromParams();
 
@@ -1431,8 +1433,9 @@ function createMatchMark(level: SuggestedVideoMatchLevel): HTMLSpanElement {
   const mark = document.createElement("span");
   mark.className = `unison-match-mark unison-match-mark--${level}`;
   mark.setAttribute("role", "img");
-  mark.title = t(hintKey);
-  mark.setAttribute("aria-label", mark.title);
+  mark.tabIndex = 0;
+  mark.dataset.tooltip = t(hintKey);
+  mark.setAttribute("aria-label", mark.dataset.tooltip);
   mark.appendChild(svgIcon(icon));
   return mark;
 }
