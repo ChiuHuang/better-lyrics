@@ -259,26 +259,31 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
     };
     let ytLyricsEarlyInjectAbortController = new AbortController();
 
-    let ytLyricsPromise = getLyrics(providerParameters, "yt-lyrics").then(lyrics => {
-      if (!AppState.areLyricsLoaded && lyrics && !signal.aborted) {
-        if (!ytLyricsEarlyInjectAbortController.signal.aborted) {
-          logCore("Temporarily Using YT Music Lyrics while we wait for synced lyrics to load");
-          let lyricsWithMeta = {
-            ...lyrics,
-            song: providerParameters.song,
-            artist: providerParameters.artist,
-            duration: providerParameters.duration,
-            videoId: providerParameters.videoId,
-            album: providerParameters.album || "",
-            segmentMap: null,
-          };
+    let ytLyricsPromise = getLyrics(providerParameters, "yt-lyrics")
+      .then(lyrics => {
+        if (!AppState.areLyricsLoaded && lyrics && !signal.aborted) {
+          if (!ytLyricsEarlyInjectAbortController.signal.aborted) {
+            logCore("Temporarily Using YT Music Lyrics while we wait for synced lyrics to load");
+            let lyricsWithMeta = {
+              ...lyrics,
+              song: providerParameters.song,
+              artist: providerParameters.artist,
+              duration: providerParameters.duration,
+              videoId: providerParameters.videoId,
+              album: providerParameters.album || "",
+              segmentMap: null,
+            };
 
-          processLyrics(document, lyricsWithMeta, true, signal);
-          retainParsedLyrics(lyricsWithMeta);
+            processLyrics(document, lyricsWithMeta, true, signal);
+            retainParsedLyrics(lyricsWithMeta);
+          }
         }
-      }
-      return lyrics;
-    });
+        return lyrics;
+      })
+      .catch(err => {
+        logCore(err);
+        return null;
+      });
 
     try {
       let meta = await getLyrics(providerParameters, "metadata");
@@ -324,7 +329,7 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
             continue;
           }
           ytLyricsEarlyInjectAbortController.abort("Lyrics are ready"); // May not be ideal when the stringSimilarity fails, but this should be rare anyways
-          let ytLyrics = (await ytLyricsPromise) as YTLyricSourceResult;
+          let ytLyrics = sourceLyrics.source === "Unison" ? null : ((await ytLyricsPromise) as YTLyricSourceResult);
 
           if (ytLyrics !== null) {
             let lyricText = "";
