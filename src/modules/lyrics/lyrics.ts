@@ -280,27 +280,31 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
     };
     let ytLyricsEarlyInjectAbortController = new AbortController();
 
-    let ytLyricsPromise = getLyrics(providerParameters, "yt-lyrics").then(lyrics => {
-      if (!AppState.areLyricsLoaded && lyrics && !signal.aborted) {
-        if (!ytLyricsEarlyInjectAbortController.signal.aborted) {
-          logCore("Temporarily Using YT Music Lyrics while we wait for synced lyrics to load");
-          let lyricsWithMeta = {
-            ...lyrics,
-            song: providerParameters.song,
-            artist: providerParameters.artist,
-            duration: providerParameters.duration,
-            videoId: providerParameters.videoId,
-            album: providerParameters.album || "",
-            segmentMap: null,
-          };
+    let ytLyricsPromise = getLyrics(providerParameters, "yt-lyrics")
+      .then(lyrics => {
+        if (!AppState.areLyricsLoaded && lyrics && !signal.aborted) {
+          if (!ytLyricsEarlyInjectAbortController.signal.aborted) {
+            logCore("Temporarily Using YT Music Lyrics while we wait for synced lyrics to load");
+            let lyricsWithMeta = {
+              ...lyrics,
+              song: providerParameters.song,
+              artist: providerParameters.artist,
+              duration: providerParameters.duration,
+              videoId: providerParameters.videoId,
+              album: providerParameters.album || "",
+              segmentMap: null,
+            };
 
-          processLyrics(document, lyricsWithMeta, true, signal);
-          retainParsedLyrics(lyricsWithMeta);
+            processLyrics(document, lyricsWithMeta, true, signal);
+            retainParsedLyrics(lyricsWithMeta);
+          }
         }
-      }
-      return lyrics;
-    });
-    ytLyricsPromise.catch(logCore);
+        return lyrics;
+      })
+      .catch(err => {
+        logCore(err);
+        return null;
+      });
 
     try {
       let meta = await getLyrics(providerParameters, "metadata");
