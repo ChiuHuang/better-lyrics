@@ -9,6 +9,7 @@ import {
 import { AppState, reloadLyrics } from "@core/appState";
 import { clearCache, compileRicsToStyles, getStorage } from "@core/storage";
 import { configureLogging, logContent } from "@core/logger";
+import { loadKaraokeSettings } from "@modules/karaoke/settings";
 import { clearCache as clearTranslationCache } from "@modules/lyrics/translation";
 import { mountDock, mountVotingSegment, reloadAlbumArt, unmountDock, updateDockPosition } from "@modules/ui/dom";
 import { applyGlobalOffsets } from "@modules/ui/lyricsDock/offset";
@@ -253,6 +254,7 @@ export function listenForPopupMessages(): void {
       loadTranslationSettings();
       loadLyricOffsetSettings();
       loadPassiveScrollSetting();
+      loadKaraokeSettings(() => {});
       loadDockSettings(() => {
         syncDock();
         hideDockOnIdleInFullscreen();

@@ -7,6 +7,13 @@ import type { UnisonData } from "@modules/lyrics/providers/unison";
 import { flushLoader } from "@modules/ui/dom";
 import { clearSongCache } from "@core/storage";
 import { logError } from "@core/logger";
+import {
+  KARAOKE_DEFAULTS,
+  type KaraokeBackdrop,
+  type KaraokeCredits,
+  type KaraokeLayout,
+  type KaraokeSize,
+} from "@modules/karaoke/defaults";
 
 export interface PlayerDetails {
   currentTime: number;
@@ -71,6 +78,12 @@ interface AppStateType {
   isPictureInPictureOpen: boolean;
   endTimeMode: "total" | "remaining";
   playbackRate: number;
+  isKaraokeEnabled: boolean;
+  karaokeLayout: KaraokeLayout;
+  karaokeSize: KaraokeSize;
+  karaokeBackdrop: KaraokeBackdrop;
+  karaokeCredits: KaraokeCredits;
+  isKaraokeBackgroundVocalsEnabled: boolean;
 }
 
 export const AppState: AppStateType = {
@@ -119,6 +132,7 @@ export const AppState: AppStateType = {
   isPictureInPictureOpen: false,
   endTimeMode: "total",
   playbackRate: 1,
+  ...KARAOKE_DEFAULTS,
 };
 
 export function reloadLyrics(): void {

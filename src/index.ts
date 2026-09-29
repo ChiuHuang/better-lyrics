@@ -4,6 +4,7 @@ import { injectI18nCssVars, loadLocaleOverride, subscribeToLocaleChanges } from 
 import { purgeExpiredKeys, saveCacheInfo } from "@core/storage";
 import { prewarmAuthenticationToken } from "@modules/lyrics/providers/unified";
 import { initProviders } from "@modules/lyrics/providers/shared";
+import { loadKaraokeSettings } from "@modules/karaoke/settings";
 import { setupRequestSniffer } from "@modules/lyrics/requestSniffer/requestSniffer";
 import {
   handleSettings,
@@ -70,6 +71,7 @@ async function modify(isDisposed: () => boolean): Promise<void> {
   loadEndTimeModeSetting();
   loadLyricOffsetSettings();
   loadPassiveScrollSetting();
+  loadKaraokeSettings(() => {});
   loadDockSettings(hideDockOnIdleInFullscreen);
   subscribeToCustomStyles();
   await purgeExpiredKeys();
