@@ -70,6 +70,7 @@ interface AppStateType {
   currentUnisonData: UnisonData | null;
   isPictureInPictureOpen: boolean;
   endTimeMode: "total" | "remaining";
+  playbackRate: number;
 }
 
 export const AppState: AppStateType = {
@@ -117,6 +118,7 @@ export const AppState: AppStateType = {
   currentUnisonData: null,
   isPictureInPictureOpen: false,
   endTimeMode: "total",
+  playbackRate: 1,
 };
 
 export function reloadLyrics(): void {

@@ -56,7 +56,6 @@ let latestPlayerPlaying = false;
 let latestPlayerTime = 0;
 let latestPlayerSnapshotTime = 0;
 let latestPlayerDuration = 0;
-let latestPlaybackRate = 1;
 
 function runAnimationEngine(now: number, force = false): void {
   if (!force && (!latestPlayerPlaying || now - lastAnimationEngineRun < ANIMATION_ENGINE_INTERVAL_MS)) return;
@@ -64,7 +63,7 @@ function runAnimationEngine(now: number, force = false): void {
   lastAnimationEngineRun = now;
   const wallTime = Date.now();
   const elapsedS = latestPlayerPlaying
-    ? (Math.max(0, wallTime - latestPlayerSnapshotTime) * latestPlaybackRate) / 1000
+    ? (Math.max(0, wallTime - latestPlayerSnapshotTime) * AppState.playbackRate) / 1000
     : 0;
   const currentTime = Math.min(latestPlayerTime + elapsedS, latestPlayerDuration || Infinity);
   if (AppState.suppressZeroTime < wallTime || currentTime !== 0) {
@@ -327,12 +326,12 @@ export function initializeLyrics(): void {
     latestPlayerTime = detail.currentTime;
     latestPlayerSnapshotTime = detail.browserTime;
     latestPlayerDuration = Number(detail.duration);
-    latestPlaybackRate = detail.playbackRate ?? 1;
+    AppState.playbackRate = detail.playbackRate ?? 1;
 
     updateFullscreenControlsSnapshot({
       currentTimeS: detail.currentTime,
       durationS: Number(detail.duration),
-      playbackRate: detail.playbackRate ?? 1,
+      playbackRate: AppState.playbackRate,
       isPlaying: detail.playing,
       wallTime: detail.browserTime,
     });
