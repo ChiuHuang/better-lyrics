@@ -547,6 +547,7 @@ body {
   --blyrics-translated-font-size: clamp(0.675rem, 2.5cqw, 1.5rem) !important;
   --blyrics-padding: clamp(0.25rem, 2cqw, 0.5rem) !important;
   --blyrics-footer-font-size: clamp(0.6rem, 2.6cqw, 0.85rem) !important;
+  --blyrics-scroll-timing-offset: 0s !important;
   margin: 0 !important;
   margin-block: 0 !important;
   margin-inline: 0 !important;
