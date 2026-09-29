@@ -1,3 +1,4 @@
+import { warnCore } from "@core/logger";
 import {
   normalizeVideoQualitySettings,
   selectVideoQuality,
@@ -27,10 +28,10 @@ const LOAD_METHODS = [
   "enqueueVideoByPlayerVars",
 ] as const;
 
-/** Preserve Music's audio, queue, authentication, timing, and content-check arguments. */
 export function patchVideoQualityPlayer(
   api: VideoQualityPlayer,
-  settings: () => VideoQualitySettings | null
+  settings: () => VideoQualitySettings | null,
+  onPlaybackLoad: () => void = () => {}
 ): () => void {
   const hooks: { name: string; original: PlayerMethod; wrapped: PlayerMethod }[] = [];
   for (const name of LOAD_METHODS) {
@@ -40,27 +41,27 @@ export function patchVideoQualityPlayer(
       const audioOnly = [true, 1, "1", "True"].includes(vars?.audio_only as never);
       const isVideo = typeof (vars?.video_id ?? vars?.videoId) === "string" && !audioOnly;
       const override = settings()?.isHighResolutionVideoEnabled && isVideo;
+      if (name === "loadVideoByPlayerVars" || name === "cueVideoByPlayerVars") onPlaybackLoad();
       return Reflect.apply(original, this, [override ? { ...vars, prefer_gapless: false } : vars, ...args]);
     };
     try {
       api[name] = wrapped;
       hooks.push({ name, original: original as PlayerMethod, wrapped });
-    } catch {
-      // A future player may expose read-only methods. Leave those native.
+    } catch (error) {
+      warnCore(`[Video quality] Failed to wrap ${name}`, error);
     }
   }
   return () => {
     for (const { name, original, wrapped } of hooks) {
       try {
         if (api[name] === wrapped) api[name] = original;
-      } catch {
-        // The page may freeze or replace its API after installation.
+      } catch (error) {
+        warnCore(`[Video quality] Failed to restore ${name}`, error);
       }
     }
   };
 }
 
-/** MAIN-world entrypoint. Music's API proxy is distinct from the DOM movie_player. */
 export function startVideoQualityPlayer(doc: Document = document, win: Window = window): () => void {
   let settings: VideoQualitySettings | null = null;
   let disposed = false;
@@ -70,6 +71,17 @@ export function startVideoQualityPlayer(doc: Document = document, win: Window = 
   let lastQualityKey = "";
   let initialRefreshKey = "";
 
+  const reportedFailures = new Set<string>();
+  const reportFailure = (context: string, error: unknown): void => {
+    if (disposed || reportedFailures.has(context)) return;
+    reportedFailures.add(context);
+    warnCore(`[Video quality] ${context}`, error);
+  };
+  const resetPlayback = (): void => {
+    lastQualityKey = "";
+    initialRefreshKey = "";
+  };
+
   const applyQuality = (): void => {
     if (!api || !settings) return;
     try {
@@ -77,14 +89,10 @@ export function startVideoQualityPlayer(doc: Document = document, win: Window = 
       const data = api.getVideoData?.();
       if (!data?.video_id || data.isLive || api.getPlayerState?.() === -1) return;
       const available = api.getAvailableQualityLevels?.() ?? [];
-      // Audio-only requests have no selectable video qualities.
       if (!available.some(quality => quality !== "auto")) {
         lastQualityKey = "";
         return;
       }
-      // Music may start its first video before getPlayer() resolves. Refresh its
-      // existing data in place once, without reconstructing load arguments or
-      // restarting the track. The second argument asks the player to refilter.
       if (
         settings.isHighResolutionVideoEnabled &&
         initialRefreshKey !== data.video_id &&
@@ -101,8 +109,8 @@ export function startVideoQualityPlayer(doc: Document = document, win: Window = 
       if (key === lastQualityKey || typeof api.setPlaybackQualityRange !== "function") return;
       api.setPlaybackQualityRange(quality, quality);
       lastQualityKey = key;
-    } catch {
-      // These are undocumented APIs; failure must not interrupt Music playback.
+    } catch (error) {
+      reportFailure("Failed to apply playback quality", error);
     }
   };
 
@@ -120,18 +128,18 @@ export function startVideoQualityPlayer(doc: Document = document, win: Window = 
           if (next !== api) {
             unpatch?.();
             api = next;
-            unpatch = patchVideoQualityPlayer(api, () => settings);
-            lastQualityKey = "";
-            initialRefreshKey = "";
+            unpatch = patchVideoQualityPlayer(api, () => settings, resetPlayback);
+            resetPlayback();
           }
           observer.disconnect();
           applyQuality();
         })
-        .catch(() => {})
+        .catch(error => reportFailure("Failed to connect to Music player", error))
         .finally(() => {
           pending = false;
         });
-    } catch {
+    } catch (error) {
+      reportFailure("Failed to connect to Music player", error);
       pending = false;
     }
   };
@@ -145,14 +153,19 @@ export function startVideoQualityPlayer(doc: Document = document, win: Window = 
       settings = next;
       lastQualityKey = "";
       connect();
-    } catch {
-      /* Ignore unrelated/malformed page events. */
+    } catch (error) {
+      reportFailure("Failed to read video quality settings", error);
     }
+  };
+  const onLoadedMetadata = (event: Event): void => {
+    const target = event.target as Element | null;
+    if (target?.tagName !== "VIDEO" || !target.closest("ytmusic-player")) return;
+    lastQualityKey = "";
+    applyQuality();
   };
   doc.addEventListener(VIDEO_QUALITY_SETTINGS_EVENT, receive);
   doc.addEventListener("yt-navigate-finish", connect);
-  doc.addEventListener("loadedmetadata", applyQuality, true);
-  // Catch the initial custom-element upgrade and API readiness before first playback.
+  doc.addEventListener("loadedmetadata", onLoadedMetadata, true);
   const observer = new MutationObserver(connect);
   observer.observe(doc, { childList: true, subtree: true });
   const interval = win.setInterval(connect, 1000);
@@ -164,6 +177,6 @@ export function startVideoQualityPlayer(doc: Document = document, win: Window = 
     unpatch?.();
     doc.removeEventListener(VIDEO_QUALITY_SETTINGS_EVENT, receive);
     doc.removeEventListener("yt-navigate-finish", connect);
-    doc.removeEventListener("loadedmetadata", applyQuality, true);
+    doc.removeEventListener("loadedmetadata", onLoadedMetadata, true);
   };
 }

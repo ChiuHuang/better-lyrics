@@ -2931,7 +2931,6 @@ input.cm-textfield:focus-visible {
     }
 }
 
-/* Video playback preferences use the existing settings rows and native select. */
 .setting-row__hint,
 .settings-group > p.video-quality-hint {
     color: rgba(255, 255, 255, 0.5);

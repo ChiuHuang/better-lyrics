@@ -37,7 +37,6 @@ export function normalizeVideoQualitySettings(
   };
 }
 
-// Also clamp settings received directly from storage, outside the options form.
 export function selectVideoQuality(settings: VideoQualitySettings, available: string[]): VideoQuality {
   if (settings.preferredVideoQuality === "auto") return "auto";
   const ceiling = Math.min(

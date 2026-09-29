@@ -1,3 +1,4 @@
+import { warnCore } from "@core/logger";
 import {
   DEFAULT_VIDEO_QUALITY_SETTINGS,
   normalizeVideoQualitySettings,
@@ -5,23 +6,26 @@ import {
   VIDEO_QUALITY_SETTINGS_EVENT,
 } from "./videoQuality";
 
-/** ISOLATED-world storage -> MAIN-world player settings, including startup/reinjection. */
 export function startVideoQualitySettingsBridge(): () => void {
   let disposed = false;
   let revision = 0;
+  let failureReported = false;
   const publish = async (): Promise<void> => {
     const current = ++revision;
     try {
       const raw = await chrome.storage.sync.get({ ...DEFAULT_VIDEO_QUALITY_SETTINGS });
       if (disposed || current !== revision) return;
+      failureReported = false;
       document.dispatchEvent(
         new CustomEvent(VIDEO_QUALITY_SETTINGS_EVENT, {
-          // A string can cross Firefox's isolated/page-world boundary too.
           detail: JSON.stringify(normalizeVideoQualitySettings(raw)),
         })
       );
-    } catch {
-      // Leave native playback alone if extension storage is unavailable.
+    } catch (error) {
+      if (!disposed && current === revision && !failureReported) {
+        failureReported = true;
+        warnCore("[Video quality] Failed to publish stored settings", error);
+      }
     }
   };
   const request = (): void => {
