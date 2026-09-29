@@ -12,7 +12,6 @@ const CARD_PAD_EM = { x: 0.8, y: 0.36 };
 const PLATE_RADIUS_EM = 0.46;
 // Under this shared width a new plate fades in rather than the old one sliding across the screen.
 const MIN_SHARED_WIDTH = 0.5;
-// The spring overshoots in proportion to the distance, so a change this large settles without it.
 const MAX_SPRING_RATIO = 1.5;
 
 type PlateMotion = "grow" | "shrink" | "resize";
