@@ -9,6 +9,10 @@ const OVERLAY_ID = "blyrics-karaoke";
 const SNAP_CLASS = "is-snap";
 const PLATE_PAD_EM = { x: 0.55, y: 0.18 };
 const CARD_PAD_EM = { x: 0.8, y: 0.36 };
+// braccato's fade-out for a line leaving the stage.
+const OUTGOING_FADE_MS = 160;
+
+type PlateMotion = "grow" | "shrink" | "settle";
 
 interface OverlayParts {
   root: HTMLElement;
@@ -30,6 +34,35 @@ let parts: OverlayParts | null = null;
 let resizeHandle: ObserverHandle | null = null;
 let barObserver: MutationObserver | null = null;
 let isTitleCardShown = false;
+let lastPlate: StageBox | null = null;
+let settleTimer: ReturnType<typeof setTimeout> | null = null;
+
+function contains(outer: StageBox, inner: StageBox): boolean {
+  return (
+    inner.x >= outer.x &&
+    inner.y >= outer.y &&
+    inner.x + inner.width <= outer.x + outer.width &&
+    inner.y + inner.height <= outer.y + outer.height
+  );
+}
+
+function unionOf(a: StageBox, b: StageBox): StageBox {
+  const x = Math.min(a.x, b.x);
+  const y = Math.min(a.y, b.y);
+  return {
+    x,
+    y,
+    width: Math.max(a.x + a.width, b.x + b.width) - x,
+    height: Math.max(a.y + a.height, b.y + b.height) - y,
+  };
+}
+
+function placePlate(plate: HTMLElement, rect: StageBox, motion: PlateMotion): void {
+  plate.dataset.plateMotion = motion;
+  plate.style.width = `${rect.width.toFixed(1)}px`;
+  plate.style.height = `${rect.height.toFixed(1)}px`;
+  plate.style.translate = `${rect.x.toFixed(1)}px ${rect.y.toFixed(1)}px`;
+}
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
@@ -129,6 +162,8 @@ export const karaokeOverlay = {
     const { plate, mount } = parts;
     const wasShown = plate.hasAttribute("data-plate");
     if (!box) {
+      if (settleTimer) clearTimeout(settleTimer);
+      settleTimer = null;
       plate.removeAttribute("data-plate");
       return;
     }
@@ -140,10 +175,30 @@ export const karaokeOverlay = {
     const padX = fontSize * pad.x;
     const padY = fontSize * pad.y;
 
+    const target: StageBox = {
+      x: box.x - padX,
+      y: box.y - padY,
+      width: box.width + padX * 2,
+      height: box.height + padY * 2,
+    };
+    // Reach the incoming line before it shows, and leave the outgoing one only once it has faded, so
+    // neither spills past the plate's edge. A move to another place stretches over both, then settles.
+    if (settleTimer) clearTimeout(settleTimer);
+    settleTimer = null;
+    const previous = wasShown ? lastPlate : null;
+    lastPlate = target;
     if (!wasShown) plate.classList.add(SNAP_CLASS);
-    plate.style.width = `${(box.width + padX * 2).toFixed(1)}px`;
-    plate.style.height = `${(box.height + padY * 2).toFixed(1)}px`;
-    plate.style.translate = `${(box.x - padX).toFixed(1)}px ${(box.y - padY).toFixed(1)}px`;
+    if (!previous || contains(target, previous)) {
+      placePlate(plate, target, "grow");
+    } else if (contains(previous, target)) {
+      placePlate(plate, target, "shrink");
+    } else {
+      placePlate(plate, unionOf(previous, target), "grow");
+      settleTimer = setTimeout(() => {
+        settleTimer = null;
+        placePlate(plate, target, "settle");
+      }, OUTGOING_FADE_MS);
+    }
     if (!wasShown) {
       void plate.offsetWidth;
       plate.classList.remove(SNAP_CLASS);

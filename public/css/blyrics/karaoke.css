@@ -2,6 +2,7 @@
    braccato's and the theme's look. */
 #blyrics-karaoke {
     --blyrics-karaoke-ease: cubic-bezier(0.2, 0, 0, 1);
+    --blyrics-karaoke-spring: linear(0, 0.025, 0.088, 0.175, 0.276, 0.382, 0.486, 0.584, 0.674, 0.752, 0.82, 0.877, 0.923, 0.96, 0.988, 1.008, 1.022, 1.031, 1.036, 1.038, 1.038, 1.036, 1.033, 1.029, 1.025, 1.021, 1.017, 1.013, 1.01, 1.008, 1.005, 1.003, 1);
     --blyrics-karaoke-floor: 7.5cqh;
     --blyrics-karaoke-lift: 0px;
     position: fixed;
@@ -54,14 +55,22 @@
     font-size: var(--blyrics-font-size);
     opacity: 0;
     transition:
-        translate 380ms var(--blyrics-karaoke-ease),
-        width 380ms var(--blyrics-karaoke-ease),
-        height 380ms var(--blyrics-karaoke-ease),
+        translate 470ms var(--blyrics-karaoke-spring),
+        width 470ms var(--blyrics-karaoke-spring),
+        height 470ms var(--blyrics-karaoke-spring),
         opacity 260ms ease-out;
 }
 
 #blyrics-karaoke .blyrics-karaoke__plate[data-plate] {
     opacity: 1;
+}
+
+#blyrics-karaoke .blyrics-karaoke__plate[data-plate-motion="grow"] {
+    transition-duration: 300ms, 300ms, 300ms, 260ms;
+}
+
+#blyrics-karaoke .blyrics-karaoke__plate[data-plate-motion="shrink"] {
+    transition-delay: 160ms, 160ms, 160ms, 0ms;
 }
 
 #blyrics-karaoke .blyrics-karaoke__plate.is-snap {
@@ -190,7 +199,7 @@
     color: var(--blyrics-translated-color);
     font-size: 0.65em;
     overflow: hidden;
-    max-width: 100%;
+    max-width: 36em;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: 550;
