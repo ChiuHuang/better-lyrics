@@ -1728,11 +1728,11 @@ interface SettingsModalIds {
   closeId: string;
 }
 
-function bindSettingsModal({ openId, overlayId, closeId }: SettingsModalIds): { close: () => void } | null {
+function bindSettingsModal({ openId, overlayId, closeId }: SettingsModalIds): boolean {
   const openBtn = document.getElementById(openId);
   const overlay = document.getElementById(overlayId);
   const closeBtn = document.getElementById(closeId);
-  if (!openBtn || !overlay || !closeBtn) return null;
+  if (!openBtn || !overlay || !closeBtn) return false;
 
   const close = (): void => overlay.classList.remove("active");
   openBtn.addEventListener("click", () => overlay.classList.add("active"));
@@ -1748,7 +1748,7 @@ function bindSettingsModal({ openId, overlayId, closeId }: SettingsModalIds): { 
     control.addEventListener("change", saveOptions);
   }
 
-  return { close };
+  return true;
 }
 
 // The controls live outside #options, so the blanket change listener over that

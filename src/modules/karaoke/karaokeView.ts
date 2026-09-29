@@ -1,6 +1,7 @@
 import { AppState } from "@core/appState";
 import { type LogSink, logCore } from "@core/logger";
 import { applyLyricDecorations } from "@modules/lyrics/lyricDecorations";
+import type { LyricDecorations } from "@modules/lyrics/injectLyrics";
 import { currentViewLyrics } from "@modules/lyrics/viewLyrics";
 import { currentTickOptions, lyricsElementAdded } from "@modules/ui/mainLyricsView";
 import { isAdPlaying } from "@modules/ui/playerControls/playerBarControls";
@@ -34,6 +35,8 @@ const karaokeView: Omit<LyricsRenderer, "destroy"> = createLyricsRenderer({
 
 let builtFrom: object | null = null;
 let builtSegmentMap: object | null = null;
+let builtLanguage: string | null | undefined;
+let decorationSignature = "";
 let firstSungLineStartS = Number.POSITIVE_INFINITY;
 let isStagePreview: boolean | null = null;
 let wasActive = false;
@@ -42,25 +45,42 @@ function clearKaraokeLyrics(): void {
   karaokeView.clear();
   builtFrom = null;
   builtSegmentMap = null;
+  decorationSignature = "";
   firstSungLineStartS = Number.POSITIVE_INFINITY;
+}
+
+function signatureOf(decorations: LyricDecorations): string {
+  let signature = "";
+  for (const [index, decoration] of Object.entries(decorations)) {
+    signature += `${index}${decoration.romanization ? "r" : ""}${decoration.translation ? "t" : ""},`;
+  }
+  return signature;
 }
 
 /**
  * Builds the karaoke view from the lyrics every secondary view shares, or hangs the latest
  * decorations off the lines it already built. Only while karaoke is wanted, so a listener who
- * never enters fullscreen video never pays for a second build.
+ * never enters fullscreen video never pays for a second build, and never from YouTube's
+ * provisional plain lines, which have nothing to sing along to.
  */
 function publishKaraokeLyrics(): void {
   const source = AppState.parsedLyrics;
-  const view = currentViewLyrics();
-  if (!view.lyrics || view.noLyrics) {
+  const lyricData = AppState.lyricData;
+  if (!source || !lyricData || lyricData.isProvisional || lyricData.syncType === "none") {
     if (builtFrom !== null) clearKaraokeLyrics();
     return;
   }
   if (!isKaraokeWanted()) return;
 
-  const segmentMap = source?.segmentMap ?? null;
-  if (source !== builtFrom || segmentMap !== builtSegmentMap) {
+  const view = currentViewLyrics();
+  if (!view.lyrics || view.noLyrics) {
+    if (builtFrom !== null) clearKaraokeLyrics();
+    return;
+  }
+
+  const segmentMap = source.segmentMap ?? null;
+  const rebuilt = source !== builtFrom || segmentMap !== builtSegmentMap;
+  if (rebuilt) {
     const wantsEndCard = AppState.karaokeCredits === "auto" || AppState.karaokeCredits === "outro";
     karaokeView.setLyrics(view.lyrics, {
       mount: karaokeOverlay.ensureMount(),
@@ -69,22 +89,29 @@ function publishKaraokeLyrics(): void {
     });
     builtFrom = source;
     builtSegmentMap = segmentMap;
+    builtLanguage = view.language;
+    decorationSignature = "";
     const firstSung = karaokeView.lines.find(line => line.lyricElement.dataset.instrumental !== "true");
     firstSungLineStartS = firstSung?.time ?? Number.POSITIVE_INFINITY;
     karaokeOverlay.setTitleCard({
-      title: AppState.lyricData?.song ?? "",
-      artist: AppState.lyricData?.artist ?? "",
+      title: lyricData.song,
+      artist: lyricData.artist,
       songwriters: view.songwriters ?? [],
     });
     decorateEndCard(karaokeView.container);
+  } else if (view.language !== builtLanguage) {
+    builtLanguage = view.language;
+    karaokeView.setLanguage(view.language);
   }
+
+  const signature = signatureOf(view.decorations);
+  if (!rebuilt && signature === decorationSignature) return;
+  decorationSignature = signature;
   applyLyricDecorations(karaokeView, view.decorations);
-  karaokeView.scheduleLyricPositionUpdate(isKaraokeActive, tickKaraokeNow);
+  karaokeView.scheduleLyricPositionUpdate(isKaraokeActive, retickKaraoke);
 }
 
 // -- Ticking --------------------------
-
-let lastTick: { timeS: number; wallTime: number; isPlaying: boolean } | null = null;
 
 /**
  * Renders the karaoke view at the side panel's time, on the side panel's frame. Run before the
@@ -92,18 +119,19 @@ let lastTick: { timeS: number; wallTime: number; isPlaying: boolean } | null = n
  * one that sees a seek as a jump and re-lays its stage with no animation.
  */
 export function tickKaraoke(timeS: number, wallTime: number, isPlaying: boolean): void {
-  lastTick = { timeS, wallTime, isPlaying };
   karaokeOverlay.update(timeS, firstSungLineStartS);
   karaokeView.tick(timeS, currentTickOptions(wallTime, isPlaying));
 }
 
-function tickKaraokeNow(): void {
-  if (lastTick) tickKaraoke(lastTick.timeS, lastTick.wallTime, lastTick.isPlaying);
+function retickKaraoke(): void {
+  karaokeView.retickFromPlaybackClock((eventCreationTime, isPlaying) =>
+    currentTickOptions(eventCreationTime, isPlaying, false)
+  );
 }
 
 function relayoutKaraoke(): void {
   karaokeView.relayout();
-  tickKaraokeNow();
+  retickKaraoke();
 }
 
 // -- Sync --------------------------

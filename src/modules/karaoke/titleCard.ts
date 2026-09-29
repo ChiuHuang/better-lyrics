@@ -13,5 +13,10 @@ interface TitleCardInput {
 
 export function isTitleCardVisible({ credits, firstSungLineStartS, timeS }: TitleCardInput): boolean {
   const wanted = credits === "intro" || (credits === "auto" && firstSungLineStartS >= TITLE_CARD_MIN_INTRO_S);
-  return wanted && timeS >= TITLE_CARD_START_S && timeS < firstSungLineStartS - TITLE_CARD_CLEAR_S;
+  return (
+    wanted &&
+    Number.isFinite(firstSungLineStartS) &&
+    timeS >= TITLE_CARD_START_S &&
+    timeS < firstSungLineStartS - TITLE_CARD_CLEAR_S
+  );
 }

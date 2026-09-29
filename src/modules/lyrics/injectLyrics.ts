@@ -89,6 +89,8 @@ export interface LyricsData {
   songwriters?: readonly string[];
   song: string;
   artist: string;
+  /** YouTube's own lines, shown while the synced providers are still being asked. */
+  isProvisional: boolean;
 }
 
 /**
@@ -194,6 +196,7 @@ function injectLyrics(
     songwriters: data.songwriters,
     song: data.song,
     artist: data.artist,
+    isProvisional: keepLoaderVisible,
   };
 
   // Set before addFooter so the dock controls read the current song's lyric data.

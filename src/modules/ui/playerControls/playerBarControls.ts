@@ -113,6 +113,15 @@ export function toggleDislike(doc: Document): void {
   doc.querySelector<HTMLElement>(DISLIKE_BUTTON)?.click();
 }
 
+export function getPlayerBar(doc: Document): HTMLElement | null {
+  return doc.querySelector<HTMLElement>(PLAYER_BAR_SELECTOR);
+}
+
+/** Where YouTube Music keeps the bar's right-hand icon buttons (volume, captions, repeat, shuffle). */
+export function getPlayerBarRightControls(doc: Document): HTMLElement | null {
+  return doc.querySelector<HTMLElement>(`${PLAYER_BAR_SELECTOR} .right-controls-buttons`);
+}
+
 export function isAdPlaying(doc: Document): boolean {
   return doc.querySelector(`${PLAYER_BAR_SELECTOR}[${AD_PLAYING_ATTR}]`) !== null;
 }

@@ -15,5 +15,11 @@ assert.equal(at("intro", 4, 1), true, "intro shows on a short intro");
 assert.equal(at("intro", 2.8, 0.6), false, "intro needs a positive window");
 assert.equal(at("outro", 12, 3), false);
 assert.equal(at("off", 12, 3), false);
+assert.equal(
+  at("auto", Number.POSITIVE_INFINITY, 3),
+  false,
+  "regression: no card before the next song's lines are built"
+);
+assert.equal(at("intro", Number.POSITIVE_INFINITY, 3), false, "regression: no card for a song with no sung line");
 
 console.log("karaoke title card self-check passed");

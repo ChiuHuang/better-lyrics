@@ -1,9 +1,9 @@
-import { PLAYER_BAR_SELECTOR } from "@constants";
 import { AppState } from "@core/appState";
 import { t } from "@core/i18n";
 import type { StageBox } from "@braccato/core";
 import { CREDITS_CLASS } from "@braccato/core/constants";
 import { type ObserverHandle, observeResize } from "@modules/ui/layout/layoutWidth";
+import { getPlayerBar } from "@modules/ui/playerControls/playerBarControls";
 import { isTitleCardVisible } from "./titleCard";
 
 const OVERLAY_ID = "blyrics-karaoke";
@@ -75,7 +75,7 @@ function ensureParts(): OverlayParts {
 }
 
 function measurePlayerBar(): void {
-  const barHeight = document.querySelector(PLAYER_BAR_SELECTOR)?.getBoundingClientRect().height;
+  const barHeight = getPlayerBar(document)?.getBoundingClientRect().height;
   if (parts && barHeight) parts.root.style.setProperty("--blyrics-karaoke-bar-height", `${barHeight}px`);
 }
 
@@ -105,7 +105,7 @@ export const karaokeOverlay = {
     resizeHandle = null;
     if (!visible) return;
     measurePlayerBar();
-    const bar = document.querySelector(PLAYER_BAR_SELECTOR);
+    const bar = getPlayerBar(document);
     resizeHandle = observeResize(bar ? [parts.stage, bar] : [parts.stage], () => {
       measurePlayerBar();
       onResize();
