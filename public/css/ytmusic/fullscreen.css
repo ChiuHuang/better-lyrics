@@ -204,6 +204,9 @@ ytmusic-player-page[player-fullscreened]:is([blyrics-dfs], [blyrics-karaoke])[bl
   mask-image: unset !important;
   box-shadow: none !important;
   top: calc(var(--ytmusic-nav-bar-height, 64px) * -0.5) !important;
+}
+
+ytmusic-player-page[player-fullscreened][blyrics-dfs][blyrics-video-mode] #player.ytmusic-player-page {
   position: relative !important;
 }
 

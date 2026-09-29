@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { isTitleCardVisible } from "./titleCard";
+import { isTitleCardVisible } from "@modules/karaoke/titleCard";
 
 const at = (firstSungLineStartS: number, timeS: number, introNote = false) =>
   isTitleCardVisible({ firstSungLineStartS, introNote, timeS });

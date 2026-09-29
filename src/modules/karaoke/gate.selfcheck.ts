@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { type KaraokeConditions, shouldShowKaraoke, wantsKaraokeLyrics } from "./gate";
+import { type KaraokeConditions, shouldShowKaraoke, wantsKaraokeLyrics } from "@modules/karaoke/gate";
 
 const all: KaraokeConditions = { enabled: true, fullscreen: true, videoMode: true, synced: true, adPlaying: false };
 

@@ -1,7 +1,7 @@
 import { KARAOKE_ACTIVE_ATTR } from "@constants";
 import { AppState } from "@core/appState";
 import { isAdPlaying } from "@modules/ui/playerControls/playerBarControls";
-import { type KaraokeConditions, shouldShowKaraoke, wantsKaraokeLyrics } from "./gate";
+import { type KaraokeConditions, shouldShowKaraoke, wantsKaraokeLyrics } from "@modules/karaoke/gate";
 
 function appLayout(): Element | null {
   return document.querySelector("ytmusic-app-layout");

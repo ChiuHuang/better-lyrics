@@ -7,9 +7,9 @@ import { currentViewLyrics } from "@modules/lyrics/viewLyrics";
 import { currentTickOptions, lyricsElementAdded } from "@modules/ui/mainLyricsView";
 import { isAdPlaying } from "@modules/ui/playerControls/playerBarControls";
 import { createLyricsRenderer, type LyricsRenderer } from "@braccato/core";
-import { decorateEndCard } from "./endCard";
-import { karaokeOverlay } from "./overlay";
-import { isKaraokeActive, isKaraokeLayout, isKaraokeWanted, syncKaraokeAttribute } from "./state";
+import { decorateEndCard } from "@modules/karaoke/endCard";
+import { karaokeOverlay } from "@modules/karaoke/overlay";
+import { isKaraokeActive, isKaraokeLayout, isKaraokeWanted, syncKaraokeAttribute } from "@modules/karaoke/state";
 
 // -- The karaoke view --------------------------
 

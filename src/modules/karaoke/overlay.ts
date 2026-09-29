@@ -3,7 +3,7 @@ import type { StageBox } from "@braccato/core";
 import { CREDITS_CLASS } from "@braccato/core/constants";
 import { type ObserverHandle, observeResize } from "@modules/ui/layout/layoutWidth";
 import { getPlayerBar } from "@modules/ui/playerControls/playerBarControls";
-import { isTitleCardVisible } from "./titleCard";
+import { isTitleCardVisible } from "@modules/karaoke/titleCard";
 
 const OVERLAY_ID = "blyrics-karaoke";
 const SNAP_CLASS = "is-snap";
