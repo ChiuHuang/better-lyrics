@@ -269,20 +269,20 @@ ytmusic-app-layout[player-fullscreened]:not([blyrics-dfs]) > [slot="player-bar"]
   --dock-y-shift: 52px;
 }
 
-/* Karaoke subtitles: the video fills the screen, less an inset a theme may ask for */
+/* Karaoke subtitles: the video fills the screen, or the share of it a theme asks for */
 ytmusic-player-page[player-fullscreened][blyrics-karaoke] #side-panel,
 ytmusic-player-page[player-fullscreened][blyrics-karaoke] #blyrics-fs-column {
   display: none !important;
 }
 
 ytmusic-player-page[player-fullscreened][blyrics-karaoke][blyrics-video-mode] #player.ytmusic-player-page {
-  width: calc(100% - 2 * var(--blyrics-karaoke-video-inset, 0px)) !important;
-  height: calc(100% - 2 * var(--blyrics-karaoke-video-inset, 0px)) !important;
-  max-height: calc(100% - 2 * var(--blyrics-karaoke-video-inset, 0px)) !important;
-  margin: var(--blyrics-karaoke-video-inset, 0px) !important;
+  width: calc(100% * var(--blyrics-karaoke-video-scale, 1)) !important;
+  height: calc(100% * var(--blyrics-karaoke-video-scale, 1)) !important;
+  max-height: calc(100% * var(--blyrics-karaoke-video-scale, 1)) !important;
+  margin: calc(50vh * (1 - var(--blyrics-karaoke-video-scale, 1))) calc(50vw * (1 - var(--blyrics-karaoke-video-scale, 1))) !important;
   top: 0 !important;
 }
 
 ytmusic-player-page[player-fullscreened][blyrics-karaoke][blyrics-video-mode] .av.ytmusic-player-page {
-  top: calc(var(--blyrics-karaoke-video-inset, 0px) + 24px) !important;
+  top: calc(50vh * (1 - var(--blyrics-karaoke-video-scale, 1)) + 24px) !important;
 }
