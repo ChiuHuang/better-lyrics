@@ -29,7 +29,7 @@ import { checkForStableRelease } from "./updateNotice";
 import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
-import { syncVideoQualityControls } from "./videoQualityControls";
+import { syncVideoQualityControls } from "@/options/videoQualityControls";
 
 interface Options extends VideoQualitySettings {
   isLogsEnabled: boolean;
