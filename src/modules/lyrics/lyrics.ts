@@ -300,6 +300,7 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
       }
       return lyrics;
     });
+    ytLyricsPromise.catch(logCore);
 
     try {
       let meta = await getLyrics(providerParameters, "metadata");
