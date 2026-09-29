@@ -2,7 +2,7 @@ import { strict as assert } from "node:assert";
 import type { LyricDecorations } from "@modules/lyrics/injectLyrics";
 import type { SegmentMap } from "@modules/lyrics/requestSniffer/requestSniffer";
 import type { Lyric } from "@braccato/core";
-import { getSegmentMapTimeShiftMs, retimeToSegmentMap } from "./segmentMap";
+import { getSegmentMapTimeShiftMs, retimeToSegmentMap } from "@modules/lyrics/segmentMap";
 
 const segmentMap: SegmentMap = {
   segment: [

@@ -170,7 +170,6 @@ export const karaokeOverlay = {
     const wasShown = plate.hasAttribute("data-plate");
     if (!box) {
       plate.removeAttribute("data-plate");
-      parts.root.removeAttribute("data-end-card");
       unclipMount(mount);
       return;
     }
@@ -178,7 +177,6 @@ export const karaokeOverlay = {
     const container = mount.firstElementChild;
     const fontSize = container ? Number.parseFloat(getComputedStyle(container).fontSize) || 16 : 16;
     const isCard = mount.querySelector(`.${CREDITS_CLASS}[data-stage-role="current"]`) !== null;
-    parts.root.toggleAttribute("data-end-card", isCard);
     const pad = isCard ? CARD_PAD_EM : PLATE_PAD_EM;
     const padX = fontSize * pad.x;
     const padY = fontSize * pad.y;
@@ -196,9 +194,11 @@ export const karaokeOverlay = {
       plate.removeAttribute("data-plate");
       activePlate = 1 - activePlate;
       unclipMount(mount);
+      plates[activePlate].toggleAttribute("data-end-card", isCard);
       snapPlate(stage, plates[activePlate], target);
       return;
     }
+    plate.toggleAttribute("data-end-card", isCard);
     if (!previous) {
       snapPlate(stage, plate, target);
       clipMount(mount, target, radius);

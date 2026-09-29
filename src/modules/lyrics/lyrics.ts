@@ -15,7 +15,7 @@ import { getLyrics, newSourceMap, providerPriority } from "./providers/shared";
 import { awaitUnifiedStream } from "./providers/unified";
 import type { YTLyricSourceResult } from "./providers/yt";
 import { getSongAlbum, getSongMetadata, type SegmentMap } from "./requestSniffer/requestSniffer";
-import { getSegmentMapTimeShiftMs } from "./segmentMap";
+import { getSegmentMapTimeShiftMs } from "@modules/lyrics/segmentMap";
 import { clearCache as clearTranslationCache } from "./translation";
 import { mainView } from "@modules/ui/mainLyricsView";
 import { resetPlaybackClock, resumeAllAutoscroll } from "@braccato/core";

@@ -557,8 +557,8 @@ With the "Karaoke subtitles" option on (the default) and a music video in fullsc
 | `ytmusic-app-layout[blyrics-karaoke]` / `#player-page[blyrics-karaoke]` | Karaoke owns the fullscreen video layout |
 | `#blyrics-karaoke[data-bar]` | Player bar is showing; the stage lifts above it |
 | `#blyrics-karaoke[data-title-card]` | Intro title card is showing; the stage is hidden |
-| `#blyrics-karaoke[data-end-card]` | End card (credits and source) holds the stage; target its plate with `#blyrics-karaoke[data-end-card] .blyrics-karaoke__plate` |
 | `.blyrics-karaoke__plate[data-plate]` | Plate is shown behind the current line |
+| `.blyrics-karaoke__plate[data-end-card]` | Plate is behind the end card (credits and source); kept while it fades out |
 | `data-stage-role` on a line | `current`, `previous`, `queued` or `gone` |
 | `data-stage-visible` on a line | Line is on screen; otherwise `visibility: hidden` |
 | `.blyrics-container[data-stage-duet]` | Sung lines use both sides: `v1` left, `v2`/`v3` right, `v1000` centred. A one-singer song stays centred |

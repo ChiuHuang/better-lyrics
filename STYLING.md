@@ -1793,8 +1793,8 @@ There are two plates so that when the next line is somewhere else on screen, a n
 |-----------|--------------|
 | `#blyrics-karaoke[data-bar]` | The YouTube Music player bar is showing; the lines lift above it |
 | `#blyrics-karaoke[data-title-card]` | The intro title card is showing; the stage is hidden |
-| `#blyrics-karaoke[data-end-card]` | The end card (songwriter credits and source) holds the stage |
 | `.blyrics-karaoke__plate[data-plate]` | This plate is behind the line being sung |
+| `.blyrics-karaoke__plate[data-end-card]` | This plate is behind the end card (songwriter credits and source); it keeps the attribute while it fades out |
 
 ### Styling the Plate
 
@@ -1813,18 +1813,18 @@ Both plates and the title card share `.blyrics-karaoke-surface`, so one rule res
 }
 ```
 
-Each backdrop can also be styled on its own: the intro card is `.blyrics-karaoke__card`, the plate behind sung lines is `.blyrics-karaoke__plate`, and the same plate behind the end card is `#blyrics-karaoke[data-end-card] .blyrics-karaoke__plate`:
+Each backdrop can also be styled on its own: the intro card is `.blyrics-karaoke__card`, the plate behind sung lines is `.blyrics-karaoke__plate:not([data-end-card])`, and the plate behind the end card is `.blyrics-karaoke__plate[data-end-card]`:
 
 ```css
 #blyrics-karaoke .blyrics-karaoke__card {
   background: rgb(0 0 0 / 55%);
 }
 
-#blyrics-karaoke:not([data-end-card]) .blyrics-karaoke__plate {
+#blyrics-karaoke .blyrics-karaoke__plate:not([data-end-card]) {
   background: rgb(0 0 0 / 70%);
 }
 
-#blyrics-karaoke[data-end-card] .blyrics-karaoke__plate {
+#blyrics-karaoke .blyrics-karaoke__plate[data-end-card] {
   background: rgb(20 20 40 / 80%);
 }
 ```
