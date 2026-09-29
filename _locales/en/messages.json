@@ -1943,6 +1943,14 @@
     "message": "Add",
     "description": "Button that links a suggested video to a Unison lyric"
   },
+  "unison_linkVideoPlaceholder": {
+    "message": "Video ID or link",
+    "description": "Placeholder and accessible label for the input on a Unison lyric's detail page where the owner types a videoId or YouTube URL to link"
+  },
+  "unison_linkVideoInvalid": {
+    "message": "That isn't a valid video ID or link",
+    "description": "Error shown when the owner tries to link a video whose ID or URL can't be parsed"
+  },
   "unison_linkFailed": {
     "message": "Couldn't link this video",
     "description": "Generic error shown when linking a video to a Unison lyric fails"
