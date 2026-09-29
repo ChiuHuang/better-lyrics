@@ -225,9 +225,9 @@ export const karaokeOverlay = {
     }
   },
 
-  update(timeS: number, firstSungLineStartS: number): void {
+  update(timeS: number, firstSungLineStartS: number, introNote: boolean): void {
     if (!parts) return;
-    const shown = isTitleCardVisible({ firstSungLineStartS, timeS });
+    const shown = isTitleCardVisible({ firstSungLineStartS, introNote, timeS });
     if (shown === isTitleCardShown) return;
     isTitleCardShown = shown;
     parts.root.toggleAttribute("data-title-card", shown);
