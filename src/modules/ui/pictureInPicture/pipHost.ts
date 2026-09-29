@@ -55,11 +55,12 @@ function whenStylesheetSettled(link: HTMLLinkElement): Promise<void> {
   return settlement;
 }
 
-function revealWhenStyled(pipWindow: Window): void {
+function revealWhenStyled(pipWindow: Window, onStyled: () => void): void {
   const links = Array.from(pipWindow.document.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'));
   const timeout = new Promise<void>(resolve => pipWindow.setTimeout(resolve, STYLESHEET_REVEAL_TIMEOUT_MS));
   void Promise.race([Promise.all(links.map(whenStylesheetSettled)), timeout]).then(() => {
     pipWindow.document.documentElement.style.removeProperty("visibility");
+    onStyled();
   });
 }
 
@@ -374,7 +375,8 @@ export function createPictureInPictureHost(
     renderLoadingShell,
     injectStylesheet: (pipWindow, stylesheet) => {
       environment.injectStylesheet(pipWindow, stylesheet);
-      revealWhenStyled(pipWindow);
+      // The renderer measured the window before this stylesheet declared its faded edges.
+      revealWhenStyled(pipWindow, measureLyrics);
     },
     closeWindow: pipWindow => {
       teardownWindow(pipWindow);
