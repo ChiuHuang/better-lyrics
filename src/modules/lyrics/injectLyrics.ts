@@ -29,7 +29,7 @@ import {
 } from "@modules/ui/dom";
 import { lyricsElementAdded, mainView } from "@modules/ui/mainLyricsView";
 import { disableNativeLyricsFocus } from "@modules/ui/nativeLyricsFocus";
-import { publishPictureInPictureLyrics } from "@modules/ui/pictureInPicture/lyricsPublisher";
+import { publishSecondaryViews } from "@modules/ui/secondaryViews";
 import { injectRomanization, injectTranslation, type LineData } from "@braccato/core";
 import { containsNonLatin, detectNonLatinLanguage } from "@braccato/core/text";
 import { findBestLanguageMatch, langCodesMatch, languageMatchesAny } from "@utils";
@@ -62,7 +62,7 @@ function recordLyricDecoration(index: number, decoration: LyricLineDecoration): 
 function updateLyricLanguage(language: string): void {
   if (AppState.lyricData) AppState.lyricData.language = language;
   mainView.setLanguage(language);
-  publishPictureInPictureLyrics();
+  publishSecondaryViews();
 }
 
 function isRomanizationDisabledForLang(lang: string): boolean {
@@ -87,6 +87,10 @@ export interface LyricsData {
   hasNonLatin: boolean;
   language?: string | null;
   songwriters?: readonly string[];
+  song: string;
+  artist: string;
+  /** YouTube's own lines, shown while the synced providers are still being asked. */
+  isProvisional: boolean;
 }
 
 /**
@@ -190,6 +194,9 @@ function injectLyrics(
     tabSelector,
     hasNonLatin: lyrics.some(item => !!item.words && containsNonLatin(item.words)),
     songwriters: data.songwriters,
+    song: data.song,
+    artist: data.artist,
+    isProvisional: keepLoaderVisible,
   };
 
   // Set before addFooter so the dock controls read the current song's lyric data.
@@ -365,7 +372,7 @@ async function processBatchTranslationsAndRomanizations(
           }
         });
         lyricsElementAdded();
-        publishPictureInPictureLyrics();
+        publishSecondaryViews();
       })()
     );
   }
@@ -399,7 +406,7 @@ async function processBatchTranslationsAndRomanizations(
           }
         });
         lyricsElementAdded();
-        publishPictureInPictureLyrics();
+        publishSecondaryViews();
       })()
     );
   }

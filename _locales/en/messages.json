@@ -2443,6 +2443,10 @@
     "message": "Something went wrong. Try again.",
     "description": "Fallback error for revision actions"
   },
+  "options_display_karaoke": {
+    "message": "Karaoke subtitles",
+    "description": "Toggle label for showing synced lyrics as subtitles over a music video in fullscreen"
+  },
   "options_display_highResolutionVideo": {
     "message": "Enable higher-resolution videos",
     "description": "Display settings toggle for enabling video resolutions above 1080p."

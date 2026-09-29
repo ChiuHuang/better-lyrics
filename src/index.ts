@@ -4,6 +4,8 @@ import { injectI18nCssVars, loadLocaleOverride, subscribeToLocaleChanges } from 
 import { purgeExpiredKeys, saveCacheInfo } from "@core/storage";
 import { prewarmAuthenticationToken } from "@modules/lyrics/providers/unified";
 import { initProviders } from "@modules/lyrics/providers/shared";
+import { disposeKaraoke, syncKaraoke } from "@modules/karaoke/karaokeView";
+import { loadKaraokeSettings } from "@modules/karaoke/settings";
 import { setupRequestSniffer } from "@modules/lyrics/requestSniffer/requestSniffer";
 import {
   handleSettings,
@@ -30,6 +32,7 @@ import {
   enableLyricsTab,
   initializeLyrics,
   lyricReloader,
+  onFullscreenChange,
   setUpAvButtonListener,
   setupAltHoverHandler,
   setupHomepageFullscreenHandler,
@@ -71,6 +74,8 @@ async function modify(isDisposed: () => boolean): Promise<void> {
   loadEndTimeModeSetting();
   loadLyricOffsetSettings();
   loadPassiveScrollSetting();
+  loadKaraokeSettings(syncKaraoke);
+  onFullscreenChange(syncKaraoke, syncKaraoke);
   loadDockSettings(hideDockOnIdleInFullscreen);
   subscribeToCustomStyles();
   await purgeExpiredKeys();
@@ -131,6 +136,7 @@ function init(): () => void {
     disposePictureInPictureBrowserController();
     if (document.querySelector('[data-extension-root="true"]')) cleanupLyrics();
     unmountDock();
+    disposeKaraoke();
   };
 }
 
