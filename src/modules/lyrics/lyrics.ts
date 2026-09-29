@@ -347,7 +347,7 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
           ytLyricsEarlyInjectAbortController.abort("Lyrics are ready"); // May not be ideal when the stringSimilarity fails, but this should be rare anyways
           let ytLyrics = (await ytLyricsPromise) as YTLyricSourceResult;
 
-          if (ytLyrics !== null) {
+          if (ytLyrics !== null && sourceLyrics.source !== "Unison") {
             let lyricText = "";
             sourceLyrics.lyrics.forEach(lyric => {
               lyricText += lyric.words + "\n";
