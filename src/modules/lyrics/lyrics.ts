@@ -15,6 +15,7 @@ import { getLyrics, newSourceMap, providerPriority } from "./providers/shared";
 import { awaitUnifiedStream } from "./providers/unified";
 import type { YTLyricSourceResult } from "./providers/yt";
 import { getSongAlbum, getSongMetadata, type SegmentMap } from "./requestSniffer/requestSniffer";
+import { getSegmentMapTimeShiftMs } from "./segmentMap";
 import { clearCache as clearTranslationCache } from "./translation";
 import { mainView } from "@modules/ui/mainLyricsView";
 import { resetPlaybackClock, resumeAllAutoscroll } from "@braccato/core";
@@ -76,28 +77,6 @@ function retainParsedLyrics(data: LyricSourceResultWithMeta): void {
     segmentMap: data.segmentMap,
   };
   publishPictureInPictureLyrics();
-}
-
-/**
- * How far a time recorded against the counterpart video moves when the same song is played back as
- * its other version. Pure, so a view that renders the lyrics somewhere other than the side panel can
- * shift a copy of them instead of the records the side panel is animating.
- *
- * @param segmentMap - Segment map pairing the two versions of the song
- * @param timeMs - Time on the counterpart video's timeline, in milliseconds
- * @returns The shift to add, in milliseconds
- */
-export function getSegmentMapTimeShiftMs(segmentMap: SegmentMap, timeMs: number): number {
-  let lastTimeChange = 0;
-  for (let segment of segmentMap.segment) {
-    if (timeMs >= segment.counterpartVideoStartTimeMilliseconds) {
-      lastTimeChange = segment.primaryVideoStartTimeMilliseconds - segment.counterpartVideoStartTimeMilliseconds;
-      if (timeMs <= segment.counterpartVideoStartTimeMilliseconds + segment.durationMilliseconds) {
-        break;
-      }
-    }
-  }
-  return lastTimeChange;
 }
 
 export function applySegmentMapToLyrics(
