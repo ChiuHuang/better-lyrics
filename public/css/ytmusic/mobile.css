@@ -50,18 +50,18 @@
     margin-top: 0;
   }
 
-  ytmusic-app-layout[player-fullscreened][show-fullscreen-controls]:not([blyrics-dfs], [blyrics-karaoke]) > [slot="player-bar"] {
+  ytmusic-app-layout[player-fullscreened][show-fullscreen-controls]:not([blyrics-dfs]) > [slot="player-bar"] {
     width: 100%;
   }
-  ytmusic-app-layout[player-fullscreened][show-fullscreen-controls]:not([blyrics-dfs], [blyrics-karaoke])
+  ytmusic-app-layout[player-fullscreened][show-fullscreen-controls]:not([blyrics-dfs])
   > [slot="player-bar"]
   .right-controls-buttons.ytmusic-player-bar,
-  ytmusic-app-layout[player-fullscreened][show-fullscreen-controls]:not([blyrics-dfs], [blyrics-karaoke])
+  ytmusic-app-layout[player-fullscreened][show-fullscreen-controls]:not([blyrics-dfs])
   > [slot="player-bar"]
   .time-info.ytmusic-player-bar {
     color: var(--blyrics-ui-text-color);
   }
-  ytmusic-app-layout[player-fullscreened][show-fullscreen-controls]:not([blyrics-dfs], [blyrics-karaoke]) > [slot="player-bar"]:before {
+  ytmusic-app-layout[player-fullscreened][show-fullscreen-controls]:not([blyrics-dfs]) > [slot="player-bar"]:before {
     background: linear-gradient(to bottom, var(--blyrics-gradient-stops));
     content: "";
     height: 100%;

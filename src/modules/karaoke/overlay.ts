@@ -28,6 +28,7 @@ interface TitleCardText {
 
 let parts: OverlayParts | null = null;
 let resizeHandle: ObserverHandle | null = null;
+let barObserver: MutationObserver | null = null;
 let isTitleCardShown = false;
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string): HTMLElementTagNameMap[K] {
@@ -66,6 +67,10 @@ function ensureParts(): OverlayParts {
   return parts;
 }
 
+function syncBarShown(layout: HTMLElement): void {
+  parts?.root.toggleAttribute("data-bar", layout.hasAttribute("show-fullscreen-controls"));
+}
+
 function measurePlayerBar(): void {
   const barHeight = getPlayerBar(document)?.getBoundingClientRect().height;
   if (parts && barHeight) parts.root.style.setProperty("--blyrics-karaoke-bar-height", `${barHeight}px`);
@@ -82,17 +87,25 @@ export const karaokeOverlay = {
   },
 
   /**
-   * YouTube Music keeps its player bar up in this fullscreen, so the stage always sits above it.
-   * The bar's height and the stage's size are followed while shown, and `onResize` re-measures
-   * the lines the size change reflowed.
+   * The stage lifts clear of the player bar while YouTube Music shows it. The bar's height and the
+   * stage's size are followed while shown, and `onResize` re-measures the lines the size change
+   * reflowed.
    */
   setVisible(visible: boolean, onResize: () => void): void {
     if (!parts || parts.root.hidden === !visible) return;
     parts.root.hidden = !visible;
     resizeHandle?.destroy();
     resizeHandle = null;
+    barObserver?.disconnect();
+    barObserver = null;
     if (!visible) return;
     measurePlayerBar();
+    const layout = document.getElementById("layout");
+    if (layout) {
+      syncBarShown(layout);
+      barObserver = new MutationObserver(() => syncBarShown(layout));
+      barObserver.observe(layout, { attributes: true, attributeFilter: ["show-fullscreen-controls"] });
+    }
     const bar = getPlayerBar(document);
     resizeHandle = observeResize(bar ? [parts.stage, bar] : [parts.stage], () => {
       measurePlayerBar();

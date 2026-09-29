@@ -2,8 +2,8 @@
    braccato's and the theme's look. */
 #blyrics-karaoke {
     --blyrics-karaoke-ease: cubic-bezier(0.2, 0, 0, 1);
-    --blyrics-karaoke-font-size: 4.3cqh;
-    --blyrics-karaoke-floor: max(7.5cqh, calc(var(--blyrics-karaoke-bar-height, 72px) + 3cqh));
+    --blyrics-karaoke-floor: 7.5cqh;
+    --blyrics-karaoke-lift: 0px;
     position: fixed;
     inset: var(--blyrics-karaoke-video-inset, 0);
     z-index: 3;
@@ -15,10 +15,17 @@
     display: none;
 }
 
+#blyrics-karaoke[data-bar] {
+    --blyrics-karaoke-lift: max(0px, calc(var(--blyrics-karaoke-bar-height, 72px) - 4.5cqh));
+}
+
 #blyrics-karaoke .blyrics-karaoke__stage {
     position: absolute;
     inset: 8cqh 8cqw var(--blyrics-karaoke-floor);
-    transition: opacity 250ms ease-out;
+    translate: 0 calc(-1 * var(--blyrics-karaoke-lift));
+    transition:
+        opacity 250ms ease-out,
+        translate 300ms var(--blyrics-karaoke-ease);
 }
 
 #blyrics-karaoke .blyrics-karaoke__mount {
@@ -102,9 +109,11 @@
     right: 12cqw;
     bottom: var(--blyrics-karaoke-floor);
     left: 12cqw;
+    translate: 0 calc(-1 * var(--blyrics-karaoke-lift));
+    transition: translate 300ms var(--blyrics-karaoke-ease);
     color: var(--blyrics-ui-text-color);
     font-family: var(--blyrics-font-family, var(--blyrics-default-font-family));
-    font-size: var(--blyrics-karaoke-font-size);
+    font-size: calc(var(--blyrics-font-size) * 0.5);
     font-weight: 700;
     line-height: 1.333;
     text-align: center;
@@ -115,6 +124,7 @@
 
 #blyrics-karaoke .blyrics-karaoke__card {
     display: inline-grid;
+    max-width: 100%;
     justify-items: center;
     padding: 0.42em 0.9em 0.5em;
     opacity: 0;
@@ -162,7 +172,7 @@
 }
 
 #blyrics-karaoke .blyrics-karaoke__card-title {
-    font-size: 1.2em;
+    font-size: 1.4em;
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1.1;
@@ -171,14 +181,18 @@
 #blyrics-karaoke .blyrics-karaoke__card-artist {
     margin-top: 0.12em !important;
     color: var(--blyrics-translated-color);
-    font-size: 0.6em;
+    font-size: 0.75em;
     font-weight: 600;
 }
 
 #blyrics-karaoke .blyrics-karaoke__card-credit {
-    margin-top: 0.55em !important;
+    margin-top: 0.5em !important;
     color: var(--blyrics-translated-color);
-    font-size: 0.4em;
+    font-size: 0.6em;
+    overflow: hidden;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-weight: 550;
 }
 

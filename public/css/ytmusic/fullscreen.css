@@ -1,4 +1,4 @@
-#layout[player-fullscreened]:not([blyrics-dfs], [blyrics-karaoke])[cursor-hidden]:not([show-fullscreen-controls]) * {
+#layout[player-fullscreened]:not([blyrics-dfs])[cursor-hidden]:not([show-fullscreen-controls]) * {
   cursor: none !important;
 }
 
@@ -220,7 +220,7 @@ ytmusic-player-page[player-fullscreened]:is([blyrics-dfs], [blyrics-karaoke]) #b
   display: none !important;
 }
 
-ytmusic-player-page[player-fullscreened]:is([blyrics-dfs], [blyrics-karaoke])[blyrics-video-mode] .av.ytmusic-player-page {
+ytmusic-player-page[player-fullscreened][blyrics-dfs][blyrics-video-mode] .av.ytmusic-player-page {
   position: static !important;
   transform: none !important;
   left: auto !important;
@@ -233,7 +233,7 @@ ytmusic-app-layout[player-fullscreened]:is([blyrics-dfs], [blyrics-karaoke]) #pl
   width: 100% !important;
 }
 
-ytmusic-app-layout[player-fullscreened]:is([blyrics-dfs], [blyrics-karaoke]) > [slot="player-bar"]:before {
+ytmusic-app-layout[player-fullscreened][blyrics-dfs] > [slot="player-bar"]:before {
   display: none !important;
 }
 
@@ -241,31 +241,31 @@ ytmusic-app-layout[player-fullscreened]:is([blyrics-dfs], [blyrics-karaoke])[bly
   display: none !important;
 }
 
-ytmusic-player-bar[player-fullscreened]:not([blyrics-dfs], [blyrics-karaoke]) #play-pause-button>.yt-icon-button>yt-icon {
+ytmusic-player-bar[player-fullscreened]:not([blyrics-dfs]) #play-pause-button>.yt-icon-button>yt-icon {
     width: 32px;
     height: 32px;
 }
 
 /* Fix YTM A/B test: player bar not auto-hiding */
 
-ytmusic-app-layout[player-fullscreened]:not([blyrics-dfs], [blyrics-karaoke]) > [slot="player-bar"] {
+ytmusic-app-layout[player-fullscreened]:not([blyrics-dfs]) > [slot="player-bar"] {
   animation: none !important;
   width: 100%;
 }
 
 /* Top-anchored Unison dock: tab header is hidden in fullscreen, so no 48px buffer needed */
-#layout[player-fullscreened]:not([blyrics-dfs], [blyrics-karaoke]) .blyrics-dock[data-position^="top-"] {
+#layout[player-fullscreened]:not([blyrics-dfs]) .blyrics-dock[data-position^="top-"] {
   top: 16px;
 }
 
 /* The proximity listener owns this attribute, including a corridor that covers the gap the
    shift opens, so no CSS hover-bridge is needed to keep it latched. */
-#layout[player-fullscreened]:not([blyrics-dfs], [blyrics-karaoke])[show-fullscreen-controls] .blyrics-dock[data-position^="bottom-"] {
+#layout[player-fullscreened]:not([blyrics-dfs])[show-fullscreen-controls] .blyrics-dock[data-position^="bottom-"] {
   --dock-y-shift: var(--blyrics-fullscreen-bottom-dock-shift, -88px);
 }
 
 /* Top-center autoscroll-button shift is smaller in fullscreen (no tab header) */
-#layout[player-fullscreened]:not([blyrics-dfs], [blyrics-karaoke]) .autoscroll-resume-wrapper:has(.autoscroll-resume-button:not([autoscroll-hidden="true"])) ~ .blyrics-dock[data-position="top-center"] {
+#layout[player-fullscreened]:not([blyrics-dfs]) .autoscroll-resume-wrapper:has(.autoscroll-resume-button:not([autoscroll-hidden="true"])) ~ .blyrics-dock[data-position="top-center"] {
   --dock-y-shift: 52px;
 }
 
