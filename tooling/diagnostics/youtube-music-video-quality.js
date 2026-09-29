@@ -46,10 +46,7 @@
       if (calls.length > 20) calls.shift();
       // Preserve every other Music-supplied argument, particularly aac_high,
       // prefer_low_quality_audio, player_params, pause_at_start, and list.
-      return Reflect.apply(original, this, [
-        override ? { ...vars, prefer_gapless: false } : vars,
-        ...rest,
-      ]);
+      return Reflect.apply(original, this, [override ? { ...vars, prefer_gapless: false } : vars, ...rest]);
     };
     api[name] = wrapped;
     hooks.push({ name, original, wrapped });
