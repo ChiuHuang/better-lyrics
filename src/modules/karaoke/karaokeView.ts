@@ -170,6 +170,8 @@ export function applyKaraokeTheme(css: string): void {
 export function disposeKaraoke(): void {
   clearKaraokeLyrics();
   karaokeOverlay.destroy();
+  panelRefit?.destroy();
+  panelRefit = null;
   wasActive = false;
   wasLayout = false;
 }
