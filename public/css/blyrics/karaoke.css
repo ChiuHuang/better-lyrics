@@ -26,48 +26,16 @@
     inset: 0;
 }
 
-#blyrics-karaoke[data-size="m"] {
-    --blyrics-karaoke-font-size: 5.2cqh;
-}
+/* -- Backdrop ----------------------------------------------- */
 
-#blyrics-karaoke[data-size="l"] {
-    --blyrics-karaoke-font-size: 6.3cqh;
-}
-
-#blyrics-karaoke .blyrics-container {
-    --blyrics-font-size: var(--blyrics-karaoke-font-size);
-}
-
-#blyrics-karaoke[data-bg-vocals="false"] .blyrics-background-line {
-    display: none;
-}
-
-/* -- Backdrops ---------------------------------------------- */
-
-#blyrics-karaoke .blyrics-karaoke__scrim {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgb(0 0 0 / 70%) 0%, rgb(0 0 0 / 42%) 26%, transparent 55%);
-    opacity: 0;
-    transition: opacity 400ms ease-out;
-}
-
-#blyrics-karaoke[data-backdrop="scrim"] .blyrics-karaoke__scrim {
-    opacity: 1;
-}
-
-#blyrics-karaoke:is([data-backdrop="plate"], [data-backdrop="blur"]) .blyrics-karaoke-surface {
+/* The plate and the title card hold no controls, so a backdrop filter cannot break hit testing here. */
+#blyrics-karaoke .blyrics-karaoke-surface {
     border-radius: 0.46em;
-    background: rgb(12 12 16 / 64%);
+    background: rgb(14 14 18 / 52%);
     box-shadow:
         inset 0 0 0 1px rgb(255 255 255 / 7%),
         inset 0 1px 0 rgb(255 255 255 / 6%),
         0 0.3em 1em rgb(0 0 0 / 22%);
-}
-
-/* The plate and the title card hold no controls, so a backdrop filter cannot break hit testing here. */
-#blyrics-karaoke[data-backdrop="blur"] .blyrics-karaoke-surface {
-    background: rgb(14 14 18 / 52%);
     -webkit-backdrop-filter: blur(22px) saturate(1.5);
     backdrop-filter: blur(22px) saturate(1.5);
 }
@@ -76,7 +44,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    font-size: var(--blyrics-karaoke-font-size);
+    font-size: var(--blyrics-font-size);
     opacity: 0;
     transition:
         translate 380ms var(--blyrics-karaoke-ease),
@@ -85,7 +53,7 @@
         opacity 260ms ease-out;
 }
 
-#blyrics-karaoke:is([data-backdrop="plate"], [data-backdrop="blur"]) .blyrics-karaoke__plate[data-plate] {
+#blyrics-karaoke .blyrics-karaoke__plate[data-plate] {
     opacity: 1;
 }
 
@@ -218,57 +186,10 @@
     #blyrics-karaoke :is(
             .blyrics-karaoke__stage,
             .blyrics-karaoke__plate,
-            .blyrics-karaoke__scrim,
             .blyrics-karaoke__title,
             .blyrics-karaoke__card,
             .blyrics-karaoke__card p
         ) {
         transition-duration: 0ms !important;
     }
-}
-
-/* -- Player bar toggle -------------------------------------- */
-
-.blyrics-karaoke-mic {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: none;
-    width: 36px;
-    height: 36px;
-    margin: 4px 8px 4px 4px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: none;
-    color: var(--ytmusic-text-secondary, rgb(144 144 144));
-    cursor: pointer;
-}
-
-.blyrics-karaoke-mic:hover:not(:disabled),
-.blyrics-karaoke-mic[aria-pressed="true"] {
-    color: var(--ytmusic-text-primary, #fff);
-}
-
-.blyrics-karaoke-mic:disabled {
-    cursor: default;
-    opacity: 0.4;
-}
-
-.blyrics-karaoke-mic svg {
-    width: 24px;
-    height: 24px;
-}
-
-.blyrics-karaoke-mic[aria-pressed="true"]:not(:disabled)::after {
-    content: "";
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    width: 16px;
-    height: 2px;
-    border-radius: 99px;
-    background: #f03;
-    translate: -50% 0;
 }

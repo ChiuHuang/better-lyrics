@@ -7,9 +7,7 @@ import { currentTickOptions, lyricsElementAdded } from "@modules/ui/mainLyricsVi
 import { isAdPlaying } from "@modules/ui/playerControls/playerBarControls";
 import { createLyricsRenderer, type LyricsRenderer } from "@braccato/core";
 import { decorateEndCard } from "./endCard";
-import { syncMicButton } from "./micButton";
 import { karaokeOverlay } from "./overlay";
-import { persistKaraokeEnabled } from "./settings";
 import { isKaraokeActive, isKaraokeWanted, syncKaraokeAttribute } from "./state";
 
 // -- The karaoke view --------------------------
@@ -38,7 +36,6 @@ let builtSegmentMap: object | null = null;
 let builtLanguage: string | null | undefined;
 let decorationSignature = "";
 let firstSungLineStartS = Number.POSITIVE_INFINITY;
-let isStagePreview: boolean | null = null;
 let wasActive = false;
 
 function clearKaraokeLyrics(): void {
@@ -81,11 +78,10 @@ function publishKaraokeLyrics(): void {
   const segmentMap = source.segmentMap ?? null;
   const rebuilt = source !== builtFrom || segmentMap !== builtSegmentMap;
   if (rebuilt) {
-    const wantsEndCard = AppState.karaokeCredits === "auto" || AppState.karaokeCredits === "outro";
     karaokeView.setLyrics(view.lyrics, {
       mount: karaokeOverlay.ensureMount(),
       language: view.language,
-      songwriters: wantsEndCard ? view.songwriters : [],
+      songwriters: view.songwriters,
     });
     builtFrom = source;
     builtSegmentMap = segmentMap;
@@ -142,19 +138,10 @@ function relayoutKaraoke(): void {
  */
 export function syncKaraoke(): void {
   const active = syncKaraokeAttribute();
-  karaokeOverlay.applySettings();
-
-  const preview = AppState.karaokeLayout === "rolling";
-  if (preview !== isStagePreview) {
-    isStagePreview = preview;
-    karaokeView.setStageOptions({ preview });
-  }
 
   if (active) publishKaraokeLyrics();
   else if (!AppState.parsedLyrics && builtFrom !== null) clearKaraokeLyrics();
   karaokeOverlay.setVisible(active, relayoutKaraoke);
-
-  syncMicButton(toggleKaraoke);
 
   if (active !== wasActive) {
     wasActive = active;
@@ -162,11 +149,6 @@ export function syncKaraoke(): void {
     if (active) relayoutKaraoke();
     else lyricsElementAdded();
   }
-}
-
-function toggleKaraoke(): void {
-  persistKaraokeEnabled(!AppState.isKaraokeEnabled);
-  syncKaraoke();
 }
 
 /**

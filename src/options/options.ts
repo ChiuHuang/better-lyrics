@@ -47,11 +47,6 @@ interface Options {
   pipMarqueeEnabled: boolean;
   pipProgressBarEnabled: boolean;
   isKaraokeEnabled: boolean;
-  karaokeLayout: string;
-  karaokeSize: string;
-  karaokeBackdrop: string;
-  karaokeCredits: string;
-  isKaraokeBackgroundVocalsEnabled: boolean;
   isTranslateEnabled: boolean;
   translationLanguage: string;
   isCursorAutoHideEnabled: boolean;
@@ -120,12 +115,6 @@ const getOptionsFromForm = (): Options => {
     pipMarqueeEnabled: (document.getElementById("pipMarqueeEnabled") as HTMLInputElement).checked,
     pipProgressBarEnabled: (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked,
     isKaraokeEnabled: (document.getElementById("isKaraokeEnabled") as HTMLInputElement).checked,
-    karaokeLayout: (document.getElementById("karaokeLayout") as HTMLSelectElement).value,
-    karaokeSize: (document.getElementById("karaokeSize") as HTMLSelectElement).value,
-    karaokeBackdrop: (document.getElementById("karaokeBackdrop") as HTMLSelectElement).value,
-    karaokeCredits: (document.getElementById("karaokeCredits") as HTMLSelectElement).value,
-    isKaraokeBackgroundVocalsEnabled: (document.getElementById("isKaraokeBackgroundVocalsEnabled") as HTMLInputElement)
-      .checked,
     isTranslateEnabled: (document.getElementById("translate") as HTMLInputElement).checked,
     translationLanguage: (document.getElementById("translationLanguage") as HTMLInputElement).value,
     isCursorAutoHideEnabled: (document.getElementById("cursorAutoHide") as HTMLInputElement).checked,
@@ -385,7 +374,6 @@ const restoreOptions = (): void => {
   document.getElementById("clear-cache")!.addEventListener("click", () => clearTransientLyrics());
   setupUnisonActionsModal();
   initPictureInPictureModal();
-  initKaraokeModal();
   initOffsetModal();
 };
 
@@ -412,12 +400,6 @@ const setOptionsInForm = (items: Options): void => {
   (document.getElementById("pipMarqueeEnabled") as HTMLInputElement).checked = items.pipMarqueeEnabled;
   (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked = items.pipProgressBarEnabled;
   (document.getElementById("isKaraokeEnabled") as HTMLInputElement).checked = items.isKaraokeEnabled;
-  (document.getElementById("karaokeLayout") as HTMLSelectElement).value = items.karaokeLayout;
-  (document.getElementById("karaokeSize") as HTMLSelectElement).value = items.karaokeSize;
-  (document.getElementById("karaokeBackdrop") as HTMLSelectElement).value = items.karaokeBackdrop;
-  (document.getElementById("karaokeCredits") as HTMLSelectElement).value = items.karaokeCredits;
-  (document.getElementById("isKaraokeBackgroundVocalsEnabled") as HTMLInputElement).checked =
-    items.isKaraokeBackgroundVocalsEnabled;
   (document.getElementById("translate") as HTMLInputElement).checked = items.isTranslateEnabled;
   (document.getElementById("translationLanguage") as HTMLInputElement).value = items.translationLanguage;
   (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked = items.isRomanizationEnabled;
@@ -1722,17 +1704,13 @@ function setOffsetDisplay(id: string, value: number): void {
   if (display) display.textContent = formatOffsetDisplay(value);
 }
 
-interface SettingsModalIds {
-  openId: string;
-  overlayId: string;
-  closeId: string;
-}
-
-function bindSettingsModal({ openId, overlayId, closeId }: SettingsModalIds): boolean {
-  const openBtn = document.getElementById(openId);
-  const overlay = document.getElementById(overlayId);
-  const closeBtn = document.getElementById(closeId);
-  if (!openBtn || !overlay || !closeBtn) return false;
+// The controls live outside #options, so the blanket change listener over that
+// subtree does not reach them and each one is bound here instead.
+function initPictureInPictureModal(): void {
+  const openBtn = document.getElementById("pip-settings-btn");
+  const overlay = document.getElementById("pip-modal-overlay");
+  const closeBtn = document.getElementById("pip-modal-close");
+  if (!openBtn || !overlay || !closeBtn) return;
 
   const close = (): void => overlay.classList.remove("active");
   openBtn.addEventListener("click", () => overlay.classList.add("active"));
@@ -1748,26 +1726,8 @@ function bindSettingsModal({ openId, overlayId, closeId }: SettingsModalIds): bo
     control.addEventListener("change", saveOptions);
   }
 
-  return true;
-}
-
-// The controls live outside #options, so the blanket change listener over that
-// subtree does not reach them and each one is bound here instead.
-function initPictureInPictureModal(): void {
-  if (!bindSettingsModal({ openId: "pip-settings-btn", overlayId: "pip-modal-overlay", closeId: "pip-modal-close" })) {
-    return;
-  }
-
   const enabledToggle = document.getElementById("isPictureInPictureEnabled") as HTMLInputElement | null;
   enabledToggle?.addEventListener("change", () => syncPictureInPictureModalDependentState(enabledToggle.checked));
-}
-
-function initKaraokeModal(): void {
-  bindSettingsModal({
-    openId: "karaoke-settings-btn",
-    overlayId: "karaoke-modal-overlay",
-    closeId: "karaoke-modal-close",
-  });
 }
 
 function syncPictureInPictureModalDependentState(enabled: boolean): void {

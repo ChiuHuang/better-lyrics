@@ -29,13 +29,6 @@ function readConditions(): KaraokeConditions {
   };
 }
 
-export function isFullscreenVideo(): boolean {
-  const layout = appLayout();
-  return (
-    (layout?.hasAttribute("player-fullscreened") ?? false) && (layout?.hasAttribute("blyrics-video-mode") ?? false)
-  );
-}
-
 export function isKaraokeActive(): boolean {
   return appLayout()?.hasAttribute(KARAOKE_ACTIVE_ATTR) ?? false;
 }

@@ -1,4 +1,3 @@
-import { AppState } from "@core/appState";
 import { t } from "@core/i18n";
 import type { StageBox } from "@braccato/core";
 import { CREDITS_CLASS } from "@braccato/core/constants";
@@ -55,21 +54,14 @@ function build(): OverlayParts {
   card.append(title, artist, credit);
   titleCard.append(card);
 
-  root.append(element("div", "blyrics-karaoke__scrim"), stage, titleCard);
+  root.append(stage, titleCard);
   document.body.append(root);
   return { root, stage, plate, mount, title, artist, credit };
-}
-
-function writeSettings(root: HTMLElement): void {
-  root.dataset.size = AppState.karaokeSize;
-  root.dataset.backdrop = AppState.karaokeBackdrop;
-  root.dataset.bgVocals = String(AppState.isKaraokeBackgroundVocalsEnabled);
 }
 
 function ensureParts(): OverlayParts {
   if (!parts) {
     parts = build();
-    writeSettings(parts.root);
   }
   return parts;
 }
@@ -80,17 +72,13 @@ function measurePlayerBar(): void {
 }
 
 /**
- * The fullscreen layer karaoke draws in: a scrim, the plate behind the lines being sung, the mount
+ * The fullscreen layer karaoke draws in: the plate behind the lines being sung, the mount
  * braccato builds the lines into, and the title card. Built on first use, so nothing is added to the
  * page for a listener who never turns karaoke on.
  */
 export const karaokeOverlay = {
   ensureMount(): HTMLElement {
     return ensureParts().mount;
-  },
-
-  applySettings(): void {
-    if (parts) writeSettings(parts.root);
   },
 
   /**
@@ -152,7 +140,7 @@ export const karaokeOverlay = {
 
   update(timeS: number, firstSungLineStartS: number): void {
     if (!parts) return;
-    const shown = isTitleCardVisible({ credits: AppState.karaokeCredits, firstSungLineStartS, timeS });
+    const shown = isTitleCardVisible({ firstSungLineStartS, timeS });
     if (shown === isTitleCardShown) return;
     isTitleCardShown = shown;
     parts.root.toggleAttribute("data-title-card", shown);
