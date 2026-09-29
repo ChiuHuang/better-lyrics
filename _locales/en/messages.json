@@ -2434,5 +2434,23 @@
   "unison_rev_error": {
     "message": "Something went wrong. Try again.",
     "description": "Fallback error for revision actions"
+  },
+  "options_display_highResolutionVideo": {
+    "message": "Enable higher-resolution videos"
+  },
+  "options_display_highResolutionVideoInfo": {
+    "message": "Unlocks resolutions above 1080p when available. May affect seamless transitions between videos. Audio-only gapless playback is preserved. Only disable if you experience playback or transition issues."
+  },
+  "options_display_preferredVideoQuality": {
+    "message": "Preferred video quality"
+  },
+  "options_display_videoQualityLimit": {
+    "message": "Enable higher-resolution videos for 1440p, 4K, and 8K."
+  },
+  "options_display_videoQualityAuto": {
+    "message": "Auto"
+  },
+  "options_display_videoQualityApplyHint": {
+    "message": "Higher-resolution playback changes apply to the next video or after refreshing. Preferred quality uses the closest available lower resolution."
   }
 }
