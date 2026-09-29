@@ -47,6 +47,7 @@ import {
 import { subscribeToCustomStyles } from "@modules/ui/styleInjector";
 import { applyLoggingSetting } from "@modules/settings/settings";
 import { logCore } from "@core/logger";
+import { startVideoQualitySettingsBridge } from "@modules/settings/videoQualityBridge";
 
 /**
  * Initializes the BetterLyrics extension by setting up all required components.
@@ -109,6 +110,7 @@ async function modify(isDisposed: () => boolean): Promise<void> {
  * Entry point for the BetterLyrics extension.
  */
 function init(): () => void {
+  const cleanupVideoQualitySettings = startVideoQualitySettingsBridge();
   let disposed = false;
   let modifyStarted = false;
   const runModify = (): void => {
@@ -128,6 +130,7 @@ function init(): () => void {
   const cleanupRequestSniffer = setupRequestSniffer();
   return () => {
     disposed = true;
+    cleanupVideoQualitySettings();
     document.removeEventListener("DOMContentLoaded", runModify);
     cleanupRequestSniffer();
     disposePictureInPictureBrowserController();

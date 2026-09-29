@@ -2446,5 +2446,29 @@
   "options_display_karaoke": {
     "message": "Karaoke subtitles",
     "description": "Toggle label for showing synced lyrics as subtitles over a music video in fullscreen"
+  },
+  "options_display_highResolutionVideo": {
+    "message": "Enable higher-resolution videos",
+    "description": "Display settings toggle for enabling video resolutions above 1080p."
+  },
+  "options_display_highResolutionVideoInfo": {
+    "message": "Unlocks resolutions above 1080p when available. May affect seamless transitions between videos. Audio-only gapless playback is preserved. Only disable if you experience playback or transition issues.",
+    "description": "Help tooltip explaining higher video resolutions and the possible effect on seamless video transitions."
+  },
+  "options_display_preferredVideoQuality": {
+    "message": "Preferred video quality",
+    "description": "Display settings label for the preferred video resolution selector."
+  },
+  "options_display_videoQualityLimit": {
+    "message": "Enable higher-resolution videos for 1440p, 4K, and 8K.",
+    "description": "Hint shown when resolutions above 1080p are disabled by the higher-resolution video toggle."
+  },
+  "options_display_videoQualityAuto": {
+    "message": "Auto",
+    "description": "Video quality choice that lets YouTube Music select the resolution automatically."
+  },
+  "options_display_videoQualityApplyHint": {
+    "message": "Higher-resolution playback changes apply to the next video or after refreshing. Preferred quality uses the closest available lower resolution.",
+    "description": "Hint explaining when video playback changes take effect and how unavailable resolutions fall back."
   }
 }

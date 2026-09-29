@@ -29,7 +29,10 @@ import { initStoreUI, setupYourThemesButton } from "./store/store";
 import { checkForStableRelease } from "./updateNotice";
 import { errorCore, warnCore } from "@core/logger";
 
-interface Options {
+import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
+import { syncVideoQualityControls } from "@/options/videoQualityControls";
+
+interface Options extends VideoQualitySettings {
   isLogsEnabled: boolean;
   isAutoSwitchEnabled: boolean;
   isAlbumArtEnabled: boolean;
@@ -96,6 +99,11 @@ const getOptionsFromForm = (): Options => {
   }
 
   return {
+    ...normalizeVideoQualitySettings({
+      isHighResolutionVideoEnabled: (document.getElementById("isHighResolutionVideoEnabled") as HTMLInputElement)
+        .checked,
+      preferredVideoQuality: (document.getElementById("preferredVideoQuality") as HTMLSelectElement).value,
+    }),
     isLogsEnabled: (document.getElementById("logs") as HTMLInputElement).checked,
     isAutoSwitchEnabled: (document.getElementById("autoSwitch") as HTMLInputElement).checked,
     isAlbumArtEnabled: (document.getElementById("albumArt") as HTMLInputElement).checked,
@@ -290,6 +298,8 @@ const restoreOptions = (): void => {
   subscribeToCacheInfo();
 
   const defaultOptions: Options = {
+    isHighResolutionVideoEnabled: true,
+    preferredVideoQuality: "auto",
     isLogsEnabled: true,
     isAutoSwitchEnabled: false,
     isAlbumArtEnabled: true,
@@ -379,6 +389,11 @@ const restoreOptions = (): void => {
 
 // Function to set options in form elements
 const setOptionsInForm = (items: Options): void => {
+  const videoSettings = normalizeVideoQualitySettings(items);
+  (document.getElementById("isHighResolutionVideoEnabled") as HTMLInputElement).checked =
+    videoSettings.isHighResolutionVideoEnabled;
+  (document.getElementById("preferredVideoQuality") as HTMLSelectElement).value = videoSettings.preferredVideoQuality;
+  syncVideoQualityControls(document);
   (document.getElementById("logs") as HTMLInputElement).checked = items.isLogsEnabled;
   (document.getElementById("albumArt") as HTMLInputElement).checked = items.isAlbumArtEnabled;
   (document.getElementById("isShadersPromoEnabled") as HTMLInputElement).checked = items.isShadersPromoEnabled;
@@ -697,7 +712,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   checkForStableRelease();
 });
 document.querySelectorAll("#options input, #options select").forEach(element => {
-  element.addEventListener("change", saveOptions);
+  element.addEventListener("change", () => {
+    syncVideoQualityControls(document);
+    saveOptions();
+  });
 });
 
 // Tab switcher
