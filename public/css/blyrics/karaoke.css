@@ -84,6 +84,16 @@
     transition-duration: 300ms;
 }
 
+#blyrics-karaoke .blyrics-karaoke__stage[data-plate-motion="resize"] .blyrics-karaoke__plate {
+    transition-duration: 420ms, 420ms, 420ms, 260ms;
+    transition-timing-function: var(--blyrics-karaoke-ease), var(--blyrics-karaoke-ease), var(--blyrics-karaoke-ease), ease-out;
+}
+
+#blyrics-karaoke .blyrics-karaoke__stage[data-plate-motion="resize"] .blyrics-karaoke__mount {
+    transition-duration: 420ms;
+    transition-timing-function: var(--blyrics-karaoke-ease);
+}
+
 #blyrics-karaoke .blyrics-karaoke__stage.is-snap .blyrics-karaoke__plate {
     transition: opacity 260ms ease-out;
 }

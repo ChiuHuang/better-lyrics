@@ -12,8 +12,10 @@ const CARD_PAD_EM = { x: 0.8, y: 0.36 };
 const PLATE_RADIUS_EM = 0.46;
 // Under this shared width a new plate fades in rather than the old one sliding across the screen.
 const MIN_SHARED_WIDTH = 0.5;
+// The spring overshoots in proportion to the distance, so a change this large settles without it.
+const MAX_SPRING_RATIO = 1.5;
 
-type PlateMotion = "grow" | "shrink";
+type PlateMotion = "grow" | "shrink" | "resize";
 
 interface OverlayParts {
   root: HTMLElement;
@@ -51,6 +53,18 @@ function contains(outer: StageBox, inner: StageBox): boolean {
 function sharedWidth(a: StageBox, b: StageBox): number {
   const overlap = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
   return Math.max(overlap, 0) / Math.min(a.width, b.width);
+}
+
+function sizeRatio(a: StageBox, b: StageBox): number {
+  return Math.max(
+    Math.max(a.width, b.width) / Math.min(a.width, b.width),
+    Math.max(a.height, b.height) / Math.min(a.height, b.height)
+  );
+}
+
+function plateMotion(previous: StageBox, target: StageBox): PlateMotion {
+  if (sizeRatio(previous, target) >= MAX_SPRING_RATIO) return "resize";
+  return contains(previous, target) ? "shrink" : "grow";
 }
 
 function placePlate(plate: HTMLElement, rect: StageBox): void {
@@ -212,8 +226,7 @@ export const karaokeOverlay = {
       void mount.offsetWidth;
       stage.classList.remove(SNAP_CLASS);
     }
-    const motion: PlateMotion = contains(previous, target) ? "shrink" : "grow";
-    stage.dataset.plateMotion = motion;
+    stage.dataset.plateMotion = plateMotion(previous, target);
     placePlate(plate, target);
     clipMount(mount, target, radius);
   },
