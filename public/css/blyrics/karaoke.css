@@ -17,7 +17,7 @@
 
 #blyrics-karaoke .blyrics-karaoke__stage {
     position: absolute;
-    inset: 8cqh 0 var(--blyrics-karaoke-floor);
+    inset: 8cqh 8cqw var(--blyrics-karaoke-floor);
     transition: opacity 250ms ease-out;
 }
 

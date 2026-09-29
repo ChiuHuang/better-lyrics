@@ -275,7 +275,10 @@ ytmusic-player-page[player-fullscreened][blyrics-karaoke] #blyrics-fs-column {
   display: none !important;
 }
 
-ytmusic-player-page[player-fullscreened][blyrics-karaoke] #main-panel.ytmusic-player-page {
-  box-sizing: border-box !important;
-  padding: var(--blyrics-karaoke-video-inset, 0) !important;
+ytmusic-player-page[player-fullscreened][blyrics-karaoke][blyrics-video-mode] #player.ytmusic-player-page {
+  width: calc(100% - 2 * var(--blyrics-karaoke-video-inset, 0px)) !important;
+  height: calc(100% - 2 * var(--blyrics-karaoke-video-inset, 0px)) !important;
+  max-height: calc(100% - 2 * var(--blyrics-karaoke-video-inset, 0px)) !important;
+  margin: var(--blyrics-karaoke-video-inset, 0px) !important;
+  top: 0 !important;
 }
