@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "Better Lyrics (เนื้อเพลงสำหรับ Youtube Music)",
+    "message": "Better Lyrics (เนื้อเพลงสำหรับ YouTube Music)",
     "description": "The name of the extension"
   },
   "extensionDescription": {
@@ -2030,23 +2030,23 @@
     "description": "Editor tab that lists what the edit changes compared with an earlier revision"
   },
   "unison_rev_changesTabs": {
-    "message": "Preview or changes",
+    "message": "ตัวอย่างหรือการเปลี่ยนแปลง",
     "description": "Screen reader label for the editor tabs that switch between the lyric preview and the list of changes"
   },
   "unison_rev_details": {
-    "message": "Details",
+    "message": "รายละเอียด",
     "description": "Diff section label above changed song details: language, ISRC and album"
   },
   "unison_rev_updating": {
-    "message": "Updating",
+    "message": "กำลังอัปเดต",
     "description": "Shown while the list of changes refreshes after an edit"
   },
   "unison_rev_checkFailed": {
-    "message": "Couldn't check your edit",
+    "message": "ไม่สามารถตรวจสอบการแก้ไขของคุณได้",
     "description": "Editor save bar title when the edit check failed for a reason the server did not explain"
   },
   "unison_rev_checkFailedHint": {
-    "message": "Save turns back on once the check runs.",
+    "message": "จะบันทึกอีกครั้งเมื่อสามารถตรวจสอบได้",
     "description": "Editor save bar hint under the failed check title, followed by a Try again link"
   },
   "unison_rev_tryAgain": {
@@ -2140,23 +2140,23 @@
     "description": "Explains what editing a sealed lyric means"
   },
   "unison_rev_status_live": {
-    "message": "Live",
+    "message": "ใช้งานอยู่",
     "description": "Revision status: the version listeners see"
   },
   "unison_rev_status_pending": {
-    "message": "Pending",
+    "message": "รอตรวจสอบ",
     "description": "Revision status: waiting for council review"
   },
   "unison_rev_status_past": {
-    "message": "Past",
+    "message": "รุ่นเก่า",
     "description": "Revision status: was live before"
   },
   "unison_rev_status_superseded": {
-    "message": "Superseded",
+    "message": "ถูกแทนที่",
     "description": "Revision status: replaced by a newer save before review"
   },
   "unison_rev_status_rejected": {
-    "message": "Rejected",
+    "message": "ถูกปฏิเสธ",
     "description": "Revision status: the council rejected it"
   },
   "unison_rev_status_withdrawn": {
