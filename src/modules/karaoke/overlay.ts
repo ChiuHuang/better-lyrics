@@ -10,8 +10,7 @@ const SNAP_CLASS = "is-snap";
 const PLATE_PAD_EM = { x: 0.55, y: 0.18 };
 const CARD_PAD_EM = { x: 0.8, y: 0.36 };
 const PLATE_RADIUS_EM = 0.46;
-// Below this share of the narrower plate's width, the next line is somewhere else: a new plate fades
-// in there rather than the old one sliding across the screen.
+// Under this shared width a new plate fades in rather than the old one sliding across the screen.
 const MIN_SHARED_WIDTH = 0.5;
 
 type PlateMotion = "grow" | "shrink";
@@ -121,33 +120,27 @@ function syncBarShown(layout: HTMLElement): void {
   parts?.root.toggleAttribute("data-bar", layout.hasAttribute("show-fullscreen-controls"));
 }
 
+function stopObserving(): void {
+  resizeHandle?.destroy();
+  resizeHandle = null;
+  barObserver?.disconnect();
+  barObserver = null;
+}
+
 function measurePlayerBar(): void {
   const barHeight = getPlayerBar(document)?.getBoundingClientRect().height;
   if (parts && barHeight) parts.root.style.setProperty("--blyrics-karaoke-bar-height", `${barHeight}px`);
 }
 
-/**
- * The fullscreen layer karaoke draws in: the plate behind the lines being sung, the mount
- * braccato builds the lines into, and the title card. Built on first use, so nothing is added to the
- * page for a listener who never turns karaoke on.
- */
 export const karaokeOverlay = {
   ensureMount(): HTMLElement {
     return ensureParts().mount;
   },
 
-  /**
-   * The stage lifts clear of the player bar while YouTube Music shows it. The bar's height and the
-   * stage's size are followed while shown, and `onResize` re-measures the lines the size change
-   * reflowed.
-   */
   setVisible(visible: boolean, onResize: () => void): void {
     if (!parts || parts.root.hidden === !visible) return;
     parts.root.hidden = !visible;
-    resizeHandle?.destroy();
-    resizeHandle = null;
-    barObserver?.disconnect();
-    barObserver = null;
+    stopObserving();
     if (!visible) return;
     measurePlayerBar();
     const layout = document.getElementById("layout");
@@ -170,10 +163,6 @@ export const karaokeOverlay = {
     credit.textContent = songwriters.length > 0 ? `${t("lyrics_writtenBy")} ${formatNames(songwriters)}` : "";
   },
 
-  /**
-   * Fits the plate to the box braccato reports, padded more when the end card is the focus. A plate
-   * coming back from hidden snaps to its new place rather than sliding from where it last was.
-   */
   setPlateBox(box: StageBox | null): void {
     if (!parts) return;
     const { stage, plates, mount } = parts;
@@ -202,8 +191,6 @@ export const karaokeOverlay = {
     lastPlate = target;
 
     if (previous && sharedWidth(previous, target) < MIN_SHARED_WIDTH) {
-      // Each plate keeps its own line: the old one fades where it was, unclipped, and a new one
-      // fades in around the next line.
       plate.removeAttribute("data-plate");
       activePlate = 1 - activePlate;
       unclipMount(mount);
@@ -216,8 +203,7 @@ export const karaokeOverlay = {
       return;
     }
 
-    // The plate and the clip on the lines move as one, so a line is only ever seen inside its plate,
-    // and the plate changes size while the next line paints in rather than after it.
+    // Plate and clip move as one, so a line is never seen outside its plate.
     if (!isMountClipped) {
       stage.classList.add(SNAP_CLASS);
       clipMount(mount, previous, radius);
@@ -228,6 +214,16 @@ export const karaokeOverlay = {
     stage.dataset.plateMotion = motion;
     placePlate(plate, target);
     clipMount(mount, target, radius);
+  },
+
+  destroy(): void {
+    stopObserving();
+    parts?.root.remove();
+    parts = null;
+    lastPlate = null;
+    isMountClipped = false;
+    activePlate = 0;
+    isTitleCardShown = false;
   },
 
   update(timeS: number, firstSungLineStartS: number, introNote: boolean): void {

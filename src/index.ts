@@ -4,7 +4,7 @@ import { injectI18nCssVars, loadLocaleOverride, subscribeToLocaleChanges } from 
 import { purgeExpiredKeys, saveCacheInfo } from "@core/storage";
 import { prewarmAuthenticationToken } from "@modules/lyrics/providers/unified";
 import { initProviders } from "@modules/lyrics/providers/shared";
-import { syncKaraoke } from "@modules/karaoke/karaokeView";
+import { disposeKaraoke, syncKaraoke } from "@modules/karaoke/karaokeView";
 import { loadKaraokeSettings } from "@modules/karaoke/settings";
 import { setupRequestSniffer } from "@modules/lyrics/requestSniffer/requestSniffer";
 import {
@@ -136,6 +136,7 @@ function init(): () => void {
     disposePictureInPictureBrowserController();
     if (document.querySelector('[data-extension-root="true"]')) cleanupLyrics();
     unmountDock();
+    disposeKaraoke();
   };
 }
 

@@ -12,11 +12,6 @@ import { isKaraokeActive, isKaraokeLayout, isKaraokeWanted, syncKaraokeAttribute
 
 // -- The karaoke view --------------------------
 
-/**
- * The second lyrics view, shown over a fullscreen music video. Created at import time like the
- * side panel's, with no mount and nothing read from AppState: the overlay it builds into is made on
- * first use, and `syncKaraoke` applies the settings.
- */
 const karaokeView: Omit<LyricsRenderer, "destroy"> = createLyricsRenderer({
   document,
   window,
@@ -57,12 +52,6 @@ function signatureOf(decorations: LyricDecorations): string {
   return signature;
 }
 
-/**
- * Builds the karaoke view from the lyrics every secondary view shares, or hangs the latest
- * decorations off the lines it already built. Only while karaoke is wanted, so a listener who
- * never enters fullscreen video never pays for a second build, and never from YouTube's
- * provisional plain lines, which have nothing to sing along to.
- */
 function publishKaraokeLyrics(): void {
   const source = AppState.parsedLyrics;
   const lyricData = AppState.lyricData;
@@ -113,11 +102,7 @@ function publishKaraokeLyrics(): void {
 
 // -- Ticking --------------------------
 
-/**
- * Renders the karaoke view at the side panel's time, on the side panel's frame. Run before the
- * side panel's own tick: braccato's playback clock is shared, and whichever view ticks first is the
- * one that sees a seek as a jump and re-lays its stage with no animation.
- */
+// Ticks before the side panel: on the shared clock only the first view to tick sees a seek as a jump.
 export function tickKaraoke(timeS: number, wallTime: number, isPlaying: boolean): void {
   karaokeOverlay.update(timeS, firstSungLineStartS, hasIntroNote);
   karaokeView.tick(timeS, currentTickOptions(wallTime, isPlaying));
@@ -136,10 +121,6 @@ function relayoutKaraoke(): void {
 
 // -- Sync --------------------------
 
-/**
- * Brings karaoke in line with everything it depends on. Called from every point where one of those
- * changed: settings, fullscreen, video mode, ads, and every lyrics publish.
- */
 export function syncKaraoke(): void {
   const active = syncKaraokeAttribute();
 
@@ -159,11 +140,13 @@ export function syncKaraoke(): void {
   }
 }
 
-/**
- * Theme settings are module state, so the side panel's view has already taken them and answered
- * whether the lines need rebuilding; that answer reloads the lyrics, which rebuilds this view too.
- * This view still drops what it resolved against the old stylesheet and measures again.
- */
 export function applyKaraokeTheme(css: string): void {
   karaokeView.setTheme(css);
+}
+
+export function disposeKaraoke(): void {
+  clearKaraokeLyrics();
+  karaokeOverlay.destroy();
+  wasActive = false;
+  wasLayout = false;
 }

@@ -9,9 +9,7 @@ function appLayout(): Element | null {
 
 let lastKnownSynced = false;
 
-// Between songs there are no lyrics loaded, or only YouTube's provisional ones, and the last song's
-// answer stands until the next song's arrives, so a fullscreen video does not flip layouts twice on
-// every track change.
+// Keeps the last song's answer between songs, so fullscreen video does not flip layouts on every track.
 function readSynced(): boolean {
   const lyricData = AppState.lyricData;
   if (lyricData && !lyricData.isProvisional) lastKnownSynced = lyricData.syncType !== "none";
@@ -31,12 +29,10 @@ function readConditions(): KaraokeConditions {
 
 let isStageShown = false;
 
-/** Karaoke owns the fullscreen layout: the video fills the screen, whether or not lines are on it. */
 export function isKaraokeLayout(): boolean {
   return appLayout()?.hasAttribute(KARAOKE_ACTIVE_ATTR) ?? false;
 }
 
-/** The karaoke stage is showing lines. */
 export function isKaraokeActive(): boolean {
   return isStageShown;
 }
@@ -45,7 +41,6 @@ export function isKaraokeWanted(): boolean {
   return wantsKaraokeLyrics(readConditions());
 }
 
-/** The one writer of the attribute every karaoke layout rule, in code and in CSS, reads. */
 export function syncKaraokeAttribute(): boolean {
   const conditions = readConditions();
   const layout = wantsKaraokeLyrics(conditions);

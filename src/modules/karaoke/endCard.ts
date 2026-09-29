@@ -6,10 +6,6 @@ import { CREDITS_CLASS } from "@braccato/core/constants";
 const SOURCE_CLASS = "blyrics-karaoke-source";
 const ICON_SIZE_PX = 16;
 
-/**
- * Puts the source under braccato's credits line: a small Better Lyrics icon, the provider's name and
- * its sync icon. Does nothing when the song has no credits line.
- */
 export function decorateEndCard(container: HTMLElement | null): void {
   const credits = container?.querySelector<HTMLElement>(`:scope > .${CREDITS_CLASS}`);
   if (!credits) return;
