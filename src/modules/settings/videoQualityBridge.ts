@@ -4,7 +4,7 @@ import {
   normalizeVideoQualitySettings,
   VIDEO_QUALITY_REQUEST_EVENT,
   VIDEO_QUALITY_SETTINGS_EVENT,
-} from "./videoQuality";
+} from "@modules/settings/videoQuality";
 
 export function startVideoQualitySettingsBridge(): () => void {
   let disposed = false;

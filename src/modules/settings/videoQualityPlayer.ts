@@ -5,7 +5,7 @@ import {
   VIDEO_QUALITY_REQUEST_EVENT,
   VIDEO_QUALITY_SETTINGS_EVENT,
   type VideoQualitySettings,
-} from "./videoQuality";
+} from "@modules/settings/videoQuality";
 
 type PlayerVars = Record<string, unknown>;
 type PlayerMethod = (vars: PlayerVars, ...args: unknown[]) => unknown;

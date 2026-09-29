@@ -5,17 +5,17 @@ import {
   normalizeVideoQualitySettings,
   selectVideoQuality,
   VIDEO_QUALITY_SETTINGS_EVENT,
-} from "./videoQuality";
-import type { VideoQualityPlayer } from "./videoQualityPlayer";
-import { syncVideoQualityControls } from "../../options/videoQualityControls";
+} from "@modules/settings/videoQuality";
+import type { VideoQualityPlayer } from "@modules/settings/videoQualityPlayer";
+import { syncVideoQualityControls } from "@/options/videoQualityControls";
 
-import { VIDEO_QUALITY_REQUEST_EVENT } from "./videoQuality";
+import { VIDEO_QUALITY_REQUEST_EVENT } from "@modules/settings/videoQuality";
 
 const warnings: unknown[][] = [];
 const originalWarn = console.warn;
 console.warn = (...args) => warnings.push(args);
-const { patchVideoQualityPlayer, startVideoQualityPlayer } = await import("./videoQualityPlayer");
-const { startVideoQualitySettingsBridge } = await import("./videoQualityBridge");
+const { patchVideoQualityPlayer, startVideoQualityPlayer } = await import("@modules/settings/videoQualityPlayer");
+const { startVideoQualitySettingsBridge } = await import("@modules/settings/videoQualityBridge");
 console.warn = originalWarn;
 const warningCount = (context: string) =>
   warnings.filter(args => args.some(arg => String(arg).includes(context))).length;
