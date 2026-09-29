@@ -1793,6 +1793,7 @@ There are two plates so that when the next line is somewhere else on screen, a n
 |-----------|--------------|
 | `#blyrics-karaoke[data-bar]` | The YouTube Music player bar is showing; the lines lift above it |
 | `#blyrics-karaoke[data-title-card]` | The intro title card is showing; the stage is hidden |
+| `#blyrics-karaoke[data-end-card]` | The end card (songwriter credits and source) holds the stage |
 | `.blyrics-karaoke__plate[data-plate]` | This plate is behind the line being sung |
 
 ### Styling the Plate
@@ -1812,6 +1813,22 @@ Both plates and the title card share `.blyrics-karaoke-surface`, so one rule res
 }
 ```
 
+Each backdrop can also be styled on its own: the intro card is `.blyrics-karaoke__card`, the plate behind sung lines is `.blyrics-karaoke__plate`, and the same plate behind the end card is `#blyrics-karaoke[data-end-card] .blyrics-karaoke__plate`:
+
+```css
+#blyrics-karaoke .blyrics-karaoke__card {
+  background: rgb(0 0 0 / 55%);
+}
+
+#blyrics-karaoke:not([data-end-card]) .blyrics-karaoke__plate {
+  background: rgb(0 0 0 / 70%);
+}
+
+#blyrics-karaoke[data-end-card] .blyrics-karaoke__plate {
+  background: rgb(20 20 40 / 80%);
+}
+```
+
 The lyric size comes from `--blyrics-font-size`, the same as everywhere else. Line scaling is turned off inside karaoke: `--blyrics-scale` and `--blyrics-active-scale` are forced to `1` on `#blyrics-karaoke .blyrics-container`, so sung and waiting lines keep the same size.
 
 ### Stage Lines
@@ -1825,6 +1842,6 @@ Style lines as you do in the scrolling view. Colors, fonts and animations carry 
 | `data-stage-role="queued"` | A line waiting its turn |
 | `data-stage-role="gone"` | A line that has left the stage |
 | `data-stage-visible` | The line is on screen; without it the line is `visibility: hidden` |
-| `.blyrics-container[data-stage-duet]` | The song is a duet: `v1` lines sit on the left, `v2` and `v3` on the right, `v1000` stays centred |
+| `.blyrics-container[data-stage-duet]` | The sung lines use both sides: `v1` lines sit on the left, `v2` and `v3` on the right, `v1000` stays centred. A song with one singer stays centred whichever voice it is |
 
 The stage fades lines in and out through `--blyrics-stage-opacity`, and it sets `opacity` from that property with `!important`. Do not set `opacity` on stage lines. It is overridden, so it cannot show a hidden line or hold one that is leaving.
