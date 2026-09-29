@@ -1,7 +1,9 @@
+import { PLAYER_BAR_SELECTOR } from "@constants";
 import { AppState } from "@core/appState";
 import { t } from "@core/i18n";
 import type { StageBox } from "@braccato/core";
 import { CREDITS_CLASS } from "@braccato/core/constants";
+import { type ObserverHandle, observeResize } from "@modules/ui/layout/layoutWidth";
 import { isTitleCardVisible } from "./titleCard";
 
 const OVERLAY_ID = "blyrics-karaoke";
@@ -26,7 +28,7 @@ interface TitleCardText {
 }
 
 let parts: OverlayParts | null = null;
-let barObserver: MutationObserver | null = null;
+let resizeHandle: ObserverHandle | null = null;
 let isTitleCardShown = false;
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className: string): HTMLElementTagNameMap[K] {
@@ -58,19 +60,23 @@ function build(): OverlayParts {
   return { root, stage, plate, mount, title, artist, credit };
 }
 
-function syncPlayerBar(): void {
-  const layout = document.getElementById("layout");
-  parts?.root.toggleAttribute("data-bar", layout?.hasAttribute("show-fullscreen-controls") ?? false);
+function writeSettings(root: HTMLElement): void {
+  root.dataset.size = AppState.karaokeSize;
+  root.dataset.backdrop = AppState.karaokeBackdrop;
+  root.dataset.bgVocals = String(AppState.isKaraokeBackgroundVocalsEnabled);
 }
 
-function observePlayerBar(observe: boolean): void {
-  barObserver?.disconnect();
-  barObserver = null;
-  const layout = document.getElementById("layout");
-  if (!observe || !layout) return;
-  barObserver = new MutationObserver(syncPlayerBar);
-  barObserver.observe(layout, { attributes: true, attributeFilter: ["show-fullscreen-controls"] });
-  syncPlayerBar();
+function ensureParts(): OverlayParts {
+  if (!parts) {
+    parts = build();
+    writeSettings(parts.root);
+  }
+  return parts;
+}
+
+function measurePlayerBar(): void {
+  const barHeight = document.querySelector(PLAYER_BAR_SELECTOR)?.getBoundingClientRect().height;
+  if (parts && barHeight) parts.root.style.setProperty("--blyrics-karaoke-bar-height", `${barHeight}px`);
 }
 
 /**
@@ -80,29 +86,37 @@ function observePlayerBar(observe: boolean): void {
  */
 export const karaokeOverlay = {
   ensureMount(): HTMLElement {
-    parts ??= build();
-    return parts.mount;
+    return ensureParts().mount;
   },
 
   applySettings(): void {
-    if (!parts) return;
-    const { dataset } = parts.root;
-    dataset.size = AppState.karaokeSize;
-    dataset.backdrop = AppState.karaokeBackdrop;
-    dataset.bgVocals = String(AppState.isKaraokeBackgroundVocalsEnabled);
+    if (parts) writeSettings(parts.root);
   },
 
-  setVisible(visible: boolean): void {
+  /**
+   * YouTube Music keeps its player bar up in this fullscreen, so the stage always sits above it.
+   * The bar's height and the stage's size are followed while shown, and `onResize` re-measures
+   * the lines the size change reflowed.
+   */
+  setVisible(visible: boolean, onResize: () => void): void {
     if (!parts || parts.root.hidden === !visible) return;
     parts.root.hidden = !visible;
-    observePlayerBar(visible);
+    resizeHandle?.destroy();
+    resizeHandle = null;
+    if (!visible) return;
+    measurePlayerBar();
+    const bar = document.querySelector(PLAYER_BAR_SELECTOR);
+    resizeHandle = observeResize(bar ? [parts.stage, bar] : [parts.stage], () => {
+      measurePlayerBar();
+      onResize();
+    });
   },
 
   setTitleCard({ title, artist, songwriters }: TitleCardText): void {
-    parts ??= build();
-    parts.title.textContent = title;
-    parts.artist.textContent = artist;
-    parts.credit.textContent = songwriters.length > 0 ? `${t("lyrics_writtenBy")} ${formatNames(songwriters)}` : "";
+    const { title: titleText, artist: artistText, credit } = ensureParts();
+    titleText.textContent = title;
+    artistText.textContent = artist;
+    credit.textContent = songwriters.length > 0 ? `${t("lyrics_writtenBy")} ${formatNames(songwriters)}` : "";
   },
 
   /**

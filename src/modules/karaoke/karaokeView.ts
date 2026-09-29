@@ -99,6 +99,11 @@ function tickKaraokeNow(): void {
   if (lastTick) tickKaraoke(lastTick.timeS, lastTick.wallTime, lastTick.isPlaying);
 }
 
+function relayoutKaraoke(): void {
+  karaokeView.relayout();
+  tickKaraokeNow();
+}
+
 // -- Sync --------------------------
 
 /**
@@ -117,12 +122,12 @@ export function syncKaraoke(): void {
 
   if (active) publishKaraokeLyrics();
   else if (!AppState.parsedLyrics && builtFrom !== null) clearKaraokeLyrics();
-  karaokeOverlay.setVisible(active);
+  karaokeOverlay.setVisible(active, relayoutKaraoke);
 
   if (active !== wasActive) {
     wasActive = active;
     // Each view was off the screen while the other one showed, so neither kept its measurements.
-    if (active) karaokeView.relayout();
+    if (active) relayoutKaraoke();
     else lyricsElementAdded();
   }
 }

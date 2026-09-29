@@ -3,9 +3,10 @@
 #blyrics-karaoke {
     --blyrics-karaoke-ease: cubic-bezier(0.2, 0, 0, 1);
     --blyrics-karaoke-font-size: 4.3cqh;
+    --blyrics-karaoke-floor: max(7.5cqh, calc(var(--blyrics-karaoke-bar-height, 72px) + 3cqh));
     position: fixed;
-    inset: 0;
-    z-index: var(--blyrics-karaoke-z-index, 2);
+    inset: var(--blyrics-karaoke-video-inset, 0);
+    z-index: 3;
     container-type: size;
     pointer-events: none;
 }
@@ -14,22 +15,10 @@
     display: none;
 }
 
-#blyrics-karaoke .blyrics-karaoke__stage,
-#blyrics-karaoke .blyrics-karaoke__title {
-    transition: translate 300ms var(--blyrics-karaoke-ease);
-}
-
-#blyrics-karaoke[data-bar] .blyrics-karaoke__stage,
-#blyrics-karaoke[data-bar] .blyrics-karaoke__title {
-    translate: 0 calc(-1 * var(--ytmusic-player-bar-height, 72px));
-}
-
 #blyrics-karaoke .blyrics-karaoke__stage {
     position: absolute;
-    inset: 8cqh 0 7.5cqh;
-    transition:
-        translate 300ms var(--blyrics-karaoke-ease),
-        opacity 250ms ease-out;
+    inset: 8cqh 0 var(--blyrics-karaoke-floor);
+    transition: opacity 250ms ease-out;
 }
 
 #blyrics-karaoke .blyrics-karaoke__mount {
@@ -143,9 +132,9 @@
 #blyrics-karaoke .blyrics-karaoke__title {
     position: absolute;
     right: 12cqw;
-    bottom: 7.5cqh;
+    bottom: var(--blyrics-karaoke-floor);
     left: 12cqw;
-    color: var(--blyrics-text-color);
+    color: var(--blyrics-ui-text-color);
     font-family: var(--blyrics-font-family, var(--blyrics-default-font-family));
     font-size: var(--blyrics-karaoke-font-size);
     font-weight: 700;
