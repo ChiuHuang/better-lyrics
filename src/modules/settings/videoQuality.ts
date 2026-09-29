@@ -37,8 +37,7 @@ export function normalizeVideoQualitySettings(
   };
 }
 
-// Keep a saved 4K/8K preference when the enhancement is temporarily disabled,
-// but enforce the 1080p ceiling until it is enabled again.
+// Also clamp settings received directly from storage, outside the options form.
 export function selectVideoQuality(settings: VideoQualitySettings, available: string[]): VideoQuality {
   if (settings.preferredVideoQuality === "auto") return "auto";
   const ceiling = Math.min(
@@ -46,7 +45,12 @@ export function selectVideoQuality(settings: VideoQualitySettings, available: st
     settings.isHighResolutionVideoEnabled ? Infinity : 1080
   );
   const choices = (Object.keys(VIDEO_QUALITIES) as VideoQuality[])
-    .filter(quality => quality !== "auto" && available.includes(quality))
+    .filter(
+      quality =>
+        quality !== "auto" &&
+        available.includes(quality) &&
+        (settings.isHighResolutionVideoEnabled || VIDEO_QUALITIES[quality] <= 1080)
+    )
     .sort((a, b) => VIDEO_QUALITIES[b] - VIDEO_QUALITIES[a]);
   return choices.find(quality => VIDEO_QUALITIES[quality] <= ceiling) ?? choices.at(-1) ?? "auto";
 }

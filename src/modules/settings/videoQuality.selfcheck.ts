@@ -8,6 +8,8 @@ import {
 } from "./videoQuality";
 import { patchVideoQualityPlayer, startVideoQualityPlayer, type VideoQualityPlayer } from "./videoQualityPlayer";
 import { syncVideoQualityControls } from "../../options/videoQualityControls";
+import { startVideoQualitySettingsBridge } from "./videoQualityBridge";
+import { VIDEO_QUALITY_REQUEST_EVENT } from "./videoQuality";
 
 const defaults = { ...DEFAULT_VIDEO_QUALITY_SETTINGS };
 assert.deepEqual(normalizeVideoQualitySettings({}), defaults);
@@ -26,6 +28,11 @@ assert.equal(
   "hd1080"
 );
 assert.equal(selectVideoQuality({ ...defaults, preferredVideoQuality: "tiny" }, ["hd720", "large"]), "large");
+assert.equal(
+  selectVideoQuality({ isHighResolutionVideoEnabled: false, preferredVideoQuality: "hd2160" }, ["hd2160"]),
+  "auto",
+  "never explicitly select a disabled quality"
+);
 
 let enabled = true;
 let received: unknown[] = [];
@@ -56,6 +63,8 @@ api.preloadVideoByPlayerVars = otherWrapper as typeof original;
 cleanup();
 assert.equal(api.loadVideoByPlayerVars, original);
 assert.equal(api.preloadVideoByPlayerVars, otherWrapper, "cleanup must not overwrite another owner");
+const frozenApi = Object.freeze({ loadVideoByPlayerVars: original });
+assert.doesNotThrow(() => patchVideoQualityPlayer(frozenApi, () => defaults)());
 
 const dom = new JSDOM(`<ytmusic-player></ytmusic-player>
   <input id="isHighResolutionVideoEnabled" type="checkbox" checked>
@@ -145,5 +154,43 @@ qualityCalls = [];
 settings("hd2160");
 await settle();
 assert.deepEqual(qualityCalls, [], "disposed bridges ignore settings and async callbacks");
+
+// Storage/page startup can happen in either order. Ignore stale async reads and
+// stop publishing after disposal; unrelated storage changes must not pin quality.
+const reads: ((value: unknown) => void)[] = [];
+const storageListeners = new Set<(changes: Record<string, unknown>, area: string) => void>();
+Object.assign(globalThis, {
+  document: doc,
+  CustomEvent: dom.window.CustomEvent,
+  chrome: {
+    storage: {
+      sync: { get: () => new Promise(resolve => reads.push(resolve)) },
+      onChanged: {
+        addListener: (fn: (changes: Record<string, unknown>, area: string) => void) => storageListeners.add(fn),
+        removeListener: (fn: (changes: Record<string, unknown>, area: string) => void) => storageListeners.delete(fn),
+      },
+    },
+  },
+});
+const published: unknown[] = [];
+doc.addEventListener(VIDEO_QUALITY_SETTINGS_EVENT, event => {
+  published.push(JSON.parse((event as CustomEvent<string>).detail));
+});
+const stopStorage = startVideoQualitySettingsBridge();
+doc.dispatchEvent(new dom.window.Event(VIDEO_QUALITY_REQUEST_EVENT));
+reads[1]({ preferredVideoQuality: "hd2160" });
+await settle();
+reads[0]({ preferredVideoQuality: "hd720" });
+await settle();
+assert.deepEqual(published, [{ ...defaults, preferredVideoQuality: "hd2160" }]);
+for (const fn of storageListeners) fn({ otherSetting: {} }, "sync");
+assert.equal(reads.length, 2);
+for (const fn of storageListeners) fn({ preferredVideoQuality: {} }, "sync");
+assert.equal(reads.length, 3);
+stopStorage();
+reads[2]({});
+await settle();
+assert.equal(published.length, 1);
+assert.equal(storageListeners.size, 0);
 dom.window.close();
 console.log("videoQuality selfcheck passed");

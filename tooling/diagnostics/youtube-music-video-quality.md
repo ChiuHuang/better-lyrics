@@ -1,8 +1,8 @@
 # YouTube Music web video-quality investigation
 
 Verified 2026-09-29 in the connected Chrome 153 browser on Linux, with a signed-in
-Premium account and Music's audio quality set to High. This is a browser experiment,
-not a production extension change.
+Premium account and Music's audio quality set to High. The findings below underpin
+the extension's video-quality preferences.
 
 ## Finding
 
@@ -11,9 +11,10 @@ H.264 video and AAC audio. The selected video family has a 1080p ceiling for the
 tested video. The server already supplies 1440p and 2160p VP9 in the same response;
 changing the argument to `false` makes those formats available and playable.
 
-The existing CSS workaround is at `public/css/ytmusic/general.css`: a 200% player
-scaled back down to 50%. It influences automatic quality selection within the
-chosen codec family, but cannot overcome this codec-family preference.
+The former CSS workaround used a 200% player scaled back down to 50%. It could
+influence automatic selection within the chosen codec family, but could not
+overcome this preference. It has been removed: explicit quality selection works
+with a normally sized player.
 
 ## Reproduction and measured results
 
@@ -31,6 +32,11 @@ The unmodified Music response includes VP9 313 (2160p) and 271 (1440p), H.264 13
 | Same response, `prefer_gapless: true`, `aac_high: true` | 1080p | H.264 137, 1920x1080 | AAC 141 |
 | Fresh native Music player request, gapless false and high audio retained | 2160p | VP9 313, 3840x2160 | AAC 141 |
 | Wrapped Music API, native UI Song -> Video transition | 2160p | VP9 313, 3840x2160 | AAC 141 |
+| Production bridge on first page load, prefer 2160p, normal player size | 2160p | VP9 313, 3840x2160 | AAC 141 |
+| Production bridge, prefer 720p, normal player size | 2160p | VP9 247, 1280x720 | AAC 141 |
+| Enhancement disabled while playing; saved 2160p clamped | 2160p until next native load | VP9 248, 1920x1080 | AAC 141 |
+| Built production MAIN script, disabled on fresh page load | 1080p | H.264 137, 1920x1080 | AAC 141 |
+| Built production MAIN script, enabled in place after that load | 2160p | VP9 313, 3840x2160 | AAC 141 |
 
 4K was verified using the video element's `videoWidth`/`videoHeight` and the active
 itag, not just the advertised quality list. There was no player error. The audio
@@ -41,7 +47,11 @@ Switching to Song used its separate audio video ID, `542_EpsMlwc`, and retained
 `audio_only: "1"`, `prefer_gapless: true`, and AAC 141. Switching back to Video
 caused Music to pass `prefer_gapless: true` again; the wrapper changed only that
 argument and 4K playback resumed. Music's video preloading calls were also observed
-passing through the wrapper. Gapless end-to-end transitions were not measured.
+passing through the wrapper. The user reported seamless album transitions in listening tests, with one failure
+when seeking near a track end. This is consistent with preserving audio-only
+arguments, but is not a sample-accurate gapless measurement. A `gapless` playback
+category indicates an active playback path, not a guarantee of an inaudible
+boundary. Late seeking can leave insufficient time to preload the next track.
 
 ## Source trace
 
@@ -95,22 +105,42 @@ except `prefer_gapless` for non-audio-only playback. In particular, do not rebui
 the arguments from only the video ID: dropping `aac_high` changed the selected
 audio to medium-quality Opus in the initial experiment.
 
-## Proposed extension integration and remaining checks
+## Extension integration and validation
 
-Integrate a video-only override in the MAIN-world player bridge, using the stable
-method names rather than minified player internals. Preserve audio-only requests
-and every other Music argument. The 200% CSS workaround can still influence
-automatic resolution after VP9 becomes selectable.
+The default-on **Enable higher-resolution videos** setting changes only video
+`prefer_gapless` arguments on Music's API proxy. Audio-only arguments and all other
+fields pass through unchanged. **Preferred video quality** defaults to Auto and
+otherwise chooses the closest available lower resolution (or the smallest
+available when none is lower). Disabling the enhancement disables 1440p/4K/8K in
+the settings UI and changes an already-selected high resolution to 1080p.
+The native codec policy fully returns on the next video or page refresh.
 
-Before enabling it by default, validate:
+On first playback, Music can load before its async API becomes available. If its
+response advertises >1080p but the selectable list does not, the bridge calls
+`updateVideoData({ prefer_gapless: false }, true)` once per video. In this player,
+the second argument refilters existing video data. Omitting it only updates
+metadata. The refresh retained position, playback state, high-quality audio, and
+all other load data in the browser test; it did not restart the track.
 
-- Initial playback and replacement/recreation of Music's API proxy.
-- Consecutive videos, automatic queue advance, preloaded entries, seeking, and
-  Song/Video transitions; disabling the preference may sacrifice seamless video
-  transitions, and mixed audio/video queue boundaries need particular attention.
-- High, Normal, and Low audio preferences, and non-Premium playback.
-- Firefox, mobile web, casting, live streams, restricted content, and ads.
-- Cleanup/hot reload and a fail-open fallback if undocumented APIs change.
+The MAIN-world entrypoint starts at document start and waits for settings from an
+ISOLATED-world storage bridge. It supports delayed/replaced APIs, settings changes,
+and cleanup. Ads, live streams, and audio-only playback keep native quality
+selection. Undocumented API failures are caught so Music can continue playing.
+No minified function names are used in the extension integration.
 
-The successful scope is desktop Music VP9/4K on this video and player release.
-An AV1-specific workaround has not been demonstrated.
+Automated selfchecks cover defaults, malformed preferences, resolution fallback,
+1080p clamping, disabled controls, immutable video arguments, audio-only passthrough,
+native receiver/return preservation, first-load refiltering, API replacement,
+ads, cleanup, and storage handshake/races. Browser checks use the production
+player module (including the final built MAIN script) injected before Music startup and the built settings page served
+locally with fixture Chrome storage/i18n APIs. This verifies the actual UI and
+handlers, but does not claim a packaged-extension installation test.
+
+Screenshots in `docs/screenshots/video-quality/` show the built Display settings
+with default values and with the enhancement disabled.
+
+Remaining compatibility coverage: sample-accurate/video/mixed-queue transitions,
+non-Premium accounts, Normal/Low audio, Firefox runtime, casting, mobile web,
+live streams, restricted content, and ads in real playback. The successful live
+scope is desktop Music VP9/4K on this video and player release. AV1 was not in this
+Music response, so an AV1-specific workaround has not been demonstrated.

@@ -42,12 +42,20 @@ export function patchVideoQualityPlayer(
       const override = settings()?.isHighResolutionVideoEnabled && isVideo;
       return Reflect.apply(original, this, [override ? { ...vars, prefer_gapless: false } : vars, ...args]);
     };
-    api[name] = wrapped;
-    hooks.push({ name, original: original as PlayerMethod, wrapped });
+    try {
+      api[name] = wrapped;
+      hooks.push({ name, original: original as PlayerMethod, wrapped });
+    } catch {
+      // A future player may expose read-only methods. Leave those native.
+    }
   }
   return () => {
     for (const { name, original, wrapped } of hooks) {
-      if (api[name] === wrapped) api[name] = original;
+      try {
+        if (api[name] === wrapped) api[name] = original;
+      } catch {
+        // The page may freeze or replace its API after installation.
+      }
     }
   };
 }
