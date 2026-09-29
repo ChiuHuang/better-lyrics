@@ -226,3 +226,49 @@
         transition-duration: 0ms !important;
     }
 }
+
+/* -- Player bar toggle -------------------------------------- */
+
+.blyrics-karaoke-mic {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    margin: 4px 8px 4px 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--ytmusic-text-secondary, rgb(144 144 144));
+    cursor: pointer;
+}
+
+.blyrics-karaoke-mic:hover:not(:disabled),
+.blyrics-karaoke-mic[aria-pressed="true"] {
+    color: var(--ytmusic-text-primary, #fff);
+}
+
+.blyrics-karaoke-mic:disabled {
+    cursor: default;
+    opacity: 0.4;
+}
+
+.blyrics-karaoke-mic svg {
+    width: 24px;
+    height: 24px;
+}
+
+.blyrics-karaoke-mic[aria-pressed="true"]:not(:disabled)::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    border-radius: 99px;
+    background: #f03;
+    translate: -50% 0;
+}

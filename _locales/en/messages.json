@@ -2507,10 +2507,6 @@
     "message": "Show background vocals",
     "description": "Toggle label for whether background vocal lines appear in karaoke subtitles"
   },
-  "karaoke_toggle": {
-    "message": "Karaoke subtitles",
-    "description": "Label for the player bar button that turns karaoke subtitles on or off"
-  },
   "karaoke_unavailable": {
     "message": "Karaoke subtitles need synced lyrics",
     "description": "Message shown when karaoke subtitles cannot be used because the current lyrics are not time synced"

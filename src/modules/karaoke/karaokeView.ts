@@ -6,7 +6,9 @@ import { currentTickOptions, lyricsElementAdded } from "@modules/ui/mainLyricsVi
 import { isAdPlaying } from "@modules/ui/playerControls/playerBarControls";
 import { createLyricsRenderer, type LyricsRenderer } from "@braccato/core";
 import { decorateEndCard } from "./endCard";
+import { syncMicButton } from "./micButton";
 import { karaokeOverlay } from "./overlay";
+import { persistKaraokeEnabled } from "./settings";
 import { isKaraokeActive, isKaraokeWanted, syncKaraokeAttribute } from "./state";
 
 // -- The karaoke view --------------------------
@@ -124,12 +126,19 @@ export function syncKaraoke(): void {
   else if (!AppState.parsedLyrics && builtFrom !== null) clearKaraokeLyrics();
   karaokeOverlay.setVisible(active, relayoutKaraoke);
 
+  syncMicButton(toggleKaraoke);
+
   if (active !== wasActive) {
     wasActive = active;
     // Each view was off the screen while the other one showed, so neither kept its measurements.
     if (active) relayoutKaraoke();
     else lyricsElementAdded();
   }
+}
+
+function toggleKaraoke(): void {
+  persistKaraokeEnabled(!AppState.isKaraokeEnabled);
+  syncKaraoke();
 }
 
 /**
