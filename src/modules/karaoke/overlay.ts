@@ -10,14 +10,17 @@ const SNAP_CLASS = "is-snap";
 const PLATE_PAD_EM = { x: 0.55, y: 0.18 };
 const CARD_PAD_EM = { x: 0.8, y: 0.36 };
 // braccato's fade-out for a line leaving the stage.
-const OUTGOING_FADE_MS = 160;
+const OUTGOING_FADE_MS = 220;
+// Below this share of the narrower plate's width, the next line is somewhere else: a new plate fades
+// in there rather than the old one sliding across the screen.
+const MIN_SHARED_WIDTH = 0.5;
 
 type PlateMotion = "grow" | "shrink" | "settle";
 
 interface OverlayParts {
   root: HTMLElement;
   stage: HTMLElement;
-  plate: HTMLElement;
+  plates: [HTMLElement, HTMLElement];
   mount: HTMLElement;
   title: HTMLElement;
   artist: HTMLElement;
@@ -36,6 +39,7 @@ let barObserver: MutationObserver | null = null;
 let isTitleCardShown = false;
 let lastPlate: StageBox | null = null;
 let settleTimer: ReturnType<typeof setTimeout> | null = null;
+let activePlate = 0;
 
 function contains(outer: StageBox, inner: StageBox): boolean {
   return (
@@ -57,6 +61,19 @@ function unionOf(a: StageBox, b: StageBox): StageBox {
   };
 }
 
+function sharedWidth(a: StageBox, b: StageBox): number {
+  const overlap = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
+  return Math.max(overlap, 0) / Math.min(a.width, b.width);
+}
+
+function showPlate(plate: HTMLElement, rect: StageBox): void {
+  plate.classList.add(SNAP_CLASS);
+  placePlate(plate, rect, "grow");
+  void plate.offsetWidth;
+  plate.classList.remove(SNAP_CLASS);
+  plate.setAttribute("data-plate", "");
+}
+
 function placePlate(plate: HTMLElement, rect: StageBox, motion: PlateMotion): void {
   plate.dataset.plateMotion = motion;
   plate.style.width = `${rect.width.toFixed(1)}px`;
@@ -76,9 +93,12 @@ function build(): OverlayParts {
   root.hidden = true;
 
   const stage = element("div", "blyrics-karaoke__stage");
-  const plate = element("div", "blyrics-karaoke__plate blyrics-karaoke-surface");
+  const plates: [HTMLElement, HTMLElement] = [
+    element("div", "blyrics-karaoke__plate blyrics-karaoke-surface"),
+    element("div", "blyrics-karaoke__plate blyrics-karaoke-surface"),
+  ];
   const mount = element("div", "blyrics-karaoke__mount");
-  stage.append(plate, mount);
+  stage.append(...plates, mount);
 
   const titleCard = element("div", "blyrics-karaoke__title");
   const card = element("div", "blyrics-karaoke__card blyrics-karaoke-surface");
@@ -90,7 +110,7 @@ function build(): OverlayParts {
 
   root.append(stage, titleCard);
   document.body.append(root);
-  return { root, stage, plate, mount, title, artist, credit };
+  return { root, stage, plates, mount, title, artist, credit };
 }
 
 function ensureParts(): OverlayParts {
@@ -159,11 +179,12 @@ export const karaokeOverlay = {
    */
   setPlateBox(box: StageBox | null): void {
     if (!parts) return;
-    const { plate, mount } = parts;
+    const { plates, mount } = parts;
+    const plate = plates[activePlate];
     const wasShown = plate.hasAttribute("data-plate");
+    if (settleTimer) clearTimeout(settleTimer);
+    settleTimer = null;
     if (!box) {
-      if (settleTimer) clearTimeout(settleTimer);
-      settleTimer = null;
       plate.removeAttribute("data-plate");
       return;
     }
@@ -174,21 +195,24 @@ export const karaokeOverlay = {
     const pad = isCard ? CARD_PAD_EM : PLATE_PAD_EM;
     const padX = fontSize * pad.x;
     const padY = fontSize * pad.y;
-
     const target: StageBox = {
       x: box.x - padX,
       y: box.y - padY,
       width: box.width + padX * 2,
       height: box.height + padY * 2,
     };
-    // Reach the incoming line before it shows, and leave the outgoing one only once it has faded, so
-    // neither spills past the plate's edge. A move to another place stretches over both, then settles.
-    if (settleTimer) clearTimeout(settleTimer);
-    settleTimer = null;
     const previous = wasShown ? lastPlate : null;
     lastPlate = target;
-    if (!wasShown) plate.classList.add(SNAP_CLASS);
-    if (!previous || contains(target, previous)) {
+
+    if (!previous) {
+      showPlate(plate, target);
+    } else if (sharedWidth(previous, target) < MIN_SHARED_WIDTH) {
+      plate.removeAttribute("data-plate");
+      activePlate = 1 - activePlate;
+      showPlate(plates[activePlate], target);
+    } else if (contains(target, previous)) {
+      // Reach the incoming line before it shows, and leave the outgoing one only once it has
+      // faded, so neither spills past the plate's edge.
       placePlate(plate, target, "grow");
     } else if (contains(previous, target)) {
       placePlate(plate, target, "shrink");
@@ -199,11 +223,6 @@ export const karaokeOverlay = {
         placePlate(plate, target, "settle");
       }, OUTGOING_FADE_MS);
     }
-    if (!wasShown) {
-      void plate.offsetWidth;
-      plate.classList.remove(SNAP_CLASS);
-    }
-    plate.setAttribute("data-plate", "");
   },
 
   update(timeS: number, firstSungLineStartS: number): void {
