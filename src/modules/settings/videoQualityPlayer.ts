@@ -48,7 +48,7 @@ export function patchVideoQualityPlayer(
       api[name] = wrapped;
       hooks.push({ name, original: original as PlayerMethod, wrapped });
     } catch (error) {
-      warnCore(`[Video quality] Failed to wrap ${name}`, error);
+      warnCore(`Failed to wrap ${name}`, error);
     }
   }
   return () => {
@@ -56,7 +56,7 @@ export function patchVideoQualityPlayer(
       try {
         if (api[name] === wrapped) api[name] = original;
       } catch (error) {
-        warnCore(`[Video quality] Failed to restore ${name}`, error);
+        warnCore(`Failed to restore ${name}`, error);
       }
     }
   };
@@ -75,7 +75,7 @@ export function startVideoQualityPlayer(doc: Document = document, win: Window = 
   const reportFailure = (context: string, error: unknown): void => {
     if (disposed || reportedFailures.has(context)) return;
     reportedFailures.add(context);
-    warnCore(`[Video quality] ${context}`, error);
+    warnCore(context, error);
   };
   const resetPlayback = (): void => {
     lastQualityKey = "";

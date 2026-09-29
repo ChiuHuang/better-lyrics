@@ -24,7 +24,7 @@ export function startVideoQualitySettingsBridge(): () => void {
     } catch (error) {
       if (!disposed && current === revision && !failureReported) {
         failureReported = true;
-        warnCore("[Video quality] Failed to publish stored settings", error);
+        warnCore("Failed to publish stored settings", error);
       }
     }
   };
