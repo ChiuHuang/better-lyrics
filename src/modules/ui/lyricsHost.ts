@@ -1,5 +1,5 @@
 import { TAB_HEADER_CLASS, TAB_RENDERER_SELECTOR } from "@constants";
-import { isKaraokeActive } from "@modules/karaoke/state";
+import { isKaraokeLayout } from "@modules/karaoke/state";
 import { seekPlayer } from "@modules/lyrics/lyrics";
 import { hideAdOverlay, isAdPlaying, isLoaderActive, showAdOverlay } from "@modules/ui/dom";
 import { getResumeScrollElement } from "@modules/ui/resumeScrollButton";
@@ -16,7 +16,7 @@ const PLAYER_UI_STATE_ATTRIBUTE = "player-ui-state";
  */
 export const ytmHost: LyricsRendererHost = {
   isViewVisible(): boolean {
-    if (isKaraokeActive()) return false;
+    if (isKaraokeLayout()) return false;
 
     const tabSelector = document.getElementsByClassName(TAB_HEADER_CLASS)[1];
     if (!tabSelector || tabSelector.getAttribute("aria-selected") !== "true") {

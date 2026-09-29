@@ -8,7 +8,7 @@ import { isAdPlaying } from "@modules/ui/playerControls/playerBarControls";
 import { createLyricsRenderer, type LyricsRenderer } from "@braccato/core";
 import { decorateEndCard } from "./endCard";
 import { karaokeOverlay } from "./overlay";
-import { isKaraokeActive, isKaraokeWanted, syncKaraokeAttribute } from "./state";
+import { isKaraokeActive, isKaraokeLayout, isKaraokeWanted, syncKaraokeAttribute } from "./state";
 
 // -- The karaoke view --------------------------
 
@@ -36,7 +36,9 @@ let builtSegmentMap: object | null = null;
 let builtLanguage: string | null | undefined;
 let decorationSignature = "";
 let firstSungLineStartS = Number.POSITIVE_INFINITY;
+let hasIntroNote = false;
 let wasActive = false;
+let wasLayout = false;
 
 function clearKaraokeLyrics(): void {
   karaokeView.clear();
@@ -44,6 +46,7 @@ function clearKaraokeLyrics(): void {
   builtSegmentMap = null;
   decorationSignature = "";
   firstSungLineStartS = Number.POSITIVE_INFINITY;
+  hasIntroNote = false;
 }
 
 function signatureOf(decorations: LyricDecorations): string {
@@ -89,6 +92,7 @@ function publishKaraokeLyrics(): void {
     decorationSignature = "";
     const firstSung = karaokeView.lines.find(line => line.lyricElement.dataset.instrumental !== "true");
     firstSungLineStartS = firstSung?.time ?? Number.POSITIVE_INFINITY;
+    hasIntroNote = karaokeView.lines[0]?.lyricElement.dataset.instrumental === "true";
     karaokeOverlay.setTitleCard({
       title: lyricData.song,
       artist: lyricData.artist,
@@ -115,7 +119,7 @@ function publishKaraokeLyrics(): void {
  * one that sees a seek as a jump and re-lays its stage with no animation.
  */
 export function tickKaraoke(timeS: number, wallTime: number, isPlaying: boolean): void {
-  karaokeOverlay.update(timeS, firstSungLineStartS);
+  karaokeOverlay.update(timeS, firstSungLineStartS, hasIntroNote);
   karaokeView.tick(timeS, currentTickOptions(wallTime, isPlaying));
 }
 
@@ -143,11 +147,15 @@ export function syncKaraoke(): void {
   else if (!AppState.parsedLyrics && builtFrom !== null) clearKaraokeLyrics();
   karaokeOverlay.setVisible(active, relayoutKaraoke);
 
+  // Each view was off the screen while the other one showed, so neither kept its measurements.
   if (active !== wasActive) {
     wasActive = active;
-    // Each view was off the screen while the other one showed, so neither kept its measurements.
     if (active) relayoutKaraoke();
-    else lyricsElementAdded();
+  }
+  const layout = isKaraokeLayout();
+  if (layout !== wasLayout) {
+    wasLayout = layout;
+    if (!layout) lyricsElementAdded();
   }
 }
 

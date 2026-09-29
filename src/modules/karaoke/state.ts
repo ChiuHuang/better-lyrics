@@ -29,18 +29,28 @@ function readConditions(): KaraokeConditions {
   };
 }
 
-export function isKaraokeActive(): boolean {
+let isStageShown = false;
+
+/** Karaoke owns the fullscreen layout: the video fills the screen, whether or not lines are on it. */
+export function isKaraokeLayout(): boolean {
   return appLayout()?.hasAttribute(KARAOKE_ACTIVE_ATTR) ?? false;
+}
+
+/** The karaoke stage is showing lines. */
+export function isKaraokeActive(): boolean {
+  return isStageShown;
 }
 
 export function isKaraokeWanted(): boolean {
   return wantsKaraokeLyrics(readConditions());
 }
 
-/** The one writer of the attribute every karaoke rule, in code and in CSS, reads. */
+/** The one writer of the attribute every karaoke layout rule, in code and in CSS, reads. */
 export function syncKaraokeAttribute(): boolean {
-  const active = shouldShowKaraoke(readConditions());
-  appLayout()?.toggleAttribute(KARAOKE_ACTIVE_ATTR, active);
-  document.querySelector("#player-page")?.toggleAttribute(KARAOKE_ACTIVE_ATTR, active);
-  return active;
+  const conditions = readConditions();
+  const layout = wantsKaraokeLyrics(conditions);
+  appLayout()?.toggleAttribute(KARAOKE_ACTIVE_ATTR, layout);
+  document.querySelector("#player-page")?.toggleAttribute(KARAOKE_ACTIVE_ATTR, layout);
+  isStageShown = shouldShowKaraoke(conditions);
+  return isStageShown;
 }
