@@ -220,7 +220,7 @@
     "description": "Toggle label inside the Unison Actions modal for auto-hiding the dock when idle in fullscreen"
   },
   "options_unisonModal_autoHide_hint": {
-    "message": "Verstecke schwebende Steuerung, wenn Du inaktiv im Vollbildmodus bist",
+    "message": "Verstecke schwebende Steuerung, wenn sie inaktiv im Vollbildmodus sind",
     "description": "Hint text under the Auto-hide in fullscreen toggle"
   },
   "options_unisonModal_position": {
@@ -1954,7 +1954,7 @@
     "description": "Button that reveals the rest of the suggested videos list beyond the first few"
   },
   "unison_error_linkCapReached": {
-    "message": "Verknüpfungs-Grenze für diesen Songtext erreicht",
+    "message": "Limit für diese Lyrik erreicht",
     "description": "Error shown when a lyric already has the maximum number of linked videos"
   },
   "unison_error_durationMismatch": {
@@ -2046,7 +2046,7 @@
     "description": "Editor save bar title when the edit check failed for a reason the server did not explain"
   },
   "unison_rev_checkFailedHint": {
-    "message": "Speichern wird wieder aktiviert, wenn die Überprüfung läuft",
+    "message": "Speichern wird wieder aktiviert, wenn die Überprüfung läuft.",
     "description": "Editor save bar hint under the failed check title, followed by a Try again link"
   },
   "unison_rev_tryAgain": {
@@ -2058,7 +2058,7 @@
     "description": "Error title in the editor Changes tab when the edit check failed"
   },
   "unison_rev_changesErrorHint": {
-    "message": "Etwas ist schiefgelaufen. Dein Entwurf ist gespeichert und die Vorschau funktioniert trotzdem",
+    "message": "Etwas ist schiefgelaufen. Dein Entwurf ist gespeichert und die Vorschau funktioniert trotzdem.",
     "description": "Error hint in the editor Changes tab when the edit check failed"
   },
   "unison_rev_changesNeedParse": {
@@ -2172,7 +2172,7 @@
     "description": "Revisions list reason for a council-approved revision"
   },
   "unison_rev_withinLimits": {
-    "message": "Within limits",
+    "message": "Innerhalb Limit",
     "description": "Revisions list reason for an edit that went live without review"
   },
   "unison_rev_reverted": {
@@ -2212,7 +2212,7 @@
     "description": "Revisions list column header"
   },
   "unison_rev_colWhen": {
-    "message": "When",
+    "message": "Wenn",
     "description": "Revisions list column header: relative time"
   },
   "unison_rev_revision": {
@@ -2302,7 +2302,7 @@
     }
   },
   "unison_rev_locked": {
-    "message": "Song und Künstler können nicht bearbeitet werden",
+    "message": "Song und Künstler können nicht bearbeitet werden.",
     "description": "Editor note about fields that are locked"
   },
   "unison_rev_editsLeft": {
@@ -2348,7 +2348,7 @@
     }
   },
   "unison_rev_ofLimit": {
-    "message": "of $limit$% limit",
+    "message": "vom $limit$% Limit",
     "description": "Follows a bold percentage in a meter, like '8% of 15% limit'",
     "placeholders": {
       "limit": {
