@@ -2466,5 +2466,9 @@
   "options_display_videoQualityAuto": {
     "message": "Auto",
     "description": "Video quality choice that lets YouTube Music select the resolution automatically."
+  },
+  "options_display_videoQualityApplyHint": {
+    "message": "Higher-resolution playback changes apply to the next video or after refreshing. Preferred quality uses the closest available lower resolution.",
+    "description": "Tooltip explaining when video playback changes take effect and how unavailable resolutions fall back."
   }
 }
