@@ -181,6 +181,13 @@
 						</button>
 					</div>
 					<div class="container">
+						<span>__MSG_options_display_karaoke__</span>
+						<button class="small-btn" id="karaoke-settings-btn">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 4.5A3 3 0 0 0 1.5 7.5v9a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3zm2.25 9.75a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5zm8.25.75a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75m-8.25-4.5a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5zm4.5 0a.75.75 0 0 0 0 1.5h5.25a.75.75 0 0 0 0-1.5z" clip-rule="evenodd"></path></svg>
+							<span>__MSG_options_manage__</span>
+						</button>
+					</div>
+					<div class="container">
 						<span>__MSG_options_display_unisonActions__</span>
 						<button class="small-btn" id="unison-actions-btn">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -735,6 +742,76 @@
 						<span>__MSG_options_display_pipProgressBar__</span>
 						<label>
 							<input type="checkbox" id="pipProgressBarEnabled">
+							<span class="checkmark"></span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="karaoke-modal-overlay" class="modal-overlay">
+			<div class="modal">
+				<div class="modal-header">
+					<h3 class="modal-title">__MSG_options_display_karaoke__</h3>
+					<button id="karaoke-modal-close" class="modal-close-btn" aria-label="Close">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
+						</svg>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="container">
+						<span>__MSG_options_display_karaokeEnabled__</span>
+						<label>
+							<input type="checkbox" id="isKaraokeEnabled">
+							<span class="checkmark"></span>
+						</label>
+					</div>
+					<div class="container">
+						<span>__MSG_options_display_karaokeLayout__</span>
+						<div class="select">
+							<select id="karaokeLayout">
+								<option value="subtitle">__MSG_options_karaokeLayout_subtitle__</option>
+								<option value="rolling">__MSG_options_karaokeLayout_rolling__</option>
+							</select>
+						</div>
+					</div>
+					<div class="container">
+						<span>__MSG_options_display_karaokeSize__</span>
+						<div class="select">
+							<select id="karaokeSize">
+								<option value="s">__MSG_options_karaokeSize_small__</option>
+								<option value="m">__MSG_options_karaokeSize_medium__</option>
+								<option value="l">__MSG_options_karaokeSize_large__</option>
+							</select>
+						</div>
+					</div>
+					<div class="container">
+						<span>__MSG_options_display_karaokeBackdrop__</span>
+						<div class="select">
+							<select id="karaokeBackdrop">
+								<option value="plate">__MSG_options_karaokeBackdrop_plate__</option>
+								<option value="blur">__MSG_options_karaokeBackdrop_blur__</option>
+								<option value="scrim">__MSG_options_karaokeBackdrop_scrim__</option>
+								<option value="none">__MSG_options_karaokeBackdrop_none__</option>
+							</select>
+						</div>
+					</div>
+					<div class="container">
+						<span>__MSG_unison_rev_headCredits__</span>
+						<div class="select">
+							<select id="karaokeCredits">
+								<option value="auto">__MSG_options_language_displayLanguageAuto__</option>
+								<option value="intro">__MSG_options_karaokeCredits_intro__</option>
+								<option value="outro">__MSG_options_karaokeCredits_outro__</option>
+								<option value="off">__MSG_options_karaokeCredits_off__</option>
+							</select>
+						</div>
+					</div>
+					<div class="container">
+						<span>__MSG_options_display_karaokeBackgroundVocals__</span>
+						<label>
+							<input type="checkbox" id="isKaraokeBackgroundVocalsEnabled">
 							<span class="checkmark"></span>
 						</label>
 					</div>
