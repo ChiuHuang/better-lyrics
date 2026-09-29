@@ -113,7 +113,7 @@
     transition: translate 300ms var(--blyrics-karaoke-ease);
     color: var(--blyrics-ui-text-color);
     font-family: var(--blyrics-font-family, var(--blyrics-default-font-family));
-    font-size: calc(var(--blyrics-font-size) * 0.5);
+    font-size: calc(var(--blyrics-font-size) * 0.7);
     font-weight: 700;
     line-height: 1.333;
     text-align: center;
@@ -188,7 +188,7 @@
 #blyrics-karaoke .blyrics-karaoke__card-credit {
     margin-top: 0.5em !important;
     color: var(--blyrics-translated-color);
-    font-size: 0.6em;
+    font-size: 0.65em;
     overflow: hidden;
     max-width: 100%;
     text-overflow: ellipsis;
