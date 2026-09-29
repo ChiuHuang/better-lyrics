@@ -1576,7 +1576,8 @@ function createManualVideoLinkForm(onLink: (videoId: string) => Promise<string |
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
-    const videoId = parseVideoId(field.value);
+    const submitted = field.value;
+    const videoId = parseVideoId(submitted);
     if (!videoId) {
       showError(t("unison_linkVideoInvalid"));
       return;
@@ -1588,7 +1589,7 @@ function createManualVideoLinkForm(onLink: (videoId: string) => Promise<string |
       showError(failure);
       return;
     }
-    field.value = "";
+    if (field.value === submitted) field.value = "";
     error.hidden = true;
   });
 
@@ -1617,16 +1618,13 @@ async function renderOwnerVideoTools(entry: UnisonLyricsEntry, view: AbortSignal
   const suggestList = document.createElement("ul");
   suggestList.className = "unison-video-list unison-suggest-list";
 
-  let linkedIds = new Set<string>();
   const linkAndRefresh = async (videoId: string): Promise<string | null> => {
     const result = await linkVideo(entry.id, videoId);
     if (!result.success) return videoLinkErrorMessage(result.code, t("unison_linkFailed"));
     await refresh();
     return null;
   };
-  const manualLinkForm = createManualVideoLinkForm(videoId =>
-    linkedIds.has(videoId) ? Promise.resolve(null) : linkAndRefresh(videoId)
-  );
+  const manualLinkForm = createManualVideoLinkForm(linkAndRefresh);
 
   section.appendChild(linkedHeading);
   section.appendChild(linkedList);
@@ -1640,10 +1638,8 @@ async function renderOwnerVideoTools(entry: UnisonLyricsEntry, view: AbortSignal
     if (view.aborted) return;
     const retry = (): void => void refresh();
 
-    if (linkedRes.success) {
-      linkedIds = new Set(linkedRes.data.map(video => video.videoId));
-      renderLinkedVideoList(entry.id, linkedList, linkedRes.data, refresh);
-    } else renderVideoListError(linkedList, retry);
+    if (linkedRes.success) renderLinkedVideoList(entry.id, linkedList, linkedRes.data, refresh);
+    else renderVideoListError(linkedList, retry);
 
     if (!suggestRes.success) {
       renderVideoListError(suggestList, retry);
