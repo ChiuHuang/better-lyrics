@@ -282,3 +282,7 @@ ytmusic-player-page[player-fullscreened][blyrics-karaoke][blyrics-video-mode] #p
   margin: var(--blyrics-karaoke-video-inset, 0px) !important;
   top: 0 !important;
 }
+
+ytmusic-player-page[player-fullscreened][blyrics-karaoke][blyrics-video-mode] .av.ytmusic-player-page {
+  top: calc(var(--blyrics-karaoke-video-inset, 0px) + 24px) !important;
+}
