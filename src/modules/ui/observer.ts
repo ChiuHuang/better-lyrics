@@ -9,6 +9,8 @@ import {
   TAB_RENDERER_SELECTOR,
 } from "@constants";
 import { AppState, handleModifications, type PlayerDetails, reloadLyrics } from "@core/appState";
+import { syncKaraoke, tickKaraoke } from "@modules/karaoke/karaokeView";
+import { isKaraokeActive } from "@modules/karaoke/state";
 import { preFetchLyrics } from "@modules/lyrics/lyrics";
 import { getArtworkMetadata, getSongAlbum, getSongMetadata } from "@modules/lyrics/requestSniffer/requestSniffer";
 import { onAutoSwitchEnabled, onFullScreenDisabled, wakeDockIdle } from "@modules/settings/settings";
@@ -23,6 +25,7 @@ import {
   openPlayerPageForFullscreen,
 } from "@modules/ui/navigation";
 import { getResumeScrollElement } from "@modules/ui/resumeScrollButton";
+import { isLyricsWantedOffTab } from "@modules/ui/secondaryViews";
 import { logCore, logError } from "@core/logger";
 import {
   addThumbnail,
@@ -67,6 +70,7 @@ function runAnimationEngine(now: number, force = false): void {
     : 0;
   const currentTime = Math.min(latestPlayerTime + elapsedS, latestPlayerDuration || Infinity);
   if (AppState.suppressZeroTime < wallTime || currentTime !== 0) {
+    if (isKaraokeActive()) tickKaraoke(currentTime, wallTime, latestPlayerPlaying);
     if (
       AppState.areLyricsTicking &&
       mainView.tick(currentTime, currentTickOptions(wallTime, latestPlayerPlaying)) === "lyrics-missing"
@@ -415,7 +419,7 @@ export function initializeLyrics(): void {
       });
     }
 
-    if (AppState.lyricInjectionFailed && !AppState.isPictureInPictureOpen) {
+    if (AppState.lyricInjectionFailed && !isLyricsWantedOffTab()) {
       const tabSelector = document.getElementsByClassName(TAB_HEADER_CLASS)[1];
       if (tabSelector && tabSelector.getAttribute("aria-selected") !== "true") {
         return; // wait to resolve until tab is visible
@@ -640,6 +644,7 @@ export function setUpAvButtonListener(): void {
   let handleAVSwitch = (isVideo: boolean) => {
     document.querySelector("#player-page")?.toggleAttribute("blyrics-video-mode", isVideo);
     document.querySelector("ytmusic-app-layout")?.toggleAttribute("blyrics-video-mode", isVideo);
+    syncKaraoke();
   };
   const observerCallback = (mutationsList: MutationRecord[]) => {
     for (const mutation of mutationsList) {

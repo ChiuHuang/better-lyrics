@@ -4,6 +4,7 @@ import { injectI18nCssVars, loadLocaleOverride, subscribeToLocaleChanges } from 
 import { purgeExpiredKeys, saveCacheInfo } from "@core/storage";
 import { prewarmAuthenticationToken } from "@modules/lyrics/providers/unified";
 import { initProviders } from "@modules/lyrics/providers/shared";
+import { syncKaraoke } from "@modules/karaoke/karaokeView";
 import { loadKaraokeSettings } from "@modules/karaoke/settings";
 import { setupRequestSniffer } from "@modules/lyrics/requestSniffer/requestSniffer";
 import {
@@ -31,6 +32,7 @@ import {
   enableLyricsTab,
   initializeLyrics,
   lyricReloader,
+  onFullscreenChange,
   setUpAvButtonListener,
   setupAltHoverHandler,
   setupHomepageFullscreenHandler,
@@ -71,7 +73,8 @@ async function modify(isDisposed: () => boolean): Promise<void> {
   loadEndTimeModeSetting();
   loadLyricOffsetSettings();
   loadPassiveScrollSetting();
-  loadKaraokeSettings(() => {});
+  loadKaraokeSettings(syncKaraoke);
+  onFullscreenChange(syncKaraoke, syncKaraoke);
   loadDockSettings(hideDockOnIdleInFullscreen);
   subscribeToCustomStyles();
   await purgeExpiredKeys();

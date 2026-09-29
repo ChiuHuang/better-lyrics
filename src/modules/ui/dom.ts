@@ -40,7 +40,8 @@ import type { ThumbnailElement } from "@modules/lyrics/requestSniffer/NextRespon
 import { getArtworkMetadata } from "@modules/lyrics/requestSniffer/requestSniffer";
 import { measureWidth, type ObserverHandle, observeLayoutWidth, observeResize } from "@modules/ui/layout/layoutWidth";
 import { lyricsElementAdded, mainView } from "@modules/ui/mainLyricsView";
-import { publishPictureInPictureLyrics } from "@modules/ui/pictureInPicture/lyricsPublisher";
+import { publishSecondaryViews } from "@modules/ui/secondaryViews";
+import { syncKaraoke } from "@modules/karaoke/karaokeView";
 import {
   createFullscreenControls,
   type FullscreenControlsHandle,
@@ -1313,6 +1314,7 @@ export function setupAdObserver(): void {
     } else {
       hideAdOverlay();
     }
+    syncKaraoke();
   });
 
   adStateObserver.observe(playerBar, { attributes: true, attributeFilter: [AD_PLAYING_ATTR] });
@@ -1634,7 +1636,7 @@ export function cleanup(): void {
   }
 
   clearLyrics();
-  publishPictureInPictureLyrics();
+  publishSecondaryViews();
 }
 
 /**
