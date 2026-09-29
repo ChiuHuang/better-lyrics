@@ -26,3 +26,21 @@ export function langCodesMatch(lang1: string, lang2: string): boolean {
   const base2 = lang2.split("-")[0];
   return base1 === base2;
 }
+
+function languageWithScript(tag: string): string {
+  const normalized = tag.replace(/_/g, "-");
+  try {
+    const { language, script } = new Intl.Locale(normalized).maximize();
+    return script ? `${language}-${script}` : language;
+  } catch {
+    return normalized.split("-")[0].toLowerCase();
+  }
+}
+
+export function findBestLanguageMatch(target: string, candidates: string[]): string | undefined {
+  if (!target) return undefined;
+  const exact = candidates.find(candidate => candidate.toLowerCase() === target.toLowerCase());
+  if (exact) return exact;
+  const targetScript = languageWithScript(target);
+  return candidates.find(candidate => candidate && languageWithScript(candidate) === targetScript);
+}
