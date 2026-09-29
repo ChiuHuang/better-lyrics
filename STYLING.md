@@ -445,6 +445,14 @@ This keeps lyrics centered everywhere except the Picture-in-Picture window:
 }
 ```
 
+The Picture-in-Picture window also defaults `--blyrics-scroll-timing-offset` to `0s`, so a line stays put until its last syllable ends instead of moving up half a second early inside the short window. A value set on `:root` doesn't reach it; to change it, set the variable on the same selector:
+
+```css
+.blyrics-pip-shell .blyrics-container {
+  --blyrics-scroll-timing-offset: 0.2s;
+}
+```
+
 Tip: Pay attention to the units of the values; Some values are in *seconds* (s), while others are in *milliseconds* (ms).
 
 ### Dynamic Properties

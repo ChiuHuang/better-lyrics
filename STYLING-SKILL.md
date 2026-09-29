@@ -204,6 +204,8 @@ blyrics-line-scroll-above-duration = calc(750ms + log(var(--blyrics-line-scroll-
 
 **PiP scroll position**: knobs are shared by the panel, fullscreen and PiP. To give PiP its own position, set `--blyrics-target-scroll-pos-ratio` under `.blyrics-pip-shell`: `.blyrics-pip-shell .blyrics-container { --blyrics-target-scroll-pos-ratio: 0.37; }`. It overrides `blyrics-target-scroll-pos-ratio` wherever it resolves. Plain number, clamped to `0` to `1`, `%` not converted, non-numbers fall back to the knob. Read once per theme apply, and panel and fullscreen share one view, so a fullscreen-only selector won't switch on toggle.
 
+**PiP scroll timing**: PiP defaults `--blyrics-scroll-timing-offset` to `0s` (at zero specificity), so a line moves only once the next one starts. A `:root` value doesn't reach it; override under `.blyrics-pip-shell .blyrics-container`.
+
 ## Dynamic Properties
 
 Properties set by JS at runtime on individual elements:
