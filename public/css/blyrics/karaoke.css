@@ -34,6 +34,13 @@
     inset: 0;
 }
 
+/* Subtitles hold still: no scale between sung and waiting lines. */
+#blyrics-karaoke .blyrics-container {
+    --blyrics-animate-line-scale: 0;
+    --blyrics-scale: 1;
+    --blyrics-active-scale: 1;
+}
+
 /* -- Backdrop ----------------------------------------------- */
 
 /* The plate and the title card hold no controls, so a backdrop filter cannot break hit testing here. */
@@ -65,16 +72,24 @@
     opacity: 1;
 }
 
-#blyrics-karaoke .blyrics-karaoke__plate[data-plate-motion="grow"] {
+#blyrics-karaoke .blyrics-karaoke__mount {
+    transition: clip-path 470ms var(--blyrics-karaoke-spring);
+}
+
+#blyrics-karaoke .blyrics-karaoke__stage[data-plate-motion="grow"] .blyrics-karaoke__plate {
     transition-duration: 300ms, 300ms, 300ms, 260ms;
 }
 
-#blyrics-karaoke .blyrics-karaoke__plate[data-plate-motion="shrink"] {
-    transition-delay: 220ms, 220ms, 220ms, 0ms;
+#blyrics-karaoke .blyrics-karaoke__stage[data-plate-motion="grow"] .blyrics-karaoke__mount {
+    transition-duration: 300ms;
 }
 
-#blyrics-karaoke .blyrics-karaoke__plate.is-snap {
+#blyrics-karaoke .blyrics-karaoke__stage.is-snap .blyrics-karaoke__plate {
     transition: opacity 260ms ease-out;
+}
+
+#blyrics-karaoke .blyrics-karaoke__stage.is-snap .blyrics-karaoke__mount {
+    transition: none;
 }
 
 #blyrics-karaoke[data-title-card] .blyrics-karaoke__stage {
@@ -209,6 +224,7 @@
     #blyrics-karaoke :is(
             .blyrics-karaoke__stage,
             .blyrics-karaoke__plate,
+            .blyrics-karaoke__mount,
             .blyrics-karaoke__title,
             .blyrics-karaoke__card,
             .blyrics-karaoke__card p
