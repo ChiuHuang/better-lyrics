@@ -7,27 +7,86 @@ export function travelDirection(from: number, to: number): "next" | "prev" | "" 
   return to > from ? "next" : "prev";
 }
 
+export function rovingIndex(current: number, key: string, count: number): number {
+  if (count <= 0) return -1;
+  switch (key) {
+    case "ArrowRight":
+      return (current + 1) % count;
+    case "ArrowLeft":
+      return current <= 0 ? count - 1 : current - 1;
+    case "Home":
+      return 0;
+    case "End":
+      return count - 1;
+    default:
+      return -1;
+  }
+}
+
 export interface CardTabsOptions {
   /** Tween the body height between panels. Off for cards whose body fills the page and scrolls. */
   animateHeight?: boolean;
   onChange?: (id: string) => void;
 }
 
-const RESIZE_FALLBACK_MS = 400;
+export interface CardTabs {
+  /** Re-place the bar; pass `true` when the card was just shown so the bar does not sweep in from x=0. */
+  place(instant?: boolean): void;
+  select(id: string, options?: { instant?: boolean }): void;
+  destroy(): void;
+}
 
-/**
- * Wires `.ui-card__tab[data-tab]` buttons to `.ui-panel[data-panel]` siblings inside one `.ui-card`.
- * Returns `place(instant)`, which the host calls whenever the card is shown after being hidden.
- */
-export function initCardTabs(
-  card: HTMLElement,
-  { animateHeight = true, onChange }: CardTabsOptions = {}
-): (instant?: boolean) => void {
+const RESIZE_FALLBACK_MS = 400;
+let cardTabsCount = 0;
+
+/** Wires `.ui-card__tab[data-tab]` buttons to `.ui-panel[data-panel]` siblings inside one `.ui-card`. */
+export function initCardTabs(card: HTMLElement, { animateHeight = true, onChange }: CardTabsOptions = {}): CardTabs {
   const tabs = Array.from(card.querySelectorAll<HTMLButtonElement>(".ui-card__tab[data-tab]"));
   const panels = Array.from(card.querySelectorAll<HTMLElement>(".ui-panel[data-panel]"));
   const bar = card.querySelector<HTMLElement>(".ui-card__bar");
   const body = card.querySelector<HTMLElement>(".ui-card__body");
+  const tablist = tabs[0]?.parentElement ?? null;
   let endResize: (() => void) | null = null;
+
+  // -- Semantics --------------------------
+
+  const idPrefix = `ui-card-tabs-${++cardTabsCount}`;
+  const panelFor = (tab: HTMLButtonElement): HTMLElement | undefined =>
+    panels.find(panel => panel.dataset.panel === tab.dataset.tab);
+  const initial = tabs.find(tab => tab.getAttribute("aria-selected") === "true") ?? tabs[0];
+
+  // A tablist may only own tabs, so the role goes on the parent only when it holds nothing else.
+  if (
+    tablist &&
+    Array.from(tablist.children).every(child => child === bar || tabs.includes(child as HTMLButtonElement))
+  ) {
+    tablist.setAttribute("role", "tablist");
+  }
+  bar?.setAttribute("aria-hidden", "true");
+  for (const tab of tabs) {
+    const panel = panelFor(tab);
+    tab.id ||= `${idPrefix}-tab-${tab.dataset.tab}`;
+    tab.setAttribute("role", "tab");
+    if (panel) {
+      panel.id ||= `${idPrefix}-panel-${panel.dataset.panel}`;
+      panel.setAttribute("role", "tabpanel");
+      panel.setAttribute("aria-labelledby", tab.id);
+      tab.setAttribute("aria-controls", panel.id);
+    }
+  }
+
+  function markSelected(selected: HTMLButtonElement | undefined, direction: "next" | "prev" | ""): void {
+    for (const tab of tabs) {
+      tab.setAttribute("aria-selected", String(tab === selected));
+      tab.tabIndex = tab === selected ? 0 : -1;
+    }
+    for (const panel of panels) {
+      panel.dataset.uiDir = direction;
+      panel.classList.toggle("is-active", panel.dataset.panel === selected?.dataset.tab);
+    }
+  }
+
+  // -- Bar --------------------------
 
   const active = (): HTMLButtonElement | undefined => tabs.find(tab => tab.getAttribute("aria-selected") === "true");
 
@@ -42,25 +101,22 @@ export function initCardTabs(
     }
   }
 
-  function select(tab: HTMLButtonElement): void {
+  // -- Selection --------------------------
+
+  function selectTab(tab: HTMLButtonElement, instant: boolean): void {
     const from = tabs.findIndex(t => t.getAttribute("aria-selected") === "true");
-    const to = tabs.indexOf(tab);
-    const direction = travelDirection(from, to);
+    const direction = travelDirection(from, tabs.indexOf(tab));
     if (!direction) return;
 
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const still = instant || matchMedia("(prefers-reduced-motion: reduce)").matches;
     const startHeight = body?.getBoundingClientRect().height ?? 0;
     endResize?.();
 
-    tabs.forEach(t => t.setAttribute("aria-selected", String(t === tab)));
-    panels.forEach(panel => {
-      panel.dataset.uiDir = reduced ? "" : direction;
-      panel.classList.toggle("is-active", panel.dataset.panel === tab.dataset.tab);
-    });
-    place();
+    markSelected(tab, still ? "" : direction);
+    place(instant);
     onChange?.(tab.dataset.tab ?? "");
 
-    if (!body || !animateHeight || reduced) return;
+    if (!body || !animateHeight || still) return;
     body.style.height = "auto";
     const endHeight = body.getBoundingClientRect().height;
     if (Math.abs(endHeight - startHeight) < 1) {
@@ -86,7 +142,37 @@ export function initCardTabs(
     endResize = finish;
   }
 
-  tabs.forEach(tab => tab.addEventListener("click", () => select(tab)));
-  requestAnimationFrame(() => place(true));
-  return place;
+  // -- Events --------------------------
+
+  const onClick = (event: MouseEvent): void => {
+    const tab = (event.target as Element).closest<HTMLButtonElement>(".ui-card__tab[data-tab]");
+    if (tab && tabs.includes(tab)) selectTab(tab, false);
+  };
+  const onKeydown = (event: KeyboardEvent): void => {
+    const focused = tabs.indexOf(document.activeElement as HTMLButtonElement);
+    if (focused < 0) return;
+    const index = rovingIndex(focused, event.key, tabs.length);
+    if (index < 0) return;
+    event.preventDefault();
+    tabs[index].focus();
+    selectTab(tabs[index], false);
+  };
+  tablist?.addEventListener("click", onClick);
+  tablist?.addEventListener("keydown", onKeydown);
+
+  markSelected(initial, "");
+  place(true);
+
+  return {
+    place,
+    select(id, { instant = false } = {}) {
+      const tab = tabs.find(t => t.dataset.tab === id);
+      if (tab) selectTab(tab, instant);
+    },
+    destroy() {
+      endResize?.();
+      tablist?.removeEventListener("click", onClick);
+      tablist?.removeEventListener("keydown", onKeydown);
+    },
+  };
 }
