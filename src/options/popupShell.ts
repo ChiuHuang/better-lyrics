@@ -43,6 +43,7 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
       b.setAttribute("aria-selected", String(b === button));
       b.tabIndex = b === button ? 0 : -1;
     }
+    if (document.body.classList.contains("is-about")) setAboutChrome(false);
     movePill(tabs, animate);
     const target = button.dataset.target ?? "";
     for (const page of document.querySelectorAll<HTMLElement>("#options > .tab-content")) {
@@ -156,6 +157,17 @@ export function initRefreshLyricsButton(): void {
 
 // -- About --------------------------
 
+function setAboutChrome(open: boolean): void {
+  document.body.classList.toggle("is-about", open);
+  document.getElementById("about-btn")?.setAttribute("aria-pressed", String(open));
+  document.querySelector<HTMLElement>(".head-slot")?.toggleAttribute("inert", open);
+  const about = document.getElementById("about-content");
+  if (about && !open) {
+    about.hidden = true;
+    about.classList.remove("active");
+  }
+}
+
 export function initAboutToggle(onPageShown: (page: HTMLElement) => void): void {
   const button = document.getElementById("about-btn");
   const about = document.getElementById("about-content");
@@ -163,8 +175,7 @@ export function initAboutToggle(onPageShown: (page: HTMLElement) => void): void 
   if (!button || !about || !body) return;
   button.addEventListener("click", () => {
     const open = !document.body.classList.contains("is-about");
-    document.body.classList.toggle("is-about", open);
-    button.setAttribute("aria-pressed", String(open));
+    setAboutChrome(open);
     const target = open
       ? about.id
       : (document.querySelector<HTMLElement>(".tabs .tab.active")?.dataset.target ?? "#general-content").slice(1);
