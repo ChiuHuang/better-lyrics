@@ -46,8 +46,6 @@ interface EditorOptions {
   enableSearch?: boolean;
 }
 
-export const SAVE_DEBOUNCE_DELAY = 1000;
-export const SAVE_CUSTOM_THEME_DEBOUNCE = 2000;
 export const BRACKET_NESTING_LEVELS = 7;
 
 const RICS_LINTER_DELAY = 150;
