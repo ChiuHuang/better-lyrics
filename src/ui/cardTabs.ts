@@ -7,7 +7,6 @@ export function travelDirection(from: number, to: number): "next" | "prev" | "" 
   return to > from ? "next" : "prev";
 }
 
-/** In right-to-left layouts the arrows follow the visual order, so ArrowLeft moves forward. */
 export function rovingIndex(current: number, key: string, count: number, rtl = false): number {
   if (count <= 0) return -1;
   const forward = rtl ? "ArrowLeft" : "ArrowRight";

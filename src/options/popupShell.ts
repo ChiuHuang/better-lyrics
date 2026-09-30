@@ -95,7 +95,6 @@ export function initPopupCards(): void {
   }
 }
 
-// a bar measured while its page was hidden sits at x=0; place it without a transition or it sweeps in
 export function placePageCard(page: HTMLElement): void {
   pageCards.get(page)?.place(true);
 }

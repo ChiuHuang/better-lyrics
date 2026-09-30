@@ -30,7 +30,9 @@ import { checkForStableRelease } from "./updateNotice";
 import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
-import { syncVideoQualityControls } from "@/options/videoQualityControls";
+import { syncVideoQualityControls, videoQualityOptions } from "@/options/videoQualityControls";
+import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFields";
+import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
 import { initPopupCards, initPopupTabs, mountIcons, placePageCard, renderAppVersion } from "@/options/popupShell";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
@@ -104,7 +106,7 @@ const getOptionsFromForm = (): Options => {
     ...normalizeVideoQualitySettings({
       isHighResolutionVideoEnabled: (document.getElementById("isHighResolutionVideoEnabled") as HTMLInputElement)
         .checked,
-      preferredVideoQuality: (document.getElementById("preferredVideoQuality") as HTMLSelectElement).value,
+      preferredVideoQuality: (document.getElementById("preferredVideoQuality") as HTMLInputElement).value,
     }),
     isLogsEnabled: (document.getElementById("logs") as HTMLInputElement).checked,
     isAutoSwitchEnabled: (document.getElementById("autoSwitch") as HTMLInputElement).checked,
@@ -119,9 +121,9 @@ const getOptionsFromForm = (): Options => {
     isPictureInPictureAutoRestoreEnabled: (
       document.getElementById("isPictureInPictureAutoRestoreEnabled") as HTMLInputElement
     ).checked,
-    pipWindowLayout: (document.getElementById("pipWindowLayout") as HTMLSelectElement).value,
-    pipArtworkTransition: (document.getElementById("pipArtworkTransition") as HTMLSelectElement).value,
-    pipTextTransition: (document.getElementById("pipTextTransition") as HTMLSelectElement).value,
+    pipWindowLayout: (document.getElementById("pipWindowLayout") as HTMLInputElement).value,
+    pipArtworkTransition: (document.getElementById("pipArtworkTransition") as HTMLInputElement).value,
+    pipTextTransition: (document.getElementById("pipTextTransition") as HTMLInputElement).value,
     pipMarqueeEnabled: (document.getElementById("pipMarqueeEnabled") as HTMLInputElement).checked,
     pipProgressBarEnabled: (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked,
     isKaraokeEnabled: (document.getElementById("isKaraokeEnabled") as HTMLInputElement).checked,
@@ -132,7 +134,7 @@ const getOptionsFromForm = (): Options => {
     preferredProviderList: preferredProviderList,
     romanizationDisabledLanguages: romanizationDisabledLanguages,
     translationDisabledLanguages: translationDisabledLanguages,
-    uiLanguage: (document.getElementById("uiLanguage") as HTMLSelectElement).value,
+    uiLanguage: (document.getElementById("uiLanguage") as HTMLInputElement).value,
     isControlsDockEnabled: (document.getElementById("isUnisonPinnedDockEnabled") as HTMLInputElement).checked,
     controlsDockPosition: getSelectedUnisonPosition(),
     isControlsDockAutoHideInFullscreenEnabled: (
@@ -394,7 +396,7 @@ const setOptionsInForm = (items: Options): void => {
   const videoSettings = normalizeVideoQualitySettings(items);
   (document.getElementById("isHighResolutionVideoEnabled") as HTMLInputElement).checked =
     videoSettings.isHighResolutionVideoEnabled;
-  (document.getElementById("preferredVideoQuality") as HTMLSelectElement).value = videoSettings.preferredVideoQuality;
+  setDropdownFieldValue("preferredVideoQuality", videoSettings.preferredVideoQuality);
   syncVideoQualityControls(document);
   (document.getElementById("logs") as HTMLInputElement).checked = items.isLogsEnabled;
   (document.getElementById("albumArt") as HTMLInputElement).checked = items.isAlbumArtEnabled;
@@ -412,16 +414,16 @@ const setOptionsInForm = (items: Options): void => {
   (document.getElementById("isPictureInPictureEnabled") as HTMLInputElement).checked = items.isPictureInPictureEnabled;
   (document.getElementById("isPictureInPictureAutoRestoreEnabled") as HTMLInputElement).checked =
     items.isPictureInPictureAutoRestoreEnabled;
-  (document.getElementById("pipWindowLayout") as HTMLSelectElement).value = items.pipWindowLayout;
-  (document.getElementById("pipArtworkTransition") as HTMLSelectElement).value = items.pipArtworkTransition;
-  (document.getElementById("pipTextTransition") as HTMLSelectElement).value = items.pipTextTransition;
+  setDropdownFieldValue("pipWindowLayout", items.pipWindowLayout);
+  setDropdownFieldValue("pipArtworkTransition", items.pipArtworkTransition);
+  setDropdownFieldValue("pipTextTransition", items.pipTextTransition);
   (document.getElementById("pipMarqueeEnabled") as HTMLInputElement).checked = items.pipMarqueeEnabled;
   (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked = items.pipProgressBarEnabled;
   (document.getElementById("isKaraokeEnabled") as HTMLInputElement).checked = items.isKaraokeEnabled;
   (document.getElementById("translate") as HTMLInputElement).checked = items.isTranslateEnabled;
-  (document.getElementById("translationLanguage") as HTMLInputElement).value = items.translationLanguage;
+  setDropdownFieldValue("translationLanguage", items.translationLanguage);
   (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked = items.isRomanizationEnabled;
-  (document.getElementById("uiLanguage") as HTMLSelectElement).value = items.uiLanguage;
+  setDropdownFieldValue("uiLanguage", items.uiLanguage);
   (document.getElementById("isUnisonPinnedDockEnabled") as HTMLInputElement).checked = items.isControlsDockEnabled;
   (document.getElementById("isUnisonAutoHideInFullscreenEnabled") as HTMLInputElement).checked =
     items.isControlsDockAutoHideInFullscreenEnabled;
@@ -637,30 +639,34 @@ function initLetterWaveSwitch(): void {
   });
 }
 
-// -- Display Language Dropdown --------------------------
+// -- Dropdown fields --------------------------
 
-function populateLanguageDropdown(): void {
-  const select = document.getElementById("uiLanguage") as HTMLSelectElement | undefined;
-  if (!select) return;
-
-  const browserLang = chrome.i18n.getUILanguage();
-  const autoOption = document.createElement("option");
-  autoOption.value = "auto";
-  autoOption.textContent = `${t("options_language_displayLanguageAuto")} (${browserLang})`;
-  select.appendChild(autoOption);
-
-  for (const locale of SUPPORTED_LOCALES) {
-    const option = document.createElement("option");
-    option.value = locale.code;
-    option.textContent = locale.nativeName;
-    select.appendChild(option);
-  }
-
-  select.addEventListener("change", () => {
+function mountDropdownFields(): void {
+  mountDropdownField("preferredVideoQuality", t("options_display_preferredVideoQuality"), videoQualityOptions());
+  mountDropdownField("translationLanguage", t("options_language_translationLanguage"), [...TRANSLATION_LANGUAGES]);
+  mountDropdownField("uiLanguage", t("options_language_displayLanguage"), [
+    { value: "auto", label: `${t("options_language_displayLanguageAuto")} (${chrome.i18n.getUILanguage()})` },
+    ...SUPPORTED_LOCALES.map(locale => ({ value: locale.code, label: locale.nativeName })),
+  ]);
+  document.getElementById("uiLanguage")?.addEventListener("change", () => {
     saveOptions();
-    location.hash = "language-content";
+    location.hash = "language-content/display-language";
     location.reload();
   });
+  mountDropdownField("pipWindowLayout", t("options_display_pipWindowLayout"), [
+    { value: "horizontal", label: t("options_pipWindowLayout_horizontal") },
+    { value: "vertical", label: t("options_pipWindowLayout_vertical") },
+  ]);
+  mountDropdownField(
+    "pipArtworkTransition",
+    t("options_display_pipArtworkTransition"),
+    ["shuffle", "flip", "push", "crossfade"].map(value => ({ value, label: t(`options_pipTransition_${value}`) }))
+  );
+  mountDropdownField(
+    "pipTextTransition",
+    t("options_display_pipTextTransition"),
+    ["spring", "push", "crossfade"].map(value => ({ value, label: t(`options_pipTransition_${value}`) }))
+  );
 }
 
 // Event listeners
@@ -669,7 +675,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initI18n();
   renderAppVersion(document.getElementById("app-version"));
   mountIcons(document);
-  populateLanguageDropdown();
+  mountDropdownFields();
   initSettingHelpTooltips();
   initLetterWaveSwitch();
   document.getElementById("isFullScreenDisabled")?.addEventListener("change", syncFullscreenDependents);
@@ -1450,14 +1456,6 @@ function renderRomanizationLanguagePills(): void {
   }
 }
 
-function getTranslationLanguagesFromSelect(): string[] {
-  const select = document.getElementById("translationLanguage") as HTMLSelectElement;
-  if (!select) return [];
-  return Array.from(select.options)
-    .map(opt => opt.value)
-    .filter(Boolean);
-}
-
 let translationPillsDelegated = false;
 
 function renderTranslationLanguagePills(): void {
@@ -1476,7 +1474,7 @@ function renderTranslationLanguagePills(): void {
 
   container.replaceChildren();
 
-  for (const langCode of getTranslationLanguagesFromSelect()) {
+  for (const { value: langCode } of TRANSLATION_LANGUAGES) {
     const langName = getLanguageDisplayName(langCode);
     const isDisabled = translationDisabledLanguages.includes(langCode);
 
