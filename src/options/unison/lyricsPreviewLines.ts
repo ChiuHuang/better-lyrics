@@ -1,8 +1,15 @@
 import { detectParser, type Lyric } from "@braccato/parsers";
 import { LOG_PREFIX } from "@constants";
+import type { UnisonFormat } from "@modules/unison/types";
 import { XMLParser } from "fast-xml-parser";
 
 const LRC_TIMESTAMPS = /^(\[[\d:.]+\]\s*)+|<[\d:.]+>\s*/g;
+
+export function detectFormat(text: string): UnisonFormat {
+  if (/^\[[\d:.]+\]/m.test(text)) return "lrc";
+  if (/<tt[\s>]/i.test(text)) return "ttml";
+  return "plain";
+}
 
 export const ORIGINAL_VIEW = "original";
 export const ROMANIZATION_VIEW = "romanization";
@@ -96,8 +103,13 @@ function ttmlParagraphs(text: string): string[] {
   }
 }
 
-export function fallbackLines(text: string, isTtml: boolean): PreviewLine[] {
+function fallbackLines(text: string, isTtml: boolean): PreviewLine[] {
   const paragraphs = isTtml ? ttmlParagraphs(text).filter(line => line.trim()) : [];
   const texts = paragraphs.length > 0 ? paragraphs : text.split("\n");
   return texts.map(line => ({ text: line.trim(), isBackground: false })).filter(line => line.text);
+}
+
+export function previewDisplayLines(text: string, lyrics: Lyric[], view: string): PreviewLine[] {
+  const lines = previewLines(lyrics, view).filter(line => line.text);
+  return lines.length > 0 ? lines : fallbackLines(text, detectFormat(text) === "ttml");
 }

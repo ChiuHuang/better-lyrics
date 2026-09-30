@@ -42,7 +42,8 @@ import { bindLyricsFileDrop, LYRICS_FILE_READING_EVENT } from "@/options/unison/
 import { createFeedback, fillFeedback } from "@/options/unison/feedback";
 import { type IconKey, svgIcon } from "@/options/unison/icons";
 import { appendLanguageOptions, matchLanguageOption } from "@/options/unison/languages";
-import { detectFormat, renderPreviewInto } from "@/options/unison/lyricsPreview";
+import { renderPreviewInto } from "@/options/unison/lyricsPreview";
+import { detectFormat } from "@/options/unison/lyricsPreviewLines";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { IS_DEV, devFixtureHint, devFixtures } from "@modules/unison/devFixtures";
 import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";

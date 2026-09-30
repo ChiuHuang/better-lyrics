@@ -21,7 +21,8 @@ import { previewRevision, saveRevision } from "@modules/unison/unisonApi";
 import { svgIcon } from "@/options/unison/icons";
 import { appendLanguageOptions } from "@/options/unison/languages";
 import { bindLyricsFileDrop, createLyricsFileInput, LYRICS_FILE_READING_EVENT } from "@/options/unison/lyricsFile";
-import { detectFormat, renderPreviewInto } from "@/options/unison/lyricsPreview";
+import { renderPreviewInto } from "@/options/unison/lyricsPreview";
+import { detectFormat } from "@/options/unison/lyricsPreviewLines";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { mountChangesTabs } from "@/options/unison/revisions/revisionChanges";
 import {

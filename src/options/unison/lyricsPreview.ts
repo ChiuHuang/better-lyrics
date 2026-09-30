@@ -1,25 +1,17 @@
 import type { Lyric } from "@braccato/parsers";
 import { getLanguageDisplayName, t } from "@core/i18n";
-import type { UnisonFormat } from "@modules/unison/types";
 import { createDropdownSelect, type DropdownOption, type DropdownSelect } from "@/options/unison/dropdownSelect";
 import { parseSvgMarkup } from "@/options/unison/icons";
 import {
   ORIGINAL_VIEW,
-  fallbackLines,
   type PreviewLine,
   parseLyrics,
-  previewLines,
+  previewDisplayLines,
   ROMANIZATION_VIEW,
   translationLanguages,
 } from "@/options/unison/lyricsPreviewLines";
 
 // -- Format --------------------------
-
-export function detectFormat(text: string): UnisonFormat {
-  if (/^\[[\d:.]+\]/m.test(text)) return "lrc";
-  if (/<tt[\s>]/i.test(text)) return "ttml";
-  return "plain";
-}
 
 // -- Preview --------------------------
 
@@ -93,8 +85,7 @@ function renderPreview(container: HTMLElement, head: HTMLElement | undefined, st
     state.select.setHidden(true);
   }
 
-  const lines = previewLines(lyrics, view).filter(line => line.text);
-  const shown = lines.length > 0 ? lines : fallbackLines(text, detectFormat(text) === "ttml");
+  const shown = previewDisplayLines(text, lyrics, view);
   for (const line of shown.slice(0, PREVIEW_LINE_LIMIT)) renderLine(container, line);
   if (shown.length > PREVIEW_LINE_LIMIT) {
     const more = document.createElement("div");
