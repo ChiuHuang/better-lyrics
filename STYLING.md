@@ -1806,7 +1806,7 @@ There are two plates so that when the next line is somewhere else on screen, a n
 
 ### Styling the Plate
 
-Both plates and the title card share `.blyrics-karaoke-surface`, so one rule restyles the whole backdrop. `--blyrics-karaoke-video-scale` shrinks the video and the overlay together relative to the screen. It is a unitless number and defaults to `1`:
+Both plates and the title card share `.blyrics-karaoke-surface`, so one rule restyles the whole backdrop. `--blyrics-karaoke-video-scale` shrinks the video and the overlay together relative to the screen. It is a unitless number and defaults to `1`. Below `1`, the frame takes the video's own aspect ratio, so a 4:3 or ultrawide video never shows black bars inside it:
 
 ```css
 :root {
