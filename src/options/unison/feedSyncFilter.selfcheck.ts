@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { activeSyncChip, applyFormatChip, applySyncChip } from "@/options/unison/feedSyncFilter";
+import { activeSyncChip, applyFormatChip, applySyncChip, isSyncChip } from "@/options/unison/feedSyncFilter";
 import { DEFAULT_FEED_FILTERS, type FeedFilters } from "@modules/unison/types";
 
 const base: FeedFilters = { ...DEFAULT_FEED_FILTERS };
@@ -105,6 +105,16 @@ const base: FeedFilters = { ...DEFAULT_FEED_FILTERS };
     assert.deepEqual(applySyncChip(once, chip), once, `applying ${chip} twice is idempotent`);
     assert.equal(activeSyncChip(once), chip, `${chip} is the active chip after applying it`);
   }
+}
+
+// -- Guards --------------------------
+
+{
+  assert.ok(isSyncChip("syllable"), "syllable is a chip");
+  assert.ok(isSyncChip("all"), "all is a chip");
+  assert.ok(!isSyncChip("richsync"), "API values are not chips");
+  assert.ok(!isSyncChip(undefined), "missing value is not a chip");
+  assert.ok(!isSyncChip(""), "empty value is not a chip");
 }
 
 console.log("feed sync filter self-check passed");

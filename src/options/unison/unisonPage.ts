@@ -40,6 +40,7 @@ import { warnUnison } from "@core/logger";
 import { observeResize } from "@modules/ui/layout/layoutWidth";
 import { bindLyricsFileDrop, LYRICS_FILE_READING_EVENT } from "@/options/unison/lyricsFile";
 import { createFeedback, fillFeedback } from "@/options/unison/feedback";
+import { activeSyncChip, applyFormatChip, applySyncChip, isSyncChip } from "@/options/unison/feedSyncFilter";
 import { type IconKey, svgIcon } from "@/options/unison/icons";
 import { createLanguageDropdown } from "@/options/unison/languageDropdown";
 import { appendLanguageOptions, matchLanguageOption } from "@/options/unison/languages";
@@ -52,6 +53,7 @@ import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revis
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
 import type { Dropdown } from "@/ui/dropdown";
+import { createSyncIcon } from "@/ui/syncTag";
 import { initTooltips } from "@/ui/tooltip";
 import { XMLParser } from "fast-xml-parser";
 
@@ -427,8 +429,27 @@ function setupFilterBar(): void {
     });
   });
 
+  for (const chip of filterBar.querySelectorAll<HTMLLabelElement>(
+    '.unison-filter-chip:has(input[name="unison-filter-sync"])'
+  )) {
+    chip.addEventListener("click", e => {
+      e.preventDefault();
+      const value = chip.querySelector<HTMLInputElement>('input[type="radio"]')?.value;
+      if (!isSyncChip(value)) return;
+      const cache = feedTabCache[activeFeedTab];
+      const next = activeSyncChip(cache.filters) === value && value !== "all" ? "all" : value;
+      cache.filters = applySyncChip(cache.filters, next);
+      renderFilterBarFromActiveTab();
+      onFilterChange();
+    });
+  }
+  for (const chip of filterBar.querySelectorAll<HTMLElement>("[data-sync-chip]")) {
+    const type = chip.dataset.syncChip;
+    const icon = isSyncChip(type) && type !== "all" ? createSyncIcon(type) : null;
+    if (icon) chip.querySelector(".unison-filter-chip__sync-icon")?.appendChild(icon);
+  }
+
   const radioGroups: ReadonlyArray<readonly [string, keyof FeedFilters]> = [
-    ["unison-filter-sync", "syncType"],
     ["unison-filter-tier", "tier"],
     ["unison-filter-format", "format"],
   ];
@@ -441,7 +462,11 @@ function setupFilterBar(): void {
         const cache = feedTabCache[activeFeedTab];
         const current = cache.filters[key] as string;
         const next = current === input.value && input.value !== "all" ? "all" : input.value;
-        (cache.filters[key] as string) = next;
+        if (key === "format") {
+          cache.filters = applyFormatChip(cache.filters, next as FeedFilters["format"]);
+        } else {
+          (cache.filters[key] as string) = next;
+        }
         renderFilterBarFromActiveTab();
         onFilterChange();
       });
@@ -551,7 +576,7 @@ function renderFilterBarFromActiveTab(animateSort = false): void {
     }
   }
 
-  setFilterRadio("unison-filter-sync", filters.syncType);
+  setFilterRadio("unison-filter-sync", activeSyncChip(filters));
   setFilterRadio("unison-filter-tier", filters.tier);
   setFilterRadio("unison-filter-format", filters.format);
 

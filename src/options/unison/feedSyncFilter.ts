@@ -1,7 +1,13 @@
 import type { SyncType } from "@constants";
 import type { FeedFilters, UnisonFormat } from "@modules/unison/types";
 
-export type SyncChip = "all" | SyncType;
+type SyncChip = "all" | SyncType;
+
+const SYNC_CHIPS: readonly SyncChip[] = ["all", "syllable", "word", "line", "unsynced"];
+
+export function isSyncChip(value: string | undefined): value is SyncChip {
+  return SYNC_CHIPS.includes(value as SyncChip);
+}
 
 const RICH_FORMAT: Partial<Record<SyncChip, UnisonFormat>> = { syllable: "ttml", word: "lrc" };
 

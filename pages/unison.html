@@ -76,20 +76,29 @@
 								<input type="radio" name="unison-filter-sync" value="all" checked>
 								<span>__MSG_marketplace_showAll__</span>
 							</label>
-							<label class="unison-filter-chip">
-								<input type="radio" name="unison-filter-sync" value="richsync">
-								<span>__MSG_unison_syncRichsync__</span>
+							<label class="unison-filter-chip" data-sync-chip="syllable">
+								<input type="radio" name="unison-filter-sync" value="syllable">
+								<span class="unison-filter-chip__sync-icon" aria-hidden="true"></span>
+								<span>__MSG_options_syncType_syllable__</span>
 								<kbd>Q</kbd>
 							</label>
-							<label class="unison-filter-chip">
-								<input type="radio" name="unison-filter-sync" value="linesync">
-								<span>__MSG_unison_syncLinesync__</span>
+							<label class="unison-filter-chip" data-sync-chip="word">
+								<input type="radio" name="unison-filter-sync" value="word">
+								<span class="unison-filter-chip__sync-icon" aria-hidden="true"></span>
+								<span>__MSG_options_syncType_word__</span>
 								<kbd>W</kbd>
 							</label>
-							<label class="unison-filter-chip">
-								<input type="radio" name="unison-filter-sync" value="plain">
-								<span>__MSG_unison_syncPlain__</span>
+							<label class="unison-filter-chip" data-sync-chip="line">
+								<input type="radio" name="unison-filter-sync" value="line">
+								<span class="unison-filter-chip__sync-icon" aria-hidden="true"></span>
+								<span>__MSG_options_syncType_line__</span>
 								<kbd>E</kbd>
+							</label>
+							<label class="unison-filter-chip" data-sync-chip="unsynced">
+								<input type="radio" name="unison-filter-sync" value="unsynced">
+								<span class="unison-filter-chip__sync-icon" aria-hidden="true"></span>
+								<span>__MSG_options_syncType_unsynced__</span>
+								<kbd>R</kbd>
 							</label>
 						</div>
 					</div>

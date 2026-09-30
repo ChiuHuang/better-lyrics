@@ -1992,6 +1992,31 @@ select.unison-input {
   }
 }
 
+.unison-filter-chip__sync-icon {
+  display: inline-flex;
+}
+
+.unison-filter-chip__sync-icon svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+[data-sync-chip="syllable"] .unison-filter-chip__sync-icon {
+  color: var(--sync-syllable);
+}
+
+[data-sync-chip="word"] .unison-filter-chip__sync-icon {
+  color: var(--sync-word);
+}
+
+[data-sync-chip="line"] .unison-filter-chip__sync-icon {
+  color: var(--sync-line);
+}
+
+[data-sync-chip="unsynced"] .unison-filter-chip__sync-icon {
+  color: var(--sync-unsynced);
+}
+
 .unison-filter-chip__label {
   transition: color 0.15s ease;
 }
