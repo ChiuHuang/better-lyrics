@@ -2411,6 +2411,10 @@
     "message": "Something went wrong. Try again.",
     "description": "Fallback error for revision actions"
   },
+  "options_display_karaoke": {
+    "message": "Karaoke subtitles",
+    "description": "Toggle label for showing synced lyrics as subtitles over a music video in fullscreen"
+  },
   "options_display_highResolutionVideo": {
     "message": "Enable higher-resolution videos",
     "description": "Display settings toggle for enabling video resolutions above 1080p."
@@ -2433,6 +2437,6 @@
   },
   "options_display_videoQualityApplyHint": {
     "message": "Higher-resolution playback changes apply to the next video or after refreshing. Preferred quality uses the closest available lower resolution.",
-    "description": "Hint explaining when video playback changes take effect and how unavailable resolutions fall back."
+    "description": "Tooltip explaining when video playback changes take effect and how unavailable resolutions fall back."
   }
 }
