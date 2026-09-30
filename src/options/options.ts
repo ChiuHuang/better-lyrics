@@ -25,6 +25,8 @@ import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/le
 import { mergePreferredProviders } from "@modules/lyrics/providers/providerList";
 import { fetchOwnGamification, renderIdentityStats } from "@modules/unison/gamificationRender";
 import Sortable from "sortablejs";
+import { initializeThemes } from "./editor/themesUi";
+import { openEditCSS, openOptions } from "./editor/ui/dom";
 import { showModal } from "./editor/ui/feedback";
 import { initStoreUI, setupYourThemesButton } from "./store/store";
 import { checkForStableRelease } from "./updateNotice";
@@ -710,6 +712,36 @@ document.getElementById("options")?.addEventListener("change", event => {
   saveOptions();
 });
 
+// -- CSS editor --------------------------
+
+function setupLazyCodeEditor(): void {
+  const button = document.getElementById("edit-css-btn");
+  if (!button) return;
+  let isRequested = false;
+
+  button.addEventListener("click", async () => {
+    openEditCSS();
+    if (isRequested) return;
+    isRequested = true;
+    button.setAttribute("aria-busy", "true");
+    try {
+      const { mountCodeEditor } = await import("./editor/codeEditor");
+      mountCodeEditor();
+    } catch (err) {
+      isRequested = false;
+      errorCore("Failed to load the CSS editor:", err);
+      openOptions();
+      showModal({
+        title: t("options_themes_create"),
+        message: t("unison_rev_error"),
+        confirmText: t("blUpdate_dismiss"),
+      });
+    } finally {
+      button.removeAttribute("aria-busy");
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   new Sortable(document.getElementById("providers-list")!, {
     animation: 150,
@@ -722,6 +754,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initStoreUI();
   setupYourThemesButton();
+  void initializeThemes();
+  setupLazyCodeEditor();
   initLangExclusionsModal();
 
   document.getElementById("browse-themes-btn")?.addEventListener("click", () => {
