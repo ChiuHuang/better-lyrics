@@ -43,11 +43,11 @@ assert.deepEqual(
   "regression: LRC without fractional seconds drops its timestamps"
 );
 
-const untimed = `<tt xmlns="http://www.w3.org/ns/ttml" xmlns:itunes="http://music.apple.com/lyric-ttml-internal" itunes:timing="None"><body><div><p>First &amp; <span>only</span></p><tt:p xmlns:tt="http://www.w3.org/ns/ttml">Second &#233;&#x301;</tt:p></div></body></tt>`;
+const untimed = `<tt xmlns="http://www.w3.org/ns/ttml" xmlns:itunes="http://music.apple.com/lyric-ttml-internal" itunes:timing="None"><body><div><p begin-note="a>b">First &amp; <span>only</span></p><p><![CDATA[Cdata <b>line</b>]]></p><tt:p xmlns:tt="http://www.w3.org/ns/ttml">Second &#233;&#x301;</tt:p></div></body></tt>`;
 assert.deepEqual(parseLyrics(untimed), [], "braccato skips untimed paragraphs, which is why the fallback exists");
 assert.deepEqual(
   fallbackLines(untimed, true).map(line => line.text),
-  ["First & only", "Second \u00e9\u0301"],
+  ["First & only", "Cdata <b>line</b>", "Second \u00e9\u0301"],
   "regression: untimed TTML previews its paragraph text, not raw markup"
 );
 assert.deepEqual(

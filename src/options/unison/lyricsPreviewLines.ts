@@ -1,5 +1,6 @@
 import { detectParser, type Lyric } from "@braccato/parsers";
 import { LOG_PREFIX } from "@constants";
+import { XMLParser } from "fast-xml-parser";
 
 const LRC_TIMESTAMPS = /^(\[[\d:.]+\]\s*)+|<[\d:.]+>\s*/g;
 
@@ -55,22 +56,48 @@ export function previewLines(lyrics: Lyric[], view: string): PreviewLine[] {
   });
 }
 
-const TTML_PARAGRAPH = /<(?:[\w-]+:)?p\b[^>]*>([\s\S]*?)<\/(?:[\w-]+:)?p>/g;
-const XML_TAG = /<[^>]*>/g;
-const XML_ENTITY = /&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos);/gi;
-const NAMED_ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+type XmlNode = Record<string, XmlNode[] | string>;
 
-function decodeXmlEntities(text: string): string {
-  return text.replace(XML_ENTITY, (match, entity: string) => {
-    if (entity[0] !== "#") return NAMED_ENTITIES[entity.toLowerCase()];
-    const code = entity[1].toLowerCase() === "x" ? Number.parseInt(entity.slice(2), 16) : Number(entity.slice(1));
-    return code <= 0x10ffff ? String.fromCodePoint(code) : match;
-  });
+const xmlParser = new XMLParser({
+  preserveOrder: true,
+  ignoreAttributes: true,
+  removeNSPrefix: true,
+  trimValues: false,
+  parseTagValue: false,
+  cdataPropName: "#cdata",
+  htmlEntities: true,
+});
+
+function nodeText(nodes: XmlNode[]): string {
+  return nodes
+    .map(node =>
+      Object.entries(node)
+        .map(([key, value]) => (key === "#text" ? String(value) : Array.isArray(value) ? nodeText(value) : ""))
+        .join("")
+    )
+    .join("");
+}
+
+function paragraphTexts(nodes: XmlNode[]): string[] {
+  return nodes.flatMap(node =>
+    Object.entries(node).flatMap(([key, value]) => {
+      if (!Array.isArray(value)) return [];
+      return key === "p" ? [nodeText(value)] : paragraphTexts(value);
+    })
+  );
+}
+
+function ttmlParagraphs(text: string): string[] {
+  try {
+    return paragraphTexts(xmlParser.parse(text) as XmlNode[]);
+  } catch (error) {
+    console.warn(`${LOG_PREFIX} Failed to read untimed TTML`, error);
+    return [];
+  }
 }
 
 export function fallbackLines(text: string, isTtml: boolean): PreviewLine[] {
-  const paragraphs = isTtml ? Array.from(text.matchAll(TTML_PARAGRAPH), match => match[1]) : [];
-  const texts =
-    paragraphs.length > 0 ? paragraphs.map(p => decodeXmlEntities(p.replace(XML_TAG, ""))) : text.split("\n");
+  const paragraphs = isTtml ? ttmlParagraphs(text).filter(line => line.trim()) : [];
+  const texts = paragraphs.length > 0 ? paragraphs : text.split("\n");
   return texts.map(line => ({ text: line.trim(), isBackground: false })).filter(line => line.text);
 }
