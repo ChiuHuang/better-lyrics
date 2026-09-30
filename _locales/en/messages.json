@@ -33,14 +33,6 @@
     "description": "Themes settings tab label"
   },
 
-  "options_general_title": {
-    "message": "General Settings",
-    "description": "General settings section title"
-  },
-  "options_general_description": {
-    "message": "Settings that affect the general behavior of Better Lyrics.",
-    "description": "General settings section description"
-  },
   "options_general_showLogs": {
     "message": "Show logs",
     "description": "Show logs setting label"
@@ -85,14 +77,6 @@
   "options_display_videoTab": {
     "message": "Video",
     "description": "Header tab in Display for video settings"
-  },
-  "options_display_title": {
-    "message": "Display Settings",
-    "description": "Display settings section title"
-  },
-  "options_display_description": {
-    "message": "Fine-tune the appearance of Better Lyrics.",
-    "description": "Display settings section description"
   },
   "options_display_disableFullscreen": {
     "message": "Disable fullscreen mode",
@@ -344,14 +328,6 @@
     "description": "Option label for automatic language detection based on browser settings"
   },
 
-  "options_language_title": {
-    "message": "Language Settings",
-    "description": "Language settings section title"
-  },
-  "options_language_description": {
-    "message": "Language and translation settings for Better Lyrics.",
-    "description": "Language settings section description"
-  },
   "options_language_romanization": {
     "message": "Romanization",
     "description": "Romanization setting label"
@@ -381,10 +357,6 @@
   "options_themes_title": {
     "message": "Theme Settings",
     "description": "Theme settings section title"
-  },
-  "options_themes_description": {
-    "message": "Customize the appearance of Better Lyrics.",
-    "description": "Theme settings section description"
   },
   "options_themes_theme": {
     "message": "Theme",
@@ -423,14 +395,6 @@
     "description": "Installed themes button label"
   },
 
-  "options_identity_title": {
-    "message": "Identity",
-    "description": "Identity settings section title"
-  },
-  "options_identity_description": {
-    "message": "Your unique anonymous identity for Better Lyrics.",
-    "description": "Identity settings section description"
-  },
   "options_identity_backupTitle": {
     "message": "Back up your identity",
     "description": "Title of the identity backup warning"
@@ -1297,10 +1261,6 @@
         "example": "Adalie"
       }
     }
-  },
-  "options_manage": {
-    "message": "Manage",
-    "description": "Manage button label"
   },
   "options_language_exclusionsTitle": {
     "message": "Language Exclusions",
