@@ -53,6 +53,18 @@
     "message": "Cache",
     "description": "Cache section label"
   },
+  "options_general_behavior": {
+    "message": "Behavior",
+    "description": "Header tab in General for behaviour toggles"
+  },
+  "options_general_clearCachedLyrics": {
+    "message": "Clear cached lyrics",
+    "description": "Label for the clear cache action row"
+  },
+  "options_general_clearCachedLyricsHint": {
+    "message": "They download again as you play",
+    "description": "Hint under the clear cached lyrics label"
+  },
   "options_general_clearCache": {
     "message": "Clear Cache",
     "description": "Clear cache button label"
@@ -66,6 +78,14 @@
     "description": "Cache size label"
   },
 
+  "options_display_fullscreenTab": {
+    "message": "Fullscreen",
+    "description": "Header tab in Display for fullscreen settings"
+  },
+  "options_display_videoTab": {
+    "message": "Video",
+    "description": "Header tab in Display for video settings"
+  },
   "options_display_title": {
     "message": "Display Settings",
     "description": "Display settings section title"
@@ -414,6 +434,14 @@
   "options_identity_warning": {
     "message": "Treat this like your password. Never share it. Export a backup. No one can recover a lost identity, not even admins.",
     "description": "Security warning in the Identity settings tab: keep the identity private and back it up because it is unrecoverable"
+  },
+  "options_identity_backupTitle": {
+    "message": "Back up your identity",
+    "description": "Title of the identity backup warning"
+  },
+  "options_identity_backupBody": {
+    "message": "Your contributions and level are tied to this key. If you lose it, no one can restore it, including the Better Lyrics team. Never share it: anyone who has it can act as you.",
+    "description": "Body of the identity backup warning"
   },
   "options_identity_yourIdentity": {
     "message": "Your identity",
@@ -1174,6 +1202,106 @@
     "message": "Language exclusions",
     "description": "Label for language exclusions setting"
   },
+  "options_about": {
+    "message": "About",
+    "description": "Footer button that opens the About page"
+  },
+  "options_about_tagline": {
+    "message": "Time-synced lyrics for YouTube Music.",
+    "description": "About page tagline under the product name"
+  },
+  "options_about_whatHeading": {
+    "message": "What it is",
+    "description": "About page section heading"
+  },
+  "options_about_whatBody": {
+    "message": "Better Lyrics upgrades your YouTube Music experience by providing beautiful time-synced lyrics for your favorite songs.",
+    "description": "About page section body"
+  },
+  "options_about_doesHeading": {
+    "message": "What it does",
+    "description": "About page section heading"
+  },
+  "options_about_does1": {
+    "message": "Time-synced lyrics on YouTube Music, seek by clicking any line.",
+    "description": "About page feature list item"
+  },
+  "options_about_does2": {
+    "message": "Translations and romanization for foreign-language tracks.",
+    "description": "About page feature list item"
+  },
+  "options_about_does3": {
+    "message": "Full-screen mode, with the UI available in multiple languages.",
+    "description": "About page feature list item"
+  },
+  "options_about_does4": {
+    "message": "Theme Marketplace with community themes.",
+    "description": "About page feature list item"
+  },
+  "options_about_does5": {
+    "message": "Customizable lyrics providers from multiple sources.",
+    "description": "About page feature list item"
+  },
+  "options_about_openSourceHeading": {
+    "message": "Open source",
+    "description": "About page section heading"
+  },
+  "options_about_openSourceBody": {
+    "message": "GPL v3. Source on $GITHUB$. PRs welcome if you spot something to fix.",
+    "description": "About page body; $GITHUB$ becomes a link to the repository",
+    "placeholders": {
+      "github": {
+        "content": "$1",
+        "example": "GitHub"
+      }
+    }
+  },
+  "options_about_communityHeading": {
+    "message": "Community",
+    "description": "About page section heading"
+  },
+  "options_about_communityDiscord": {
+    "message": "$DISCORD$ for questions and chat.",
+    "description": "About page list item; $DISCORD$ becomes a link to the Discord server",
+    "placeholders": {
+      "discord": {
+        "content": "$1",
+        "example": "Discord"
+      }
+    }
+  },
+  "options_about_communityIssue": {
+    "message": "$ISSUE$ if something is broken.",
+    "description": "About page list item; $ISSUE$ becomes a link to the issue tracker",
+    "placeholders": {
+      "issue": {
+        "content": "$1",
+        "example": "File an issue"
+      }
+    }
+  },
+  "options_about_fileIssue": {
+    "message": "File an issue",
+    "description": "Link text in the About page that opens the issue tracker"
+  },
+  "options_about_madeByHeading": {
+    "message": "Made by",
+    "description": "About page section heading"
+  },
+  "options_about_madeByBody": {
+    "message": "$BOIDU$ and $ADALIE$, with thanks to everyone in the Better Lyrics community who has tested it and reported bugs.",
+    "description": "About page credits; the names become links",
+    "placeholders": {
+      "boidu": {
+        "content": "$1",
+        "example": "Boidu"
+      },
+      "adalie": {
+        "content": "$2",
+        "example": "Adalie"
+      }
+    }
+  },
   "options_manage": {
     "message": "Manage",
     "description": "Manage button label"
@@ -1874,15 +2002,15 @@
     }
   },
   "unison_viewProfile": {
-    "message": "View full profile",
+    "message": "View profile",
     "description": "Link on the Identity tab that opens the user's full Unison profile in a new tab"
   },
   "unison_changePicture": {
-    "message": "Change picture",
+    "message": "Change pfp",
     "description": "Link on the Identity tab, shown when the user has a Unison profile picture, that opens the Unison website where they can pick a different one"
   },
   "unison_addPicture": {
-    "message": "Add a picture",
+    "message": "Add a pfp",
     "description": "Link on the Identity tab, shown when the user has no Unison profile picture, that opens the Unison website where they can pick one"
   },
   "unison_submitted_this": {
