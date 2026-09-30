@@ -639,7 +639,6 @@ export function setUpVideoModeListener(): void {
 
   videoModeObserver?.disconnect();
 
-  // The A/V toggle holds the preference, not what plays: album videos leave it off and disabled.
   const syncVideoMode = () => {
     const isVideo = playerPage.hasAttribute("video-mode");
     playerPage.toggleAttribute("blyrics-video-mode", isVideo);
