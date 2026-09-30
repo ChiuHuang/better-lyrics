@@ -1,4 +1,4 @@
-import { KARAOKE_ACTIVE_ATTR } from "@constants";
+import { KARAOKE_ACTIVE_ATTR, LYRICS_DISABLED_ATTR } from "@constants";
 import { AppState } from "@core/appState";
 import { isAdPlaying } from "@modules/ui/playerControls/playerBarControls";
 import { type KaraokeConditions, shouldShowKaraoke, wantsKaraokeLyrics } from "@modules/karaoke/gate";
@@ -21,6 +21,7 @@ function readConditions(): KaraokeConditions {
   return {
     enabled: AppState.isKaraokeEnabled,
     fullscreen: layout?.hasAttribute("player-fullscreened") ?? false,
+    fullscreenDisabled: layout?.hasAttribute(LYRICS_DISABLED_ATTR) ?? false,
     videoMode: layout?.hasAttribute("blyrics-video-mode") ?? false,
     synced: readSynced(),
     adPlaying: isAdPlaying(document),
