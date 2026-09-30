@@ -60,7 +60,8 @@
         "fflate": "^0.8.3",
         "marked": "^18.0.14",
         "rics": "^0.3.22",
-        "sortablejs": "^1.15.7"
+        "sortablejs": "^1.15.7",
+        "@braccato/highlight": "0.1.0"
     },
     "devDependencies": {
         "@aws-sdk/client-s3": "^3.1141.0",
