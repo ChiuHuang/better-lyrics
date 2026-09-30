@@ -6,7 +6,7 @@
     --blyrics-karaoke-floor: 7.5cqh;
     --blyrics-karaoke-lift: 0px;
     position: fixed;
-    inset: calc(50vh * (1 - var(--blyrics-karaoke-video-scale, 1))) calc(50vw * (1 - var(--blyrics-karaoke-video-scale, 1)));
+    inset: var(--blyrics-karaoke-frame-y) var(--blyrics-karaoke-frame-x);
     z-index: 3;
     container-type: size;
     pointer-events: none;
