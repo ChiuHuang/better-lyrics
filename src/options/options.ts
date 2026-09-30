@@ -1143,7 +1143,7 @@ async function importIdentityFromJson(json: string): Promise<void> {
   try {
     const imported = await importIdentity(json);
     await markIdentityBackedUp(imported.keyId);
-    await updateIdentityDisplay();
+    await Promise.all([updateIdentityDisplay(), syncBackupWarning()]);
     showAlert(t("options_alert_importSuccess"));
     closeImportIdentityModal();
   } catch (err) {
