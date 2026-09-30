@@ -48,8 +48,9 @@ import {
 import {
   isIdentityBackedUp,
   markIdentityBackedUp,
-  markWhenDownloadCompletes,
+  onBackupFlagChanged,
   readBackedUpKeyId,
+  rememberPendingBackup,
 } from "@/options/identityBackup";
 import { attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
@@ -743,6 +744,7 @@ async function initIdentityUI(): Promise<void> {
   if (warnSlot) warnSlot.style.transition = "none";
   await syncBackupWarning();
   requestAnimationFrame(() => warnSlot?.style.removeProperty("transition"));
+  onBackupFlagChanged(() => void syncBackupWarning());
 
   try {
     displayNameEl.textContent = await getDisplayName();
@@ -1054,9 +1056,8 @@ async function handleExportIdentity(): Promise<void> {
     const [displayName, exportData, { keyId }] = await Promise.all([getDisplayName(), exportIdentity(), getIdentity()]);
     const outcome = await downloadIdentityFile(exportData, `better-lyrics-identity-${displayName}.json`);
     showAlert(downloadOutcomeMessage(outcome));
-    if (outcome.kind === "downloads")
-      markWhenDownloadCompletes(outcome.downloadId, keyId, () => void syncBackupWarning());
-    else if (outcome.kind === "anchor") await markIdentityBackedUp(keyId).then(syncBackupWarning);
+    if (outcome.kind === "downloads") await rememberPendingBackup(outcome.downloadId, keyId);
+    else if (outcome.kind === "anchor") await markIdentityBackedUp(keyId);
   } catch (error) {
     errorCore("Failed to export identity:", error);
     showAlert(t("options_alert_exportFailed"));
@@ -1136,7 +1137,7 @@ async function importIdentityFromJson(json: string): Promise<void> {
   try {
     const imported = await importIdentity(json);
     await markIdentityBackedUp(imported.keyId);
-    await Promise.all([updateIdentityDisplay(), syncBackupWarning()]);
+    await updateIdentityDisplay();
     showAlert(t("options_alert_importSuccess"));
     closeImportIdentityModal();
   } catch (err) {
