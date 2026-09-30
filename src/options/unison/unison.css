@@ -1277,10 +1277,6 @@ kbd {
 
 /* -- Dropdown Select --------------------------  */
 
-.unison-detail-col-head .ui-dropdown {
-  margin: -0.375rem 0 0.125rem;
-}
-
 .unison-detail-col-head--changes .ui-dropdown {
   display: none;
 }
