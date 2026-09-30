@@ -271,47 +271,6 @@ body {
     color: #fff;
 }
 
-.setting-help::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    width: max-content;
-    max-width: 240px;
-    padding: 8px 10px;
-    background-color: hsl(0, 0%, 20%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    line-height: 1.4;
-    text-align: left;
-    white-space: normal;
-    border-radius: 6px;
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(-50%) translateY(4px);
-    transition:
-        opacity 0.15s ease-out,
-        visibility 0.15s ease-out,
-        transform 0.15s ease-out;
-    z-index: 100;
-}
-
-.setting-help[data-tooltip-placement="bottom"]::after {
-    top: calc(100% + 8px);
-    bottom: auto;
-    transform: translateX(-50%) translateY(-4px);
-}
-
-.setting-help:hover::after,
-.setting-help:focus-visible::after {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-}
-
 #offset-modal-overlay .container:first-of-type {
     margin-top: 0;
 }
@@ -915,46 +874,6 @@ body {
 	background-color: hsla(0, 0%, 100%, 0.15);
 }
 
-.icon-btn::after {
-	--ease: ease-out;
-	content: attr(data-tooltip);
-	position: absolute;
-	bottom: calc(100% + 8px);
-	left: 50%;
-	transform: translateX(-50%) translateY(4px);
-	padding: 6px 10px;
-	background-color: hsl(0, 0%, 20%);
-	color: #fff;
-	font-size: 0.75rem;
-	font-weight: 500;
-	white-space: nowrap;
-	border-radius: 6px;
-	pointer-events: none;
-	opacity: 0;
-	visibility: hidden;
-	transition:
-		opacity 0.15s var(--ease),
-		visibility 0.15s var(--ease),
-		transform 0.15s var(--ease);
-	transition-delay: 0s;
-	z-index: 100;
-}
-
-.icon-btn:hover::after {
-	opacity: 1;
-	visibility: visible;
-	transform: translateX(-50%) translateY(0);
-	transition-delay: 0.4s;
-}
-
-.ie-utils:hover .icon-btn:hover::after {
-	transition-delay: 0s;
-}
-
-.ie-utils:hover .icon-btn:not(:hover)::after {
-	transition-delay: 0.1s;
-}
-
 .CodeMirror-hints {
     background: #28292c !important;
     border: 1px solid #3e3e41 !important;
@@ -1381,10 +1300,6 @@ hr {
 	cursor: default;
 }
 
-.sortable-item.disabled-item .sync-tag::after {
-	display: none;
-}
-
 .checkbox-container {
     position: relative;
     display: inline-block;
@@ -1746,42 +1661,6 @@ hr {
 .sync-tag--unsynced {
 	color: rgba(255, 255, 255, 0.5);
 	background: rgba(255, 255, 255, 0.05);
-}
-
-.sync-tag::after {
-	--ease: ease-out;
-	content: attr(data-tooltip);
-	position: absolute;
-	bottom: calc(100% + 8px);
-	right: 0;
-	transform: translateY(4px);
-	padding: 6px 10px;
-	background-color: hsl(0, 0%, 20%);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	color: #fff;
-	font-size: 0.75rem;
-	font-weight: 500;
-	border-radius: 6px;
-	pointer-events: none;
-	opacity: 0;
-	visibility: hidden;
-	max-width: 20em;
-	width: max-content;
-	transition:
-		opacity 0.15s var(--ease),
-		visibility 0.15s var(--ease),
-		transform 0.15s var(--ease);
-	transition-delay: 0s;
-	z-index: 100;
-	text-transform: none;
-	letter-spacing: normal;
-}
-
-.sync-tag:hover::after {
-	opacity: 1;
-	visibility: visible;
-	transform: translateY(0);
-	transition-delay: 0.2s;
 }
 
 .cm-editor {

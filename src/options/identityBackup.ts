@@ -6,7 +6,7 @@ export function isIdentityBackedUp(storedKeyId: unknown, currentKeyId: string): 
   return typeof storedKeyId === "string" && storedKeyId.length > 0 && storedKeyId === currentKeyId;
 }
 
-export interface DownloadDelta {
+interface DownloadDelta {
   id: number;
   state?: { current?: string };
 }

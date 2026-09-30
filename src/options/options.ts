@@ -43,6 +43,7 @@ import {
 } from "@/options/identityBackup";
 import { attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
+import { initTooltips } from "@/ui/tooltip";
 
 interface Options extends VideoQualitySettings {
   isLogsEnabled: boolean;
@@ -690,7 +691,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderAppVersion(document.getElementById("app-version"));
   mountIcons(document);
   mountDropdownFields();
-  initSettingHelpTooltips();
+  initTooltips(document.body);
   initLetterWaveSwitch();
   document.getElementById("isFullScreenDisabled")?.addEventListener("change", syncFullscreenDependents);
   restoreOptions();
@@ -706,38 +707,6 @@ document.getElementById("options")?.addEventListener("change", event => {
   syncVideoQualityControls(document);
   saveOptions();
 });
-
-// -- Setting help tooltips --------------------------
-
-const TOOLTIP_GAP = 8;
-
-// A modal body counts as a boundary even though it does not clip: a tooltip that runs past its top
-// covers the modal title, which is the thing the tooltip is explaining.
-function getBoundaryTop(element: HTMLElement): number {
-  for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) {
-    const clips = !getComputedStyle(ancestor)
-      .overflow.split(" ")
-      .every(axis => axis === "visible");
-
-    if (clips || ancestor.classList.contains("modal-body")) {
-      return ancestor.getBoundingClientRect().top;
-    }
-  }
-  return 0;
-}
-
-function initSettingHelpTooltips(): void {
-  for (const help of document.querySelectorAll<HTMLElement>(".setting-help")) {
-    const place = (): void => {
-      const height = parseFloat(getComputedStyle(help, "::after").height) || 0;
-      const spaceAbove = help.getBoundingClientRect().top - getBoundaryTop(help);
-      help.dataset.tooltipPlacement = spaceAbove >= height + TOOLTIP_GAP ? "top" : "bottom";
-    };
-
-    help.addEventListener("pointerenter", place);
-    help.addEventListener("focus", place);
-  }
-}
 
 document.addEventListener("DOMContentLoaded", () => {
   new Sortable(document.getElementById("providers-list")!, {

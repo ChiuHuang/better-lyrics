@@ -3,7 +3,7 @@ import { VIDEO_QUALITIES, type VideoQuality } from "@modules/settings/videoQuali
 const HIGH_RESOLUTION_FLOOR = 1080;
 const HIGH_RESOLUTION_FALLBACK = "hd1080";
 
-export interface VideoQualityControlState {
+interface VideoQualityControlState {
   allowed: string[];
   value: string;
   showLimitHint: boolean;
