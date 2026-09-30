@@ -2411,6 +2411,10 @@
     "message": "Etwas ist schiefgelaufen. Versuche es erneut.",
     "description": "Fallback error for revision actions"
   },
+  "options_display_karaoke": {
+    "message": "Karaoke subtitles",
+    "description": "Toggle label for showing synced lyrics as subtitles over a music video in fullscreen"
+  },
   "options_display_highResolutionVideo": {
     "message": "Aktiviere hochauflösende Videos",
     "description": "Display settings toggle for enabling video resolutions above 1080p."
@@ -2433,6 +2437,6 @@
   },
   "options_display_videoQualityApplyHint": {
     "message": "Änderungen der Wiedergabe mit höherer Auflösung gelten für das nächste Video oder nach dem Aktualisieren. Bevorzugte Qualität verwendet die nächstmögliche verfügbare niedrigere Auflösung.",
-    "description": "Hint explaining when video playback changes take effect and how unavailable resolutions fall back."
+    "description": "Tooltip explaining when video playback changes take effect and how unavailable resolutions fall back."
   }
 }
