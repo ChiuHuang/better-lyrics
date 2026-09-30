@@ -51,6 +51,7 @@ import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revis
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
 import { initTooltips } from "@/options/unison/tooltip";
+import { XMLParser } from "fast-xml-parser";
 
 // -- Icons --------------------------
 
@@ -474,16 +475,34 @@ function autoDetectLanguage(): void {
   if (matched) submitLanguageSelect.value = matched;
 }
 
-function detectTtmlIsrc(text: string): string | null {
-  for (const [tag] of text.matchAll(/<(?:[\w-]+:)?meta\b[^>]*>/gi)) {
-    if (!/\bkey\s*=\s*["']isrc["']/i.test(tag)) continue;
-    const value = tag
-      .match(/\bvalue\s*=\s*["']([^"']+)["']/i)?.[1]
-      .toUpperCase()
-      .replace(/[\s-]/g, "");
-    if (value && /^[A-Z]{2}[A-Z0-9]{3}\d{7}$/.test(value)) return value;
+const ttmlMetaParser = new XMLParser({ ignoreAttributes: false, removeNSPrefix: true });
+
+function findIsrcMeta(node: unknown): string | null {
+  if (!node || typeof node !== "object") return null;
+  for (const [key, child] of Object.entries(node)) {
+    if (key === "meta") {
+      for (const meta of [child].flat()) {
+        if (String(meta?.["@_key"]).toLowerCase() !== "isrc") continue;
+        const value = String(meta["@_value"] ?? "")
+          .toUpperCase()
+          .replace(/[\s-]/g, "");
+        if (/^[A-Z]{2}[A-Z0-9]{3}\d{7}$/.test(value)) return value;
+      }
+    }
+    const found = findIsrcMeta(child);
+    if (found) return found;
   }
   return null;
+}
+
+function detectTtmlIsrc(text: string): string | null {
+  if (!/isrc/i.test(text) || detectFormat(text) !== "ttml") return null;
+  try {
+    return findIsrcMeta(ttmlMetaParser.parse(text));
+  } catch (error) {
+    warnUnison("Failed to read TTML metadata", error);
+    return null;
+  }
 }
 
 function autoDetectIsrc(): void {
