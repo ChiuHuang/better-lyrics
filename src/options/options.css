@@ -615,13 +615,14 @@ body {
 }
 
 .small-btn {
-		position:relative;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background-color: hsla(0, 0%, 100%, 0.1);
-    color: #fff;
+    background-color: var(--button-bg);
+    box-shadow: var(--raised-edge);
+    color: var(--text);
     padding: 8px 12px;
     padding-right: 16px;
     border: none;
@@ -629,13 +630,39 @@ body {
     text-align: center;
     cursor: pointer;
     font-size: 0.875rem;
+    font-weight: 500;
     width: fit-content;
     margin: 0;
+    transition:
+        background-color var(--duration-quick) ease-out,
+        color var(--duration-quick) ease-out,
+        scale var(--duration-quick) ease-out;
+}
+
+.small-btn:hover {
+    background-color: var(--button-bg-hover);
+    color: #fff;
+}
+
+.small-btn:active {
+    scale: var(--scale-press);
 }
 
 .small-btn svg {
     width: 0.875rem;
     height: 0.875rem;
+    color: rgba(255, 255, 255, 0.55);
+    transition: color var(--duration-quick) ease-out;
+}
+
+.small-btn:hover svg {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .small-btn, .small-btn svg {
+        transition: none;
+    }
 }
 
 .unison-open-btn {
@@ -1228,7 +1255,14 @@ hr {
 .btn-danger {
     line-height: 1rem;
     background-color: rgb(239 68 68);
+    box-shadow: inset rgba(255, 255, 255, 0.18) 0 1px 0 0;
+    color: #fff;
     transition: background-color 0.2s;
+}
+
+.btn-danger svg,
+.btn-danger:hover svg {
+    color: #fff;
 }
 
 .btn-danger:hover {
