@@ -1,5 +1,6 @@
 import { svgIcon } from "@/options/unison/icons";
 import { type DropdownOption, filterOptions, shouldShowSearch } from "@/ui/dropdownFilter";
+import { menuPlacement } from "@/ui/menuPlacement";
 
 export type { DropdownOption } from "@/ui/dropdownFilter";
 
@@ -22,8 +23,6 @@ export interface Dropdown {
   destroy(): void;
 }
 
-const MENU_GAP_PX = 4;
-const VIEWPORT_MARGIN_PX = 8;
 const MENU_MIN_WIDTH_PX = 200;
 let dropdownCount = 0;
 
@@ -64,6 +63,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
   let current = "";
   let isOpen = false;
   let closeTimer = 0;
+  let openFrame = 0;
 
   // -- Rendering --------------------------
 
@@ -150,14 +150,17 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     menu.style.minWidth = `${Math.max(rect.width, MENU_MIN_WIDTH_PX)}px`;
     menu.style.width = variant === "stretch" ? `${rect.width}px` : "";
     const side = rect.left + rect.width / 2 > window.innerWidth / 2 ? "end" : "start";
-    const menuHeight = menu.offsetHeight;
-    const spaceBelow = window.innerHeight - rect.bottom - VIEWPORT_MARGIN_PX;
-    const placement = menuHeight > spaceBelow && rect.top > spaceBelow ? "above" : "below";
+    const { placement, top } = menuPlacement({
+      triggerTop: rect.top,
+      triggerBottom: rect.bottom,
+      menuHeight: menu.offsetHeight,
+      viewportHeight: window.innerHeight,
+    });
     menu.dataset.side = side;
     menu.dataset.placement = placement;
     // Anchor with left/top only: a right/bottom inset resolves against the fixed containing block, which excludes scrollbar gutters.
     menu.style.left = `${side === "end" ? rect.right - menu.offsetWidth : rect.left}px`;
-    menu.style.top = `${placement === "below" ? rect.bottom + MENU_GAP_PX : rect.top - MENU_GAP_PX - menuHeight}px`;
+    menu.style.top = `${top}px`;
   }
 
   // -- Open / close --------------------------
@@ -166,7 +169,8 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     const target = event.target as Node;
     if (!root.contains(target) && !menu.contains(target)) close(false);
   };
-  const onViewportChange = (): void => {
+  const onViewportChange = (event: Event): void => {
+    if (event.target instanceof Node && menu.contains(event.target)) return;
     if (isOpen) place();
   };
 
@@ -180,7 +184,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     place();
     isOpen = true;
     trigger.setAttribute("aria-expanded", "true");
-    requestAnimationFrame(() => menu.classList.add("is-open"));
+    openFrame = requestAnimationFrame(() => menu.classList.add("is-open"));
     document.addEventListener("pointerdown", onOutsidePointer, true);
     window.addEventListener("resize", onViewportChange);
     window.addEventListener("scroll", onViewportChange, { capture: true, passive: true });
@@ -192,6 +196,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
   function close(restoreFocus: boolean): void {
     if (!isOpen) return;
     isOpen = false;
+    cancelAnimationFrame(openFrame);
     trigger.setAttribute("aria-expanded", "false");
     menu.classList.remove("is-open");
     menu.classList.add("is-closing");
@@ -201,7 +206,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     const duration =
       Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--duration-quick")) || 150;
     closeTimer = window.setTimeout(() => {
-      menu.classList.remove("is-closing");
+      menu.classList.remove("is-open", "is-closing");
       menu.remove();
     }, duration);
     if (restoreFocus) trigger.focus();
