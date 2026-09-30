@@ -53,7 +53,7 @@ import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revis
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
 import type { Dropdown } from "@/ui/dropdown";
-import { createSyncIcon } from "@/ui/syncTag";
+import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
 import { initTooltips } from "@/ui/tooltip";
 import { XMLParser } from "fast-xml-parser";
 
@@ -916,10 +916,7 @@ function createLyricsCard(entry: UnisonSearchEntry | UnisonFeedEntry, options: L
   formatBadge.textContent = t(`unison_format_${entry.format}`);
   badges.appendChild(formatBadge);
 
-  const syncBadge = document.createElement("span");
-  syncBadge.className = "unison-badge unison-badge--sync";
-  syncBadge.textContent = t(`unison_sync${entry.syncType[0].toUpperCase()}${entry.syncType.slice(1)}`);
-  badges.appendChild(syncBadge);
+  badges.appendChild(createSyncTag(syncTypeForLyric(entry.syncType, entry.format)));
 
   badges.appendChild(createConfidenceBadge(entry.confidence));
 
