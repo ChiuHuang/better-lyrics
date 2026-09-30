@@ -1640,7 +1640,7 @@
     "description": "Hint text below video ID field label"
   },
   "unison_additionalVideos": {
-    "message": "Additional videos",
+    "message": "추가 동영상",
     "description": "Label for the optional submit-form field where the user lists other videos of the same song to link to this lyric"
   },
   "unison_additionalVideosHint": {
@@ -1658,11 +1658,11 @@
     }
   },
   "unison_additionalVideosInvalid": {
-    "message": "Some additional videos aren't valid video IDs or URLs. Fix or remove them to submit.",
+    "message": "일부 추가 동영상의 ID나 URL이 유효하지 않습니다. 제출하려면 수정하거나 제거하세요.",
     "description": "Error shown on submit when the additional videos field contains entries that are not valid YouTube video IDs or URLs"
   },
   "unison_viewSubmittedLyrics": {
-    "message": "View lyrics",
+    "message": "가사 보기",
     "description": "Button in the submit feedback that opens the lyric that was just submitted, shown when some additional videos could not be linked"
   },
   "unison_formatHint": {
@@ -1862,19 +1862,19 @@
     "description": "Plural noun used after numbers other than 1 in the Unison vote count (e.g. '5 votes')"
   },
   "unison_linkedVideos": {
-    "message": "Linked videos",
+    "message": "연결된 동영상",
     "description": "Heading for the list of YouTube videos a Unison lyric is linked to, on the lyric detail page"
   },
   "unison_noLinkedVideos": {
-    "message": "No linked videos yet",
+    "message": "아직 연결된 동영상 없음",
     "description": "Shown under the linked-videos heading when a lyric has no linked videos"
   },
   "unison_videoPrimary": {
-    "message": "Primary",
+    "message": "주",
     "description": "Badge marking the primary (home) video of a Unison lyric, which cannot be unlinked"
   },
   "unison_removeVideo": {
-    "message": "Remove",
+    "message": "제거",
     "description": "Button that unlinks a video from a Unison lyric"
   },
   "unison_suggestedVideos": {
@@ -1882,7 +1882,7 @@
     "description": "Heading for the list of videos Unison suggests linking to a lyric"
   },
   "unison_noMatchingVideos": {
-    "message": "No matching videos found",
+    "message": "일치하는 동영상 없음",
     "description": "Suggested videos list when every suggestion is judged a different recording; those stay behind the other versions toggle below it"
   },
   "unison_noSuggestions": {
@@ -1908,23 +1908,23 @@
     }
   },
   "unison_addVideo": {
-    "message": "Add",
+    "message": "추가",
     "description": "Button that links a suggested video to a Unison lyric"
   },
   "unison_linkVideoPlaceholder": {
-    "message": "Video ID or link",
+    "message": "동영상 ID 또는 링크",
     "description": "Placeholder and accessible label for the input on a Unison lyric's detail page where the owner types a videoId or YouTube URL to link"
   },
   "unison_linkVideoInvalid": {
-    "message": "That isn't a valid video ID or link",
+    "message": "유효한 동영상 ID 또는 링크가 아닙니다",
     "description": "Error shown when the owner tries to link a video whose ID or URL can't be parsed"
   },
   "unison_linkFailed": {
-    "message": "Couldn't link this video",
+    "message": "동영상을 연결할 수 없습니다",
     "description": "Generic error shown when linking a video to a Unison lyric fails"
   },
   "unison_unlinkFailed": {
-    "message": "Couldn't remove this video",
+    "message": "동영상을 제거할 수 없습니다",
     "description": "Generic error shown when unlinking a video from a Unison lyric fails"
   },
   "unison_suggestMatchSameHint": {
@@ -1940,7 +1940,7 @@
     "description": "Tooltip and accessible label for the layers icon on a suggested video judged to be a different recording of the song, such as a remix or live version"
   },
   "unison_suggestOtherVersions": {
-    "message": "Show $count$ other versions",
+    "message": "다른 버전 $count$개 보기",
     "description": "Toggle that reveals suggested videos judged to be different recordings, such as remixes or live versions. $count$ is how many are hidden",
     "placeholders": {
       "count": {
@@ -1950,15 +1950,15 @@
     }
   },
   "unison_suggestHideOtherVersions": {
-    "message": "Hide other versions",
+    "message": "다른 버전 숨기기",
     "description": "Label of the other versions toggle while it is open; clicking it hides the suggested videos judged to be different recordings again"
   },
   "unison_videosLoadFailed": {
-    "message": "Couldn't load videos",
+    "message": "동영상을 불러올 수 없습니다",
     "description": "Shown in place of the linked or suggested videos list when Unison could not load it; a retry button follows"
   },
   "unison_showMore": {
-    "message": "Show more",
+    "message": "더보기",
     "description": "Button that reveals the rest of the suggested videos list beyond the first few"
   },
   "unison_error_linkCapReached": {
@@ -1966,19 +1966,19 @@
     "description": "Error shown when a lyric already has the maximum number of linked videos"
   },
   "unison_error_durationMismatch": {
-    "message": "That video's length doesn't match",
+    "message": "동영상의 길이가 맞지 않습니다",
     "description": "Error shown when a video cannot be linked because its duration differs too much from the lyric"
   },
   "unison_error_videoUnverifiable": {
-    "message": "That video couldn't be verified",
+    "message": "동영상을 확인할 수 없습니다",
     "description": "Error shown when a video cannot be linked because Unison could not fetch it"
   },
   "unison_error_cannotUnlinkPrimary": {
-    "message": "The primary video can't be removed",
+    "message": "주 동영상은 삭제할 수 없습니다",
     "description": "Error shown when the user tries to unlink the primary video of a lyric"
   },
   "unison_rev_number": {
-    "message": "Revision $rev$",
+    "message": "리비전 $rev$",
     "description": "Revision label. $rev$ is the revision number",
     "placeholders": {
       "rev": {
@@ -1988,11 +1988,11 @@
     }
   },
   "unison_rev_original": {
-    "message": "Original",
+    "message": "원본",
     "description": "Label for revision 1 of a Unison lyric, the original upload"
   },
   "unison_rev_neverEdited": {
-    "message": "Uploaded $when$, never edited",
+    "message": "$when$ 업로드, 편집된 적 없음",
     "description": "Revision bar text for a lyric with no edits. $when$ is a relative time",
     "placeholders": {
       "when": {
@@ -2002,7 +2002,7 @@
     }
   },
   "unison_rev_editedAgo": {
-    "message": "Edited $when$",
+    "message": "$when$ 편집",
     "description": "Revision bar text for the live revision. $when$ is a relative time",
     "placeholders": {
       "when": {
@@ -2012,7 +2012,7 @@
     }
   },
   "unison_rev_pendingChip": {
-    "message": "Revision $rev$ pending",
+    "message": "리비전 $rev$ 보류 중",
     "description": "Chip for an edit waiting for council review",
     "placeholders": {
       "rev": {
@@ -2022,23 +2022,23 @@
     }
   },
   "unison_rev_revisions": {
-    "message": "Revisions",
+    "message": "리비전",
     "description": "Button and page title for the list of a lyric's revisions"
   },
   "unison_rev_editLyrics": {
-    "message": "Edit lyrics",
+    "message": "가사 편집",
     "description": "Button that opens the lyric editor"
   },
   "unison_rev_viewChanges": {
-    "message": "View changes",
+    "message": "변경 사항 보기",
     "description": "Button that opens the diff of the pending edit, and link in the editor save bar that opens the Changes tab"
   },
   "unison_rev_changes": {
-    "message": "Changes",
+    "message": "변경 사항",
     "description": "Editor tab that lists what the edit changes compared with an earlier revision"
   },
   "unison_rev_changesTabs": {
-    "message": "Preview or changes",
+    "message": "미리보기 또는 변경 사항",
     "description": "Screen reader label for the editor tabs that switch between the lyric preview and the list of changes"
   },
   "unison_rev_details": {
@@ -2046,11 +2046,11 @@
     "description": "Diff section label above changed song details: language, ISRC and album"
   },
   "unison_rev_updating": {
-    "message": "Updating",
+    "message": "업데이트 중",
     "description": "Shown while the list of changes refreshes after an edit"
   },
   "unison_rev_checkFailed": {
-    "message": "Couldn't check your edit",
+    "message": "편집을 확인할 수 없습니다",
     "description": "Editor save bar title when the edit check failed for a reason the server did not explain"
   },
   "unison_rev_checkFailedHint": {
@@ -2058,11 +2058,11 @@
     "description": "Editor save bar hint under the failed check title, followed by a Try again link"
   },
   "unison_rev_tryAgain": {
-    "message": "Try again",
+    "message": "다시 시도",
     "description": "Link or button that runs the edit check again after it failed"
   },
   "unison_rev_changesError": {
-    "message": "Couldn't load changes",
+    "message": "변경 사항을 불러올 수 없습니다",
     "description": "Error title in the editor Changes tab when the edit check failed"
   },
   "unison_rev_changesErrorHint": {
@@ -2074,11 +2074,11 @@
     "description": "Editor Changes tab while the lyrics have errors that stop them from being read"
   },
   "unison_rev_withdraw": {
-    "message": "Withdraw",
+    "message": "철회",
     "description": "Button that withdraws a pending edit before the council reviews it"
   },
   "unison_rev_reason_sealed": {
-    "message": "Sealed lyric",
+    "message": "인증 가사",
     "description": "Why an edit needs council review: the council approved (sealed) this lyric"
   },
   "unison_rev_reason_flagged": {
@@ -2148,31 +2148,31 @@
     "description": "Explains what editing a sealed lyric means"
   },
   "unison_rev_status_live": {
-    "message": "Live",
+    "message": "활성",
     "description": "Revision status: the version listeners see"
   },
   "unison_rev_status_pending": {
-    "message": "Pending",
+    "message": "보류",
     "description": "Revision status: waiting for council review"
   },
   "unison_rev_status_past": {
-    "message": "Past",
+    "message": "과거",
     "description": "Revision status: was live before"
   },
   "unison_rev_status_superseded": {
-    "message": "Superseded",
+    "message": "대체",
     "description": "Revision status: replaced by a newer save before review"
   },
   "unison_rev_status_rejected": {
-    "message": "Rejected",
+    "message": "거부",
     "description": "Revision status: the council rejected it"
   },
   "unison_rev_status_withdrawn": {
-    "message": "Withdrawn",
+    "message": "철회",
     "description": "Revision status: the owner withdrew it"
   },
   "unison_rev_anchor": {
-    "message": "Anchor",
+    "message": "앵커",
     "description": "Chip on the revision that edits are measured against"
   },
   "unison_rev_approved": {
@@ -2208,23 +2208,23 @@
     }
   },
   "unison_rev_colStatus": {
-    "message": "Status",
+    "message": "상태",
     "description": "Revisions list column header"
   },
   "unison_rev_colChange": {
-    "message": "Change",
+    "message": "변경",
     "description": "Revisions list column header (noun): how much an edit changed"
   },
   "unison_rev_colReason": {
-    "message": "Reason",
+    "message": "사유",
     "description": "Revisions list column header"
   },
   "unison_rev_colWhen": {
-    "message": "When",
+    "message": "일시",
     "description": "Revisions list column header: relative time"
   },
   "unison_rev_revision": {
-    "message": "Revision",
+    "message": "리비전",
     "description": "Column header and editor sidebar label"
   },
   "unison_rev_comparedWith": {
@@ -2238,15 +2238,15 @@
     }
   },
   "unison_rev_legendAdded": {
-    "message": "Added",
+    "message": "추가",
     "description": "Diff legend: added lines or words"
   },
   "unison_rev_legendRemoved": {
-    "message": "Removed",
+    "message": "제거",
     "description": "Diff legend: removed lines or words"
   },
   "unison_rev_legendTiming": {
-    "message": "Timing only",
+    "message": "시간만",
     "description": "Diff legend: lines whose timing changed but text did not"
   },
   "unison_rev_unchangedLines": {
@@ -2278,7 +2278,7 @@
     }
   },
   "unison_rev_noDiff": {
-    "message": "No changes to show",
+    "message": "표시할 변경 사항이 없습니다",
     "description": "Diff area when there is nothing to compare"
   },
   "unison_rev_revertToThis": {
@@ -2380,63 +2380,63 @@
     }
   },
   "unison_rev_checking": {
-    "message": "Checking your edit...",
+    "message": "편집을 확인하는 중...",
     "description": "Editor status while the server checks the edit"
   },
   "unison_rev_fixErrors": {
-    "message": "Fix the errors to save",
+    "message": "저장하려면 오류를 해결하세요",
     "description": "Editor status when the edit has errors"
   },
   "unison_rev_limitReached": {
-    "message": "Edit limit reached",
+    "message": "편집 제한에 도달했습니다",
     "description": "Shown when the daily edit limit is used up"
   },
   "unison_rev_noChanges": {
-    "message": "No changes from the live revision",
+    "message": "활성 리비전에서 달라진 점이 없습니다",
     "description": "Shown when an edit or revert would change nothing"
   },
   "unison_rev_goesLive": {
-    "message": "Goes live when you save",
+    "message": "저장하면 바로 활성화됩니다",
     "description": "Editor status when the edit skips review"
   },
   "unison_rev_submitForReview": {
-    "message": "Submit for review",
+    "message": "검토를 위해 제출",
     "description": "Save button label when the edit needs review"
   },
   "unison_rev_noEdits": {
-    "message": "No edits yet",
+    "message": "아직 편집 없음",
     "description": "Revisions page notice for a lyric that was never edited"
   },
   "unison_rev_error": {
-    "message": "Something went wrong. Try again.",
+    "message": "문제가 발생했습니다. 다시 시도해 주세요.",
     "description": "Fallback error for revision actions"
   },
   "options_display_karaoke": {
-    "message": "Karaoke subtitles",
+    "message": "노래방 자막",
     "description": "Toggle label for showing synced lyrics as subtitles over a music video in fullscreen"
   },
   "options_display_highResolutionVideo": {
-    "message": "Enable higher-resolution videos",
+    "message": "고해상도 동영상 켜기",
     "description": "Display settings toggle for enabling video resolutions above 1080p."
   },
   "options_display_highResolutionVideoInfo": {
-    "message": "Unlocks resolutions above 1080p when available. May affect seamless transitions between videos. Audio-only gapless playback is preserved. Only disable if you experience playback or transition issues.",
+    "message": "가능한 경우 1080p를 넘는 해상도의 제한을 풉니다. 동영상 간 끊김 없는 전환에 영향을 줄 수 있습니다. 오디오만 재생할 때는 끊김 없는 재생에 영향을 주지 않습니다. 재생이나 전환에 문제가 있는 경우에만 끄세요.",
     "description": "Help tooltip explaining higher video resolutions and the possible effect on seamless video transitions."
   },
   "options_display_preferredVideoQuality": {
-    "message": "Preferred video quality",
+    "message": "선호 동영상 품질",
     "description": "Display settings label for the preferred video resolution selector."
   },
   "options_display_videoQualityLimit": {
-    "message": "Enable higher-resolution videos for 1440p, 4K, and 8K.",
+    "message": "1440p, 4K, 8K를 이용하려면 고해상도 동영상을 켜세요.",
     "description": "Hint shown when resolutions above 1080p are disabled by the higher-resolution video toggle."
   },
   "options_display_videoQualityAuto": {
-    "message": "Auto",
+    "message": "자동",
     "description": "Video quality choice that lets YouTube Music select the resolution automatically."
   },
   "options_display_videoQualityApplyHint": {
-    "message": "Higher-resolution playback changes apply to the next video or after refreshing. Preferred quality uses the closest available lower resolution.",
+    "message": "고해상도 재생 설정 변경은 다음 동영상이나 새로고침을 한 뒤에 적용합니다. 선호 품질을 이용할 수 없으면 더 낮은 해상도 중 가장 인접한 품질을 사용합니다.",
     "description": "Tooltip explaining when video playback changes take effect and how unavailable resolutions fall back."
   }
 }
