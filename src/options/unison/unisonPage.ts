@@ -474,6 +474,25 @@ function autoDetectLanguage(): void {
   if (matched) submitLanguageSelect.value = matched;
 }
 
+function detectTtmlIsrc(text: string): string | null {
+  for (const [tag] of text.matchAll(/<(?:[\w-]+:)?meta\b[^>]*>/gi)) {
+    if (!/\bkey\s*=\s*["']isrc["']/i.test(tag)) continue;
+    const value = tag
+      .match(/\bvalue\s*=\s*["']([^"']+)["']/i)?.[1]
+      .toUpperCase()
+      .replace(/[\s-]/g, "");
+    if (value && /^[A-Z]{2}[A-Z0-9]{3}\d{7}$/.test(value)) return value;
+  }
+  return null;
+}
+
+function autoDetectIsrc(): void {
+  const isrcInput = document.getElementById("unison-field-isrc") as HTMLInputElement;
+  if (isrcInput.value.trim()) return;
+  const isrc = detectTtmlIsrc(lyricsTextarea.value);
+  if (isrc) isrcInput.value = isrc;
+}
+
 function clearFeedTabCache(cache: FeedTabCache): void {
   cache.requestId++;
   cache.loading = false;
@@ -1857,6 +1876,7 @@ function setupSubmitForm(): void {
     updatePreview();
     autoDetectFormat();
     autoDetectLanguage();
+    autoDetectIsrc();
   });
 
   lyricsTextarea.addEventListener(LYRICS_FILE_READING_EVENT, syncSubmitButton);
@@ -1865,6 +1885,7 @@ function setupSubmitForm(): void {
     updatePreview();
     autoDetectFormat();
     autoDetectLanguage();
+    autoDetectIsrc();
   });
 }
 
