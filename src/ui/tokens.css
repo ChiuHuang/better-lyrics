@@ -76,6 +76,10 @@
   --sync-unsynced: rgba(255, 255, 255, 0.5);
   --sync-unsynced-bg: rgba(255, 255, 255, 0.05);
 
+  /* -- Layers: portalled menus sit above page modals, tooltips above menus -- */
+  --z-menu: 2147483646;
+  --z-tooltip: 2147483647;
+
   /* -- Danger -- */
   --danger: rgb(239, 68, 68);
   --danger-hover: rgb(220, 38, 38);
