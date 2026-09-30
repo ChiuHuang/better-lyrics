@@ -278,7 +278,6 @@ ytmusic-player-page[player-fullscreened][blyrics-karaoke] #blyrics-fs-column {
   display: none !important;
 }
 
-/* Below scale 1 the frame hugs the video's aspect, so it never shows letterbox bars */
 ytmusic-player-page[blyrics-karaoke] #player.ytmusic-player-page,
 #blyrics-karaoke {
   --blyrics-karaoke-scale: var(--blyrics-karaoke-video-scale, 1);
