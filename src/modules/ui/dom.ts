@@ -1,5 +1,6 @@
 import {
   AD_PLAYING_ATTR,
+  ARTWORK_MIN_SIZE_PX,
   DISCORD_INVITE_URL,
   DISCORD_LOGO_SRC,
   DOCK_CLASS,
@@ -1395,7 +1396,7 @@ function setBackgroundImage(src: string): void {
 }
 
 function containerSizeFor(width: number): number {
-  return Math.round(Math.max(width * window.devicePixelRatio, 1440));
+  return Math.round(Math.max(width * window.devicePixelRatio, ARTWORK_MIN_SIZE_PX));
 }
 
 function getContainerSize(): number {
