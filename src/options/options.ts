@@ -670,16 +670,17 @@ function mountDropdownFields(): void {
     { value: "horizontal", label: t("options_pipWindowLayout_horizontal") },
     { value: "vertical", label: t("options_pipWindowLayout_vertical") },
   ]);
-  mountDropdownField(
-    "pipArtworkTransition",
-    t("options_display_pipArtworkTransition"),
-    ["shuffle", "flip", "push", "crossfade"].map(value => ({ value, label: t(`options_pipTransition_${value}`) }))
-  );
-  mountDropdownField(
-    "pipTextTransition",
-    t("options_display_pipTextTransition"),
-    ["spring", "push", "crossfade"].map(value => ({ value, label: t(`options_pipTransition_${value}`) }))
-  );
+  mountDropdownField("pipArtworkTransition", t("options_display_pipArtworkTransition"), [
+    { value: "shuffle", label: t("options_pipTransition_shuffle") },
+    { value: "flip", label: t("options_pipTransition_flip") },
+    { value: "push", label: t("options_pipTransition_push") },
+    { value: "crossfade", label: t("options_pipTransition_crossfade") },
+  ]);
+  mountDropdownField("pipTextTransition", t("options_display_pipTextTransition"), [
+    { value: "spring", label: t("options_pipTransition_spring") },
+    { value: "push", label: t("options_pipTransition_push") },
+    { value: "crossfade", label: t("options_pipTransition_crossfade") },
+  ]);
 }
 
 // Event listeners
