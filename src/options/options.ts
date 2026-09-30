@@ -686,9 +686,15 @@ function mountDropdownFields(): void {
 }
 
 // Event listeners
-document.addEventListener("DOMContentLoaded", async () => {
+const localeReady = new Promise<void>(resolve => {
+  document.addEventListener("DOMContentLoaded", () => resolve(), { once: true });
+}).then(async () => {
   await loadLocaleOverride();
   initI18n();
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await localeReady;
   renderAppVersion(document.getElementById("app-version"));
   mountIcons(document);
   initRefreshLyricsButton(() => showAlert(t("options_alert_refreshFailed")));
@@ -767,7 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initStoreUI();
   setupYourThemesButton();
-  void initializeThemes();
+  localeReady.then(initializeThemes).catch(err => errorCore("Failed to initialize themes:", err));
   setupLazyCodeEditor();
   initLangExclusionsModal();
 
