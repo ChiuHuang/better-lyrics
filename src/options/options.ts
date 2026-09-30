@@ -1287,19 +1287,17 @@ let translationDisabledLanguages: string[] = [];
 let activeExclusionTab: "romanization" | "translation" = "romanization";
 
 function updateExclusionsConfigVisibility(): void {
-  const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
-  const translateToggle = document.getElementById("translate") as HTMLInputElement;
-  const configContainer = document.getElementById("romanization-config-container");
-  if (!configContainer) return;
-
-  const shouldShow = romanizationToggle?.checked || translateToggle?.checked;
-  configContainer.style.display = shouldShow ? "flex" : "none";
+  const romanization = (document.getElementById("isRomanizationEnabled") as HTMLInputElement | null)?.checked;
+  const translate = (document.getElementById("translate") as HTMLInputElement | null)?.checked;
+  const romanizationRow = document.getElementById("romanization-exclusions-btn");
+  const translationRow = document.getElementById("translation-exclusions-btn");
+  if (romanizationRow) romanizationRow.hidden = !romanization;
+  if (translationRow) translationRow.hidden = !translate;
 }
 
 function initLangExclusionsModal(): void {
   const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
   const translateToggle = document.getElementById("translate") as HTMLInputElement;
-  const configBtn = document.getElementById("romanization-config-btn");
   const modalOverlay = document.getElementById("lang-exclusions-modal-overlay");
   const modalClose = document.getElementById("lang-exclusions-modal-close");
   const romanizationSearchInput = document.getElementById("romanization-search") as HTMLInputElement;
@@ -1307,21 +1305,20 @@ function initLangExclusionsModal(): void {
   const resetBtn = document.getElementById("lang-exclusions-reset-btn");
   const tabButtons = modalOverlay?.querySelectorAll(".modal-tab");
 
-  if (!configBtn || !modalOverlay) return;
+  if (!modalOverlay) return;
 
   romanizationToggle?.addEventListener("change", updateExclusionsConfigVisibility);
   translateToggle?.addEventListener("change", updateExclusionsConfigVisibility);
 
-  configBtn.addEventListener("click", () => {
+  const openExclusions = (tab: "romanization" | "translation"): void => {
+    switchExclusionTab(tab);
     modalOverlay.classList.add("active");
-    const tabName = t(activeExclusionTab === "romanization" ? "options_romanization_tab" : "options_translation_tab");
-    if (resetBtn) resetBtn.textContent = t("options_resetToDefault", tabName);
-    if (activeExclusionTab === "romanization") {
-      romanizationSearchInput?.focus();
-    } else {
-      translationSearchInput?.focus();
-    }
-  });
+    (tab === "romanization" ? romanizationSearchInput : translationSearchInput)?.focus();
+  };
+  document
+    .getElementById("romanization-exclusions-btn")
+    ?.addEventListener("click", () => openExclusions("romanization"));
+  document.getElementById("translation-exclusions-btn")?.addEventListener("click", () => openExclusions("translation"));
 
   modalClose?.addEventListener("click", closeLangExclusionsModal);
 

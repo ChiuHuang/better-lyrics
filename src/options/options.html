@@ -197,39 +197,25 @@
 					</div>
 				</div>
 			</section>
-			<div class="page tab-content" id="language-content">
-				<div class="settings-group">
-					<h2>
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-							<path fill-rule="evenodd" d="M9 2.25a.75.75 0 0 1 .75.75v1.506a49.384 49.384 0 0 1 5.343.371.75.75 0 1 1-.186 1.489c-.66-.083-1.323-.151-1.99-.206a18.67 18.67 0 0 1-2.97 6.323c.318.384.65.753 1 1.107a.75.75 0 0 1-1.07 1.052A18.902 18.902 0 0 1 9 13.687a18.823 18.823 0 0 1-5.656 4.482.75.75 0 0 1-.688-1.333 17.323 17.323 0 0 0 5.396-4.353A18.72 18.72 0 0 1 5.89 8.598a.75.75 0 0 1 1.388-.568A17.21 17.21 0 0 0 9 11.224a17.168 17.168 0 0 0 2.391-5.165 48.04 48.04 0 0 0-8.298.307.75.75 0 0 1-.186-1.489 49.159 49.159 0 0 1 5.343-.371V3A.75.75 0 0 1 9 2.25ZM15.75 9a.75.75 0 0 1 .68.433l5.25 11.25a.75.75 0 1 1-1.36.634l-1.198-2.567h-6.744l-1.198 2.567a.75.75 0 0 1-1.36-.634l5.25-11.25A.75.75 0 0 1 15.75 9Zm-2.672 8.25h5.344l-2.672-5.726-2.672 5.726Z" clip-rule="evenodd"></path>
-						</svg>
-
-						__MSG_options_language_title__
-					</h2>
-					<p>__MSG_options_language_description__</p>
-					<div class="container">
-						<span>__MSG_options_language_displayLanguage__</span>
-						<div class="select">
-							<select id="uiLanguage"></select>
+			<section class="page tab-content" id="language-content">
+				<div class="ui-card">
+					<div class="ui-card__head">
+						<div class="ui-card__tabs">
+							<button class="ui-card__tab" data-tab="translation" type="button" aria-selected="true">__MSG_options_translation_tab__</button>
+							<button class="ui-card__tab" data-tab="romanization" type="button" aria-selected="false">__MSG_options_romanization_tab__</button>
+							<button class="ui-card__tab" data-tab="display-language" type="button" aria-selected="false">__MSG_options_language_displayLanguage__</button>
+							<span class="ui-card__bar"></span>
 						</div>
 					</div>
-					<div class="container">
-						<span>__MSG_options_language_romanization__</span>
-						<label>
-							<input type="checkbox" id="isRomanizationEnabled">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container">
-						<span>__MSG_options_language_translate__</span>
-						<label>
-							<input type="checkbox" id="translate">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container">
-						<span>__MSG_options_language_translationLanguage__</span>
-						<div class="select">
+					<div class="ui-card__body">
+						<div class="ui-panel" data-panel="translation">
+							<div class="ui-row">
+								<span class="ui-row__label">__MSG_options_language_translate__</span>
+								<label><input type="checkbox" id="translate"><span class="checkmark"></span></label>
+							</div>
+							<div class="ui-row">
+								<span class="ui-row__label">__MSG_options_language_translationLanguage__</span>
+								<div class="select">
 							<select id="translationLanguage">
 								<option value="af">Afrikaans</option>
 								<option value="sq">Albanian</option>
@@ -367,18 +353,33 @@
 								<option value="zu">Zulu</option>
 							</select>
 						</div>
-					</div>
-					<div class="container" id="romanization-config-container" style="display: none;">
-						<span>__MSG_options_language_exclusions__</span>
-						<button class="small-btn" id="romanization-config-btn">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-								<path fill-rule="evenodd" d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 0 1-.517.608 7.45 7.45 0 0 0-.478.198.798.798 0 0 1-.796-.064l-.453-.324a1.875 1.875 0 0 0-2.416.2l-.243.243a1.875 1.875 0 0 0-.2 2.416l.324.453a.798.798 0 0 1 .064.796 7.448 7.448 0 0 0-.198.478.798.798 0 0 1-.608.517l-.55.092a1.875 1.875 0 0 0-1.566 1.849v.344c0 .916.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517.06.162.127.321.198.478a.798.798 0 0 1-.064.796l-.324.453a1.875 1.875 0 0 0 .2 2.416l.243.243c.648.648 1.67.733 2.416.2l.453-.324a.798.798 0 0 1 .796-.064c.157.071.316.137.478.198.267.1.47.327.517.608l.092.55c.15.903.932 1.566 1.849 1.566h.344c.916 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 0 1 .517-.608 7.52 7.52 0 0 0 .478-.198.798.798 0 0 1 .796.064l.453.324a1.875 1.875 0 0 0 2.416-.2l.243-.243c.648-.648.733-1.67.2-2.416l-.324-.453a.798.798 0 0 1-.064-.796c.071-.157.137-.316.198-.478.1-.267.327-.47.608-.517l.55-.091a1.875 1.875 0 0 0 1.566-1.85v-.344c0-.916-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 0 1-.608-.517 7.507 7.507 0 0 0-.198-.478.798.798 0 0 1 .064-.796l.324-.453a1.875 1.875 0 0 0-.2-2.416l-.243-.243a1.875 1.875 0 0 0-2.416-.2l-.453.324a.798.798 0 0 1-.796.064 7.462 7.462 0 0 0-.478-.198.798.798 0 0 1-.517-.608l-.091-.55a1.875 1.875 0 0 0-1.85-1.566h-.344ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" clip-rule="evenodd"></path>
-							</svg>
-							<span>__MSG_options_manage__</span>
-						</button>
+							</div>
+							<button class="ui-row" id="translation-exclusions-btn" type="button" hidden>
+								<span class="ui-row__label">__MSG_options_language_exclusions__</span>
+								<span data-icon="chevron"></span>
+							</button>
+						</div>
+						<div class="ui-panel" data-panel="romanization">
+							<div class="ui-row">
+								<span class="ui-row__label">__MSG_options_language_romanization__</span>
+								<label><input type="checkbox" id="isRomanizationEnabled"><span class="checkmark"></span></label>
+							</div>
+							<button class="ui-row" id="romanization-exclusions-btn" type="button" hidden>
+								<span class="ui-row__label">__MSG_options_language_exclusions__</span>
+								<span data-icon="chevron"></span>
+							</button>
+						</div>
+						<div class="ui-panel" data-panel="display-language">
+							<div class="ui-row">
+								<span class="ui-row__label">__MSG_options_language_displayLanguage__</span>
+								<div class="select">
+							<select id="uiLanguage"></select>
+						</div>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
+			</section>
 			<div class="page tab-content" id="sources-content">
 				<div class="settings-group">
 					<h2>
