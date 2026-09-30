@@ -91,6 +91,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
         button.type = "button";
         button.className = "ui-menu__option";
         button.setAttribute("role", "option");
+        button.dataset.value = option.value;
         button.tabIndex = -1;
         button.setAttribute("aria-selected", String(option.value === current));
         if (option.disabled) {
@@ -113,6 +114,33 @@ export function createDropdown(config: DropdownConfig): Dropdown {
         return button;
       })
     );
+  }
+
+  function syncSearch(): void {
+    if (shouldShowSearch(options.length)) {
+      if (!search.isConnected) menu.prepend(search);
+      return;
+    }
+    search.remove();
+    search.value = "";
+  }
+
+  function focusOption(value: string | undefined): void {
+    const buttons = optionButtons();
+    const target =
+      buttons.find(button => button.dataset.value === value) ??
+      buttons.find(button => button.getAttribute("aria-selected") === "true") ??
+      buttons[0];
+    (target ?? (search.isConnected ? search : trigger)).focus({ preventScroll: true });
+  }
+
+  function refresh(): void {
+    const focused = menu.contains(document.activeElement) ? document.activeElement : null;
+    const focusedValue = focused instanceof HTMLElement && focused !== search ? focused.dataset.value : undefined;
+    syncSearch();
+    renderList();
+    place();
+    if (focused && !menu.contains(document.activeElement)) focusOption(focusedValue);
   }
 
   // -- Placement --------------------------
@@ -146,8 +174,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     window.clearTimeout(closeTimer);
     menu.classList.remove("is-closing");
     search.value = "";
-    if (shouldShowSearch(options.length)) menu.prepend(search);
-    else search.remove();
+    syncSearch();
     renderList();
     document.body.appendChild(menu);
     place();
@@ -192,6 +219,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
       return;
     }
     if (event.key === "Tab" && isOpen) {
+      trigger.focus();
       close(false);
       return;
     }
@@ -201,6 +229,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
       return;
     }
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    if (document.activeElement === search && (event.key === "Home" || event.key === "End")) return;
     event.preventDefault();
     if (!isOpen) {
       open();
@@ -231,12 +260,12 @@ export function createDropdown(config: DropdownConfig): Dropdown {
       options = next;
       current = value;
       renderValue();
-      if (isOpen) renderList();
+      if (isOpen) refresh();
     },
     setValue(value) {
       current = value;
       renderValue();
-      if (isOpen) renderList();
+      if (isOpen) refresh();
     },
     getValue: () => current,
     setHidden(hidden) {
