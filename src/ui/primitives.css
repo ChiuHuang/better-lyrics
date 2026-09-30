@@ -201,6 +201,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   visibility: hidden;
   scale: 0.98;
 }
+.ui-tooltip { transform-origin: bottom center; }
+.ui-tooltip[data-placement="below"] { transform-origin: top center; }
 .ui-tooltip--visible {
   opacity: 1;
   visibility: visible;

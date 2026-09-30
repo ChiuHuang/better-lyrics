@@ -1,7 +1,7 @@
 const TOOLTIP_GAP_PX = 8;
 const VIEWPORT_MARGIN_PX = 8;
 
-let tooltip: HTMLDivElement;
+let tooltip: HTMLDivElement | undefined;
 let anchor: HTMLElement | null = null;
 
 function tooltipAnchor(target: EventTarget | null): HTMLElement | null {
@@ -9,6 +9,7 @@ function tooltipAnchor(target: EventTarget | null): HTMLElement | null {
 }
 
 function showTooltip(target: HTMLElement): void {
+  if (!tooltip) return;
   anchor = target;
   tooltip.textContent = target.dataset.tooltip ?? "";
 
@@ -23,12 +24,13 @@ function showTooltip(target: HTMLElement): void {
   tooltip.dataset.placement = fitsAbove ? "above" : "below";
   tooltip.style.top = `${top}px`;
   tooltip.style.left = `${left}px`;
-  tooltip.classList.add("unison-tooltip--visible");
+  tooltip.classList.add("ui-tooltip--visible");
 }
 
 function hideTooltip(): void {
+  if (!tooltip) return;
   anchor = null;
-  tooltip.classList.remove("unison-tooltip--visible");
+  tooltip.classList.remove("ui-tooltip--visible");
 }
 
 function hideIfAnchor(event: Event): void {
@@ -36,8 +38,9 @@ function hideIfAnchor(event: Event): void {
 }
 
 export function initTooltips(root: HTMLElement): void {
+  if (tooltip?.isConnected) return;
   tooltip = document.createElement("div");
-  tooltip.className = "unison-tooltip";
+  tooltip.className = "ui-tooltip";
   tooltip.setAttribute("aria-hidden", "true");
   document.body.appendChild(tooltip);
 
