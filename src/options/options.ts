@@ -31,7 +31,7 @@ import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
 import { syncVideoQualityControls } from "@/options/videoQualityControls";
-import { createSyncIcon, createSyncTag } from "@/ui/syncTag";
+import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
 interface Options extends VideoQualitySettings {
   isLogsEnabled: boolean;
@@ -518,27 +518,6 @@ const getProviderIdToInfoMap = (): { [key: string]: ProviderInfo } => ({
   "lrclib-plain": { name: t("options_provider_lrclib"), syncType: "unsynced" },
 });
 
-const getSyncTypeConfig = (): {
-  [key in SyncType]: { label: string; tooltip: string };
-} => ({
-  syllable: {
-    label: t("options_syncType_syllable"),
-    tooltip: t("options_syncType_syllable_tooltip"),
-  },
-  word: {
-    label: t("options_syncType_word"),
-    tooltip: t("options_syncType_word_tooltip"),
-  },
-  line: {
-    label: t("options_syncType_line"),
-    tooltip: t("options_syncType_line_tooltip"),
-  },
-  unsynced: {
-    label: t("options_syncType_unsynced"),
-    tooltip: t("options_syncType_unsynced_tooltip"),
-  },
-});
-
 function createProviderElem(providerId: string, checked = true): HTMLLIElement | null {
   const providerIdToInfoMap = getProviderIdToInfoMap();
   if (!Object.hasOwn(providerIdToInfoMap, providerId)) {
@@ -547,7 +526,6 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
   }
 
   const providerInfo = providerIdToInfoMap[providerId];
-  const syncConfig = getSyncTypeConfig()[providerInfo.syncType];
 
   const liElem = document.createElement("li");
   liElem.classList.add("sortable-item");
@@ -578,7 +556,7 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
 
   liElem.appendChild(labelElem);
 
-  const tagElem = createSyncTag(providerInfo.syncType, { label: syncConfig.label, tooltip: syncConfig.tooltip });
+  const tagElem = createSyncTag(providerInfo.syncType);
   tagElem.classList.add("sync-tag", `sync-tag--${providerInfo.syncType}`);
   liElem.appendChild(tagElem);
 
@@ -1786,7 +1764,6 @@ function initOffsetModal(): void {
     richsyncOffsetTrim: ["syllable", "word"],
     lineOffsetTrim: ["line"],
   };
-  const syncConfig = getSyncTypeConfig();
   for (const applies of document.querySelectorAll<HTMLElement>("#offset-modal-overlay .offset-applies")) {
     const types = applies.dataset.offsetScope ? offsetApplies[applies.dataset.offsetScope] : undefined;
     if (!types) continue;
@@ -1797,7 +1774,7 @@ function initOffsetModal(): void {
       const icon = createSyncIcon(type);
       if (icon) chip.appendChild(icon);
       const name = document.createElement("span");
-      name.textContent = syncConfig[type].label;
+      name.textContent = syncTypeLabel(type);
       chip.appendChild(name);
       applies.appendChild(chip);
     }

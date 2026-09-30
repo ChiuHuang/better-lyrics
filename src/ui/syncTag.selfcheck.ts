@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
 
-const { syncTypeForLyric } = await import("./syncTag");
+const messages: Record<string, string> = {
+  options_syncType_syllable: "Syllable",
+  options_syncType_word: "Word",
+  options_syncType_line: "Line",
+  options_syncType_unsynced: "Unsynced",
+  options_syncType_syllable_tooltip: "Syllable tooltip",
+  options_syncType_word_tooltip: "Word tooltip",
+  options_syncType_line_tooltip: "Line tooltip",
+  options_syncType_unsynced_tooltip: "Unsynced tooltip",
+};
+Object.assign(globalThis, { chrome: { i18n: { getMessage: (key: string) => messages[key] ?? "" } } });
+
+const { syncTypeForLyric, syncTypeLabel, syncTypeTooltip } = await import("./syncTag");
 
 // -- Happy paths --------------------------
 {
@@ -23,6 +35,17 @@ const { syncTypeForLyric } = await import("./syncTag");
 {
   // Owner rule 2026-10-01: TTML that declares word timing still reads Syllable; timing is never parsed.
   assert.equal(syncTypeForLyric("richsync", "ttml"), "syllable", "regression: TTML word timing is not Word");
+}
+
+// -- Labels --------------------------
+{
+  assert.equal(syncTypeLabel("syllable"), "Syllable", "syllable label comes from options_syncType_syllable");
+  assert.equal(syncTypeLabel("word"), "Word", "word label comes from options_syncType_word");
+  assert.equal(syncTypeLabel("line"), "Line", "line label comes from options_syncType_line");
+  assert.equal(syncTypeLabel("unsynced"), "Unsynced", "unsynced label comes from options_syncType_unsynced");
+  assert.equal(syncTypeTooltip("syllable"), "Syllable tooltip", "syllable tooltip key");
+  assert.equal(syncTypeTooltip("unsynced"), "Unsynced tooltip", "unsynced tooltip key");
+  assert.equal(syncTypeLabel(syncTypeForLyric("richsync", "ttml")), "Syllable", "rule and label compose");
 }
 
 console.log("syncTag self-check passed");
