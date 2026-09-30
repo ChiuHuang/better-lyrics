@@ -2412,7 +2412,7 @@
     "description": "Fallback error for revision actions"
   },
   "options_display_karaoke": {
-    "message": "Karaoke subtitles",
+    "message": "Karaoke-Untertitel",
     "description": "Toggle label for showing synced lyrics as subtitles over a music video in fullscreen"
   },
   "options_display_highResolutionVideo": {
