@@ -46,6 +46,7 @@ import { createLanguageDropdown } from "@/options/unison/languageDropdown";
 import { appendLanguageOptions, matchLanguageOption } from "@/options/unison/languages";
 import { renderPreviewInto } from "@/options/unison/lyricsPreview";
 import { detectFormat } from "@/options/unison/lyricsPreviewLines";
+import { searchResultsMessage, splitSearchResultsMessage } from "@/options/unison/searchResultsLabel";
 import { createSubmitterByline } from "@/options/unison/submitterByline";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { IS_DEV, devFixtureHint, devFixtures } from "@modules/unison/devFixtures";
@@ -365,6 +366,7 @@ async function loadIdentity(): Promise<void> {
 // -- Feed / Search Visibility --------------------------
 
 function showFeed(): void {
+  resultsMeta.hidden = true;
   feedContainer.hidden = false;
   filterBar.hidden = false;
   resultsGrid.hidden = true;
@@ -382,6 +384,8 @@ function showSearchResults(): void {
   filterBar.hidden = true;
   resultsGrid.hidden = false;
   noResults.hidden = true;
+  resultsMeta.hidden = true;
+  updateTabActiveState();
 }
 
 function saveActiveTabContent(): void {
@@ -642,6 +646,7 @@ function appendToTab(tab: FeedTabName, node: Node): void {
 
 let tabRecent: HTMLButtonElement;
 let tabMine: HTMLButtonElement;
+let resultsMeta: HTMLElement;
 
 function setupFeedTabs(): void {
   const tabsRow = document.createElement("div");
@@ -650,17 +655,25 @@ function setupFeedTabs(): void {
   tabRecent = document.createElement("button");
   tabRecent.className = "unison-feed-tab unison-feed-tab--active";
   tabRecent.textContent = t("unison_tabFeed");
-  tabRecent.addEventListener("click", () => switchTab("recent"));
+  tabRecent.addEventListener("click", () => onTabClick("recent"));
 
   tabMine = document.createElement("button");
   tabMine.className = "unison-feed-tab";
   tabMine.textContent = t("unison_tabMySubmissions");
-  tabMine.addEventListener("click", () => switchTab("mine"));
+  tabMine.addEventListener("click", () => onTabClick("mine"));
 
-  tabsRow.appendChild(tabRecent);
-  tabsRow.appendChild(tabMine);
+  resultsMeta = document.createElement("span");
+  resultsMeta.className = "unison-results-meta";
+  resultsMeta.hidden = true;
+
+  tabsRow.append(tabRecent, tabMine, resultsMeta);
   const anchor = filterBar ?? feedContainer;
   anchor.parentElement?.insertBefore(tabsRow, anchor);
+}
+
+function onTabClick(next: FeedTabName): void {
+  if (resultsGrid.hidden) switchTab(next);
+  else navigateTo(next === "mine" ? { tab: "mine" } : {});
 }
 
 function switchTab(next: FeedTabName): void {
@@ -850,6 +863,7 @@ async function performSearch(query: string): Promise<void> {
   noResults.hidden = true;
 
   const result = await searchLyrics(query);
+  renderResultsMeta(query, result.success ? result.data.length : 0);
 
   if (!result.success || result.data.length === 0) {
     noResults.hidden = false;
@@ -859,6 +873,15 @@ async function performSearch(query: string): Promise<void> {
   for (const entry of result.data) {
     resultsGrid.appendChild(createLyricsCard(entry));
   }
+}
+
+function renderResultsMeta(query: string, count: number): void {
+  const { key, subs } = searchResultsMessage(count);
+  const { before, query: term, after } = splitSearchResultsMessage(t(key, subs), query);
+  const bold = document.createElement("b");
+  bold.textContent = term;
+  resultsMeta.replaceChildren(before, bold, after);
+  resultsMeta.hidden = false;
 }
 
 function formatScoreNumber(score: number): string {

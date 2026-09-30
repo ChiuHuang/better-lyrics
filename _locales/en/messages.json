@@ -1545,6 +1545,30 @@
     "message": "Search songs, artists, or lyrics...",
     "description": "Search input placeholder"
   },
+  "unison_searchResults": {
+    "message": "“$query$” · $count$ results",
+    "description": "Search result count shown at the end of the Feed / My Submissions tab row",
+    "placeholders": {
+      "query": {
+        "content": "$1",
+        "example": "love"
+      },
+      "count": {
+        "content": "$2",
+        "example": "20"
+      }
+    }
+  },
+  "unison_searchResultsOne": {
+    "message": "“$query$” · 1 result",
+    "description": "Search result count when there is exactly one result",
+    "placeholders": {
+      "query": {
+        "content": "$1",
+        "example": "love"
+      }
+    }
+  },
   "unison_submit": {
     "message": "Submit Lyrics",
     "description": "Submit lyrics button text"
