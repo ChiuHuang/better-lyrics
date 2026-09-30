@@ -321,3 +321,64 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 #themes-content .store-buttons-row { margin: 8px var(--row-pad) var(--row-pad); padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
 #themes-content .store-buttons-row .small-btn { height: 36px; padding: 0 14px; font-weight: 500; }
 #themes-content .store-buttons-row .small-btn svg { width: 1rem; height: 1rem; }
+
+/* -- Footer ------------------------------------------------------------------ */
+
+.pop__foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px calc(var(--page-pad) - 10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.pop__foot-spacer { flex: 1; }
+
+.text-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  margin: 0;
+  padding: 7px 10px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out,
+    scale var(--duration-quick) ease-out;
+}
+.text-btn:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.text-btn:active { scale: var(--scale-press); }
+.text-btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.08); color: #fff; }
+.text-btn svg { width: 14px; height: 14px; flex: none; }
+.text-btn .refresh-icon { transition: rotate 0.6s var(--ease-smooth-out); }
+.text-btn.is-spinning .refresh-icon { rotate: 360deg; }
+
+.pop__status {
+  padding: 0 8px;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.75rem;
+  opacity: 0;
+  transform: translateY(4px);
+  filter: blur(var(--blur-small));
+  transition:
+    opacity var(--duration-quick) ease-in-out,
+    transform var(--duration-quick) ease-in-out,
+    filter var(--duration-quick) ease-in-out;
+}
+.pop__status.is-shown { opacity: 1; transform: none; filter: none; }
+
+@supports (corner-shape: superellipse(1.6)) {
+  .text-btn { corner-shape: superellipse(1.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-btn, .text-btn .refresh-icon, .pop__status { transition: none; }
+}

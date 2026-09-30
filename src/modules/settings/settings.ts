@@ -6,7 +6,7 @@ import {
   FULLSCREEN_CONTROLS_DISABLED_ATTR,
   LYRICS_DISABLED_ATTR,
 } from "@constants";
-import { AppState, reloadLyrics } from "@core/appState";
+import { AppState, refreshCurrentSong, reloadLyrics } from "@core/appState";
 import { clearCache, compileRicsToStyles, getStorage } from "@core/storage";
 import { configureLogging, logContent } from "@core/logger";
 import { syncKaraoke } from "@modules/karaoke/karaokeView";
@@ -284,6 +284,15 @@ export function listenForPopupMessages(): void {
       } catch {
         sendResponse({ success: false });
       }
+    } else if (request.action === "refreshLyrics") {
+      refreshCurrentSong().then(
+        () => sendResponse({ success: true }),
+        error => {
+          logContent("refreshLyrics failed:", error);
+          sendResponse({ success: false });
+        }
+      );
+      return true;
     }
   });
 }

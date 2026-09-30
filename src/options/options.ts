@@ -34,7 +34,15 @@ import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modul
 import { syncVideoQualityControls, videoQualityOptions } from "@/options/videoQualityControls";
 import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFields";
 import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
-import { initPopupCards, initPopupTabs, mountIcons, pageCard, renderAppVersion } from "@/options/popupShell";
+import {
+  flashSaved,
+  initPopupCards,
+  initPopupTabs,
+  initRefreshLyricsButton,
+  mountIcons,
+  pageCard,
+  renderAppVersion,
+} from "@/options/popupShell";
 import {
   isIdentityBackedUp,
   markIdentityBackedUp,
@@ -191,6 +199,7 @@ function setDockControlsOrderInForm(order: string[]): void {
 // Function to save options to Chrome storage
 const saveOptionsToStorage = (options: Options): void => {
   chrome.storage.sync.set(options, () => {
+    if (!chrome.runtime.lastError) flashSaved();
     chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
       tabs.forEach(tab => {
         chrome.tabs.sendMessage(tab.id!, {
@@ -200,23 +209,6 @@ const saveOptionsToStorage = (options: Options): void => {
       });
     });
   });
-};
-
-// Function to show save confirmation message
-const _showSaveConfirmation = (): void => {
-  const status = document.getElementById("status")!;
-  status.textContent = "Options saved. Refresh tab to apply changes.";
-  status.classList.add("active");
-  setTimeout(hideSaveConfirmation, 4000);
-};
-
-// Function to hide save confirmation message
-const hideSaveConfirmation = (): void => {
-  const status = document.getElementById("status")!;
-  status.classList.remove("active");
-  setTimeout(() => {
-    status.textContent = "";
-  }, 200);
 };
 
 // Function to show alert message
@@ -690,6 +682,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initI18n();
   renderAppVersion(document.getElementById("app-version"));
   mountIcons(document);
+  initRefreshLyricsButton();
   mountDropdownFields();
   initTooltips(document.body);
   initLetterWaveSwitch();

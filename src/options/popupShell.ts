@@ -1,3 +1,4 @@
+import { warnCore } from "@core/logger";
 import { controlIcons, parseSvgString } from "@modules/ui/lyricsDock/icons";
 import { svgIcon } from "@/options/unison/icons";
 import { type CardTabs, initCardTabs, rovingIndex, travelDirection } from "@/ui/cardTabs";
@@ -117,4 +118,38 @@ export function mountIcons(root: ParentNode): void {
     svg.setAttribute("aria-hidden", "true");
     slot.replaceWith(svg);
   }
+}
+
+// -- Footer --------------------------
+
+const SAVED_STATUS_MS = 1400;
+let savedTimer: ReturnType<typeof setTimeout> | undefined;
+
+export function flashSaved(): void {
+  const status = document.getElementById("save-status");
+  if (!status) return;
+  status.classList.add("is-shown");
+  clearTimeout(savedTimer);
+  savedTimer = setTimeout(() => status.classList.remove("is-shown"), SAVED_STATUS_MS);
+}
+
+export function initRefreshLyricsButton(): void {
+  const button = document.getElementById("refresh-lyrics-btn");
+  const icon = button?.querySelector<SVGElement>(".refresh-icon");
+  if (!button || !icon) return;
+  button.addEventListener("click", () => {
+    icon.style.transition = "none";
+    button.classList.remove("is-spinning");
+    void icon.getBoundingClientRect();
+    icon.style.removeProperty("transition");
+    button.classList.add("is-spinning");
+    chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
+      for (const tab of tabs) {
+        if (tab.id == null) continue;
+        chrome.tabs
+          .sendMessage(tab.id, { action: "refreshLyrics" })
+          .catch(error => warnCore("refreshLyrics send failed:", error));
+      }
+    });
+  });
 }
