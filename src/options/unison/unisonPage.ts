@@ -496,7 +496,7 @@ function findIsrcMeta(node: unknown): string | null {
 }
 
 function detectTtmlIsrc(text: string): string | null {
-  if (!/<(?:[\w-]+:)?meta\b[^>]*\bisrc\b/i.test(text)) return null;
+  if (!/isrc/i.test(text)) return null;
   try {
     return findIsrcMeta(ttmlMetaParser.parse(text));
   } catch (error) {
