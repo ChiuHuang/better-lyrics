@@ -146,4 +146,22 @@ dropdown.setOptions(options(3), "v1");
   faded.destroy();
 }
 
+{
+  const nested = createDropdown({ label: "Nested", onChange: () => undefined });
+  doc.body.appendChild(nested.root);
+  nested.setOptions([{ value: "a", label: "A" }], "a");
+  let documentEscapes = 0;
+  const countEscape = (event: KeyboardEvent): void => {
+    if (event.key === "Escape") documentEscapes++;
+  };
+  doc.addEventListener("keydown", countEscape);
+  (nested.root.querySelector(".ui-dropdown__trigger") as HTMLButtonElement).click();
+  press(active(), "Escape");
+  assert.equal(documentEscapes, 0, "Escape that closes the menu does not reach a parent modal");
+  press(nested.root.querySelector(".ui-dropdown__trigger") as HTMLElement, "Escape");
+  assert.equal(documentEscapes, 1, "Escape with the menu closed still reaches the page");
+  doc.removeEventListener("keydown", countEscape);
+  nested.destroy();
+}
+
 console.log("dropdown self-check passed");

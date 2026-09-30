@@ -234,6 +234,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
   const onKeydown = (event: KeyboardEvent): void => {
     if (event.key === "Escape" && isOpen) {
       event.preventDefault();
+      event.stopPropagation();
       close(true);
       return;
     }
