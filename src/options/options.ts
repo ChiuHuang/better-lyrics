@@ -750,11 +750,7 @@ function setupLazyCodeEditor(): void {
       isRequested = false;
       errorCore("Failed to load the CSS editor:", err);
       openOptions();
-      showModal({
-        title: t("options_themes_create"),
-        message: t("unison_rev_error"),
-        confirmText: t("blUpdate_dismiss"),
-      });
+      showAlert(t("unison_rev_error"));
     } finally {
       button.removeAttribute("aria-busy");
     }
