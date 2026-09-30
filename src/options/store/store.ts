@@ -7,6 +7,7 @@ import { applyStoreThemeComplete } from "../editor/features/storage";
 import type { AllThemeStats, InstalledStoreTheme, StoreTheme, ThemeStats } from "./types";
 
 let gridAnimationController: AnimationController | null = null;
+let gridAnimationGeneration = 0;
 
 import { getDisplayName, hasCertificate } from "@core/keyIdentity";
 import { type AlertAction, showAlert, showConfirm } from "../editor/ui/feedback";
@@ -1014,8 +1015,10 @@ async function loadMarketplace(): Promise<void> {
 
     await applyFiltersToGrid();
 
+    const generation = ++gridAnimationGeneration;
     import("@formkit/auto-animate")
       .then(({ default: autoAnimate }) => {
+        if (generation !== gridAnimationGeneration || !grid.isConnected || gridAnimationController) return;
         gridAnimationController = autoAnimate(grid, { duration: 200, easing: "cubic-bezier(0.2, 0, 0, 1)" });
         gridAnimationController.enable();
       })
@@ -1044,6 +1047,7 @@ function openThemeFromUrlParam(): void {
 }
 
 async function refreshMarketplace(): Promise<void> {
+  gridAnimationGeneration++;
   if (gridAnimationController) {
     gridAnimationController.disable();
     gridAnimationController = null;
