@@ -1853,3 +1853,27 @@ Style lines as you do in the scrolling view. Colors, fonts and animations carry 
 | `.blyrics-container[data-stage-duet]` | The sung lines use both sides: `v1` lines sit on the left, `v2` and `v3` on the right, `v1000` stays centred. A song with one singer stays centred whichever voice it is |
 
 The stage fades lines in and out through `--blyrics-stage-opacity`, and it sets `opacity` from that property with `!important`. Do not set `opacity` on stage lines. It is overridden, so it cannot show a hidden line or hold one that is leaving.
+
+## Optional image highlights and HDR
+
+The renderer supports theme-provided image fills. They are disabled by default. A theme opts in
+with `/* blyrics-image-highlights = true; */` and supplies one CSS image URL through
+`--blyrics-highlight-image` on `.blyrics-container`. This works with SDR textures too; the
+renderer does not enable HDR or choose a brightness on its own.
+
+The bundled **HDR** theme supplies a gain-map JPEG only inside HDR-display and CSS-support
+queries. Select it in the theme picker to enable brighter lyrics, the instrumental note, and
+image-colored glow.
+`--dynamic-range` controls the display-dependent brightness ceiling (the default is 70% standard,
+30% no-limit). Glow follows the normal per-word duration, easing and blur radius settings, with
+`--blyrics-image-glow-opacity-from` and `--blyrics-image-glow-opacity-to` controlling its strength.
+
+The glow blurs a separate copy after its karaoke mask, preserving the sharp fill and leaving room
+at word edges without padding changes. Letter masks and motion share the renderer's clock.
+For fragmented long words and bidi-sensitive inline runs, a parallel text run keeps the halo
+aligned with every wrapped fragment. Joining-script and mixed-direction word groups use
+whole-word sweeps to preserve native text shaping. Forced colors retain system text
+colors. Missing note images fall back to the ordinary note fill.
+
+A display's HDR headroom and browser compositing affect the observed brightness. Screenshots
+can check animation and clipping, but cannot establish the monitor's emitted luminance.
