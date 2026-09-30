@@ -1692,6 +1692,30 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
   }
 }
 
+let parseMarkdown: ((text: string) => DocumentFragment) | null = null;
+
+function renderDescription(descEl: HTMLElement, theme: StoreTheme): void {
+  if (parseMarkdown) {
+    descEl.style.visibility = "";
+    descEl.replaceChildren(parseMarkdown(theme.description));
+    return;
+  }
+  descEl.style.visibility = "hidden";
+  const isCurrent = () => currentDetailTheme?.id === theme.id;
+  import("./markdown")
+    .then(module => {
+      parseMarkdown = module.parseMarkdown;
+      if (isCurrent()) descEl.replaceChildren(module.parseMarkdown(theme.description));
+    })
+    .catch(err => {
+      errorStore("Failed to render theme description:", err);
+      if (isCurrent()) descEl.textContent = theme.description;
+    })
+    .finally(() => {
+      if (isCurrent()) descEl.style.visibility = "";
+    });
+}
+
 async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): Promise<void> {
   currentDetailTheme = theme;
   currentSlideIndex = 0;
@@ -1716,14 +1740,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
     }
   }
   if (authorEl) authorEl.textContent = `By ${formatCreators(theme.creators)} · v${theme.version}`;
-  if (descEl) {
-    descEl.replaceChildren();
-    import("./markdown")
-      .then(({ parseMarkdown }) => {
-        if (currentDetailTheme?.id === theme.id) descEl.replaceChildren(parseMarkdown(theme.description));
-      })
-      .catch(err => errorStore("Failed to render theme description:", err));
-  }
+  if (descEl) renderDescription(descEl, theme);
 
   const statsEl = document.getElementById("detail-stats");
   const ratingSectionEl = document.getElementById("detail-rating-section");
