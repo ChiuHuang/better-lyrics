@@ -234,3 +234,80 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 @media (prefers-reduced-motion: reduce) {
   .head-link, .head-link svg, .providers > li { transition: none; }
 }
+
+/* -- Identity ----------------------------------------------------------------- */
+
+.stack { display: flex; flex-direction: column; gap: 16px; padding: var(--row-pad); }
+.stack .ui-row { min-height: 0; padding: 0; }
+.stack .ui-row:hover { background: none; }
+.btn-row { display: flex; gap: 8px; }
+
+.keyfield { display: flex; flex-direction: column; margin-bottom: 4px; }
+.keyfield__box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 6px 6px 14px;
+  border-radius: 0.875rem;
+  background: var(--field-bg);
+  box-shadow: var(--field-edge);
+}
+.keyfield__box code {
+  font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.92);
+}
+.keyfield__box .ui-button--compact { border-radius: calc(0.875rem - 6px); }
+
+/* shown until this key id has been exported, so a new identity brings it back */
+.warn-slot {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows var(--duration-slow) var(--ease-smooth-out),
+    opacity var(--duration-fast) ease-out;
+}
+.warn-slot > div { min-height: 0; overflow: hidden; }
+.warn-slot .warn-callout { margin-top: 12px; }
+.warn-slot[data-backed-up] { grid-template-rows: 0fr; opacity: 0; }
+
+.warn-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px 12px 12px;
+  border-radius: 0.875rem;
+  background: linear-gradient(rgba(245, 185, 66, 0.1), rgba(245, 185, 66, 0.06));
+  box-shadow: inset 0 0 0 1px rgba(245, 185, 66, 0.22), inset rgba(255, 220, 150, 0.08) 0 1px 0 0;
+}
+.warn-callout__icon { flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 2px; color: #f5b942; }
+.warn-callout__icon svg { width: 22px; height: 22px; }
+.warn-callout__text { display: flex; flex-direction: column; gap: 3px; padding-top: 3px; }
+.warn-callout p {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, #f5d38a 45%, rgba(255, 255, 255, 0.8));
+  text-wrap: pretty;
+}
+.warn-callout .warn-callout__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: color-mix(in srgb, #f5d38a 75%, #fff);
+}
+
+/* Unison stats on the text inset; the divider runs edge to edge like the card header's */
+.gam-panel { margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); }
+.gam-panel .blyrics-gam__stats-row { padding: var(--row-pad) var(--text-inset) var(--text-inset); }
+.gam-panel .blyrics-gam__stats-foot { margin-top: 0; padding: 12px var(--text-inset); border-top-color: rgba(255, 255, 255, 0.08); }
+
+@supports (corner-shape: superellipse(1.6)) {
+  .keyfield__box, .warn-callout { corner-shape: superellipse(1.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .warn-slot { transition: none; }
+}

@@ -12,6 +12,7 @@ import { getLanguageDisplayName, initI18n, loadLocaleOverride, SUPPORTED_LOCALES
 import {
   exportIdentity,
   getDisplayName,
+  getIdentity,
   getResolvedProfile,
   importIdentity,
   invalidateDisplayName,
@@ -33,7 +34,13 @@ import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modul
 import { syncVideoQualityControls, videoQualityOptions } from "@/options/videoQualityControls";
 import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFields";
 import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
-import { initPopupCards, initPopupTabs, mountIcons, placePageCard, renderAppVersion } from "@/options/popupShell";
+import { initPopupCards, initPopupTabs, mountIcons, pageCard, renderAppVersion } from "@/options/popupShell";
+import {
+  isIdentityBackedUp,
+  markIdentityBackedUp,
+  markWhenDownloadCompletes,
+  readBackedUpKeyId,
+} from "@/options/identityBackup";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
 interface Options extends VideoQualitySettings {
@@ -679,7 +686,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("isFullScreenDisabled")?.addEventListener("change", syncFullscreenDependents);
   restoreOptions();
   initPopupCards();
-  initPopupTabs(placePageCard);
+  initPopupTabs(page => pageCard(page)?.place(true));
   checkForStableRelease();
 });
 
@@ -755,6 +762,11 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initIdentityUI(): Promise<void> {
   const displayNameEl = document.getElementById("identity-display-name");
   if (!displayNameEl) return;
+
+  const warnSlot = document.getElementById("identity-warn-slot");
+  if (warnSlot) warnSlot.style.transition = "none";
+  await syncBackupWarning();
+  requestAnimationFrame(() => warnSlot?.style.removeProperty("transition"));
 
   try {
     displayNameEl.textContent = await getDisplayName();
@@ -1063,68 +1075,56 @@ function initNicknameModal(): void {
 
 async function handleExportIdentity(): Promise<void> {
   try {
-    const displayName = await getDisplayName();
-    const exportData = await exportIdentity();
-    const filename = `better-lyrics-identity-${displayName}.json`;
-
-    chrome.permissions.contains({ permissions: ["downloads"] }, hasPermission => {
-      if (hasPermission) {
-        downloadIdentityFile(exportData, filename);
-      } else {
-        chrome.permissions.request({ permissions: ["downloads"] }, granted => {
-          if (granted) {
-            downloadIdentityFile(exportData, filename);
-          } else {
-            fallbackDownloadIdentity(exportData, filename);
-          }
-        });
-      }
-    });
+    const [displayName, exportData, { keyId }] = await Promise.all([getDisplayName(), exportIdentity(), getIdentity()]);
+    const outcome = await downloadIdentityFile(exportData, `better-lyrics-identity-${displayName}.json`);
+    showAlert(downloadOutcomeMessage(outcome));
+    if (outcome.kind === "downloads")
+      markWhenDownloadCompletes(outcome.downloadId, keyId, () => void syncBackupWarning());
+    else if (outcome.kind === "anchor") await markIdentityBackedUp(keyId).then(syncBackupWarning);
   } catch (error) {
     errorCore("Failed to export identity:", error);
     showAlert(t("options_alert_exportFailed"));
   }
 }
 
-function downloadIdentityFile(content: string, filename: string): void {
-  const blob = new Blob([content], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+type DownloadOutcome = { kind: "downloads"; downloadId: number } | { kind: "anchor" } | { kind: "failed" };
 
-  if (chrome.downloads) {
-    chrome.downloads
-      .download({
-        url: url,
-        filename: filename,
-        saveAs: true,
-      })
-      .then(() => {
-        showAlert(t("options_alert_fileSaveDialogOpened"));
-        URL.revokeObjectURL(url);
-      })
-      .catch(() => {
-        showAlert(t("options_alert_fileSaveFailed"));
-        URL.revokeObjectURL(url);
-      });
-  } else {
-    fallbackDownloadIdentity(content, filename);
+async function downloadIdentityFile(content: string, filename: string): Promise<DownloadOutcome> {
+  const hasPermission = await chrome.permissions.contains({ permissions: ["downloads"] });
+  const granted = hasPermission || (await chrome.permissions.request({ permissions: ["downloads"] }));
+  const url = URL.createObjectURL(new Blob([content], { type: "application/json" }));
+  if (granted && chrome.downloads) {
+    try {
+      const downloadId = await chrome.downloads.download({ url, filename, saveAs: true });
+      return { kind: "downloads", downloadId };
+    } catch (error) {
+      errorCore("Identity download failed:", error);
+      return { kind: "failed" };
+    } finally {
+      URL.revokeObjectURL(url);
+    }
   }
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+  return { kind: "anchor" };
 }
 
-function fallbackDownloadIdentity(content: string, filename: string): void {
-  const blob = new Blob([content], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+function downloadOutcomeMessage(outcome: DownloadOutcome): string {
+  if (outcome.kind === "downloads") return t("options_alert_fileSaveDialogOpened");
+  if (outcome.kind === "anchor") return t("options_alert_downloadInitiated");
+  return t("options_alert_fileSaveFailed");
+}
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  setTimeout(() => URL.revokeObjectURL(url), 100);
-
-  showAlert(t("options_alert_downloadInitiated"));
+async function syncBackupWarning(): Promise<void> {
+  const slot = document.getElementById("identity-warn-slot");
+  if (!slot) return;
+  const [{ keyId }, stored] = await Promise.all([getIdentity(), readBackedUpKeyId()]);
+  slot.toggleAttribute("data-backed-up", isIdentityBackedUp(stored, keyId));
 }
 
 async function handleImportIdentity(): Promise<void> {
@@ -1158,8 +1158,9 @@ function closeImportIdentityModal(): void {
 
 async function importIdentityFromJson(json: string): Promise<void> {
   try {
-    await importIdentity(json);
-    await updateIdentityDisplay();
+    const imported = await importIdentity(json);
+    await markIdentityBackedUp(imported.keyId);
+    await Promise.all([updateIdentityDisplay(), syncBackupWarning()]);
     showAlert(t("options_alert_importSuccess"));
     closeImportIdentityModal();
   } catch (err) {
@@ -1269,6 +1270,17 @@ async function renderOwnIdentityStats(): Promise<void> {
   if (render !== identityStatsRender) return;
   statsEl.replaceChildren(...next.childNodes);
   statsWrap.hidden = !user;
+  syncIdentityStatsTab(Boolean(user));
+}
+
+function syncIdentityStatsTab(hasStats: boolean): void {
+  const tab = document.getElementById("identity-stats-tab");
+  const page = document.getElementById("identity-content");
+  if (!tab || !page) return;
+  tab.hidden = !hasStats;
+  const card = pageCard(page);
+  if (!hasStats && tab.getAttribute("aria-selected") === "true") card?.select("identity", { instant: true });
+  card?.place(true);
 }
 
 function watchPictureChanges(): void {

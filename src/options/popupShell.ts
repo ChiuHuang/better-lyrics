@@ -95,8 +95,8 @@ export function initPopupCards(): void {
   }
 }
 
-export function placePageCard(page: HTMLElement): void {
-  pageCards.get(page)?.place(true);
+export function pageCard(page: HTMLElement): CardTabs | undefined {
+  return pageCards.get(page);
 }
 
 // -- Icons --------------------------
