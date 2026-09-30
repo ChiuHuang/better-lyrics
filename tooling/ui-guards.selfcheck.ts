@@ -31,7 +31,7 @@ const KNOWN: Record<string, Record<string, number>> = {
     "src/options/unison/revisions/revisionEditor.ts": 1,
   },
   "uppercase text": {
-    "src/options/options.css": 5,
+    "src/options/options.css": 4,
     "src/options/store/store.css": 6,
     "src/options/unison/unison.css": 10,
   },
