@@ -1194,6 +1194,14 @@
     "message": "Search languages...",
     "description": "Search input placeholder"
   },
+  "ui_dropdownSearch": {
+    "message": "Search",
+    "description": "Placeholder for the search box inside a long dropdown menu"
+  },
+  "ui_dropdownNoResults": {
+    "message": "No results",
+    "description": "Shown inside a dropdown menu when the search matches no option"
+  },
   "options_romanization_hint": {
     "message": "Click to toggle. Excluded languages will not be romanized.",
     "description": "Hint text for romanization exclusions"

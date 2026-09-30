@@ -1,3 +1,4 @@
+import { t } from "@core/i18n";
 import { svgIcon } from "@/options/unison/icons";
 import { type DropdownOption, filterOptions, shouldShowSearch } from "@/ui/dropdownFilter";
 import { menuPlacement } from "@/ui/menuPlacement";
@@ -27,7 +28,13 @@ const MENU_MIN_WIDTH_PX = 200;
 let dropdownCount = 0;
 
 export function createDropdown(config: DropdownConfig): Dropdown {
-  const { label, onChange, variant = "inline" } = config;
+  const {
+    label,
+    onChange,
+    variant = "inline",
+    searchPlaceholder = t("ui_dropdownSearch"),
+    noResultsLabel = t("ui_dropdownNoResults"),
+  } = config;
 
   const root = document.createElement("div");
   root.className = `ui-dropdown${variant === "inline" ? "" : ` ui-dropdown--${variant}`}`;
@@ -49,8 +56,8 @@ export function createDropdown(config: DropdownConfig): Dropdown {
   const search = document.createElement("input");
   search.type = "text";
   search.className = "ui-menu__search";
-  search.placeholder = config.searchPlaceholder ?? "";
-  search.setAttribute("aria-label", config.searchPlaceholder ?? label);
+  search.placeholder = searchPlaceholder;
+  search.setAttribute("aria-label", searchPlaceholder);
   const list = document.createElement("div");
   list.className = "ui-menu__options";
   list.setAttribute("role", "listbox");
@@ -81,7 +88,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     if (!shown.length) {
       const empty = document.createElement("div");
       empty.className = "ui-menu__empty";
-      empty.textContent = config.noResultsLabel ?? "";
+      empty.textContent = noResultsLabel;
       list.replaceChildren(empty);
       return;
     }
