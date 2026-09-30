@@ -12,6 +12,7 @@ interface Operation {
 
 class EditorStateManager {
   private editor: EditorView | null = null;
+  private pendingContent: string | null = null;
   private operationQueue: Operation[] = [];
   private isProcessing = false;
   private currentThemeName: string | null = null;
@@ -27,6 +28,17 @@ class EditorStateManager {
   setEditor(editor: EditorView): void {
     this.editor = editor;
     logEditor("Editor instance registered");
+    if (this.pendingContent !== null) {
+      const css = this.pendingContent;
+      this.pendingContent = null;
+      this.isProgrammaticChange = true;
+      editor.dispatch({ changes: { from: 0, to: editor.state.doc.length, insert: css } });
+      this.isProgrammaticChange = false;
+    }
+  }
+
+  getContent(): string | null {
+    return this.editor ? this.editor.state.doc.toString() : this.pendingContent;
   }
 
   getEditor(): EditorView | null {
@@ -178,7 +190,9 @@ class EditorStateManager {
 
   async setEditorContent(css: string, source: string, preserveCursor = true): Promise<void> {
     if (!this.editor) {
-      throw new Error("Editor not initialized");
+      this.pendingContent = css;
+      logEditor(`Buffered editor content from: ${source} (${css.length} bytes), no view yet`);
+      return;
     }
 
     const currentContent = this.editor.state.doc.toString();
