@@ -560,9 +560,7 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
 
   liElem.appendChild(labelElem);
 
-  const tagElem = createSyncTag(providerInfo.syncType);
-  tagElem.classList.add("sync-tag", `sync-tag--${providerInfo.syncType}`);
-  liElem.appendChild(tagElem);
+  liElem.appendChild(createSyncTag(providerInfo.syncType));
 
   const styleFromCheckState = () => {
     if (checkboxElem.checked) {

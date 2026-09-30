@@ -170,3 +170,67 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 @media (prefers-reduced-motion: reduce) {
   [data-fs-deps] { transition: none; }
 }
+
+/* -- Sources ------------------------------------------------------------------ */
+
+#sources-content > .ui-card { flex: 1; }
+#sources-content .ui-card__body { flex: 1; padding-bottom: 24px; }
+
+/* raised surface like the dropdown trigger and nav tiles; the plain link read too subtle */
+.head-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  height: 28px;
+  margin: 0;
+  padding: 0 9px 0 7px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: var(--raised-bg);
+  box-shadow: var(--raised-edge);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out,
+    scale var(--duration-quick) ease-out;
+}
+.head-link:hover { background: var(--raised-bg-hover); color: #fff; }
+.head-link:active { scale: var(--scale-press); }
+.head-link img { width: 14px; height: 14px; border-radius: 50%; }
+.head-link svg {
+  width: 12px;
+  height: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  transition:
+    translate var(--duration-fast) var(--ease-smooth-out),
+    color var(--duration-quick) ease-out;
+}
+.head-link:hover svg { color: #fff; translate: 1px -1px; }
+
+.providers { gap: 2px; }
+.providers > li {
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 var(--row-pad);
+  border: none;
+  border-radius: 8px;
+  background: none;
+  transition: background var(--duration-quick) ease-out;
+}
+.providers > li:hover { background: rgba(255, 255, 255, 0.035); }
+.providers > li .ui-sync-tag { flex: none; margin-inline-start: auto; }
+.providers > li.disabled-item .ui-sync-tag { opacity: 0.5; }
+
+@supports (corner-shape: superellipse(1.6)) {
+  .head-link { corner-shape: superellipse(1.6); }
+  .providers > li { border-radius: var(--radius-row); corner-shape: superellipse(1.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .head-link, .head-link svg, .providers > li { transition: none; }
+}
