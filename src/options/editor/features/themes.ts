@@ -475,10 +475,8 @@ function debounceSaveCustomTheme() {
       const isCustom = editorStateManager.getIsCustomTheme();
 
       if (themeName && isCustom) {
-        const currentEditor = editorStateManager.getEditor();
-        if (!currentEditor) return;
-
-        const css = currentEditor.state.doc.toString();
+        const css = editorStateManager.getContent();
+        if (css === null) return;
         const cleanCss = css.replace(/^\/\*.*?\*\/\n\n/s, "").trim();
 
         try {
@@ -500,15 +498,14 @@ function debounceSave() {
 
 export function saveToStorage(isTheme = false) {
   logEditor("saveToStorage called, isTheme:", isTheme);
-  const currentEditor = editorStateManager.getEditor();
-  if (!currentEditor) {
+  const css = editorStateManager.getContent();
+  if (css === null) {
     errorEditor("Cannot save: editor not initialized");
     return;
   }
 
   editorStateManager.incrementSaveCount();
   editorStateManager.setIsSaving(true);
-  const css = currentEditor.state.doc.toString();
   logEditor("saveToStorage CSS length:", css.length);
 
   const isCustom = editorStateManager.getIsCustomTheme();
@@ -979,13 +976,11 @@ export async function setThemeName() {
 }
 
 export async function handleSaveTheme() {
-  const currentEditor = editorStateManager.getEditor();
-  if (!currentEditor) {
+  const css = editorStateManager.getContent();
+  if (css === null) {
     showAlert("Editor not initialized!");
     return;
   }
-
-  const css = currentEditor.state.doc.toString();
   if (!css || css.trim() === "") {
     showAlert("No CSS to save as theme!");
     return;

@@ -79,13 +79,11 @@ function initializeFileOperations() {
   });
 
   document.getElementById("file-export-btn")?.addEventListener("click", async () => {
-    const editor = editorStateManager.getEditor();
-    if (!editor) {
+    const css = editorStateManager.getContent();
+    if (css === null) {
       showAlert("Editor not initialized!");
       return;
     }
-
-    const css = editor.state.doc.toString();
     if (!css) {
       showAlert("No styles to export!");
       return;
