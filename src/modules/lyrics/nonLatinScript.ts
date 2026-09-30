@@ -4,15 +4,27 @@ const LATIN_LETTERS = /\p{Script=Latin}/gu;
 const LATIN_LOOKALIKE_LETTERS = /[\p{Script=Cyrillic}\p{Script=Greek}]/gu;
 const NON_LETTERS = /[^\p{L}\p{M}]+/u;
 
-// A mostly-Latin word with Cyrillic or Greek lookalikes mixed in ("Lеt") is stylized Latin, not another script.
-function isStylizedLatinWord(word: string): boolean {
-  const latin = word.match(LATIN_LETTERS)?.length ?? 0;
-  const lookalikes = word.match(LATIN_LOOKALIKE_LETTERS)?.length ?? 0;
-  return lookalikes > 0 && latin >= lookalikes;
+interface ScriptBalance {
+  latin: number;
+  lookalikes: number;
+}
+
+function scriptBalance(text: string): ScriptBalance {
+  return {
+    latin: text.match(LATIN_LETTERS)?.length ?? 0,
+    lookalikes: text.match(LATIN_LOOKALIKE_LETTERS)?.length ?? 0,
+  };
+}
+
+function isStylizedLatinWord(word: string, line: ScriptBalance): boolean {
+  const { latin, lookalikes } = scriptBalance(word);
+  if (lookalikes === 0) return false;
+  return latin > lookalikes || (latin === lookalikes && line.latin > line.lookalikes);
 }
 
 export function hasNonLatinScript(text: string): boolean {
-  return text.split(NON_LETTERS).some(word => containsNonLatin(word) && !isStylizedLatinWord(word));
+  const line = scriptBalance(text);
+  return text.split(NON_LETTERS).some(word => containsNonLatin(word) && !isStylizedLatinWord(word, line));
 }
 
 export function detectScriptLanguage(text: string): string | null {

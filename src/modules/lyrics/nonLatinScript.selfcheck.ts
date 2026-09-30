@@ -28,6 +28,8 @@ assert.equal(hasNonLatinScript("Rock-н-ролл forever"), true, "regression: h
 assert.equal(hasNonLatinScript("YouTube-канал"), true, "regression: hyphenated brand and Cyrillic word");
 assert.equal(hasNonLatinScript("Привiт"), true, "regression: Ukrainian typed with a Latin i");
 assert.equal(hasNonLatinScript("Мiй свiт"), true, "regression: several Latin i in Cyrillic words");
+assert.equal(hasNonLatinScript("Нi"), true, "regression: short Cyrillic word with a Latin i, tied letter counts");
+assert.equal(hasNonLatinScript("Нi, нi, нi"), true, "regression: tied words in a Cyrillic line");
 
 // -- Edge cases --------------------------
 
