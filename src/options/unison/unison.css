@@ -444,13 +444,12 @@ kbd {
 /* -- No Results --------------------------  */
 
 .unison-empty-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  padding: 64px 0;
   text-align: center;
-  color: rgba(255, 255, 255, 0.35);
-  padding: 5rem 2rem;
-  font-size: 0.875rem;
   grid-column: 1 / -1;
 }
 
@@ -460,6 +459,21 @@ kbd {
 
 .unison-empty-state p {
   margin: 0;
+}
+
+.unison-empty-state__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.unison-empty-state__hint {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.unison-empty-state .unison-nav-btn {
+  margin-top: 12px;
 }
 
 /* -- Feed Tabs --------------------------  */

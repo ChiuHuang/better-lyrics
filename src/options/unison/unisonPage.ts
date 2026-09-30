@@ -709,13 +709,26 @@ function isDefaultFilters(filters: FeedFilters): boolean {
 function createFeedEmptyState(tab: FeedTabName, filters: FeedFilters): HTMLElement {
   const wrap = document.createElement("div");
   wrap.className = "unison-empty-state";
-  const p = document.createElement("p");
-  if (isDefaultFilters(filters)) {
-    p.textContent = tab === "mine" ? t("unison_noSubmissions") : t("unison_noFeedYet");
-  } else {
-    p.textContent = t("unison_noFilterResults");
+  const title = document.createElement("p");
+  title.className = "unison-empty-state__title";
+  if (!isDefaultFilters(filters)) {
+    title.textContent = t("unison_noFilterResults");
+    wrap.appendChild(title);
+    return wrap;
   }
-  wrap.appendChild(p);
+  title.textContent = tab === "mine" ? t("unison_noSubmissions") : t("unison_noFeedYet");
+  wrap.appendChild(title);
+  if (tab === "mine") {
+    const hint = document.createElement("p");
+    hint.className = "unison-empty-state__hint";
+    hint.textContent = t("unison_emptyMineHint");
+    const submit = document.createElement("button");
+    submit.type = "button";
+    submit.className = "unison-nav-btn";
+    submit.append(svgIcon("submit"), t("unison_submit"));
+    submit.addEventListener("click", () => navigateTo({ submit: "true" }));
+    wrap.append(hint, submit);
+  }
   return wrap;
 }
 

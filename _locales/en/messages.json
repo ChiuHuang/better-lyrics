@@ -1871,6 +1871,10 @@
     "message": "You haven't submitted any lyrics yet.",
     "description": "Empty state for my submissions tab"
   },
+  "unison_emptyMineHint": {
+    "message": "Lyrics you submit show up here.",
+    "description": "Second line of the empty My Submissions tab, under the title and above the submit button"
+  },
   "unison_noFilterResults": {
     "message": "No lyrics match your filters",
     "description": "Empty state shown when the active sort/filter combination returns no entries"
