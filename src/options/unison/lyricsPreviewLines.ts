@@ -54,3 +54,23 @@ export function previewLines(lyrics: Lyric[], view: string): PreviewLine[] {
     return lines;
   });
 }
+
+const TTML_PARAGRAPH = /<(?:[\w-]+:)?p\b[^>]*>([\s\S]*?)<\/(?:[\w-]+:)?p>/g;
+const XML_TAG = /<[^>]*>/g;
+const XML_ENTITY = /&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos);/gi;
+const NAMED_ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+
+function decodeXmlEntities(text: string): string {
+  return text.replace(XML_ENTITY, (match, entity: string) => {
+    if (entity[0] !== "#") return NAMED_ENTITIES[entity.toLowerCase()];
+    const code = entity[1].toLowerCase() === "x" ? Number.parseInt(entity.slice(2), 16) : Number(entity.slice(1));
+    return code <= 0x10ffff ? String.fromCodePoint(code) : match;
+  });
+}
+
+export function fallbackLines(text: string, isTtml: boolean): PreviewLine[] {
+  const paragraphs = isTtml ? Array.from(text.matchAll(TTML_PARAGRAPH), match => match[1]) : [];
+  const texts =
+    paragraphs.length > 0 ? paragraphs.map(p => decodeXmlEntities(p.replace(XML_TAG, ""))) : text.split("\n");
+  return texts.map(line => ({ text: line.trim(), isBackground: false })).filter(line => line.text);
+}

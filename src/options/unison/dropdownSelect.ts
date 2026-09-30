@@ -63,7 +63,6 @@ export function createDropdownSelect(label: string, onChange: (value: string) =>
   }
 
   trigger.addEventListener("click", () => (list.hidden ? open() : close(true)));
-  // Firefox on macOS does not focus a clicked button, so keep focus in the list until the click lands.
   list.addEventListener("pointerdown", event => {
     if ((event.target as Element).closest("[role=option]")) event.preventDefault();
   });

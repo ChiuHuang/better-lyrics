@@ -5,6 +5,7 @@ import { createDropdownSelect, type DropdownOption, type DropdownSelect } from "
 import { parseSvgMarkup } from "@/options/unison/icons";
 import {
   ORIGINAL_VIEW,
+  fallbackLines,
   type PreviewLine,
   parseLyrics,
   previewLines,
@@ -68,14 +69,6 @@ function renderLine(container: HTMLElement, line: PreviewLine): void {
   container.appendChild(div);
 }
 
-// braccato skips untimed TTML paragraphs, so read their text directly before showing raw markup.
-function fallbackLines(text: string): PreviewLine[] {
-  const doc = detectFormat(text) === "ttml" ? new DOMParser().parseFromString(text, "application/xml") : null;
-  const paragraphs = doc && !doc.querySelector("parsererror") ? Array.from(doc.getElementsByTagNameNS("*", "p")) : [];
-  const texts = paragraphs.length > 0 ? paragraphs.map(p => p.textContent ?? "") : text.split("\n");
-  return texts.map(line => ({ text: line.trim(), isBackground: false })).filter(line => line.text);
-}
-
 function renderPreview(container: HTMLElement, head: HTMLElement | undefined, state: PreviewState): void {
   container.replaceChildren();
   const { text } = state;
@@ -101,7 +94,7 @@ function renderPreview(container: HTMLElement, head: HTMLElement | undefined, st
   }
 
   const lines = previewLines(lyrics, view).filter(line => line.text);
-  const shown = lines.length > 0 ? lines : fallbackLines(text);
+  const shown = lines.length > 0 ? lines : fallbackLines(text, detectFormat(text) === "ttml");
   for (const line of shown.slice(0, PREVIEW_LINE_LIMIT)) renderLine(container, line);
   if (shown.length > PREVIEW_LINE_LIMIT) {
     const more = document.createElement("div");

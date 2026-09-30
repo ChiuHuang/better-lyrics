@@ -1277,7 +1277,6 @@ kbd {
 
 /* -- Dropdown Select --------------------------  */
 
-/* Negative block margins keep the head as tall as the title alone, so both columns stay aligned. */
 .unison-select {
   position: relative;
   margin: -0.375rem 0 0.125rem;
