@@ -34,8 +34,10 @@ import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modul
 import { syncVideoQualityControls, videoQualityOptions } from "@/options/videoQualityControls";
 import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFields";
 import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
+import { renderAboutLinks } from "@/options/aboutPage";
 import {
   flashSaved,
+  initAboutToggle,
   initPopupCards,
   initPopupTabs,
   initRefreshLyricsButton,
@@ -691,6 +693,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   initPopupCards();
   initPopupScrollFades();
   initPopupTabs(page => pageCard(page)?.place(true));
+  initAboutToggle(page => pageCard(page)?.place(true));
+  renderAboutLinks(document);
   checkForStableRelease();
 });
 

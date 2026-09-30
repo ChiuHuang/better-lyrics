@@ -153,3 +153,28 @@ export function initRefreshLyricsButton(): void {
     });
   });
 }
+
+// -- About --------------------------
+
+export function initAboutToggle(onPageShown: (page: HTMLElement) => void): void {
+  const button = document.getElementById("about-btn");
+  const about = document.getElementById("about-content");
+  const body = document.getElementById("options");
+  if (!button || !about || !body) return;
+  button.addEventListener("click", () => {
+    const open = !document.body.classList.contains("is-about");
+    document.body.classList.toggle("is-about", open);
+    button.setAttribute("aria-pressed", String(open));
+    const target = open
+      ? about.id
+      : (document.querySelector<HTMLElement>(".tabs .tab.active")?.dataset.target ?? "#general-content").slice(1);
+    for (const page of body.querySelectorAll<HTMLElement>(":scope > .page")) {
+      const shown = page.id === target;
+      page.dataset.uiDir = open ? "next" : "prev";
+      page.classList.toggle("active", shown);
+      if (page === about) page.hidden = !shown;
+      if (shown) onPageShown(page);
+    }
+    body.scrollTop = 0;
+  });
+}
