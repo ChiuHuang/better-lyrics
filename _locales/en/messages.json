@@ -2469,6 +2469,6 @@
   },
   "options_display_videoQualityApplyHint": {
     "message": "Higher-resolution playback changes apply to the next video or after refreshing. Preferred quality uses the closest available lower resolution.",
-    "description": "Hint explaining when video playback changes take effect and how unavailable resolutions fall back."
+    "description": "Tooltip explaining when video playback changes take effect and how unavailable resolutions fall back."
   }
 }

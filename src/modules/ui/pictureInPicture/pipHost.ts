@@ -55,11 +55,14 @@ function whenStylesheetSettled(link: HTMLLinkElement): Promise<void> {
   return settlement;
 }
 
-function revealWhenStyled(pipWindow: Window): void {
+function revealWhenStyled(pipWindow: Window, onStyled: () => void): void {
   const links = Array.from(pipWindow.document.head.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'));
   const timeout = new Promise<void>(resolve => pipWindow.setTimeout(resolve, STYLESHEET_REVEAL_TIMEOUT_MS));
-  void Promise.race([Promise.all(links.map(whenStylesheetSettled)), timeout]).then(() => {
+  const styled = Promise.all(links.map(whenStylesheetSettled));
+  void Promise.race([styled.then(() => true), timeout.then(() => false)]).then(isStyled => {
     pipWindow.document.documentElement.style.removeProperty("visibility");
+    onStyled();
+    if (!isStyled) void styled.then(onStyled);
   });
 }
 
@@ -374,7 +377,9 @@ export function createPictureInPictureHost(
     renderLoadingShell,
     injectStylesheet: (pipWindow, stylesheet) => {
       environment.injectStylesheet(pipWindow, stylesheet);
-      revealWhenStyled(pipWindow);
+      revealWhenStyled(pipWindow, () => {
+        if (activeWindow === pipWindow) measureLyrics();
+      });
     },
     closeWindow: pipWindow => {
       teardownWindow(pipWindow);
