@@ -1581,25 +1581,35 @@
 }
 
 #your-themes-dropdown {
-  position: absolute;
-  bottom: calc(100% + 0.5rem);
-  right: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
   min-width: 280px;
   max-width: 350px;
-  max-height: 300px;
-  overflow-y: auto;
   background: #3e3e41;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0.75rem;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 30px -5px;
   display: flex;
   flex-direction: column;
-  z-index: 100;
-  transform-origin: bottom right;
+  overflow: hidden;
+  z-index: var(--z-menu);
+  transform-origin: top right;
   opacity: 0;
   transform: scale(0.95);
   pointer-events: none;
   transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+}
+
+#your-themes-dropdown[data-placement="above"] {
+  transform-origin: bottom right;
+}
+
+#your-themes-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 #your-themes-dropdown.active {
@@ -1760,24 +1770,20 @@
 }
 
 /* Scrollbar for store modal */
-.store-modal-body::-webkit-scrollbar,
-#your-themes-dropdown::-webkit-scrollbar {
+.store-modal-body::-webkit-scrollbar {
   width: 8px;
 }
 
-.store-modal-body::-webkit-scrollbar-track,
-#your-themes-dropdown::-webkit-scrollbar-track {
+.store-modal-body::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.store-modal-body::-webkit-scrollbar-thumb,
-#your-themes-dropdown::-webkit-scrollbar-thumb {
+.store-modal-body::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
 
-.store-modal-body::-webkit-scrollbar-thumb:hover,
-#your-themes-dropdown::-webkit-scrollbar-thumb:hover {
+.store-modal-body::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 

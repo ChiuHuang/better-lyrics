@@ -42,6 +42,8 @@ import {
 } from "./themeStoreService";
 import { cleanupTurnstile, getTurnstileToken } from "./turnstile";
 import { errorStore, warnStore } from "@core/logger";
+import { menuPlacement } from "@/ui/menuPlacement";
+import { attachScrollFade } from "@/ui/scrollFade";
 
 let detailModalOverlay: HTMLElement | null = null;
 let urlModalOverlay: HTMLElement | null = null;
@@ -2358,7 +2360,7 @@ async function handleUrlInstall(): Promise<void> {
 }
 
 async function updateYourThemesDropdown(): Promise<void> {
-  const dropdown = document.getElementById("your-themes-dropdown");
+  const dropdown = document.getElementById("your-themes-list");
   if (!dropdown) return;
 
   const installed = await getInstalledStoreThemes();
@@ -2469,6 +2471,26 @@ async function handleApplyTheme(theme: InstalledStoreTheme): Promise<boolean> {
   }
 }
 
+const YOUR_THEMES_MAX_HEIGHT_PX = 300;
+const YOUR_THEMES_EDGE_PX = 12;
+
+function placeYourThemesDropdown(dropdown: HTMLElement, btn: HTMLElement): void {
+  const list = document.getElementById("your-themes-list");
+  const rect = btn.getBoundingClientRect();
+  const room = Math.max(rect.top, window.innerHeight - rect.bottom) - YOUR_THEMES_EDGE_PX;
+  const frame = dropdown.offsetHeight - (list?.offsetHeight ?? 0);
+  if (list) list.style.maxHeight = `${Math.min(YOUR_THEMES_MAX_HEIGHT_PX, room - frame)}px`;
+  const { placement, top } = menuPlacement({
+    triggerTop: rect.top,
+    triggerBottom: rect.bottom,
+    menuHeight: dropdown.offsetHeight,
+    viewportHeight: window.innerHeight,
+  });
+  dropdown.dataset.placement = placement;
+  dropdown.style.top = `${top}px`;
+  dropdown.style.left = `${rect.right - dropdown.offsetWidth}px`;
+}
+
 function toggleYourThemesDropdown(show?: boolean): void {
   const dropdown = document.getElementById("your-themes-dropdown");
   const btn = document.getElementById("your-themes-btn");
@@ -2481,7 +2503,8 @@ function toggleYourThemesDropdown(show?: boolean): void {
   if (shouldShow) {
     dropdown.classList.add("active");
     btn.classList.add("active");
-    updateYourThemesDropdown();
+    void updateYourThemesDropdown().then(() => placeYourThemesDropdown(dropdown, btn));
+    placeYourThemesDropdown(dropdown, btn);
   } else {
     dropdown.classList.remove("active");
     btn.classList.remove("active");
@@ -2549,6 +2572,18 @@ async function refreshStoreCards(): Promise<void> {
 
 export function setupYourThemesButton(): void {
   const btn = document.getElementById("your-themes-btn");
+  const dropdown = document.getElementById("your-themes-dropdown");
+  const list = document.getElementById("your-themes-list");
+  if (dropdown) document.body.appendChild(dropdown);
+  if (list) attachScrollFade(list);
+  window.addEventListener(
+    "scroll",
+    event => {
+      if (!(event.target instanceof Node && dropdown?.contains(event.target))) toggleYourThemesDropdown(false);
+    },
+    { capture: true, passive: true }
+  );
+  window.addEventListener("resize", () => toggleYourThemesDropdown(false));
   btn?.addEventListener("click", e => {
     e.stopPropagation();
     toggleYourThemesDropdown();
