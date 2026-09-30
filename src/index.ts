@@ -34,7 +34,7 @@ import {
   initializeLyrics,
   lyricReloader,
   onFullscreenChange,
-  setUpAvButtonListener,
+  setUpVideoModeListener,
   setupAltHoverHandler,
   setupHomepageFullscreenHandler,
   setupWakeLockForFullscreen,
@@ -88,7 +88,7 @@ async function modify(isDisposed: () => boolean): Promise<void> {
   setupAltHoverHandler();
   initProviders();
   prewarmAuthenticationToken();
-  setUpAvButtonListener();
+  setUpVideoModeListener();
   logCore(
     INITIALIZE_LOG,
     "background: rgba(10,11,12,1) ; color: rgba(214, 250, 214,1) ; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 1rem; "
