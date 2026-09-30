@@ -32,6 +32,25 @@ export function fadeInlineEdges(
   };
 }
 
+const WHEEL_LINE_PX = 16;
+const DOM_DELTA_LINE = 1;
+
+interface WheelDelta {
+  deltaX: number;
+  deltaY: number;
+  deltaMode: number;
+}
+
+/** scrollLeft change a vertical wheel should apply to an inline strip, or null when the strip cannot move that way. */
+export function inlineWheelStep(wheel: WheelDelta, metrics: InlineScrollMetrics, rtl = false): number | null {
+  if (wheel.deltaX !== 0 || wheel.deltaY === 0) return null;
+  const { start, end } = fadeInlineEdges(metrics, rtl);
+  const forward = wheel.deltaY > 0;
+  if (forward ? !end : !start) return null;
+  const delta = wheel.deltaMode === DOM_DELTA_LINE ? wheel.deltaY * WHEEL_LINE_PX : wheel.deltaY;
+  return rtl ? -delta : delta;
+}
+
 export interface ScrollFade {
   update(): void;
   destroy(): void;
