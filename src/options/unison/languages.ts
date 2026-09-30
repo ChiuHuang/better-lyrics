@@ -1,5 +1,6 @@
 import { warnUnison } from "@core/logger";
 import { findBestLanguageMatch } from "@utils";
+import type { DropdownOption } from "@/ui/dropdownFilter";
 
 // -- Languages --------------------------
 
@@ -45,20 +46,32 @@ const LANGUAGE_OPTIONS = [
   "sw",
 ];
 
-export function appendLanguageOptions(select: HTMLSelectElement): void {
-  let displayNames: Intl.DisplayNames | null = null;
+function languageDisplayNames(): Intl.DisplayNames | null {
   try {
-    displayNames = new Intl.DisplayNames(undefined, { type: "language" });
+    return new Intl.DisplayNames(undefined, { type: "language" });
   } catch (err) {
     warnUnison("Intl.DisplayNames unavailable, falling back to language codes", err);
-    displayNames = null;
+    return null;
   }
-  for (const code of LANGUAGE_OPTIONS) {
+}
+
+export function appendLanguageOptions(select: HTMLSelectElement): void {
+  for (const { value, label } of languageOptionList()) {
     const opt = document.createElement("option");
-    opt.value = code;
-    opt.textContent = displayNames?.of(code) ?? code;
+    opt.value = value;
+    opt.textContent = label;
     select.appendChild(opt);
   }
+}
+
+export function languageOptionList(opts: { leading?: DropdownOption; current?: string } = {}): DropdownOption[] {
+  const names = languageDisplayNames();
+  const list: DropdownOption[] = opts.leading ? [opts.leading] : [];
+  for (const code of LANGUAGE_OPTIONS) list.push({ value: code, label: names?.of(code) ?? code });
+  if (opts.current && !list.some(option => option.value === opts.current)) {
+    list.push({ value: opts.current, label: opts.current });
+  }
+  return list;
 }
 
 export function matchLanguageOption(lang: string): string | null {

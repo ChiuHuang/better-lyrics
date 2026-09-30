@@ -1996,39 +1996,6 @@ select.unison-input {
   transition: color 0.15s ease;
 }
 
-.unison-filter-select {
-  height: 1.5rem;
-  padding: 0 0.625rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1000rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.75rem;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-.unison-filter-select:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-
-.unison-filter-select:focus {
-  outline: none;
-  background: rgba(129, 140, 248, 0.15);
-  border-color: rgba(129, 140, 248, 0.4);
-  color: rgb(165, 180, 252);
-}
-
-.unison-filter-select option {
-  background: #1a1a1c;
-  color: rgba(255, 255, 255, 0.9);
-}
-
 /* -- Revisions --------------------------  */
 
 .unison-rev-detail-main {

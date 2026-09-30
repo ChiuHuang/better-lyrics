@@ -41,6 +41,7 @@ import { observeResize } from "@modules/ui/layout/layoutWidth";
 import { bindLyricsFileDrop, LYRICS_FILE_READING_EVENT } from "@/options/unison/lyricsFile";
 import { createFeedback, fillFeedback } from "@/options/unison/feedback";
 import { type IconKey, svgIcon } from "@/options/unison/icons";
+import { createLanguageDropdown } from "@/options/unison/languageDropdown";
 import { appendLanguageOptions, matchLanguageOption } from "@/options/unison/languages";
 import { renderPreviewInto } from "@/options/unison/lyricsPreview";
 import { detectFormat } from "@/options/unison/lyricsPreviewLines";
@@ -50,6 +51,7 @@ import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
 import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revisions/revisionEditor";
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
+import type { Dropdown } from "@/ui/dropdown";
 import { initTooltips } from "@/ui/tooltip";
 import { XMLParser } from "fast-xml-parser";
 
@@ -91,7 +93,7 @@ let noResults: HTMLElement;
 let feedContainer: HTMLElement;
 let feedMoreBtn: HTMLElement;
 let filterBar: HTMLElement;
-let filterLanguageSelect: HTMLSelectElement;
+let filterLanguage: Dropdown;
 let detailMeta: HTMLElement;
 let detailFrame: HTMLElement;
 let detailPreviewHead: HTMLElement;
@@ -311,7 +313,6 @@ export function initUnisonPage(): void {
   feedContainer = document.getElementById("unison-feed") as HTMLElement;
   feedMoreBtn = document.getElementById("unison-feed-more") as HTMLElement;
   filterBar = document.getElementById("unison-filters") as HTMLElement;
-  filterLanguageSelect = document.getElementById("unison-filter-language") as HTMLSelectElement;
   detailMeta = document.getElementById("unison-detail-meta") as HTMLElement;
   detailFrame = viewDetail.querySelector(".unison-rev-detail-main") as HTMLElement;
   detailPreviewHead = document.getElementById("unison-detail-preview-head") as HTMLElement;
@@ -404,8 +405,6 @@ function applyActiveTabContent(): void {
 // -- Filter Bar --------------------------
 
 function setupFilterBar(): void {
-  populateLanguageOptions();
-
   filterBar.querySelectorAll<HTMLLabelElement>(".unison-filter-chip--sort").forEach(chip => {
     chip.addEventListener("click", e => {
       e.preventDefault();
@@ -449,15 +448,17 @@ function setupFilterBar(): void {
     });
   }
 
-  filterLanguageSelect.addEventListener("change", () => {
-    const cache = feedTabCache[activeFeedTab];
-    cache.filters.language = filterLanguageSelect.value;
-    onFilterChange();
+  filterLanguage = createLanguageDropdown({
+    label: t("unison_language"),
+    leading: { value: "all", label: t("unison_languageAll") },
+    value: feedTabCache[activeFeedTab].filters.language,
+    variant: "chip",
+    onChange: value => {
+      feedTabCache[activeFeedTab].filters.language = value;
+      onFilterChange();
+    },
   });
-}
-
-function populateLanguageOptions(): void {
-  appendLanguageOptions(filterLanguageSelect);
+  document.getElementById("unison-filter-language-mount")?.appendChild(filterLanguage.root);
 }
 
 function detectTtmlLanguage(text: string): string | null {
@@ -554,7 +555,7 @@ function renderFilterBarFromActiveTab(animateSort = false): void {
   setFilterRadio("unison-filter-tier", filters.tier);
   setFilterRadio("unison-filter-format", filters.format);
 
-  filterLanguageSelect.value = filters.language;
+  filterLanguage.setValue(filters.language);
 }
 
 function setFilterRadio(name: string, value: string): void {
@@ -808,9 +809,14 @@ function setupSearch(): void {
 
 function isInputFocused(): boolean {
   const active = document.activeElement;
-  return (
-    active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement || active instanceof HTMLSelectElement
-  );
+  if (
+    active instanceof HTMLInputElement ||
+    active instanceof HTMLTextAreaElement ||
+    active instanceof HTMLSelectElement
+  ) {
+    return true;
+  }
+  return active instanceof HTMLElement && active.closest("[role=listbox]") !== null;
 }
 
 async function performSearch(query: string): Promise<void> {

@@ -27,7 +27,7 @@ const RULES: Rule[] = [
 
 const KNOWN: Record<string, Record<string, number>> = {
   "native select": {
-    "pages/unison.html": 3,
+    "pages/unison.html": 2,
     "src/options/unison/revisions/revisionEditor.ts": 1,
   },
   "uppercase text": {
