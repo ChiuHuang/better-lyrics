@@ -596,7 +596,10 @@ function initPopupScrollFades(): void {
 
 function syncFullscreenDependents(): void {
   const master = document.getElementById("isFullScreenDisabled") as HTMLInputElement | null;
-  document.querySelector("[data-fs-deps]")?.toggleAttribute("data-muted", master?.checked ?? false);
+  const dependents = document.querySelector("[data-fs-deps]");
+  const muted = master?.checked ?? false;
+  dependents?.toggleAttribute("data-muted", muted);
+  dependents?.toggleAttribute("inert", muted);
 }
 
 // -- Letter wave switch --------------------------
