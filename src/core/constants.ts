@@ -197,6 +197,8 @@ export const LYRICS_NEGATIVE_CACHE_TTL_MS = 30 * 60 * 1000;
 export const UNISON_NEGATIVE_CACHE_TTL_MS = 5 * 60 * 1000;
 export const UNISON_MAX_VIDEOS_PER_LYRIC = 20;
 
+export const ARTWORK_MIN_SIZE_PX = 1440;
+
 export const OFFSET_STORAGE_PREFIX = "blyricsOffset_";
 
 export const PLAYER_BAR_SELECTOR = "ytmusic-player-bar" as const;
