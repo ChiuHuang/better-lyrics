@@ -359,7 +359,7 @@ YouTube Music™, YouTube™, Google™, and Chrome™ are trademarks of Google 
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=better-lyrics%2Fbetter-lyrics&type=timeline&releases=&legend=bottom-right">
+<a href="https://www.star-history.com/?repos=better-lyrics%2Fbetter-lyrics&type=date&releases=&legend=bottom-right">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=better-lyrics/better-lyrics&type=date&theme=dark&legend=bottom-right" />
    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=better-lyrics/better-lyrics&type=date&legend=bottom-right" />
