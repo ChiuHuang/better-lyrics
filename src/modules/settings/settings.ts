@@ -43,6 +43,7 @@ export function handleSettings(): void {
         layout.setAttribute(LYRICS_DISABLED_ATTR, "");
         playerPage.setAttribute(LYRICS_DISABLED_ATTR, "");
       }
+      syncKaraoke();
     },
     () => {
       const layout = document.getElementById("layout");
@@ -52,6 +53,7 @@ export function handleSettings(): void {
         layout.removeAttribute(LYRICS_DISABLED_ATTR);
         playerPage.removeAttribute(LYRICS_DISABLED_ATTR);
       }
+      syncKaraoke();
     }
   );
 
