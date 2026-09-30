@@ -1395,7 +1395,7 @@ function setBackgroundImage(src: string): void {
 }
 
 function containerSizeFor(width: number): number {
-  return Math.round(Math.max(width * window.devicePixelRatio, 1500));
+  return Math.round(Math.max(width * window.devicePixelRatio, 1440));
 }
 
 function getContainerSize(): number {
