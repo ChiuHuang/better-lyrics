@@ -632,10 +632,9 @@ kbd {
 }
 
 .unison-detail-preview {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
-  padding: 1.25rem;
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--text-inset);
   max-height: 80vh;
   overflow: auto;
 }
@@ -673,14 +672,14 @@ kbd {
   letter-spacing: 0;
   color: rgba(255, 255, 255, 0.5);
   text-align: left;
-  padding: 0.25rem 0.75rem 0.25rem 0;
+  padding: 8px 0.75rem 8px 0;
   white-space: nowrap;
   vertical-align: baseline;
 }
 
 .unison-detail-table td {
   color: rgba(255, 255, 255, 0.8);
-  padding: 0.25rem 0;
+  padding: 8px 0;
   vertical-align: baseline;
   text-align: right;
 }
@@ -1392,23 +1391,18 @@ kbd {
 /* -- Detail Lyrics Panel --------------------------  */
 
 .unison-detail-pre {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
+  box-sizing: border-box;
   margin: 0;
-  padding: 1.25rem;
-  font-size: 0.8125rem;
+  padding: var(--text-inset);
+  max-height: 80vh;
+  overflow: auto;
+  font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  font-size: 12px;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.7);
   white-space: pre-wrap;
   word-break: break-word;
-  overflow: auto;
-  max-height: 80vh;
-  font-family: inherit;
 }
 
-.unison-detail-preview,
-.unison-detail-pre,
 .unison-detail-meta {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
@@ -2453,9 +2447,13 @@ select.unison-input {
     min-height: 0;
   }
 
-  .unison-rev-detail-main--fit .unison-detail-preview {
+  .unison-rev-detail-main--fit .unison-detail-col > .ui-frame,
+  .unison-rev-detail-main--fit .unison-detail-lyrics > .ui-frame {
     flex: 1;
     min-height: 0;
+  }
+
+  .unison-rev-detail-main--fit .unison-detail-preview {
     max-height: none;
   }
 
@@ -2477,8 +2475,6 @@ select.unison-input {
   }
 
   .unison-rev-detail-main--fit .unison-detail-pre {
-    flex: 1;
-    min-height: 0;
     max-height: none;
   }
 
@@ -3025,8 +3021,6 @@ select.unison-input {
   }
 
   .unison-report-dropdown,
-  .unison-detail-preview,
-  .unison-detail-pre,
   .unison-preview-content {
     border-radius: 1rem;
   }
@@ -3035,8 +3029,6 @@ select.unison-input {
   .unison-feedback,
   .unison-card,
   .unison-report-dropdown,
-  .unison-detail-preview,
-  .unison-detail-pre,
   .unison-preview-content {
     corner-shape: superellipse(1.6);
   }

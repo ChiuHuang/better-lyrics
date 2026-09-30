@@ -1,5 +1,5 @@
 import { UNISON_API_BASE_URL, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
-import { t } from "@core/i18n";
+import { getLanguageDisplayName, t } from "@core/i18n";
 import { formatTimeAgo } from "@core/relativeTime";
 import {
   DEFAULT_FEED_FILTERS,
@@ -55,8 +55,10 @@ import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revis
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
 import type { Dropdown } from "@/ui/dropdown";
+import { attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
 import { initTooltips } from "@/ui/tooltip";
+import { highlightInto } from "@braccato/highlight";
 import { XMLParser } from "fast-xml-parser";
 
 // -- Icons --------------------------
@@ -342,6 +344,7 @@ export function initUnisonPage(): void {
   setupSubmitForm();
   setupNavButtons();
   initTooltips(document.querySelector(".unison-page") as HTMLElement);
+  attachScrollFade(detailPreview, detailPreview, { pane: true });
   loadIdentity();
   routeFromParams();
 
@@ -1088,9 +1091,9 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   metaTable.className = "unison-detail-table";
 
   appendMetaRow(metaTable, t("unison_format"), t(`unison_format_${entry.format}`));
-  appendMetaRow(metaTable, t("unison_sync"), entry.syncType);
+  appendMetaRow(metaTable, t("unison_sync"), createSyncTag(syncTypeForLyric(entry.syncType, entry.format)));
   if (entry.album) appendMetaRow(metaTable, t("unison_album"), entry.album);
-  if (entry.language) appendMetaRow(metaTable, t("unison_language"), entry.language);
+  if (entry.language) appendMetaRow(metaTable, t("unison_language"), getLanguageDisplayName(entry.language));
   if (entry.isrc) appendMetaRow(metaTable, "ISRC", entry.isrc);
   if (entry.submitter) appendMetaRow(metaTable, t("unison_uploadedBy"), createUploaderCell(entry.submitter));
 
@@ -1146,10 +1149,15 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   renderPreviewInto(detailPreview, entry.lyrics, false, detailPreviewHead);
 
   // -- Raw lyrics column
+  const frame = document.createElement("div");
+  frame.className = "ui-frame";
   const pre = document.createElement("pre");
   pre.className = "unison-detail-pre";
-  pre.textContent = entry.lyrics;
-  detailLyrics.appendChild(pre);
+  highlightInto(pre, entry.lyrics, { pretty: true });
+  frame.appendChild(pre);
+  detailLyrics.appendChild(frame);
+  const fade = attachScrollFade(pre, pre, { pane: true });
+  view.addEventListener("abort", fade.destroy, { once: true });
   fitToViewport(detailFrame, view);
 }
 

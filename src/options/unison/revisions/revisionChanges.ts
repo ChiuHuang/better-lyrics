@@ -74,7 +74,8 @@ export function mountChangesTabs(surface: ChangesSurface, host: RevisionHost, ha
   lyricsHead.classList.add(HEAD_TABS_CLASS);
   preview.setAttribute("role", "tabpanel");
   preview.setAttribute("aria-labelledby", previewTab.id);
-  preview.after(panel);
+  const previewPane = preview.closest<HTMLElement>(".ui-frame") ?? preview;
+  previewPane.after(panel);
 
   let active: TabName = "preview";
   let supported = true;
@@ -89,7 +90,7 @@ export function mountChangesTabs(surface: ChangesSurface, host: RevisionHost, ha
     lyricsHead.classList.remove(HEAD_TABS_CLASS);
     preview.removeAttribute("role");
     preview.removeAttribute("aria-labelledby");
-    preview.hidden = false;
+    previewPane.hidden = false;
     panel.remove();
   };
   host.onLeave(teardown);
@@ -101,7 +102,7 @@ export function mountChangesTabs(surface: ChangesSurface, host: RevisionHost, ha
       tabs[name].setAttribute("aria-selected", String(selected));
       tabs[name].tabIndex = selected ? 0 : -1;
     }
-    preview.hidden = next !== "preview";
+    previewPane.hidden = next !== "preview";
     panel.hidden = next !== "changes";
     previewHead.classList.toggle(HEAD_CHANGES_CLASS, next === "changes");
   };
