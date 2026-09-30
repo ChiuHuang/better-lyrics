@@ -1,0 +1,253 @@
+import { svgIcon } from "@/options/unison/icons";
+import { type DropdownOption, filterOptions, shouldShowSearch } from "@/ui/dropdownFilter";
+
+export type { DropdownOption } from "@/ui/dropdownFilter";
+
+export interface DropdownConfig {
+  label: string;
+  onChange: (value: string) => void;
+  /** "inline" sizes to content, "stretch" fills its container (form fields), "chip" matches 26px filter chips. */
+  variant?: "inline" | "stretch" | "chip";
+  /** Search box placeholder; the box appears when there are more than 12 options. */
+  searchPlaceholder?: string;
+  noResultsLabel?: string;
+}
+
+export interface Dropdown {
+  root: HTMLElement;
+  setOptions(options: DropdownOption[], value: string): void;
+  setValue(value: string): void;
+  getValue(): string;
+  setHidden(hidden: boolean): void;
+  destroy(): void;
+}
+
+const MENU_GAP_PX = 4;
+const VIEWPORT_MARGIN_PX = 8;
+const MENU_MIN_WIDTH_PX = 200;
+let dropdownCount = 0;
+
+export function createDropdown(config: DropdownConfig): Dropdown {
+  const { label, onChange, variant = "inline" } = config;
+
+  const root = document.createElement("div");
+  root.className = `ui-dropdown${variant === "inline" ? "" : ` ui-dropdown--${variant}`}`;
+
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "ui-dropdown__trigger";
+  trigger.setAttribute("aria-haspopup", "listbox");
+  trigger.setAttribute("aria-expanded", "false");
+  const valueEl = document.createElement("span");
+  valueEl.className = "ui-dropdown__value";
+  const chevron = svgIcon("chevronDown");
+  chevron.classList.add("ui-dropdown__chevron");
+  trigger.append(valueEl, chevron);
+  root.appendChild(trigger);
+
+  const menu = document.createElement("div");
+  menu.className = "ui-menu";
+  const search = document.createElement("input");
+  search.type = "text";
+  search.className = "ui-menu__search";
+  search.placeholder = config.searchPlaceholder ?? "";
+  search.setAttribute("aria-label", config.searchPlaceholder ?? label);
+  const list = document.createElement("div");
+  list.className = "ui-menu__options";
+  list.setAttribute("role", "listbox");
+  list.setAttribute("aria-label", label);
+  list.id = `ui-dropdown-list-${++dropdownCount}`;
+  trigger.setAttribute("aria-controls", list.id);
+  menu.appendChild(list);
+
+  let options: DropdownOption[] = [];
+  let current = "";
+  let isOpen = false;
+  let closeTimer = 0;
+
+  // -- Rendering --------------------------
+
+  const optionButtons = (): HTMLButtonElement[] =>
+    Array.from(list.querySelectorAll<HTMLButtonElement>("[role=option]:not(:disabled)"));
+
+  function renderValue(): void {
+    const selected = options.find(option => option.value === current)?.label ?? current;
+    valueEl.textContent = selected;
+    trigger.setAttribute("aria-label", `${label}: ${selected}`);
+  }
+
+  function renderList(): void {
+    const shown = filterOptions(options, search.value);
+    if (!shown.length) {
+      const empty = document.createElement("div");
+      empty.className = "ui-menu__empty";
+      empty.textContent = config.noResultsLabel ?? "";
+      list.replaceChildren(empty);
+      return;
+    }
+    list.replaceChildren(
+      ...shown.map(option => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "ui-menu__option";
+        button.setAttribute("role", "option");
+        button.tabIndex = -1;
+        button.setAttribute("aria-selected", String(option.value === current));
+        if (option.disabled) {
+          button.disabled = true;
+          button.setAttribute("aria-disabled", "true");
+        }
+        const text = document.createElement("span");
+        text.textContent = option.label;
+        const check = svgIcon("check");
+        check.classList.add("ui-menu__check");
+        button.append(text, check);
+        button.addEventListener("click", () => {
+          close(true);
+          if (option.value !== current) {
+            current = option.value;
+            renderValue();
+            onChange(option.value);
+          }
+        });
+        return button;
+      })
+    );
+  }
+
+  // -- Placement --------------------------
+
+  function place(): void {
+    const rect = trigger.getBoundingClientRect();
+    menu.style.minWidth = `${Math.max(rect.width, MENU_MIN_WIDTH_PX)}px`;
+    menu.style.width = variant === "stretch" ? `${rect.width}px` : "";
+    const side = rect.left + rect.width / 2 > window.innerWidth / 2 ? "end" : "start";
+    const menuHeight = menu.offsetHeight;
+    const spaceBelow = window.innerHeight - rect.bottom - VIEWPORT_MARGIN_PX;
+    const placement = menuHeight > spaceBelow && rect.top > spaceBelow ? "above" : "below";
+    menu.dataset.side = side;
+    menu.dataset.placement = placement;
+    // Anchor with left/top only: a right/bottom inset resolves against the fixed containing block, which excludes scrollbar gutters.
+    menu.style.left = `${side === "end" ? rect.right - menu.offsetWidth : rect.left}px`;
+    menu.style.top = `${placement === "below" ? rect.bottom + MENU_GAP_PX : rect.top - MENU_GAP_PX - menuHeight}px`;
+  }
+
+  // -- Open / close --------------------------
+
+  const onOutsidePointer = (event: PointerEvent): void => {
+    const target = event.target as Node;
+    if (!root.contains(target) && !menu.contains(target)) close(false);
+  };
+  const onViewportChange = (): void => {
+    if (isOpen) place();
+  };
+
+  function open(): void {
+    window.clearTimeout(closeTimer);
+    menu.classList.remove("is-closing");
+    search.value = "";
+    if (shouldShowSearch(options.length)) menu.prepend(search);
+    else search.remove();
+    renderList();
+    document.body.appendChild(menu);
+    place();
+    isOpen = true;
+    trigger.setAttribute("aria-expanded", "true");
+    requestAnimationFrame(() => menu.classList.add("is-open"));
+    document.addEventListener("pointerdown", onOutsidePointer, true);
+    window.addEventListener("resize", onViewportChange);
+    window.addEventListener("scroll", onViewportChange, { capture: true, passive: true });
+    const selected = list.querySelector<HTMLButtonElement>("[aria-selected=true]");
+    if (selected) list.scrollTop = selected.offsetTop - list.clientHeight / 2 + selected.offsetHeight / 2;
+    (search.isConnected ? search : (selected ?? optionButtons()[0]))?.focus({ preventScroll: true });
+  }
+
+  function close(restoreFocus: boolean): void {
+    if (!isOpen) return;
+    isOpen = false;
+    trigger.setAttribute("aria-expanded", "false");
+    menu.classList.remove("is-open");
+    menu.classList.add("is-closing");
+    document.removeEventListener("pointerdown", onOutsidePointer, true);
+    window.removeEventListener("resize", onViewportChange);
+    window.removeEventListener("scroll", onViewportChange, { capture: true });
+    const duration =
+      Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--duration-quick")) || 150;
+    closeTimer = window.setTimeout(() => {
+      menu.classList.remove("is-closing");
+      menu.remove();
+    }, duration);
+    if (restoreFocus) trigger.focus();
+  }
+
+  // -- Keyboard --------------------------
+
+  trigger.addEventListener("click", () => (isOpen ? close(true) : open()));
+  search.addEventListener("input", renderList);
+
+  const onKeydown = (event: KeyboardEvent): void => {
+    if (event.key === "Escape" && isOpen) {
+      event.preventDefault();
+      close(true);
+      return;
+    }
+    if (event.key === "Tab" && isOpen) {
+      close(false);
+      return;
+    }
+    if (event.key === "Enter" && document.activeElement === search) {
+      event.preventDefault();
+      optionButtons()[0]?.click();
+      return;
+    }
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    if (!isOpen) {
+      open();
+      return;
+    }
+    const buttons = optionButtons();
+    const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    const last = buttons.length - 1;
+    const targets: Record<string, number> = {
+      Home: 0,
+      End: last,
+      ArrowDown: index < 0 || index === last ? 0 : index + 1,
+      ArrowUp: index <= 0 ? last : index - 1,
+    };
+    buttons[targets[event.key]]?.focus();
+  };
+  root.addEventListener("keydown", onKeydown);
+  menu.addEventListener("keydown", onKeydown);
+  list.addEventListener("pointerdown", event => {
+    if ((event.target as Element).closest("[role=option]")) event.preventDefault();
+  });
+
+  // -- API --------------------------
+
+  return {
+    root,
+    setOptions(next, value) {
+      options = next;
+      current = value;
+      renderValue();
+      if (isOpen) renderList();
+    },
+    setValue(value) {
+      current = value;
+      renderValue();
+      if (isOpen) renderList();
+    },
+    getValue: () => current,
+    setHidden(hidden) {
+      if (hidden) close(false);
+      root.hidden = hidden;
+    },
+    destroy() {
+      close(false);
+      menu.remove();
+      root.removeEventListener("keydown", onKeydown);
+      root.remove();
+    },
+  };
+}
