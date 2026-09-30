@@ -1,0 +1,31 @@
+/* -- Popup shell ----------------------------------------------------------- */
+
+html {
+  width: var(--popup-width);
+  min-width: var(--popup-width);
+  max-width: var(--popup-width);
+  overflow: hidden;
+}
+
+body.options-page {
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+  padding: 0;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.pop__head { flex: none; padding: 0 var(--page-pad); }
+
+.pop__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--page-pad) var(--page-pad);
+}
+
+.page { display: none; flex: 1; min-height: 0; flex-direction: column; }
+.page.active { display: flex; }
+.page--flow { flex: none; }
