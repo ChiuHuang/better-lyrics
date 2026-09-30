@@ -93,7 +93,6 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   const formatCell = renderSidebar(entry, surface.meta, host, controls);
 
   surface.lyrics.replaceChildren(textarea);
-  renderPreviewInto(surface.preview, entry.lyrics);
 
   const bar = createSaveBar();
   surface.savebar.replaceChildren(bar.root);
@@ -137,6 +136,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     retry: () => retryPreview(),
     tabChange: () => syncViewChanges(),
   });
+  renderPreviewInto(surface.preview, entry.lyrics, false, surface.previewHead);
 
   const syncViewChanges = (): void => {
     bar.viewChanges.hidden = !changes.onPreviewTab() || bar.save.disabled || changes.count() === 0;
@@ -228,7 +228,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
 
   textarea.addEventListener("input", () => {
     formatCell.textContent = t(`unison_format_${detectFormat(textarea.value)}`);
-    renderPreviewInto(surface.preview, textarea.value);
+    renderPreviewInto(surface.preview, textarea.value, false, surface.previewHead);
     schedulePreview();
   });
   controls.languageSelect.addEventListener("change", schedulePreview);

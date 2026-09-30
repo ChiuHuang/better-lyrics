@@ -101,6 +101,7 @@ let savebarSlot: HTMLElement;
 let submitBtn: HTMLButtonElement;
 let submitFeedback: HTMLElement;
 let previewContent: HTMLElement;
+let previewHead: HTMLElement;
 let lyricsTextarea: HTMLTextAreaElement;
 let formatSelect: HTMLSelectElement;
 let submitLanguageSelect: HTMLSelectElement;
@@ -320,6 +321,7 @@ export function initUnisonPage(): void {
   submitBtn = document.getElementById("unison-submit-btn") as HTMLButtonElement;
   submitFeedback = document.getElementById("unison-submit-feedback") as HTMLElement;
   previewContent = document.getElementById("unison-preview-content") as HTMLElement;
+  previewHead = document.getElementById("unison-preview-head") as HTMLElement;
   lyricsTextarea = document.getElementById("unison-field-lyrics") as HTMLTextAreaElement;
   formatSelect = document.getElementById("unison-field-format") as HTMLSelectElement;
   submitLanguageSelect = document.getElementById("unison-field-language") as HTMLSelectElement;
@@ -913,6 +915,7 @@ function renderDetailSkeleton(): void {
   detailMeta.appendChild(artistSkel);
   detailMeta.appendChild(metaSkel);
 
+  renderPreviewInto(detailPreview, "", false, detailPreviewHead);
   const previewSkel = document.createElement("div");
   previewSkel.className = "unison-skeleton";
   previewSkel.style.width = "100%";
@@ -1023,7 +1026,7 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   void renderDetailRevisionBar(entry, view);
 
   // -- Preview column
-  renderPreviewInto(detailPreview, entry.lyrics);
+  renderPreviewInto(detailPreview, entry.lyrics, false, detailPreviewHead);
 
   // -- Raw lyrics column
   const pre = document.createElement("pre");
@@ -2033,7 +2036,7 @@ function autoDetectFormat(): void {
 }
 
 function updatePreview(): void {
-  renderPreviewInto(previewContent, lyricsTextarea.value, true);
+  renderPreviewInto(previewContent, lyricsTextarea.value, true, previewHead);
 }
 
 function parseVideoId(raw: string): string | null {
