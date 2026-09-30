@@ -45,7 +45,7 @@ let fullscreenObserver: MutationObserver | null = null;
 let lyricsTabObserver: MutationObserver | null = null;
 let inertObserver: MutationObserver | null = null;
 let fullscreenExitObserver: MutationObserver | null = null;
-let avButtonObserver: MutationObserver | null = null;
+let videoModeObserver: MutationObserver | null = null;
 
 let hasInitializedLyricReloader = false;
 let hasInitializedHomepageFullscreen = false;
@@ -630,37 +630,24 @@ export function setupAltHoverHandler(): void {
   });
 }
 
-export function setUpAvButtonListener(): void {
-  let avToggle = document.querySelector("#av-id > ytmusic-av-toggle");
-  if (!avToggle) {
-    setTimeout(setUpAvButtonListener, 1000);
+export function setUpVideoModeListener(): void {
+  const playerPage = document.querySelector("#player-page");
+  if (!playerPage) {
+    setTimeout(setUpVideoModeListener, 1000);
     return;
   }
 
-  if (avButtonObserver) {
-    avButtonObserver.disconnect();
-  }
+  videoModeObserver?.disconnect();
 
-  let handleAVSwitch = (isVideo: boolean) => {
-    document.querySelector("#player-page")?.toggleAttribute("blyrics-video-mode", isVideo);
+  const syncVideoMode = () => {
+    const isVideo = playerPage.hasAttribute("video-mode");
+    playerPage.toggleAttribute("blyrics-video-mode", isVideo);
     document.querySelector("ytmusic-app-layout")?.toggleAttribute("blyrics-video-mode", isVideo);
     syncKaraoke();
   };
-  const observerCallback = (mutationsList: MutationRecord[]) => {
-    for (const mutation of mutationsList) {
-      if (mutation.type === "attributes" && mutation.attributeName === "is-video-playback-mode-selected") {
-        const isVideo = avToggle.getAttribute("is-video-playback-mode-selected") === "true";
-        handleAVSwitch(isVideo);
-      }
-    }
-  };
 
-  avButtonObserver = new MutationObserver(observerCallback);
-
-  avButtonObserver.observe(avToggle, {
-    attributes: true,
-    attributeFilter: ["is-video-playback-mode-selected"],
-  });
-  handleAVSwitch(avToggle.getAttribute("is-video-playback-mode-selected") === "true");
-  logCore("Set up a/v toggle observer");
+  videoModeObserver = new MutationObserver(syncVideoMode);
+  videoModeObserver.observe(playerPage, { attributes: true, attributeFilter: ["video-mode"] });
+  syncVideoMode();
+  logCore("Set up video mode observer");
 }
