@@ -147,13 +147,14 @@ export function initCardTabs(card: HTMLElement, { animateHeight = true, onChange
     if (tab && tabs.includes(tab)) selectTab(tab, false);
   };
   const onKeydown = (event: KeyboardEvent): void => {
-    const focused = tabs.indexOf(document.activeElement as HTMLButtonElement);
+    const visible = tabs.filter(tab => !tab.hidden);
+    const focused = visible.indexOf(document.activeElement as HTMLButtonElement);
     if (focused < 0) return;
-    const index = rovingIndex(focused, event.key, tabs.length, getComputedStyle(card).direction === "rtl");
+    const index = rovingIndex(focused, event.key, visible.length, getComputedStyle(card).direction === "rtl");
     if (index < 0) return;
     event.preventDefault();
-    tabs[index].focus();
-    selectTab(tabs[index], false);
+    visible[index].focus();
+    selectTab(visible[index], false);
   };
   tablist?.addEventListener("click", onClick);
   tablist?.addEventListener("keydown", onKeydown);
@@ -164,7 +165,7 @@ export function initCardTabs(card: HTMLElement, { animateHeight = true, onChange
   return {
     place,
     select(id, { instant = false } = {}) {
-      const tab = tabs.find(t => t.dataset.tab === id);
+      const tab = tabs.find(t => t.dataset.tab === id && !t.hidden);
       if (tab) selectTab(tab, instant);
     },
     destroy() {

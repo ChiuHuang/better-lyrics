@@ -175,4 +175,21 @@ function buildCard(withAction: boolean): HTMLElement {
   assert.equal(tabs[1].getAttribute("aria-selected"), "true", "rtl: ArrowLeft selects the next tab");
 }
 
+{
+  const card = buildCard(false);
+  const tabs = Array.from(card.querySelectorAll<HTMLButtonElement>(".ui-card__tab"));
+  tabs[1].hidden = true;
+  const cardTabs = initCardTabs(card);
+  const selected = (): (string | null)[] => tabs.map(tab => tab.getAttribute("aria-selected"));
+  tabs[0].focus();
+  tabs[0].dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true }));
+  assert.equal(window.document.activeElement, tabs[2], "ArrowRight skips a hidden tab");
+  tabs[2].dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true }));
+  assert.equal(window.document.activeElement, tabs[0], "wrapping skips a hidden tab too");
+  tabs[0].dispatchEvent(new window.KeyboardEvent("keydown", { key: "End", bubbles: true, cancelable: true }));
+  assert.deepEqual(selected(), ["false", "false", "true"], "End lands on the last visible tab");
+  cardTabs.select("b");
+  assert.deepEqual(selected(), ["false", "false", "true"], "select() ignores a hidden tab");
+}
+
 console.log("cardTabs self-check passed");
