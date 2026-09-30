@@ -12,7 +12,7 @@ import { AppState } from "@core/appState";
 import { t } from "@core/i18n";
 import { applySegmentMapToLyrics, type LyricSourceResultWithMeta } from "@modules/lyrics/lyrics";
 import type { LyricPart } from "@modules/lyrics/providers/shared";
-import { detectScriptLanguage, hasNonLatinScript } from "@modules/lyrics/nonLatinScript";
+import { createScriptClassifier, type ScriptClassifier } from "@modules/lyrics/nonLatinScript";
 import {
   getRomanizationFromCache,
   getTranslationFromCache,
@@ -154,6 +154,7 @@ function injectLyrics(
   const isStale = () => AppState.currentInjectionId !== injectionId;
 
   const lyrics = data.lyrics!;
+  const scripts = createScriptClassifier(lyrics.map(item => item.words));
   cleanup();
   disableNativeLyricsFocus();
 
@@ -192,7 +193,7 @@ function injectLyrics(
     language: data.language,
     isMusicVideoSynced: data.musicVideoSynced === true,
     tabSelector,
-    hasNonLatin: lyrics.some(item => !!item.words && hasNonLatinScript(item.words)),
+    hasNonLatin: lyrics.some(item => !!item.words && scripts.hasNonLatinScript(item.words)),
     songwriters: data.songwriters,
     song: data.song,
     artist: data.artist,
@@ -220,7 +221,7 @@ function injectLyrics(
     addNoLyricsButton(data.song, data.artist, data.album, data.duration, data.videoId);
   }
 
-  void processBatchTranslationsAndRomanizations(doc, data, lines, isStale, signal);
+  void processBatchTranslationsAndRomanizations(doc, data, lines, scripts, isStale, signal);
 
   if (data.segmentMap) {
     applySegmentMapToLyrics(lyricsData, lines, data.segmentMap);
@@ -242,6 +243,7 @@ async function processBatchTranslationsAndRomanizations(
   doc: Document,
   data: LyricSourceResultWithMeta,
   linesData: readonly LineData[],
+  scripts: ScriptClassifier,
   isStale: () => boolean,
   signal?: AbortSignal
 ): Promise<void> {
@@ -264,7 +266,7 @@ async function processBatchTranslationsAndRomanizations(
     const lyricElement = lineData.lyricElement;
 
     // Authoring tools stamp a default xml:lang on every file, so a language the script contradicts cannot veto.
-    const scriptLanguage = detectScriptLanguage(item.words);
+    const scriptLanguage = scripts.detectScriptLanguage(item.words);
     const trustedLanguage =
       sourceLanguage && scriptLanguage && !langCodesMatch(sourceLanguage, scriptLanguage) ? undefined : sourceLanguage;
 
@@ -293,9 +295,9 @@ async function processBatchTranslationsAndRomanizations(
       } else {
         const shouldRomanize =
           (sourceLanguage && languageMatchesAny(sourceLanguage, ROMANIZATION_LANGUAGES)) ||
-          hasNonLatinScript(item.words);
+          scripts.hasNonLatinScript(item.words);
         if (shouldRomanize || !sourceLanguage) {
-          const detectedLang = detectScriptLanguage(item.words);
+          const detectedLang = scripts.detectScriptLanguage(item.words);
           if (!detectedLang || !isRomanizationDisabledForLang(detectedLang)) {
             romanizationBatch.push({ index, text: item.words });
           }
@@ -329,7 +331,7 @@ async function processBatchTranslationsAndRomanizations(
         injectTranslation(doc, lyricElement, translationResult, translationLanguage);
         recordLyricDecoration(index, { translation: translationResult, translationLanguage });
         didInjectCachedContent = true;
-      } else if (sourceLanguage !== targetTranslationLang || hasNonLatinScript(item.words) || !sourceLanguage) {
+      } else if (sourceLanguage !== targetTranslationLang || scripts.hasNonLatinScript(item.words) || !sourceLanguage) {
         translationBatch.push({ index, text: item.words });
       }
     }
@@ -348,6 +350,7 @@ async function processBatchTranslationsAndRomanizations(
     promises.push(
       (async () => {
         const response = await romanizeBatch({
+          scripts,
           lines: romanizationBatch.map(b => b.text),
           targetLanguage: targetTranslationLang,
           sourceLanguage: sourceLanguage || undefined,
@@ -381,6 +384,7 @@ async function processBatchTranslationsAndRomanizations(
     promises.push(
       (async () => {
         const response = await translateBatch({
+          scripts,
           lines: translationBatch.map(b => b.text),
           targetLanguage: targetTranslationLang,
           sourceLanguage: sourceLanguage || undefined,

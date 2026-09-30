@@ -4,6 +4,11 @@ const LATIN_LETTERS = /\p{Script=Latin}/gu;
 const LATIN_LOOKALIKE_LETTERS = /[\p{Script=Cyrillic}\p{Script=Greek}]/gu;
 const NON_LETTERS = /[^\p{L}\p{M}]+/u;
 
+export interface ScriptClassifier {
+  hasNonLatinScript(text: string): boolean;
+  detectScriptLanguage(text: string): string | null;
+}
+
 interface ScriptBalance {
   latin: number;
   lookalikes: number;
@@ -16,17 +21,26 @@ function scriptBalance(text: string): ScriptBalance {
   };
 }
 
-function isStylizedLatinWord(word: string, line: ScriptBalance): boolean {
-  const { latin, lookalikes } = scriptBalance(word);
-  if (lookalikes === 0) return false;
-  return latin > lookalikes || (latin === lookalikes && line.latin > line.lookalikes);
+function leansLatin({ latin, lookalikes }: ScriptBalance): boolean | null {
+  return latin === lookalikes ? null : latin > lookalikes;
 }
 
-export function hasNonLatinScript(text: string): boolean {
-  const line = scriptBalance(text);
-  return text.split(NON_LETTERS).some(word => containsNonLatin(word) && !isStylizedLatinWord(word, line));
-}
+export function createScriptClassifier(songLines: readonly string[]): ScriptClassifier {
+  const song = scriptBalance(songLines.join("\n"));
 
-export function detectScriptLanguage(text: string): string | null {
-  return hasNonLatinScript(text) ? detectNonLatinLanguage(text) : null;
+  const isStylizedLatinWord = (word: string, line: ScriptBalance): boolean => {
+    const balance = scriptBalance(word);
+    if (balance.lookalikes === 0) return false;
+    return leansLatin(balance) ?? leansLatin(line) ?? leansLatin(song) ?? false;
+  };
+
+  const hasNonLatinScript = (text: string): boolean => {
+    const line = scriptBalance(text);
+    return text.split(NON_LETTERS).some(word => containsNonLatin(word) && !isStylizedLatinWord(word, line));
+  };
+
+  return {
+    hasNonLatinScript,
+    detectScriptLanguage: text => (hasNonLatinScript(text) ? detectNonLatinLanguage(text) : null),
+  };
 }
