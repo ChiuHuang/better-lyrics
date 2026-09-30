@@ -1,6 +1,6 @@
+import { DISCORD_INVITE_URL, GITHUB_REPO_URL } from "@constants";
 import { t } from "@core/i18n";
 
-const REPO_URL = "https://github.com/better-lyrics/better-lyrics";
 const LINK_MARKER = "\u2063";
 
 interface Link {
@@ -33,11 +33,11 @@ function fillLinked(el: HTMLElement, key: string, links: Link[]): void {
 
 export function renderAboutLinks(root: ParentNode): void {
   const slots: Record<string, [string, Link[]]> = {
-    openSource: ["options_about_openSourceBody", [{ href: REPO_URL, text: "GitHub" }]],
-    discord: ["options_about_communityDiscord", [{ href: "https://discord.gg/UsHE3d5fWF", text: "Discord" }]],
+    openSource: ["options_about_openSourceBody", [{ href: GITHUB_REPO_URL, text: "GitHub" }]],
+    discord: ["options_about_communityDiscord", [{ href: DISCORD_INVITE_URL, text: "Discord" }]],
     issue: [
       "options_about_communityIssue",
-      [{ href: `${REPO_URL}/issues/new/choose`, text: t("options_about_fileIssue") }],
+      [{ href: `${GITHUB_REPO_URL}/issues/new/choose`, text: t("options_about_fileIssue") }],
     ],
     madeBy: [
       "options_about_madeByBody",
