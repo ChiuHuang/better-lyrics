@@ -1104,7 +1104,9 @@ async function syncBackupWarning(): Promise<void> {
   const slot = document.getElementById("identity-warn-slot");
   if (!slot) return;
   const [{ keyId }, stored] = await Promise.all([getIdentity(), readBackedUpKeyId()]);
-  slot.toggleAttribute("data-backed-up", isIdentityBackedUp(stored, keyId));
+  const backedUp = isIdentityBackedUp(stored, keyId);
+  slot.toggleAttribute("data-backed-up", backedUp);
+  slot.toggleAttribute("inert", backedUp);
 }
 
 async function handleImportIdentity(): Promise<void> {
