@@ -116,13 +116,18 @@ function initializePopout() {
 
 export function mountCodeEditor(): void {
   if (mounted) return;
-  mounted = true;
   logEditor("Mounting code editor");
 
   const editorElement = document.getElementById("editor")!;
   const isStandalone = document.querySelector(".theme-name-display.standalone") !== null;
   const view = createEditorView(createEditorState("Loading...", { enableSearch: isStandalone }), editorElement);
-  editorStateManager.setEditor(view);
+  try {
+    editorStateManager.setEditor(view);
+  } catch (err) {
+    view.destroy();
+    throw err;
+  }
+  mounted = true;
 
   initializeEditorKeyboardShortcuts();
   initializeFileOperations();
