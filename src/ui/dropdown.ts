@@ -25,6 +25,14 @@ export interface Dropdown {
 }
 
 const MENU_MIN_WIDTH_PX = 200;
+const CLOSE_FALLBACK_MS = 150;
+
+// The minifier rewrites 150ms as .15s, so honour both units.
+function cssTimeMs(value: string): number {
+  const amount = Number.parseFloat(value);
+  if (Number.isNaN(amount)) return CLOSE_FALLBACK_MS;
+  return value.trim().endsWith("ms") ? amount : amount * 1000;
+}
 let dropdownCount = 0;
 
 export function createDropdown(config: DropdownConfig): Dropdown {
@@ -210,8 +218,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     document.removeEventListener("pointerdown", onOutsidePointer, true);
     window.removeEventListener("resize", onViewportChange);
     window.removeEventListener("scroll", onViewportChange, { capture: true });
-    const duration =
-      Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--duration-quick")) || 150;
+    const duration = cssTimeMs(getComputedStyle(document.documentElement).getPropertyValue("--duration-quick"));
     closeTimer = window.setTimeout(() => {
       menu.classList.remove("is-open", "is-closing");
       menu.remove();

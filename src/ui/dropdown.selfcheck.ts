@@ -101,6 +101,18 @@ dropdown.setOptions(options(3), "v1");
   assert.equal(trigger.getAttribute("aria-expanded"), "false", "Tab closes the menu");
 }
 
+// -- Regressions: the close animation waits for the minified token --------------------------
+{
+  doc.documentElement.style.setProperty("--duration-quick", ".15s");
+  trigger.click();
+  trigger.click();
+  await new Promise(resolve => setTimeout(resolve, 60));
+  assert.ok(menu(), "regression: a seconds-valued --duration-quick keeps the menu for its close animation");
+  await new Promise(resolve => setTimeout(resolve, 150));
+  assert.equal(menu(), null, "the menu is removed once the close animation ends");
+  doc.documentElement.style.removeProperty("--duration-quick");
+}
+
 // -- Hidden and destroy --------------------------
 {
   trigger.click();
