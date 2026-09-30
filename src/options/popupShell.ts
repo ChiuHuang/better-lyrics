@@ -1,3 +1,5 @@
+import { controlIcons, parseSvgString } from "@modules/ui/lyricsDock/icons";
+import { svgIcon } from "@/options/unison/icons";
 import { type CardTabs, initCardTabs, rovingIndex, travelDirection } from "@/ui/cardTabs";
 
 // -- Version --------------------------
@@ -96,4 +98,24 @@ export function initPopupCards(): void {
 // a bar measured while its page was hidden sits at x=0; place it without a transition or it sweeps in
 export function placePageCard(page: HTMLElement): void {
   pageCards.get(page)?.place(true);
+}
+
+// -- Icons --------------------------
+
+const SLOT_ICONS: Record<string, { svg: () => SVGElement | null; className?: string }> = {
+  chevron: { svg: () => svgIcon("chevron"), className: "ui-row__chevron" },
+  refresh: { svg: () => parseSvgString(controlIcons.refresh), className: "refresh-icon" },
+  info: { svg: () => svgIcon("info") },
+  externalLink: { svg: () => svgIcon("externalLink") },
+};
+
+export function mountIcons(root: ParentNode): void {
+  for (const slot of root.querySelectorAll<HTMLElement>("[data-icon]")) {
+    const entry = SLOT_ICONS[slot.dataset.icon ?? ""];
+    const svg = entry?.svg();
+    if (!svg) continue;
+    if (entry.className) svg.classList.add(entry.className);
+    svg.setAttribute("aria-hidden", "true");
+    slot.replaceWith(svg);
+  }
 }

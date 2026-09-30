@@ -161,3 +161,12 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 @media (prefers-reduced-motion: reduce) {
   .page.active > .ui-card > *, .page--flow.active { animation: none; }
 }
+
+/* -- Fullscreen dependents: dimmed while fullscreen is disabled; values still save -- */
+
+[data-fs-deps] { transition: opacity var(--duration-fast) var(--ease-smooth-out); }
+[data-fs-deps][data-muted] { opacity: 0.4; pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-fs-deps] { transition: none; }
+}

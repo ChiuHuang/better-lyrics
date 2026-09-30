@@ -31,7 +31,7 @@ import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
 import { syncVideoQualityControls } from "@/options/videoQualityControls";
-import { initPopupCards, initPopupTabs, placePageCard, renderAppVersion } from "@/options/popupShell";
+import { initPopupCards, initPopupTabs, mountIcons, placePageCard, renderAppVersion } from "@/options/popupShell";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
 interface Options extends VideoQualitySettings {
@@ -406,6 +406,7 @@ const setOptionsInForm = (items: Options): void => {
     items.isFullscreenControlsEnabled;
   (document.getElementById("isStylizedAnimationsEnabled") as HTMLInputElement).checked =
     items.isStylizedAnimationsEnabled;
+  syncFullscreenDependents();
   setLetterWaveSwitchState(items.letterWavePref);
   (document.getElementById("isPassiveScrollEnabled") as HTMLInputElement).checked = items.isPassiveScrollEnabled;
   (document.getElementById("isPictureInPictureEnabled") as HTMLInputElement).checked = items.isPictureInPictureEnabled;
@@ -579,6 +580,13 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
   return liElem;
 }
 
+// -- Fullscreen dependents --------------------------
+
+function syncFullscreenDependents(): void {
+  const master = document.getElementById("isFullScreenDisabled") as HTMLInputElement | null;
+  document.querySelector("[data-fs-deps]")?.toggleAttribute("data-muted", master?.checked ?? false);
+}
+
 // -- Letter wave switch --------------------------
 
 const LETTER_WAVE_ORDER: LetterWavePref[] = ["off", "auto", "on"];
@@ -660,9 +668,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadLocaleOverride();
   initI18n();
   renderAppVersion(document.getElementById("app-version"));
+  mountIcons(document);
   populateLanguageDropdown();
   initSettingHelpTooltips();
   initLetterWaveSwitch();
+  document.getElementById("isFullScreenDisabled")?.addEventListener("change", syncFullscreenDependents);
   restoreOptions();
   initPopupCards();
   initPopupTabs(placePageCard);

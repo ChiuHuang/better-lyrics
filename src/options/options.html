@@ -91,142 +91,112 @@
 					</div>
 				</div>
 			</section>
-			<div class="page tab-content" id="display-content">
-				<div class="settings-group">
-					<h2>
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-							<path fill-rule="evenodd" d="M2.25 5.25a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3V15a3 3 0 0 1-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 0 1-.53 1.28h-9a.75.75 0 0 1-.53-1.28l.621-.622a2.25 2.25 0 0 0 .659-1.59V18h-3a3 3 0 0 1-3-3V5.25Zm1.5 0v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5Z" clip-rule="evenodd"></path>
-						</svg>
-
-						__MSG_options_display_title__
-					</h2>
-					<p>__MSG_options_display_description__</p>
-					<div class="container">
-						<span>__MSG_options_display_disableFullscreen__</span>
-						<label>
-							<input type="checkbox" id="isFullScreenDisabled">
-							<span class="checkmark"></span>
-						</label>
+			<section class="page tab-content" id="display-content">
+				<div class="ui-card">
+					<div class="ui-card__head">
+						<div class="ui-card__tabs">
+							<button class="ui-card__tab" data-tab="lyrics" type="button" aria-selected="true">__MSG_unison_lyrics__</button>
+							<button class="ui-card__tab" data-tab="fullscreen" type="button" aria-selected="false">__MSG_options_display_fullscreenTab__</button>
+							<button class="ui-card__tab" data-tab="video" type="button" aria-selected="false">__MSG_options_display_videoTab__</button>
+							<span class="ui-card__bar"></span>
+						</div>
 					</div>
-					<div class="container">
-						<span>__MSG_options_display_autoHideCursor__</span>
-						<label>
-							<input type="checkbox" id="cursorAutoHide">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container">
-						<span>__MSG_options_display_albumArt__</span>
-						<label>
-							<input type="checkbox" id="albumArt">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container">
-						<span>__MSG_options_display_fullscreenControls__</span>
-						<label>
-							<input type="checkbox" id="isFullscreenControlsEnabled">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container" id="high-resolution-video-setting">
-						<div class="setting-row__text">
-							<div class="setting-row__title-line">
-								<span id="highResolutionVideoLabel">__MSG_options_display_highResolutionVideo__</span>
-								<span class="setting-help" tabindex="0" data-tooltip="__MSG_options_display_highResolutionVideoInfo__" aria-label="__MSG_options_display_highResolutionVideoInfo__">?</span>
+					<div class="ui-card__body">
+						<div class="ui-panel" data-panel="lyrics">
+							<div class="ui-row">
+								<span class="ui-row__label">__MSG_options_display_stylizedAnimations__</span>
+								<label><input type="checkbox" id="isStylizedAnimationsEnabled"><span class="checkmark"></span></label>
+							</div>
+							<div class="ui-row">
+								<span class="ui-row__label">
+									<span id="letterWaveLabel">__MSG_options_display_letterWave__</span>
+									<span class="setting-badge">__MSG_options_display_letterWaveBadge__</span>
+									<span class="setting-help" tabindex="0" data-tooltip="__MSG_options_display_letterWaveTooltip__ __MSG_options_display_letterWaveTooltipStates__" aria-label="__MSG_options_display_letterWaveTooltip__ __MSG_options_display_letterWaveTooltipStates__">?</span>
+								</span>
+								<button type="button" class="triswitch" id="letterWaveSwitch" role="slider" aria-labelledby="letterWaveLabel" aria-valuemin="0" aria-valuemax="2" aria-valuenow="1"></button>
+							</div>
+							<div class="ui-row">
+								<span class="ui-row__label">__MSG_options_display_passiveScroll__</span>
+								<label><input type="checkbox" id="isPassiveScrollEnabled"><span class="checkmark"></span></label>
+							</div>
+							<button class="ui-row" id="offset-settings-btn" type="button">
+								<span class="ui-row__label">__MSG_options_unisonModal_controlOffset__</span>
+								<span data-icon="chevron"></span>
+							</button>
+							<button class="ui-row" id="unison-actions-btn" type="button">
+								<span class="ui-row__label">__MSG_options_display_unisonActions__</span>
+								<span data-icon="chevron"></span>
+							</button>
+							<button class="ui-row" id="pip-settings-btn" type="button">
+								<span class="ui-row__label">__MSG_options_display_pipWindow__</span>
+								<span data-icon="chevron"></span>
+							</button>
+						</div>
+						<div class="ui-panel" data-panel="fullscreen">
+							<div class="ui-row">
+								<span class="ui-row__label">__MSG_options_display_disableFullscreen__</span>
+								<label><input type="checkbox" id="isFullScreenDisabled"><span class="checkmark"></span></label>
+							</div>
+							<div data-fs-deps>
+								<div class="ui-row">
+									<span class="ui-row__label">__MSG_options_display_autoHideCursor__</span>
+									<label><input type="checkbox" id="cursorAutoHide"><span class="checkmark"></span></label>
+								</div>
+								<div class="ui-row">
+									<span class="ui-row__label">__MSG_options_display_albumArt__</span>
+									<label><input type="checkbox" id="albumArt"><span class="checkmark"></span></label>
+								</div>
+								<div class="ui-row">
+									<span class="ui-row__label">__MSG_options_display_fullscreenControls__</span>
+									<label><input type="checkbox" id="isFullscreenControlsEnabled"><span class="checkmark"></span></label>
+								</div>
+								<div class="ui-row">
+									<span class="ui-row__label">__MSG_options_display_karaoke__</span>
+									<label><input type="checkbox" id="isKaraokeEnabled"><span class="checkmark"></span></label>
+								</div>
+								<div class="ui-row">
+									<span class="ui-row__label">__MSG_options_display_shadersPromo__</span>
+									<label><input type="checkbox" id="isShadersPromoEnabled"><span class="checkmark"></span></label>
+								</div>
 							</div>
 						</div>
-						<label>
-							<input type="checkbox" id="isHighResolutionVideoEnabled" aria-labelledby="highResolutionVideoLabel" checked="">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container" id="preferred-video-quality-setting">
-						<div class="setting-row__text">
-							<div class="setting-row__title-line">
-								<span id="preferredVideoQualityLabel">__MSG_options_display_preferredVideoQuality__</span>
-								<span class="setting-help" tabindex="0" data-tooltip="__MSG_options_display_videoQualityApplyHint__" aria-label="__MSG_options_display_videoQualityApplyHint__">?</span>
+						<div class="ui-panel" data-panel="video">
+							<div class="ui-row" id="high-resolution-video-setting">
+								<span class="ui-row__label">
+									<span id="highResolutionVideoLabel">__MSG_options_display_highResolutionVideo__</span>
+									<span class="setting-help" tabindex="0" data-tooltip="__MSG_options_display_highResolutionVideoInfo__" aria-label="__MSG_options_display_highResolutionVideoInfo__">?</span>
+								</span>
+								<label><input type="checkbox" id="isHighResolutionVideoEnabled" aria-labelledby="highResolutionVideoLabel" checked=""><span class="checkmark"></span></label>
 							</div>
-							<span class="setting-row__hint" id="videoQualityLimitHint" hidden="">__MSG_options_display_videoQualityLimit__</span>
-						</div>
-						<div class="select">
-							<select id="preferredVideoQuality" aria-labelledby="preferredVideoQualityLabel" aria-describedby="videoQualityLimitHint">
-								<option value="auto">__MSG_options_display_videoQualityAuto__</option>
-								<option value="hd4320">4320p (8K)</option>
-								<option value="hd2160">2160p (4K)</option>
-								<option value="hd1440">1440p</option>
-								<option value="hd1080">1080p</option>
-								<option value="hd720">720p</option>
-								<option value="large">480p</option>
-								<option value="medium">360p</option>
-								<option value="small">240p</option>
-								<option value="tiny">144p</option>
-							</select>
-						</div>
-					</div>
-					<div class="container">
-						<span>__MSG_options_display_stylizedAnimations__</span>
-						<label>
-							<input type="checkbox" id="isStylizedAnimationsEnabled">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container">
-						<div class="setting-row__text">
-							<div class="setting-row__title-line">
-								<span id="letterWaveLabel">__MSG_options_display_letterWave__</span>
-								<span class="setting-badge">__MSG_options_display_letterWaveBadge__</span>
-								<span class="setting-help" tabindex="0" data-tooltip="__MSG_options_display_letterWaveTooltip__ __MSG_options_display_letterWaveTooltipStates__" aria-label="__MSG_options_display_letterWaveTooltip__ __MSG_options_display_letterWaveTooltipStates__">?</span>
+							<div class="ui-row" id="preferred-video-quality-setting">
+								<span class="ui-row__label">
+									<span>
+										<span class="ui-row__label">
+											<span id="preferredVideoQualityLabel">__MSG_options_display_preferredVideoQuality__</span>
+											<span class="setting-help" tabindex="0" data-tooltip="__MSG_options_display_videoQualityApplyHint__" aria-label="__MSG_options_display_videoQualityApplyHint__">?</span>
+										</span>
+										<span class="ui-row__sub" id="videoQualityLimitHint" hidden="">__MSG_options_display_videoQualityLimit__</span>
+									</span>
+								</span>
+				<div class="select">
+					<select id="preferredVideoQuality" aria-labelledby="preferredVideoQualityLabel" aria-describedby="videoQualityLimitHint">
+						<option value="auto">__MSG_options_display_videoQualityAuto__</option>
+						<option value="hd4320">4320p (8K)</option>
+						<option value="hd2160">2160p (4K)</option>
+						<option value="hd1440">1440p</option>
+						<option value="hd1080">1080p</option>
+						<option value="hd720">720p</option>
+						<option value="large">480p</option>
+						<option value="medium">360p</option>
+						<option value="small">240p</option>
+						<option value="tiny">144p</option>
+					</select>
+				</div>
 							</div>
 						</div>
-						<button type="button" class="triswitch" id="letterWaveSwitch" role="slider" aria-labelledby="letterWaveLabel" aria-valuemin="0" aria-valuemax="2" aria-valuenow="1"></button>
-					</div>
-					<div class="container">
-						<span>__MSG_options_display_passiveScroll__</span>
-						<label>
-							<input type="checkbox" id="isPassiveScrollEnabled">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container">
-						<span>__MSG_options_display_shadersPromo__</span>
-						<label>
-							<input type="checkbox" id="isShadersPromoEnabled">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container">
-						<span>__MSG_options_display_karaoke__</span>
-						<label>
-							<input type="checkbox" id="isKaraokeEnabled">
-							<span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="container">
-						<span>__MSG_options_display_pipWindow__</span>
-						<button class="small-btn" id="pip-settings-btn">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path d="M13 17c0-1.886 0-2.828.586-3.414S15.114 13 17 13h1c1.886 0 2.828 0 3.414.586S22 15.114 22 17s0 2.828-.586 3.414S19.886 21 18 21h-1c-1.886 0-2.828 0-3.414-.586S13 18.886 13 17"></path><path fill-rule="evenodd" d="M10 3h4c3.771 0 5.657 0 6.828 1.172c.95.949 1.13 2.694 1.164 5.328c.012.937.018 1.405-.275 1.703c-.294.297-.768.297-1.717.297h-2.5c-2.828 0-4.243 0-5.121.879c-.879.878-.879 2.293-.879 5.121v2c0 .466 0 .699-.076.883a1 1 0 0 1-.541.54C10.699 21 10.466 21 10 21c-3.771 0-5.657 0-6.828-1.172S2 16.771 2 13v-2c0-3.771 0-5.657 1.172-6.828S6.229 3 10 3M8.03 6.97a.75.75 0 0 0-1.06 1.06l2.72 2.72H8.5a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 .75-.75v-3a.75.75 0 0 0-1.5 0v1.19z" clip-rule="evenodd"></path></svg>
-							<span>__MSG_options_manage__</span>
-						</button>
-					</div>
-					<div class="container">
-						<span>__MSG_options_display_unisonActions__</span>
-						<button class="small-btn" id="unison-actions-btn">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-								<path fill-rule="evenodd" d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 0 1-.517.608 7.45 7.45 0 0 0-.478.198.798.798 0 0 1-.796-.064l-.453-.324a1.875 1.875 0 0 0-2.416.2l-.243.243a1.875 1.875 0 0 0-.2 2.416l.324.453a.798.798 0 0 1 .064.796 7.448 7.448 0 0 0-.198.478.798.798 0 0 1-.608.517l-.55.092a1.875 1.875 0 0 0-1.566 1.849v.344c0 .916.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517.06.162.127.321.198.478a.798.798 0 0 1-.064.796l-.324.453a1.875 1.875 0 0 0 .2 2.416l.243.243c.648.648 1.67.733 2.416.2l.453-.324a.798.798 0 0 1 .796-.064c.157.071.316.137.478.198.267.1.47.327.517.608l.092.55c.15.903.932 1.566 1.849 1.566h.344c.916 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 0 1 .517-.608 7.52 7.52 0 0 0 .478-.198.798.798 0 0 1 .796.064l.453.324a1.875 1.875 0 0 0 2.416-.2l.243-.243c.648-.648.733-1.67.2-2.416l-.324-.453a.798.798 0 0 1-.064-.796c.071-.157.137-.316.198-.478.1-.267.327-.47.608-.517l.55-.091a1.875 1.875 0 0 0 1.566-1.85v-.344c0-.916-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 0 1-.608-.517 7.507 7.507 0 0 0-.198-.478.798.798 0 0 1 .064-.796l.324-.453a1.875 1.875 0 0 0-.2-2.416l-.243-.243a1.875 1.875 0 0 0-2.416-.2l-.453.324a.798.798 0 0 1-.796.064 7.462 7.462 0 0 0-.478-.198.798.798 0 0 1-.517-.608l-.091-.55a1.875 1.875 0 0 0-1.85-1.566h-.344ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" clip-rule="evenodd"></path>
-							</svg>
-							<span>__MSG_options_manage__</span>
-						</button>
-					</div>
-					<div class="container">
-						<span>__MSG_options_unisonModal_controlOffset__</span>
-						<button class="small-btn" id="offset-settings-btn">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12m10-4a1 1 0 1 0-2 0v5a1 1 0 0 0 1 1h5a1 1 0 1 0 0-2h-4z" clip-rule="evenodd"></path></svg>
-							<span>__MSG_options_manage__</span>
-						</button>
 					</div>
 				</div>
-			</div>
+			</section>
 			<div class="page tab-content" id="language-content">
 				<div class="settings-group">
 					<h2>
