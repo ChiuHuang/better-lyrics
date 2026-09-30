@@ -98,7 +98,7 @@
   transition: transform var(--duration-fast) var(--ease-smooth-out);
 }
 .ui-card__action { margin-inline-start: auto; }
-.ui-card__body { min-height: 0; padding: var(--card-pad); transition: height var(--duration-fast) var(--ease-smooth-out); }
+.ui-card__body { box-sizing: border-box; min-height: 0; padding: var(--card-pad); transition: height var(--duration-fast) var(--ease-smooth-out); }
 .ui-card__body.is-resizing { overflow: hidden; }
 
 /* Panels enter from the travel direction. Only card children animate; the card shell never blinks. */
