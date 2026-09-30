@@ -5,6 +5,7 @@ const { window } = new JSDOM("<!doctype html><html><body></body></html>", { pret
 Object.assign(globalThis, {
   document: window.document,
   matchMedia: () => ({ matches: false }),
+  getComputedStyle: window.getComputedStyle.bind(window),
   requestAnimationFrame: window.requestAnimationFrame.bind(window),
 });
 
@@ -37,6 +38,10 @@ const { barTransform, initCardTabs, rovingIndex, travelDirection } = await impor
   assert.equal(rovingIndex(0, "ArrowRight", 1), 0, "a single tab stays put");
   assert.equal(rovingIndex(-1, "ArrowRight", 3), 0, "no focused tab starts at the first");
   assert.equal(rovingIndex(0, "ArrowRight", 0), -1, "no tabs: nothing to move to");
+  assert.equal(rovingIndex(0, "ArrowLeft", 3, true), 1, "rtl: ArrowLeft moves to the next tab");
+  assert.equal(rovingIndex(0, "ArrowRight", 3, true), 2, "rtl: ArrowRight wraps back from the first tab");
+  assert.equal(rovingIndex(2, "ArrowLeft", 3, true), 0, "rtl: ArrowLeft wraps from the last tab");
+  assert.equal(rovingIndex(1, "Home", 3, true), 0, "rtl: Home still goes to the first tab");
 }
 
 // -- DOM wiring --------------------------
@@ -145,6 +150,29 @@ function buildCard(withAction: boolean): HTMLElement {
     "a head that also holds an action is not marked as a tablist"
   );
   assert.equal(card.querySelector(".ui-card__tab")?.getAttribute("role"), "tab", "tabs keep their role anyway");
+}
+
+{
+  const card = buildCard(true);
+  const head = card.querySelector(".ui-card__head") as HTMLElement;
+  const group = window.document.createElement("div");
+  group.className = "ui-card__tabs";
+  group.append(...Array.from(head.querySelectorAll(".ui-card__tab, .ui-card__bar")));
+  head.prepend(group);
+  initCardTabs(card);
+  assert.equal(group.getAttribute("role"), "tablist", "tabs grouped apart from the action form the tablist");
+  assert.equal(head.hasAttribute("role"), false, "the head holding the group and the action is not the tablist");
+}
+
+{
+  const card = buildCard(false);
+  card.style.direction = "rtl";
+  initCardTabs(card);
+  const tabs = Array.from(card.querySelectorAll<HTMLButtonElement>(".ui-card__tab"));
+  tabs[0].focus();
+  tabs[0].dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true, cancelable: true }));
+  assert.equal(window.document.activeElement, tabs[1], "rtl: ArrowLeft moves focus to the next tab");
+  assert.equal(tabs[1].getAttribute("aria-selected"), "true", "rtl: ArrowLeft selects the next tab");
 }
 
 console.log("cardTabs self-check passed");

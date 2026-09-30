@@ -59,19 +59,22 @@
   flex-direction: column;
   min-height: 0;
   border: var(--card-edge);
-  border-radius: var(--radius-card);
+  border-radius: 0.75rem;
   background: var(--card-bg);
+  box-shadow: rgba(0, 0, 0, 0.05) 0 4px 6px -1px, rgba(0, 0, 0, 0.03) 0 2px 4px -1px;
 }
 .ui-card__head {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
   min-height: var(--card-head-height);
   padding: 0 var(--text-inset);
-  border-bottom: 1px solid var(--divider);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
-.ui-card__title { font-size: 0.9375rem; font-weight: 600; color: var(--text-strong); }
+/* Groups the tabs and bar apart from a title or action, so the group can be the tablist. The head stays the bar's positioned ancestor. */
+.ui-card__tabs { display: flex; align-items: center; align-self: stretch; gap: 24px; }
+.ui-card__title { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.875rem; font-weight: 600; color: var(--text-strong); }
 .ui-card__tab {
   height: var(--card-head-height);
   margin: 0;
@@ -80,8 +83,9 @@
   background: none;
   color: var(--text-label);
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
   transition: color var(--duration-quick) ease-out;
 }
@@ -102,7 +106,7 @@
 .ui-card__body { box-sizing: border-box; min-height: 0; padding: var(--card-pad); transition: height var(--duration-fast) var(--ease-smooth-out); }
 .ui-card__body.is-resizing { overflow: hidden; }
 
-.ui-panel { display: none; }
+.ui-panel { display: none; --ui-enter: none; }
 .ui-panel.is-active { display: block; animation: var(--ui-enter, none) var(--duration-fast) var(--ease-smooth-out); }
 [data-ui-dir="next"] { --ui-enter: ui-enter-from-end; }
 [data-ui-dir="prev"] { --ui-enter: ui-enter-from-start; }
@@ -347,7 +351,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 
 /* -- Hidden: the display rules above would otherwise beat the UA [hidden] rule -- */
 :is(
-  .ui-button, .ui-card, .ui-card__head, .ui-panel, .ui-row, .ui-row__label, .ui-row__sub, .ui-action-strip,
+  .ui-button, .ui-card, .ui-card__head, .ui-card__tabs, .ui-panel, .ui-row, .ui-row__label, .ui-row__sub, .ui-action-strip,
   .ui-chip, .ui-sync-tag, .ui-dropdown, .ui-dropdown__trigger, .ui-menu, .ui-menu__options, .ui-menu__option, .ui-frame
 )[hidden] {
   display: none;
@@ -355,6 +359,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 
 /* -- Superellipse corners -- */
 @supports (corner-shape: superellipse(1.6)) {
+  .ui-card { border-radius: var(--radius-card); }
   .ui-button, .ui-field, .ui-card, .ui-row, .ui-sync-tag, .ui-dropdown__trigger,
   .ui-menu, .ui-menu__search, .ui-menu__option, .ui-frame {
     corner-shape: superellipse(1.6);

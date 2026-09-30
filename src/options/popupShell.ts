@@ -1,4 +1,4 @@
-import { rovingIndex, travelDirection } from "@/ui/cardTabs";
+import { type CardTabs, initCardTabs, rovingIndex, travelDirection } from "@/ui/cardTabs";
 
 // -- Version --------------------------
 
@@ -58,7 +58,7 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
   tabs.addEventListener("keydown", event => {
     const focused = buttons.indexOf(document.activeElement as HTMLButtonElement);
     if (focused < 0) return;
-    const index = rovingIndex(focused, event.key, buttons.length);
+    const index = rovingIndex(focused, event.key, buttons.length, getComputedStyle(tabs).direction === "rtl");
     if (index < 0) return;
     event.preventDefault();
     buttons[index].focus();
@@ -68,4 +68,32 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
   const restored = buttons.find(b => b.dataset.target === `#${location.hash.slice(1).split("/")[0]}`);
   activate(restored ?? buttons[0], false);
   void document.fonts.ready.then(() => movePill(tabs, false));
+}
+
+// -- Cards --------------------------
+
+const pageCards = new Map<HTMLElement, CardTabs>();
+
+function hashSubTab(pageId: string): string | null {
+  const [page, sub] = location.hash.slice(1).split("/");
+  return page === pageId && sub ? sub : null;
+}
+
+export function initPopupCards(): void {
+  for (const page of document.querySelectorAll<HTMLElement>("#options > .tab-content")) {
+    const card = page.querySelector<HTMLElement>(".ui-card");
+    if (!card) continue;
+    const cardTabs = initCardTabs(card, {
+      animateHeight: page.id !== "sources-content",
+      onChange: id => history.replaceState(null, "", `#${page.id}/${id}`),
+    });
+    const sub = hashSubTab(page.id);
+    if (sub) cardTabs.select(sub, { instant: true });
+    pageCards.set(page, cardTabs);
+  }
+}
+
+// a bar measured while its page was hidden sits at x=0; place it without a transition or it sweeps in
+export function placePageCard(page: HTMLElement): void {
+  pageCards.get(page)?.place(true);
 }

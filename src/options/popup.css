@@ -149,3 +149,15 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 @media (prefers-reduced-motion: reduce) {
   .tabs .tab, .tabs__pill, .head-slot, .tabs-slot { transition: none; }
 }
+
+/* -- Card in the popup ------------------------------------------------------ */
+
+.page > .ui-card { flex: none; }
+
+/* every tab is the same card in the same place, so only its contents enter; animating the card blinked its surface */
+.page.active > .ui-card > *,
+.page--flow.active { animation: var(--ui-enter, none) var(--duration-fast) var(--ease-smooth-out); }
+
+@media (prefers-reduced-motion: reduce) {
+  .page.active > .ui-card > *, .page--flow.active { animation: none; }
+}

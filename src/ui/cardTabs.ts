@@ -7,12 +7,15 @@ export function travelDirection(from: number, to: number): "next" | "prev" | "" 
   return to > from ? "next" : "prev";
 }
 
-export function rovingIndex(current: number, key: string, count: number): number {
+/** In right-to-left layouts the arrows follow the visual order, so ArrowLeft moves forward. */
+export function rovingIndex(current: number, key: string, count: number, rtl = false): number {
   if (count <= 0) return -1;
+  const forward = rtl ? "ArrowLeft" : "ArrowRight";
+  const back = rtl ? "ArrowRight" : "ArrowLeft";
   switch (key) {
-    case "ArrowRight":
+    case forward:
       return (current + 1) % count;
-    case "ArrowLeft":
+    case back:
       return current <= 0 ? count - 1 : current - 1;
     case "Home":
       return 0;
@@ -147,7 +150,7 @@ export function initCardTabs(card: HTMLElement, { animateHeight = true, onChange
   const onKeydown = (event: KeyboardEvent): void => {
     const focused = tabs.indexOf(document.activeElement as HTMLButtonElement);
     if (focused < 0) return;
-    const index = rovingIndex(focused, event.key, tabs.length);
+    const index = rovingIndex(focused, event.key, tabs.length, getComputedStyle(card).direction === "rtl");
     if (index < 0) return;
     event.preventDefault();
     tabs[index].focus();

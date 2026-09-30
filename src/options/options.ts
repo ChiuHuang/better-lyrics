@@ -31,7 +31,7 @@ import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
 import { syncVideoQualityControls } from "@/options/videoQualityControls";
-import { initPopupTabs, renderAppVersion } from "@/options/popupShell";
+import { initPopupCards, initPopupTabs, placePageCard, renderAppVersion } from "@/options/popupShell";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
 interface Options extends VideoQualitySettings {
@@ -664,7 +664,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   initSettingHelpTooltips();
   initLetterWaveSwitch();
   restoreOptions();
-  initPopupTabs(() => undefined);
+  initPopupCards();
+  initPopupTabs(placePageCard);
   checkForStableRelease();
 });
 
