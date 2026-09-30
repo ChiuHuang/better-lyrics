@@ -359,11 +359,11 @@ YouTube Music™, YouTube™, Google™, and Chrome™ are trademarks of Google 
 
 ## Star History
 
-<a href="https://www.star-history.com/?type=date&legend=top-left&repos=better-lyrics%2Fbetter-lyrics">
+<a href="https://www.star-history.com/?repos=better-lyrics%2Fbetter-lyrics&type=date&releases=&legend=bottom-right">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=better-lyrics/better-lyrics&type=date&theme=dark&legend=top-left&sealed_token=J9IwYlZ-HGwqs7dxJCnowQ3wlZ0Fk1M57QbNY8fPYlGhkJCr00lCXEeFvKJ3NegBZikDzmT-5Z2zMrYhV00rhRYZLalwZOe09JI38lDIvk3iJd0MQDWR7Wc00peRdRtQXrXa23fbkUZTxnlCmlh38ZotjrpAAXoHGqhwAlLO0iQXEC0iOUGVM0p6u0TB" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=better-lyrics/better-lyrics&type=date&legend=top-left&sealed_token=J9IwYlZ-HGwqs7dxJCnowQ3wlZ0Fk1M57QbNY8fPYlGhkJCr00lCXEeFvKJ3NegBZikDzmT-5Z2zMrYhV00rhRYZLalwZOe09JI38lDIvk3iJd0MQDWR7Wc00peRdRtQXrXa23fbkUZTxnlCmlh38ZotjrpAAXoHGqhwAlLO0iQXEC0iOUGVM0p6u0TB" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=better-lyrics/better-lyrics&type=date&legend=top-left&sealed_token=J9IwYlZ-HGwqs7dxJCnowQ3wlZ0Fk1M57QbNY8fPYlGhkJCr00lCXEeFvKJ3NegBZikDzmT-5Z2zMrYhV00rhRYZLalwZOe09JI38lDIvk3iJd0MQDWR7Wc00peRdRtQXrXa23fbkUZTxnlCmlh38ZotjrpAAXoHGqhwAlLO0iQXEC0iOUGVM0p6u0TB" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=better-lyrics/better-lyrics&type=date&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=better-lyrics/better-lyrics&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=better-lyrics/better-lyrics&type=date&legend=bottom-right" />
  </picture>
 </a>
 

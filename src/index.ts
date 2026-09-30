@@ -25,6 +25,7 @@ import {
   observeLyricsPageType,
   reloadAlbumArt,
   setupAdObserver,
+  setupFullscreenPlayerBarReveal,
   unmountDock,
 } from "@modules/ui/dom";
 import {
@@ -128,6 +129,7 @@ function init(): () => void {
   }
 
   const cleanupRequestSniffer = setupRequestSniffer();
+  const cleanupPlayerBarReveal = setupFullscreenPlayerBarReveal();
   return () => {
     disposed = true;
     cleanupVideoQualitySettings();
@@ -136,6 +138,7 @@ function init(): () => void {
     disposePictureInPictureBrowserController();
     if (document.querySelector('[data-extension-root="true"]')) cleanupLyrics();
     unmountDock();
+    cleanupPlayerBarReveal();
     disposeKaraoke();
   };
 }
