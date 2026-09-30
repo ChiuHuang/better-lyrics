@@ -3,8 +3,6 @@ import { t } from "@core/i18n";
 import { formatTimeAgo } from "@core/relativeTime";
 import { getLocalStorage, getSyncStorage } from "@core/storage";
 import autoAnimate, { type AnimationController } from "@formkit/auto-animate";
-import DOMPurify from "dompurify";
-import { marked } from "marked";
 import { applyStoreThemeComplete } from "../editor/features/storage";
 import type { AllThemeStats, InstalledStoreTheme, StoreTheme, ThemeStats } from "./types";
 
@@ -448,38 +446,6 @@ function getTestStats(): AllThemeStats {
     };
   }
   return stats;
-}
-
-marked.setOptions({
-  breaks: true,
-  gfm: true,
-});
-
-const renderer = new marked.Renderer();
-renderer.link = ({ href, text }) => {
-  return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-};
-renderer.image = ({ href, title, text }) => {
-  const src = href.replace(
-    /^https?:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/(.+)/,
-    "https://raw.githubusercontent.com/$1/$2"
-  );
-  const titleAttr = title ? ` title="${title}"` : "";
-  return `<img src="${src}" alt="${text}"${titleAttr} />`;
-};
-marked.use({ renderer });
-
-function parseMarkdown(text: string): DocumentFragment {
-  // https://marked.js.org/#usage
-  const content = text.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, "");
-  const html = marked.parse(content, { async: false }) as string;
-
-  const sanitized = DOMPurify.sanitize(html.trim());
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(`<template>${sanitized}</template>`, "text/html");
-  const template = doc.querySelector("template");
-  return template ? template.content : document.createDocumentFragment();
 }
 
 function createShaderIcon(): SVGSVGElement {
@@ -1742,7 +1708,14 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
     }
   }
   if (authorEl) authorEl.textContent = `By ${formatCreators(theme.creators)} · v${theme.version}`;
-  if (descEl) descEl.replaceChildren(parseMarkdown(theme.description));
+  if (descEl) {
+    descEl.replaceChildren();
+    import("./markdown")
+      .then(({ parseMarkdown }) => {
+        if (currentDetailTheme?.id === theme.id) descEl.replaceChildren(parseMarkdown(theme.description));
+      })
+      .catch(err => errorStore("Failed to render theme description:", err));
+  }
 
   const statsEl = document.getElementById("detail-stats");
   const ratingSectionEl = document.getElementById("detail-rating-section");
