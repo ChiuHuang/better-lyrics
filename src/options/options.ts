@@ -31,6 +31,7 @@ import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
 import { syncVideoQualityControls } from "@/options/videoQualityControls";
+import { renderAppVersion } from "@/options/popupShell";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
 interface Options extends VideoQualitySettings {
@@ -672,6 +673,7 @@ function restoreActiveTab(): void {
 document.addEventListener("DOMContentLoaded", async () => {
   await loadLocaleOverride();
   initI18n();
+  renderAppVersion(document.getElementById("app-version"));
   populateLanguageDropdown();
   initTabScrollIndicators();
   initSettingHelpTooltips();
