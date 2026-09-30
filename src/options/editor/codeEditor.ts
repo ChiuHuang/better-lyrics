@@ -4,7 +4,6 @@ import { createEditorState, createEditorView } from "./core/editor";
 import { editorStateManager } from "./core/state";
 import { generateDefaultFilename, importManager, saveCSSToFile } from "./features/import";
 import { saveToStorage } from "./features/themes";
-import { openOptions } from "./ui/dom";
 import { showAlert, showModal } from "./ui/feedback";
 import { errorEditor, logEditor } from "@core/logger";
 
@@ -125,7 +124,6 @@ export function mountCodeEditor(): void {
   const view = createEditorView(createEditorState("Loading...", { enableSearch: isStandalone }), editorElement);
   editorStateManager.setEditor(view);
 
-  document.getElementById("back-btn")?.addEventListener("click", openOptions);
   initializeEditorKeyboardShortcuts();
   initializeFileOperations();
   initializePopout();

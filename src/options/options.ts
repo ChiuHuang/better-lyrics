@@ -734,6 +734,7 @@ function sortableWhenVisible(list: HTMLElement, options: Sortable.Options): void
 // -- CSS editor --------------------------
 
 function setupLazyCodeEditor(): void {
+  document.getElementById("back-btn")?.addEventListener("click", openOptions);
   const button = document.getElementById("edit-css-btn");
   if (!button) return;
   let isRequested = false;
