@@ -391,6 +391,56 @@ kbd {
   color: rgba(255, 255, 255, 0.4);
 }
 
+/* -- Card Submitter --------------------------  */
+
+.unison-card-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.unison-byline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.unison-byline__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 110px;
+}
+
+/* People are circles, like the level ring; content gets the superellipse. */
+.unison-byline__avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06) center / cover;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.unison-byline__avatar--empty {
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.unison-byline__avatar--empty svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
 /* -- No Results --------------------------  */
 
 .unison-empty-state {

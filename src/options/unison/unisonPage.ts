@@ -46,6 +46,7 @@ import { createLanguageDropdown } from "@/options/unison/languageDropdown";
 import { appendLanguageOptions, matchLanguageOption } from "@/options/unison/languages";
 import { renderPreviewInto } from "@/options/unison/lyricsPreview";
 import { detectFormat } from "@/options/unison/lyricsPreviewLines";
+import { createSubmitterByline } from "@/options/unison/submitterByline";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { IS_DEV, devFixtureHint, devFixtures } from "@modules/unison/devFixtures";
 import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
@@ -943,12 +944,22 @@ function createLyricsCard(entry: UnisonSearchEntry | UnisonFeedEntry, options: L
   scoreGroup.appendChild(votes);
   footer.appendChild(scoreGroup);
 
+  const meta = document.createElement("span");
+  meta.className = "unison-card-meta";
+  if (entry.submitter) meta.appendChild(createSubmitterByline(entry.submitter));
   if ("createdAt" in entry) {
+    if (meta.childElementCount) {
+      const dot = document.createElement("span");
+      dot.className = "unison-card-sep";
+      dot.textContent = "\u00B7";
+      meta.appendChild(dot);
+    }
     const time = document.createElement("span");
     time.className = "unison-card-time";
     time.textContent = formatTimeAgo(entry.createdAt * 1000, "narrow");
-    footer.appendChild(time);
+    meta.appendChild(time);
   }
+  if (meta.childElementCount) footer.appendChild(meta);
 
   card.appendChild(header);
   card.appendChild(badges);

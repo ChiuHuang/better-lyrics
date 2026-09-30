@@ -17,6 +17,9 @@ export interface UnisonSubmitter {
   avatarUrl?: string | null;
 }
 
+/** Submitter as feed and search rows carry it: the public actor, without reputation. */
+export type UnisonActor = Omit<UnisonSubmitter, "reputation">;
+
 export interface UnisonFulfillment {
   demand: number;
   requestCount: number;
@@ -61,6 +64,7 @@ export interface UnisonSearchEntry {
   voteCount: number;
   confidence: UnisonConfidence;
   matchScore: number;
+  submitter?: UnisonActor;
 }
 
 export interface UnisonFeedEntry {
@@ -81,6 +85,7 @@ export interface UnisonFeedEntry {
   createdAt: number;
   marks?: Mark[];
   userVote?: 1 | -1 | null;
+  submitter?: UnisonActor;
 }
 
 export interface LinkedVideo {
