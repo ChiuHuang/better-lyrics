@@ -74,6 +74,7 @@
 .ui-card__title { font-size: 0.9375rem; font-weight: 600; color: var(--text-strong); }
 .ui-card__tab {
   height: var(--card-head-height);
+  margin: 0;
   padding: 0;
   border: none;
   background: none;

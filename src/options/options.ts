@@ -31,7 +31,7 @@ import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
 import { syncVideoQualityControls } from "@/options/videoQualityControls";
-import { renderAppVersion } from "@/options/popupShell";
+import { initPopupTabs, renderAppVersion } from "@/options/popupShell";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
 interface Options extends VideoQualitySettings {
@@ -655,93 +655,25 @@ function populateLanguageDropdown(): void {
   });
 }
 
-function restoreActiveTab(): void {
-  if (!location.hash) return;
-
-  const target = `#${location.hash.slice(1)}`;
-  const targetBtn = document.querySelector(`.tab[data-target="${target}"]`);
-  const targetContent = document.querySelector(target);
-  if (!targetBtn || !targetContent) return;
-
-  document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
-  document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
-  targetBtn.classList.add("active");
-  targetContent.classList.add("active");
-}
-
 // Event listeners
 document.addEventListener("DOMContentLoaded", async () => {
   await loadLocaleOverride();
   initI18n();
   renderAppVersion(document.getElementById("app-version"));
   populateLanguageDropdown();
-  initTabScrollIndicators();
   initSettingHelpTooltips();
   initLetterWaveSwitch();
   restoreOptions();
-  restoreActiveTab();
+  initPopupTabs(() => undefined);
   checkForStableRelease();
 });
-document.querySelectorAll("#options input, #options select").forEach(element => {
-  element.addEventListener("change", () => {
-    syncVideoQualityControls(document);
-    saveOptions();
-  });
+
+document.getElementById("options")?.addEventListener("change", event => {
+  const target = event.target as HTMLElement;
+  if (!target.matches("input, select") || target.closest("[data-no-autosave]")) return;
+  syncVideoQualityControls(document);
+  saveOptions();
 });
-
-// Tab switcher
-const tabButtons = document.querySelectorAll(".tab");
-const tabContents = document.querySelectorAll(".tab-content");
-
-tabButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    tabButtons.forEach(btn => btn.classList.remove("active"));
-    tabContents.forEach(content => content.classList.remove("active"));
-
-    button.classList.add("active");
-    const target = button.getAttribute("data-target")!;
-    document.querySelector(target)!.classList.add("active");
-    history.replaceState(null, "", target);
-  });
-});
-
-// -- Tab scroll fade indicators --------------------------
-
-function initTabScrollIndicators(): void {
-  const container = document.querySelector(".tab-container") as HTMLElement;
-  if (!container) return;
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "tab-scroll-wrapper";
-  container.parentNode!.insertBefore(wrapper, container);
-  wrapper.appendChild(container);
-
-  function update(): void {
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-    const overflow = scrollWidth - clientWidth;
-
-    if (overflow <= 2) {
-      delete container.dataset.scrollLeft;
-      delete container.dataset.scrollRight;
-      return;
-    }
-
-    if (scrollLeft > 2) {
-      container.dataset.scrollLeft = "";
-    } else {
-      delete container.dataset.scrollLeft;
-    }
-
-    if (scrollLeft < overflow - 2) {
-      container.dataset.scrollRight = "";
-    } else {
-      delete container.dataset.scrollRight;
-    }
-  }
-
-  container.addEventListener("scroll", update);
-  update();
-}
 
 // -- Setting help tooltips --------------------------
 

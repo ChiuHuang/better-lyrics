@@ -28,6 +28,7 @@ export const openEditCSS = (): void => {
     editCSS.style.display = "block";
     options.style.display = "none";
     themeContent.style.display = "none";
+    document.body.classList.add("is-editing");
   }
 };
 
@@ -40,5 +41,6 @@ export const openOptions = (): void => {
     editCSS.style.display = "";
     options.style.display = "";
     themeContent.style.display = "";
+    document.body.classList.remove("is-editing");
   }
 };

@@ -3,9 +3,9 @@
 		<title>Better Lyrics Settings</title>
 		<link rel="stylesheet" href="/fonts/fonts.css">
 		<link rel="stylesheet" href="../ui/tokens.css">
-		<link rel="stylesheet" href="../ui/primitives.css">
 		<link rel="stylesheet" href="options.css">
 		<link rel="stylesheet" href="store/store.css">
+		<link rel="stylesheet" href="../ui/primitives.css">
 		<link rel="stylesheet" href="popup.css">
 		<style>body:not(.i18n-ready){opacity:0}</style>
 	</head>
@@ -39,29 +39,22 @@
 				</a>
 			</div>
 		</nav>
-		</div></div></div>
-		<div id="options">
-			<div class="tab-container">
-				<button class="tab active" id="general-tab" data-target="#general-content">
-					__MSG_options_tab_general__
-				</button>
-				<button class="tab" id="display-tab" data-target="#display-content">
-					__MSG_options_tab_display__
-				</button>
-				<button class="tab" id="language-tab" data-target="#language-content">
-					__MSG_options_tab_language__
-				</button>
-				<button class="tab" id="sources-tab" data-target="#sources-content">
-					__MSG_options_tab_sources__
-				</button>
-				<button class="tab" id="identity-tab" data-target="#identity-content">
-					__MSG_options_tab_identity__
-				</button>
-				<button class="tab" id="themes-tab" data-target="#themes-content">
-					__MSG_options_tab_themes__
-				</button>
+		<div class="tabs-slot"><div>
+			<div class="tabs-wrap">
+				<div class="tabs" role="tablist">
+					<span class="tabs__pill" aria-hidden="true"></span>
+					<button class="tab active" id="general-tab" data-target="#general-content" role="tab" type="button">__MSG_options_tab_general__</button>
+					<button class="tab" id="display-tab" data-target="#display-content" role="tab" type="button">__MSG_options_tab_display__</button>
+					<button class="tab" id="language-tab" data-target="#language-content" role="tab" type="button">__MSG_options_tab_language__</button>
+					<button class="tab" id="sources-tab" data-target="#sources-content" role="tab" type="button">__MSG_options_tab_sources__</button>
+					<button class="tab" id="identity-tab" data-target="#identity-content" role="tab" type="button">__MSG_options_tab_identity__</button>
+					<button class="tab" id="themes-tab" data-target="#themes-content" role="tab" type="button">__MSG_options_tab_themes__</button>
+				</div>
 			</div>
-			<div class="tab-content active" id="general-content">
+		</div></div>
+		</div></div></div>
+		<main id="options" class="pop__body">
+			<div class="page tab-content active" id="general-content">
 				<div class="settings-group">
 					<h2>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -109,7 +102,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="tab-content" id="display-content">
+			<div class="page tab-content" id="display-content">
 				<div class="settings-group">
 					<h2>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -245,7 +238,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="tab-content" id="language-content">
+			<div class="page tab-content" id="language-content">
 				<div class="settings-group">
 					<h2>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -427,7 +420,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="tab-content" id="sources-content">
+			<div class="page tab-content" id="sources-content">
 				<div class="settings-group">
 					<h2>
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" height="20" width="20">
@@ -444,12 +437,11 @@
 						__MSG_options_sources_description__
 					</p>
 					<div class="container" style="margin-bottom: 0.2rem">
-						<ul id="providers-list" class="sortable-list"></ul>
+						<ul id="providers-list" class="sortable-list" data-no-autosave></ul>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="tab-content" id="themes-content">
+		<div class="page tab-content" id="themes-content">
 			<div class="settings-group">
 				<h2>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -505,7 +497,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="tab-content" id="identity-content">
+		<div class="page tab-content" id="identity-content">
 			<div class="settings-group">
 				<h2>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -556,6 +548,7 @@
 				</div>
 			</div>
 		</div>
+		</main>
 		<div id="status"></div>
 
 		<div id="modal-overlay" class="modal-overlay">
