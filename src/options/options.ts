@@ -41,6 +41,7 @@ import {
   markWhenDownloadCompletes,
   readBackedUpKeyId,
 } from "@/options/identityBackup";
+import { attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
 interface Options extends VideoQualitySettings {
@@ -587,6 +588,14 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
   return liElem;
 }
 
+// -- Scroll fades --------------------------
+
+function initPopupScrollFades(): void {
+  const body = document.getElementById("options");
+  if (body) attachScrollFade(body);
+  for (const el of document.querySelectorAll<HTMLElement>("[data-scroll-fade]")) attachScrollFade(el);
+}
+
 // -- Fullscreen dependents --------------------------
 
 function syncFullscreenDependents(): void {
@@ -686,6 +695,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("isFullScreenDisabled")?.addEventListener("change", syncFullscreenDependents);
   restoreOptions();
   initPopupCards();
+  initPopupScrollFades();
   initPopupTabs(page => pageCard(page)?.place(true));
   checkForStableRelease();
 });

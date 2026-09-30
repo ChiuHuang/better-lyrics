@@ -2,6 +2,7 @@ import { t } from "@core/i18n";
 import { svgIcon } from "@/options/unison/icons";
 import { type DropdownOption, filterOptions, shouldShowSearch } from "@/ui/dropdownFilter";
 import { menuPlacement } from "@/ui/menuPlacement";
+import { attachScrollFade } from "@/ui/scrollFade";
 
 export type { DropdownOption } from "@/ui/dropdownFilter";
 
@@ -70,6 +71,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
   list.id = `ui-dropdown-list-${++dropdownCount}`;
   trigger.setAttribute("aria-controls", list.id);
   menu.appendChild(list);
+  const listFade = attachScrollFade(list);
 
   let options: DropdownOption[] = [];
   let current = "";
@@ -291,6 +293,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     },
     destroy() {
       close(false);
+      listFade.destroy();
       menu.remove();
       root.removeEventListener("keydown", onKeydown);
       root.remove();

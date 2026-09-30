@@ -4,11 +4,19 @@ import { JSDOM } from "jsdom";
 const dom = new JSDOM("<!doctype html><html><body></body></html>", { pretendToBeVisual: true });
 const { window } = dom;
 const messages: Record<string, string> = { ui_dropdownSearch: "Search", ui_dropdownNoResults: "No results" };
+Object.assign(window, {
+  ResizeObserver: class {
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+  },
+});
 Object.assign(globalThis, {
   window,
   document: window.document,
   DOMParser: window.DOMParser,
   Node: window.Node,
+  MutationObserver: window.MutationObserver,
   Element: window.Element,
   HTMLElement: window.HTMLElement,
   HTMLButtonElement: window.HTMLButtonElement,
@@ -124,6 +132,18 @@ dropdown.setOptions(options(3), "v1");
   assert.equal(dropdown.root.isConnected, false, "destroy removes the root");
   await new Promise(resolve => setTimeout(resolve, 200));
   assert.equal(menu(), null, "destroy leaves no menu behind");
+}
+
+{
+  const faded = createDropdown({ label: "Faded", onChange: () => {} });
+  doc.body.appendChild(faded.root);
+  faded.setOptions([{ value: "a", label: "A" }], "a");
+  (faded.root.querySelector(".ui-dropdown__trigger") as HTMLButtonElement).click();
+  assert.ok(
+    menu()?.querySelector(".ui-menu__options")?.classList.contains("ui-scroll-fade"),
+    "the option list fades at its scroll edges instead of showing a scrollbar"
+  );
+  faded.destroy();
 }
 
 console.log("dropdown self-check passed");
