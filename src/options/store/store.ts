@@ -2,7 +2,7 @@ import { formatCreators } from "@core/customCss";
 import { t } from "@core/i18n";
 import { formatTimeAgo } from "@core/relativeTime";
 import { getLocalStorage, getSyncStorage } from "@core/storage";
-import autoAnimate, { type AnimationController } from "@formkit/auto-animate";
+import type { AnimationController } from "@formkit/auto-animate";
 import { applyStoreThemeComplete } from "../editor/features/storage";
 import type { AllThemeStats, InstalledStoreTheme, StoreTheme, ThemeStats } from "./types";
 
@@ -1014,8 +1014,12 @@ async function loadMarketplace(): Promise<void> {
 
     await applyFiltersToGrid();
 
-    gridAnimationController = autoAnimate(grid, { duration: 200, easing: "cubic-bezier(0.2, 0, 0, 1)" });
-    gridAnimationController.enable();
+    import("@formkit/auto-animate")
+      .then(({ default: autoAnimate }) => {
+        gridAnimationController = autoAnimate(grid, { duration: 200, easing: "cubic-bezier(0.2, 0, 0, 1)" });
+        gridAnimationController.enable();
+      })
+      .catch(err => warnStore("Grid animation unavailable:", err));
 
     openThemeFromUrlParam();
   } catch (err) {
