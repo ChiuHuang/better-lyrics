@@ -19,6 +19,10 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+export function isLazyChunk(file: string): boolean {
+  return /\.js$/.test(file) && (/^\d+(\.[\da-f]+)?\.js$/.test(file) || file.startsWith("chunks/"));
+}
+
 export function collectSizes(dir: string, minBytes = 10_000): SizeRow[] {
   if (!existsSync(dir)) return [];
   return walk(dir)
@@ -32,7 +36,7 @@ export function collectSizes(dir: string, minBytes = 10_000): SizeRow[] {
         hash: createHash("md5").update(buf).digest("hex"),
       };
     })
-    .filter(row => row.bytes >= minBytes)
+    .filter(row => row.bytes >= minBytes || isLazyChunk(row.file))
     .sort((a, b) => b.bytes - a.bytes || a.file.localeCompare(b.file));
 }
 
@@ -44,17 +48,25 @@ export function findDuplicates(rows: SizeRow[]): string[][] {
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 
+const signed = (n: number) => (n === 0 ? "0" : `${n > 0 ? "+" : ""}${fmt(n)}`);
+
 export function formatTable(rows: SizeRow[], baseline: Record<string, number> = {}): string {
   const lines = ["| File | Bytes | Gzip | Delta vs baseline |", "|---|---|---|---|"];
   for (const row of rows) {
     const base = baseline[row.file];
-    const diff = base === undefined ? undefined : row.bytes - base;
-    const delta = diff === undefined ? "new" : diff === 0 ? "0" : `${diff > 0 ? "+" : ""}${fmt(diff)}`;
-    lines.push(`| \`${row.file}\` | ${fmt(row.bytes)} | ${fmt(row.gzip)} | ${delta} |`);
+    lines.push(
+      `| \`${row.file}\` | ${fmt(row.bytes)} | ${fmt(row.gzip)} | ${base === undefined ? "new" : signed(row.bytes - base)} |`
+    );
+  }
+  const present = new Set(rows.map(row => row.file));
+  for (const [file, bytes] of Object.entries(baseline)) {
+    if (!present.has(file)) lines.push(`| \`${file}\` | removed |  | ${signed(-bytes)} |`);
   }
   const total = rows.reduce((sum, row) => sum + row.bytes, 0);
   const totalGzip = rows.reduce((sum, row) => sum + row.gzip, 0);
-  lines.push(`| **total (listed)** | ${fmt(total)} | ${fmt(totalGzip)} | |`);
+  const baselineTotal = Object.values(baseline).reduce((sum, bytes) => sum + bytes, 0);
+  const totalDelta = Object.keys(baseline).length ? signed(total - baselineTotal) : "";
+  lines.push(`| **total (listed)** | ${fmt(total)} | ${fmt(totalGzip)} | ${totalDelta} |`);
   return lines.join("\n");
 }
 
