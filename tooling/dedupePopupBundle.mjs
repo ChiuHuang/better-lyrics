@@ -1,9 +1,40 @@
+import { existsSync, readFileSync } from "node:fs";
+import { join, posix } from "node:path";
+
 const ACTION_ENTRY = "action/index";
 const OPTIONS_ENTRY = "options/index";
+const CHECKED_HTML = [`${ACTION_ENTRY}.html`, `${OPTIONS_ENTRY}.html`];
 
 /** @param {string} html */
 export function rewriteOptionsHtml(html) {
   return html.replace(/\/options\/index\.(js|css)(?=["'?])/g, "/action/index.$1");
+}
+
+/**
+ * @param {string} html
+ * @param {{ expectCss: boolean }} options
+ * @returns {{ ok: boolean, html: string, reason: string }}
+ */
+export function planOptionsRewrite(html, { expectCss }) {
+  const rewritten = rewriteOptionsHtml(html);
+  const fail = reason => ({ ok: false, html, reason });
+  if (rewritten === html) return fail("rewrite left the html unchanged");
+  if (!rewritten.includes("/action/index.js")) return fail("rewritten html does not load /action/index.js");
+  if (expectCss && !rewritten.includes("/action/index.css")) return fail("rewritten html does not load /action/index.css");
+  if (rewritten.includes("options/index.")) return fail("rewritten html still references options/index.");
+  return { ok: true, html: rewritten, reason: "" };
+}
+
+/** @param {string} htmlName @param {string} html */
+export function localAssetRefs(htmlName, html) {
+  const refs = [];
+  for (const [, url] of html.matchAll(/<(?:script|link)\b[^>]*?\s(?:src|href)=["']([^"']+)["']/gi)) {
+    if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(url)) continue;
+    const path = url.split(/[?#]/)[0];
+    if (!path) continue;
+    refs.push(path.startsWith("/") ? path.slice(1) : posix.normalize(posix.join(posix.dirname(htmlName), path)));
+  }
+  return refs;
 }
 
 /** @param {string[]} a @param {string[]} b */
@@ -13,11 +44,13 @@ export function sameModuleSet(a, b) {
   return b.every(id => set.has(id));
 }
 
-// Both manifest fields name one HTML file, so extension-develop builds two entries from it. Their JS
-// differs only in the entry chunk id, so equivalence is judged on the modules each entry bundles.
+// The two entries' JS differs only in the entry chunk id, so equivalence is judged on bundled modules.
 export const dedupePopupBundle = {
   apply(compiler) {
-    const { Compilation, sources } = compiler.webpack;
+    const { Compilation, WebpackError, sources } = compiler.webpack;
+    const warn = (compilation, message) =>
+      compilation.warnings.push(new WebpackError(`[DedupePopupBundle] ${message}; shipping both copies`));
+
     compiler.hooks.thisCompilation.tap("DedupePopupBundle", compilation => {
       compilation.hooks.processAssets.tap(
         { name: "DedupePopupBundle", stage: Compilation.PROCESS_ASSETS_STAGE_REPORT },
@@ -30,21 +63,40 @@ export const dedupePopupBundle = {
 
           const actionCss = compilation.getAsset(`${ACTION_ENTRY}.css`);
           const optionsCss = compilation.getAsset(`${OPTIONS_ENTRY}.css`);
-          if (Boolean(actionCss) !== Boolean(optionsCss)) return;
-          if (actionCss && actionCss.source.source().toString() !== optionsCss.source.source().toString()) return;
+          if (Boolean(actionCss) !== Boolean(optionsCss)) return warn(compilation, "only one entry emitted css");
+          if (actionCss && actionCss.source.source().toString() !== optionsCss.source.source().toString()) {
+            return warn(compilation, "entry css differs");
+          }
 
           const html = compilation.getAsset(`${OPTIONS_ENTRY}.html`);
-          if (!html || !compilation.getAsset(`${ACTION_ENTRY}.js`)) return;
+          if (!html) return warn(compilation, `${OPTIONS_ENTRY}.html was not emitted`);
+          if (!compilation.getAsset(`${ACTION_ENTRY}.js`)) return warn(compilation, `${ACTION_ENTRY}.js was not emitted`);
 
-          compilation.updateAsset(
-            `${OPTIONS_ENTRY}.html`,
-            new sources.RawSource(rewriteOptionsHtml(html.source.source().toString()))
-          );
+          const plan = planOptionsRewrite(html.source.source().toString(), { expectCss: Boolean(actionCss) });
+          if (!plan.ok) return warn(compilation, plan.reason);
+
+          compilation.updateAsset(`${OPTIONS_ENTRY}.html`, new sources.RawSource(plan.html));
           for (const name of [".js", ".css", ".js.map", ".css.map"].map(ext => `${OPTIONS_ENTRY}${ext}`)) {
             if (compilation.getAsset(name)) compilation.deleteAsset(name);
           }
         }
       );
+    });
+
+    compiler.hooks.afterEmit.tap("DedupePopupBundle", compilation => {
+      const outputPath = compilation.outputOptions.path;
+      for (const htmlName of CHECKED_HTML) {
+        const htmlPath = join(outputPath, htmlName);
+        if (!existsSync(htmlPath)) continue;
+        const missing = localAssetRefs(htmlName, readFileSync(htmlPath, "utf8")).filter(
+          ref => !existsSync(join(outputPath, ref))
+        );
+        if (missing.length) {
+          compilation.errors.push(
+            new WebpackError(`[DedupePopupBundle] ${htmlName} references files that were not emitted: ${missing.join(", ")}`)
+          );
+        }
+      }
     });
   },
 };
