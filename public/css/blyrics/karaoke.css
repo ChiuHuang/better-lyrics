@@ -111,6 +111,7 @@
 #blyrics-karaoke .blyrics-credits {
     --blyrics-credits-font-size: 0.58em;
     text-align: center;
+    text-wrap: balance;
 }
 
 #blyrics-karaoke .blyrics-karaoke-source {
