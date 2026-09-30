@@ -37,10 +37,19 @@ function revealActiveTab(tabs: HTMLElement, animate: boolean): void {
   });
 }
 
+const WHEEL_LINE_PX = 16;
+
+function scrollTabsWithWheel(tabs: HTMLElement, event: WheelEvent): void {
+  if (event.deltaX !== 0 || event.deltaY === 0) return;
+  const delta = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? event.deltaY * WHEEL_LINE_PX : event.deltaY;
+  tabs.scrollLeft += getComputedStyle(tabs).direction === "rtl" ? -delta : delta;
+}
+
 function enableTabScrollIfClipped(tabs: HTMLElement): void {
   if (tabs.hasAttribute("data-scrollable") || tabs.scrollWidth <= tabs.clientWidth) return;
   tabs.setAttribute("data-scrollable", "");
   attachScrollFade(tabs, tabs, { axis: "x" });
+  tabs.addEventListener("wheel", event => scrollTabsWithWheel(tabs, event), { passive: true });
   revealActiveTab(tabs, false);
 }
 
