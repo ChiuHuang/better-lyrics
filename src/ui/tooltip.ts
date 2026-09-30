@@ -37,24 +37,30 @@ function hideIfAnchor(event: Event): void {
   if (event.target === anchor) hideTooltip();
 }
 
-export function initTooltips(root: HTMLElement): void {
+const showFor = (event: Event): void => {
+  const target = tooltipAnchor(event.target);
+  if (target) showTooltip(target);
+};
+
+const hideOnEscape = (event: KeyboardEvent): void => {
+  if (event.key === "Escape") hideTooltip();
+};
+
+function ensureTooltip(): void {
   if (tooltip?.isConnected) return;
   tooltip = document.createElement("div");
   tooltip.className = "ui-tooltip";
   tooltip.setAttribute("aria-hidden", "true");
   document.body.appendChild(tooltip);
+  window.addEventListener("scroll", hideTooltip, { capture: true, passive: true });
+  document.addEventListener("keydown", hideOnEscape);
+}
 
-  const showFor = (event: Event): void => {
-    const target = tooltipAnchor(event.target);
-    if (target) showTooltip(target);
-  };
-
+// Handlers are module-level, so wiring the same root twice is a no-op for addEventListener.
+export function initTooltips(root: HTMLElement): void {
+  ensureTooltip();
   root.addEventListener("pointerenter", showFor, true);
   root.addEventListener("pointerleave", hideIfAnchor, true);
   root.addEventListener("focusin", showFor);
   root.addEventListener("focusout", hideIfAnchor);
-  window.addEventListener("scroll", hideTooltip, { capture: true, passive: true });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") hideTooltip();
-  });
 }

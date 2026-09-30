@@ -200,8 +200,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   opacity: 0;
   visibility: hidden;
   scale: 0.98;
+  transform-origin: bottom center;
 }
-.ui-tooltip { transform-origin: bottom center; }
 .ui-tooltip[data-placement="below"] { transform-origin: top center; }
 .ui-tooltip--visible {
   opacity: 1;
@@ -373,5 +373,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
     transition: none;
     animation: none;
   }
+  /* The hover delay is not motion; keep it so tooltips do not flash on pass-over. */
+  .ui-tooltip--visible { transition: visibility 0s linear var(--tooltip-delay); }
   .ui-spinner { animation-duration: 2s; }
 }
