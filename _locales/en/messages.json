@@ -515,6 +515,10 @@
     "message": "Could not reach the server",
     "description": "Status when nickname request fails"
   },
+  "options_alert_refreshFailed": {
+    "message": "Could not refresh lyrics. Open YouTube Music and try again.",
+    "description": "Shown when the popup's Refresh lyrics button finds no YouTube Music tab or none of them responds"
+  },
   "options_alert_importEmpty": {
     "message": "Paste identity JSON or choose a file first.",
     "description": "Shown when the user clicks Import with no JSON provided"

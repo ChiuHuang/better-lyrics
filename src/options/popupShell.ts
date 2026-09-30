@@ -134,24 +134,34 @@ export function flashSaved(): void {
   savedTimer = setTimeout(() => status.classList.remove("is-shown"), SAVED_STATUS_MS);
 }
 
-export function initRefreshLyricsButton(): void {
+function resetSpin(button: HTMLElement, icon: SVGElement): void {
+  icon.style.transition = "none";
+  button.classList.remove("is-spinning");
+  void icon.getBoundingClientRect();
+  icon.style.removeProperty("transition");
+}
+
+async function refreshYouTubeMusicTabs(): Promise<boolean> {
+  const tabs = await chrome.tabs.query({ url: "https://music.youtube.com/*" });
+  const results = await Promise.allSettled(
+    tabs.flatMap(tab => (tab.id == null ? [] : [chrome.tabs.sendMessage(tab.id, { action: "refreshLyrics" })]))
+  );
+  for (const result of results) {
+    if (result.status === "rejected") warnCore("refreshLyrics send failed:", result.reason);
+  }
+  return results.some(result => result.status === "fulfilled" && result.value?.success === true);
+}
+
+export function initRefreshLyricsButton(onFailed: () => void): void {
   const button = document.getElementById("refresh-lyrics-btn");
   const icon = button?.querySelector<SVGElement>(".refresh-icon");
   if (!button || !icon) return;
-  button.addEventListener("click", () => {
-    icon.style.transition = "none";
-    button.classList.remove("is-spinning");
-    void icon.getBoundingClientRect();
-    icon.style.removeProperty("transition");
+  button.addEventListener("click", async () => {
+    resetSpin(button, icon);
     button.classList.add("is-spinning");
-    chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
-      for (const tab of tabs) {
-        if (tab.id == null) continue;
-        chrome.tabs
-          .sendMessage(tab.id, { action: "refreshLyrics" })
-          .catch(error => warnCore("refreshLyrics send failed:", error));
-      }
-    });
+    if (await refreshYouTubeMusicTabs()) return;
+    resetSpin(button, icon);
+    onFailed();
   });
 }
 

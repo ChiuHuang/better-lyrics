@@ -688,7 +688,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initI18n();
   renderAppVersion(document.getElementById("app-version"));
   mountIcons(document);
-  initRefreshLyricsButton();
+  initRefreshLyricsButton(() => showAlert(t("options_alert_refreshFailed")));
   mountDropdownFields();
   initTooltips(document.body);
   initLetterWaveSwitch();
