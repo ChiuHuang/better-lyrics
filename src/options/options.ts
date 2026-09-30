@@ -24,7 +24,7 @@ import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
 import { mergePreferredProviders } from "@modules/lyrics/providers/providerList";
 import { fetchOwnGamification, renderIdentityStats } from "@modules/unison/gamificationRender";
-import Sortable from "sortablejs";
+import type Sortable from "sortablejs";
 import { initializeThemes } from "./editor/themesUi";
 import { openEditCSS, openOptions } from "./editor/ui/dom";
 import { showModal } from "./editor/ui/feedback";
@@ -712,6 +712,19 @@ document.getElementById("options")?.addEventListener("change", event => {
   saveOptions();
 });
 
+// -- Drag sorting --------------------------
+
+function sortableWhenVisible(list: HTMLElement, options: Sortable.Options): void {
+  const observer = new IntersectionObserver(entries => {
+    if (!entries.some(entry => entry.isIntersecting)) return;
+    observer.disconnect();
+    import("sortablejs")
+      .then(({ default: SortableList }) => new SortableList(list, options))
+      .catch(err => errorCore("Failed to load drag sorting:", err));
+  });
+  observer.observe(list);
+}
+
 // -- CSS editor --------------------------
 
 function setupLazyCodeEditor(): void {
@@ -743,7 +756,7 @@ function setupLazyCodeEditor(): void {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  new Sortable(document.getElementById("providers-list")!, {
+  sortableWhenVisible(document.getElementById("providers-list")!, {
     animation: 150,
     ghostClass: "dragging",
     forceFallback: true,
@@ -1636,7 +1649,7 @@ function setupUnisonActionsModal(): void {
 
   const picker = document.querySelector<HTMLElement>(".controls-shown-picker");
   if (picker) {
-    new Sortable(picker, {
+    sortableWhenVisible(picker, {
       animation: 150,
       ghostClass: "dragging",
       forceFallback: true,
