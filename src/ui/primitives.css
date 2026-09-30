@@ -59,7 +59,7 @@
   flex-direction: column;
   min-height: 0;
   border: var(--card-edge);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-card-fallback);
   background: var(--card-bg);
   box-shadow: rgba(0, 0, 0, 0.05) 0 4px 6px -1px, rgba(0, 0, 0, 0.03) 0 2px 4px -1px;
 }
@@ -70,7 +70,7 @@
   gap: 24px;
   min-height: var(--card-head-height);
   padding: 0 var(--text-inset);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--divider-strong);
 }
 /* Groups the tabs and bar apart from a title or action, so the group can be the tablist. The head stays the bar's positioned ancestor. */
 .ui-card__tabs { display: flex; align-items: center; align-self: stretch; gap: 24px; }
@@ -126,7 +126,7 @@
   font-size: 0.9375rem;
   transition: background var(--duration-quick) ease-out;
 }
-.ui-row:hover { background: rgba(255, 255, 255, 0.035); }
+.ui-row:is(button, :has(label, button, .ui-dropdown)):hover { background: rgba(255, 255, 255, 0.035); }
 .ui-row__label { display: inline-flex; align-items: center; gap: 0.4rem; min-width: 0; }
 .ui-row__sub { display: block; margin-top: 1px; font-size: 0.8125rem; color: var(--text-label); }
 .ui-row__value { color: var(--text-muted); font-variant-numeric: tabular-nums; }

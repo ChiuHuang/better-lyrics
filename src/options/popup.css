@@ -311,7 +311,7 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 /* Unison stats on the text inset; the divider runs edge to edge like the card header's */
 .gam-panel { margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); }
 .gam-panel .blyrics-gam__stats-row { padding: var(--row-pad) var(--text-inset) var(--text-inset); }
-.gam-panel .blyrics-gam__stats-foot { margin-top: 0; padding: 12px var(--text-inset); border-top-color: rgba(255, 255, 255, 0.08); }
+.gam-panel .blyrics-gam__stats-foot { margin-top: 0; padding: 12px var(--text-inset); border-top-color: var(--divider-strong); }
 
 @supports (corner-shape: superellipse(1.6)) {
   .keyfield__box, .warn-callout { corner-shape: superellipse(1.6); }
@@ -335,7 +335,7 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
   align-items: center;
   gap: 2px;
   padding: 8px calc(var(--page-pad) - 10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--divider-strong);
 }
 .pop__foot-spacer { flex: 1; }
 
@@ -363,7 +363,7 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 .text-btn:active { scale: var(--scale-press); }
 .text-btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.08); color: #fff; }
 .text-btn svg { width: 14px; height: 14px; flex: none; }
-.text-btn .refresh-icon { transition: rotate 0.6s var(--ease-smooth-out); }
+.text-btn .refresh-icon { transition: rotate var(--duration-spin) var(--ease-smooth-out); }
 .text-btn.is-spinning .refresh-icon { rotate: 360deg; }
 
 .pop__status {
