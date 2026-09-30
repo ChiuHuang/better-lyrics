@@ -568,7 +568,10 @@ function setupFilterShortcuts(): void {
   for (const chip of filterBar.querySelectorAll<HTMLLabelElement>(".unison-filter-chip")) {
     const kbd = chip.querySelector("kbd");
     if (!kbd?.textContent) continue;
-    shortcutMap.set(kbd.textContent.trim().toUpperCase(), chip);
+    const key = kbd.textContent.trim().toUpperCase();
+    shortcutMap.set(key, chip);
+    const name = Array.from(chip.querySelectorAll("span"), span => span.textContent?.trim()).find(Boolean);
+    if (name) chip.dataset.tooltip = `${name} · ${key}`;
   }
 
   document.addEventListener("keydown", e => {

@@ -32,7 +32,6 @@ const KNOWN: Record<string, Record<string, number>> = {
   },
   "uppercase text": {
     "src/options/options.css": 4,
-    "src/options/unison/unison.css": 10,
   },
   "dark field well": {},
 };
