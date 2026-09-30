@@ -66,6 +66,7 @@
   /* -- Scroll fades (mask on the inner scroller, never the surface) -- */
   --fade-top-size: 40px;
   --fade-bottom-size: 56px;
+  --fade-inline-size: 24px;
   --pane-fade-top-size: 72px;
   --pane-fade-bottom-size: 96px;
 

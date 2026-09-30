@@ -332,6 +332,19 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-scroll-fade[data-fade-bottom] { --ui-fade-bottom: var(--fade-bottom-size); }
 .ui-scroll-fade--pane[data-fade-top] { --ui-fade-top: var(--pane-fade-top-size); }
 .ui-scroll-fade--pane[data-fade-bottom] { --ui-fade-bottom: var(--pane-fade-bottom-size); }
+@property --ui-fade-start { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --ui-fade-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
+.ui-scroll-fade--x {
+  mask-image: linear-gradient(to right, transparent, #000 var(--ui-fade-start), #000 calc(100% - var(--ui-fade-end)), transparent);
+  transition:
+    --ui-fade-start var(--duration-fast) var(--ease-smooth-out),
+    --ui-fade-end var(--duration-fast) var(--ease-smooth-out);
+}
+.ui-scroll-fade--x:dir(rtl) {
+  mask-image: linear-gradient(to left, transparent, #000 var(--ui-fade-start), #000 calc(100% - var(--ui-fade-end)), transparent);
+}
+.ui-scroll-fade--x[data-fade-start] { --ui-fade-start: var(--fade-inline-size); }
+.ui-scroll-fade--x[data-fade-end] { --ui-fade-end: var(--fade-inline-size); }
 
 /* -- Frame: paints the pane surface; its child scrolls and carries the fade -- */
 .ui-frame {

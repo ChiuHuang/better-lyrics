@@ -2,6 +2,7 @@ import { warnCore } from "@core/logger";
 import { controlIcons, parseSvgString } from "@modules/ui/lyricsDock/icons";
 import { svgIcon } from "@/options/unison/icons";
 import { type CardTabs, initCardTabs, rovingIndex, travelDirection } from "@/ui/cardTabs";
+import { attachScrollFade } from "@/ui/scrollFade";
 
 // -- Version --------------------------
 
@@ -26,6 +27,23 @@ function movePill(tabs: HTMLElement, animate: boolean): void {
   }
 }
 
+function revealActiveTab(tabs: HTMLElement, animate: boolean): void {
+  if (!tabs.hasAttribute("data-scrollable")) return;
+  const smooth = animate && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  tabs.querySelector<HTMLElement>(".tab.active")?.scrollIntoView({
+    block: "nearest",
+    inline: "nearest",
+    behavior: smooth ? "smooth" : "instant",
+  });
+}
+
+function enableTabScrollIfClipped(tabs: HTMLElement): void {
+  if (tabs.hasAttribute("data-scrollable") || tabs.scrollWidth <= tabs.clientWidth) return;
+  tabs.setAttribute("data-scrollable", "");
+  attachScrollFade(tabs, tabs, { axis: "x" });
+  revealActiveTab(tabs, false);
+}
+
 // -- Page switching --------------------------
 
 export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
@@ -45,6 +63,7 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
     }
     if (document.body.classList.contains("is-about")) setAboutChrome(false);
     movePill(tabs, animate);
+    revealActiveTab(tabs, animate);
     const target = button.dataset.target ?? "";
     for (const page of document.querySelectorAll<HTMLElement>("#options > .tab-content")) {
       page.dataset.uiDir = animate ? direction : "";
@@ -71,7 +90,10 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
 
   const restored = buttons.find(b => b.dataset.target === `#${location.hash.slice(1).split("/")[0]}`);
   activate(restored ?? buttons[0], false);
-  void document.fonts.ready.then(() => movePill(tabs, false));
+  void document.fonts.ready.then(() => {
+    enableTabScrollIfClipped(tabs);
+    movePill(tabs, false);
+  });
 }
 
 // -- Cards --------------------------

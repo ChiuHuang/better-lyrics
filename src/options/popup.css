@@ -88,6 +88,8 @@ body.options-page {
   box-shadow: rgba(0, 0, 0, 0.05) 0 4px 6px -1px, rgba(0, 0, 0, 0.03) 0 2px 4px -1px;
 }
 .tabs { position: relative; display: flex; gap: 0.5rem; padding: 0.25rem; }
+/* long locales only: the strip scrolls and fades instead of clipping its last tab */
+.tabs[data-scrollable] { overflow-x: auto; scroll-padding-inline: var(--fade-inline-size); }
 .tabs .tab {
   position: relative;
   z-index: 1;
