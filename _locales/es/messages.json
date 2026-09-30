@@ -2208,23 +2208,23 @@
     }
   },
   "unison_rev_colStatus": {
-    "message": "Status",
+    "message": "Estado",
     "description": "Revisions list column header"
   },
   "unison_rev_colChange": {
-    "message": "Change",
+    "message": "Cambiar",
     "description": "Revisions list column header (noun): how much an edit changed"
   },
   "unison_rev_colReason": {
-    "message": "Reason",
+    "message": "Razón",
     "description": "Revisions list column header"
   },
   "unison_rev_colWhen": {
-    "message": "When",
+    "message": "Cuando",
     "description": "Revisions list column header: relative time"
   },
   "unison_rev_revision": {
-    "message": "Revision",
+    "message": "Revisión",
     "description": "Column header and editor sidebar label"
   },
   "unison_rev_comparedWith": {
@@ -2238,11 +2238,11 @@
     }
   },
   "unison_rev_legendAdded": {
-    "message": "Added",
+    "message": "añadido",
     "description": "Diff legend: added lines or words"
   },
   "unison_rev_legendRemoved": {
-    "message": "Removed",
+    "message": "eliminado",
     "description": "Diff legend: removed lines or words"
   },
   "unison_rev_legendTiming": {
@@ -2264,7 +2264,7 @@
     "description": "Label above the diff rows for text stored outside the lyric lines: translations, romanizations and credits"
   },
   "unison_rev_headCredits": {
-    "message": "Credits",
+    "message": "Créditos",
     "description": "Diff row label for a changed credit, such as a songwriter or singer name"
   },
   "unison_rev_headLine": {
@@ -2328,7 +2328,7 @@
     }
   },
   "unison_rev_textChanged": {
-    "message": "Text changed",
+    "message": "Texto Cambiado",
     "description": "Meter label: how much of the text changed"
   },
   "unison_rev_timingChanged": {
@@ -2384,7 +2384,7 @@
     "description": "Editor status while the server checks the edit"
   },
   "unison_rev_fixErrors": {
-    "message": "Fix the errors to save",
+    "message": "Arregla los errores para guardar",
     "description": "Editor status when the edit has errors"
   },
   "unison_rev_limitReached": {
@@ -2411,6 +2411,10 @@
     "message": "Something went wrong. Try again.",
     "description": "Fallback error for revision actions"
   },
+  "options_display_karaoke": {
+    "message": "Karaoke subtitles",
+    "description": "Toggle label for showing synced lyrics as subtitles over a music video in fullscreen"
+  },
   "options_display_highResolutionVideo": {
     "message": "Enable higher-resolution videos",
     "description": "Display settings toggle for enabling video resolutions above 1080p."
@@ -2433,6 +2437,6 @@
   },
   "options_display_videoQualityApplyHint": {
     "message": "Higher-resolution playback changes apply to the next video or after refreshing. Preferred quality uses the closest available lower resolution.",
-    "description": "Hint explaining when video playback changes take effect and how unavailable resolutions fall back."
+    "description": "Tooltip explaining when video playback changes take effect and how unavailable resolutions fall back."
   }
 }
