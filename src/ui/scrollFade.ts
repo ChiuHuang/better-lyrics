@@ -1,6 +1,6 @@
 import { observeResize } from "@modules/ui/layout/layoutWidth";
 
-export interface ScrollMetrics {
+interface ScrollMetrics {
   scrollTop: number;
   clientHeight: number;
   scrollHeight: number;

@@ -4,7 +4,7 @@ export interface DropdownOption {
   disabled?: boolean;
 }
 
-export const SEARCH_THRESHOLD = 12;
+const SEARCH_THRESHOLD = 12;
 
 const fold = (text: string): string =>
   text

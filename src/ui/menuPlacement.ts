@@ -1,7 +1,7 @@
-export const MENU_GAP_PX = 4;
-export const VIEWPORT_MARGIN_PX = 8;
+const MENU_GAP_PX = 4;
+const VIEWPORT_MARGIN_PX = 8;
 
-export interface MenuPlacementInput {
+interface MenuPlacementInput {
   triggerTop: number;
   triggerBottom: number;
   menuHeight: number;
