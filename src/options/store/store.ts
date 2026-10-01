@@ -1702,7 +1702,7 @@ function renderDescription(descEl: HTMLElement, theme: StoreTheme): void {
   }
   descEl.style.visibility = "hidden";
   const isCurrent = () => currentDetailTheme?.id === theme.id;
-  import("./markdown")
+  import("@/options/store/markdown")
     .then(module => {
       parseMarkdown = module.parseMarkdown;
       if (isCurrent()) descEl.replaceChildren(module.parseMarkdown(theme.description));

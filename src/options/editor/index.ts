@@ -1,7 +1,7 @@
 import { initI18n, loadLocaleOverride } from "@core/i18n";
-import { mountCodeEditor } from "./codeEditor";
-import { initializeThemes } from "./themesUi";
-import { openEditCSS } from "./ui/dom";
+import { mountCodeEditor } from "@/options/editor/codeEditor";
+import { initializeThemes } from "@/options/editor/themesUi";
+import { openEditCSS } from "@/options/editor/ui/dom";
 import { logEditor } from "@core/logger";
 
 export function initialize() {

@@ -1,4 +1,4 @@
-import { storageManager } from "./features/storage";
+import { storageManager } from "@/options/editor/features/storage";
 import {
   closeThemeModal,
   handleDeleteTheme,
@@ -9,7 +9,7 @@ import {
   openThemeModal,
   preloadInstalledThemeImages,
   setThemeName,
-} from "./features/themes";
+} from "@/options/editor/features/themes";
 import {
   deleteThemeBtn,
   editThemeBtn,
@@ -17,7 +17,7 @@ import {
   themeModalOverlay,
   themeNameText,
   themeSelectorBtn,
-} from "./ui/dom";
+} from "@/options/editor/ui/dom";
 import { logEditor } from "@core/logger";
 
 // -- Theme picker, theme actions, storage sync (no CodeMirror) --------------------------

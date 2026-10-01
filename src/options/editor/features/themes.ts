@@ -12,7 +12,7 @@ import { fetchStoreThemesByIds } from "../../store/themeStoreService";
 import type { AllThemeStats, ThemeSource, ThemeStats } from "../../store/types";
 import type { Theme } from "../../themes";
 import THEMES, { deleteCustomTheme, getCustomThemes, renameCustomTheme, saveCustomTheme } from "../../themes";
-import { SAVE_CUSTOM_THEME_DEBOUNCE, SAVE_DEBOUNCE_DELAY } from "../constants";
+import { SAVE_CUSTOM_THEME_DEBOUNCE, SAVE_DEBOUNCE_DELAY } from "@/options/editor/constants";
 import { editorStateManager } from "../core/state";
 import type { ThemeCardOptions } from "../types";
 import {

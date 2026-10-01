@@ -1,10 +1,10 @@
 import { openSearchPanel } from "@codemirror/search";
 import { GITHUB_REPO_URL } from "@constants";
-import { createEditorState, createEditorView } from "./core/editor";
-import { editorStateManager } from "./core/state";
-import { generateDefaultFilename, importManager, saveCSSToFile } from "./features/import";
-import { saveToStorage } from "./features/themes";
-import { showAlert, showModal } from "./ui/feedback";
+import { createEditorState, createEditorView } from "@/options/editor/core/editor";
+import { editorStateManager } from "@/options/editor/core/state";
+import { generateDefaultFilename, importManager, saveCSSToFile } from "@/options/editor/features/import";
+import { saveToStorage } from "@/options/editor/features/themes";
+import { showAlert, showModal } from "@/options/editor/ui/feedback";
 import { errorEditor, logEditor } from "@core/logger";
 
 let mounted = false;

@@ -25,8 +25,8 @@ import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/le
 import { mergePreferredProviders } from "@modules/lyrics/providers/providerList";
 import { fetchOwnGamification, renderIdentityStats } from "@modules/unison/gamificationRender";
 import type Sortable from "sortablejs";
-import { initializeThemes } from "./editor/themesUi";
-import { openEditCSS, openOptions } from "./editor/ui/dom";
+import { initializeThemes } from "@/options/editor/themesUi";
+import { openEditCSS, openOptions } from "@/options/editor/ui/dom";
 import { showModal } from "./editor/ui/feedback";
 import { initStoreUI, setupYourThemesButton } from "./store/store";
 import { checkForStableRelease } from "./updateNotice";
@@ -745,7 +745,7 @@ function setupLazyCodeEditor(): void {
     isRequested = true;
     button.setAttribute("aria-busy", "true");
     try {
-      const { mountCodeEditor } = await import("./editor/codeEditor");
+      const { mountCodeEditor } = await import("@/options/editor/codeEditor");
       mountCodeEditor();
     } catch (err) {
       isRequested = false;
