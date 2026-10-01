@@ -5,16 +5,10 @@ const ACTION_ENTRY = "action/index";
 const OPTIONS_ENTRY = "options/index";
 const CHECKED_HTML = [`${ACTION_ENTRY}.html`, `${OPTIONS_ENTRY}.html`];
 
-/** @param {string} html */
 export function rewriteOptionsHtml(html) {
   return html.replace(/\/options\/index\.(js|css)(?=["'?])/g, "/action/index.$1");
 }
 
-/**
- * @param {string} html
- * @param {{ expectCss: boolean }} options
- * @returns {{ ok: boolean, html: string, reason: string }}
- */
 export function planOptionsRewrite(html, { expectCss }) {
   const rewritten = rewriteOptionsHtml(html);
   const fail = reason => ({ ok: false, html, reason });
@@ -25,7 +19,6 @@ export function planOptionsRewrite(html, { expectCss }) {
   return { ok: true, html: rewritten, reason: "" };
 }
 
-/** @param {string} htmlName @param {string} html */
 export function localAssetRefs(htmlName, html) {
   const refs = [];
   for (const [, url] of html.matchAll(/<(?:script|link)\b[^>]*?\s(?:src|href)=["']([^"']+)["']/gi)) {
@@ -37,7 +30,6 @@ export function localAssetRefs(htmlName, html) {
   return refs;
 }
 
-/** @param {string[]} a @param {string[]} b */
 export function sameModuleSet(a, b) {
   if (a.length === 0 || a.length !== b.length) return false;
   const set = new Set(a);
