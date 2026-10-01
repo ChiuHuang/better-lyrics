@@ -59,12 +59,12 @@
 					<div class="ui-card__body">
 						<div class="ui-panel is-active">
 							<div class="ui-row">
-								<span class="ui-row__label">__MSG_options_general_showLogs__</span>
-								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="logs"><span class="ui-switch__track" aria-hidden="true"></span></label>
+								<span class="ui-row__label" id="logs-label">__MSG_options_general_showLogs__</span>
+								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="logs" aria-labelledby="logs-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
 							<div class="ui-row">
-								<span class="ui-row__label">__MSG_options_general_autoSwitch__</span>
-								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="autoSwitch"><span class="ui-switch__track" aria-hidden="true"></span></label>
+								<span class="ui-row__label" id="autoSwitch-label">__MSG_options_general_autoSwitch__</span>
+								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="autoSwitch" aria-labelledby="autoSwitch-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
 							<div class="ui-row">
 								<span class="ui-row__label">__MSG_options_general_totalLyrics__</span>
@@ -95,8 +95,8 @@
 					<div class="ui-card__body">
 						<div class="ui-panel" data-panel="lyrics">
 							<div class="ui-row">
-								<span class="ui-row__label">__MSG_options_display_stylizedAnimations__</span>
-								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isStylizedAnimationsEnabled"><span class="ui-switch__track" aria-hidden="true"></span></label>
+								<span class="ui-row__label" id="isStylizedAnimationsEnabled-label">__MSG_options_display_stylizedAnimations__</span>
+								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isStylizedAnimationsEnabled" aria-labelledby="isStylizedAnimationsEnabled-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
 							<div class="ui-row">
 								<span class="ui-row__label">
@@ -107,8 +107,8 @@
 								<button type="button" class="ui-switch ui-switch--tri" id="letterWaveSwitch" role="slider" aria-labelledby="letterWaveLabel" aria-valuemin="0" aria-valuemax="2" aria-valuenow="1"></button>
 							</div>
 							<div class="ui-row">
-								<span class="ui-row__label">__MSG_options_display_passiveScroll__</span>
-								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isPassiveScrollEnabled"><span class="ui-switch__track" aria-hidden="true"></span></label>
+								<span class="ui-row__label" id="isPassiveScrollEnabled-label">__MSG_options_display_passiveScroll__</span>
+								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isPassiveScrollEnabled" aria-labelledby="isPassiveScrollEnabled-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
 							<button class="ui-row" id="offset-settings-btn" type="button">
 								<span class="ui-row__label">__MSG_options_unisonModal_controlOffset__</span>
@@ -125,29 +125,29 @@
 						</div>
 						<div class="ui-panel" data-panel="fullscreen">
 							<div class="ui-row">
-								<span class="ui-row__label">__MSG_options_display_disableFullscreen__</span>
-								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isFullScreenDisabled"><span class="ui-switch__track" aria-hidden="true"></span></label>
+								<span class="ui-row__label" id="isFullScreenDisabled-label">__MSG_options_display_disableFullscreen__</span>
+								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isFullScreenDisabled" aria-labelledby="isFullScreenDisabled-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
 							<div data-fs-deps>
 								<div class="ui-row">
-									<span class="ui-row__label">__MSG_options_display_autoHideCursor__</span>
-									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="cursorAutoHide"><span class="ui-switch__track" aria-hidden="true"></span></label>
+									<span class="ui-row__label" id="cursorAutoHide-label">__MSG_options_display_autoHideCursor__</span>
+									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="cursorAutoHide" aria-labelledby="cursorAutoHide-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 								</div>
 								<div class="ui-row">
-									<span class="ui-row__label">__MSG_options_display_albumArt__</span>
-									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="albumArt"><span class="ui-switch__track" aria-hidden="true"></span></label>
+									<span class="ui-row__label" id="albumArt-label">__MSG_options_display_albumArt__</span>
+									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="albumArt" aria-labelledby="albumArt-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 								</div>
 								<div class="ui-row">
-									<span class="ui-row__label">__MSG_options_display_fullscreenControls__</span>
-									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isFullscreenControlsEnabled"><span class="ui-switch__track" aria-hidden="true"></span></label>
+									<span class="ui-row__label" id="isFullscreenControlsEnabled-label">__MSG_options_display_fullscreenControls__</span>
+									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isFullscreenControlsEnabled" aria-labelledby="isFullscreenControlsEnabled-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 								</div>
 								<div class="ui-row">
-									<span class="ui-row__label">__MSG_options_display_karaoke__</span>
-									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isKaraokeEnabled"><span class="ui-switch__track" aria-hidden="true"></span></label>
+									<span class="ui-row__label" id="isKaraokeEnabled-label">__MSG_options_display_karaoke__</span>
+									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isKaraokeEnabled" aria-labelledby="isKaraokeEnabled-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 								</div>
 								<div class="ui-row">
-									<span class="ui-row__label">__MSG_options_display_shadersPromo__</span>
-									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isShadersPromoEnabled"><span class="ui-switch__track" aria-hidden="true"></span></label>
+									<span class="ui-row__label" id="isShadersPromoEnabled-label">__MSG_options_display_shadersPromo__</span>
+									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isShadersPromoEnabled" aria-labelledby="isShadersPromoEnabled-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 								</div>
 							</div>
 						</div>
@@ -188,8 +188,8 @@
 					<div class="ui-card__body">
 						<div class="ui-panel" data-panel="translation">
 							<div class="ui-row">
-								<span class="ui-row__label">__MSG_options_language_translate__</span>
-								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="translate"><span class="ui-switch__track" aria-hidden="true"></span></label>
+								<span class="ui-row__label" id="translate-label">__MSG_options_language_translate__</span>
+								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="translate" aria-labelledby="translate-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
 							<div class="ui-row">
 								<span class="ui-row__label">__MSG_options_language_translationLanguage__</span>
@@ -202,8 +202,8 @@
 						</div>
 						<div class="ui-panel" data-panel="romanization">
 							<div class="ui-row">
-								<span class="ui-row__label">__MSG_options_language_romanization__</span>
-								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isRomanizationEnabled"><span class="ui-switch__track" aria-hidden="true"></span></label>
+								<span class="ui-row__label" id="isRomanizationEnabled-label">__MSG_options_language_romanization__</span>
+								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isRomanizationEnabled" aria-labelledby="isRomanizationEnabled-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
 							<button class="ui-row" id="romanization-exclusions-btn" type="button" hidden>
 								<span class="ui-row__label">__MSG_options_language_exclusions__</span>
@@ -471,21 +471,21 @@
 				<div class="ui-modal__body" id="unison-actions-modal-body" data-scroll-fade>
 					<div class="container unison-modal-row">
 						<div class="unison-modal-row__text">
-							<span>__MSG_options_unisonModal_showPinned__</span>
+							<span id="isUnisonPinnedDockEnabled-label">__MSG_options_unisonModal_showPinned__</span>
 							<p class="unison-modal-row__hint">__MSG_options_unisonModal_showPinned_hint__</p>
 						</div>
 						<label class="ui-switch">
-							<input type="checkbox" role="switch" class="ui-switch__input" id="isUnisonPinnedDockEnabled">
+							<input type="checkbox" role="switch" class="ui-switch__input" id="isUnisonPinnedDockEnabled" aria-labelledby="isUnisonPinnedDockEnabled-label">
 							<span class="ui-switch__track" aria-hidden="true"></span>
 						</label>
 					</div>
 					<div class="container unison-modal-row unison-modal-row--dependent">
 						<div class="unison-modal-row__text">
-							<span>__MSG_options_unisonModal_autoHide__</span>
+							<span id="isUnisonAutoHideInFullscreenEnabled-label">__MSG_options_unisonModal_autoHide__</span>
 							<p class="unison-modal-row__hint">__MSG_options_unisonModal_autoHide_hint__</p>
 						</div>
 						<label class="ui-switch">
-							<input type="checkbox" role="switch" class="ui-switch__input" id="isUnisonAutoHideInFullscreenEnabled">
+							<input type="checkbox" role="switch" class="ui-switch__input" id="isUnisonAutoHideInFullscreenEnabled" aria-labelledby="isUnisonAutoHideInFullscreenEnabled-label">
 							<span class="ui-switch__track" aria-hidden="true"></span>
 						</label>
 					</div>
@@ -550,21 +550,21 @@
 				</div>
 				<div class="ui-modal__body" id="pip-modal-body" data-scroll-fade>
 					<div class="container">
-						<span>__MSG_options_display_pipEnabled__</span>
+						<span id="isPictureInPictureEnabled-label">__MSG_options_display_pipEnabled__</span>
 						<label class="ui-switch">
-							<input type="checkbox" role="switch" class="ui-switch__input" id="isPictureInPictureEnabled">
+							<input type="checkbox" role="switch" class="ui-switch__input" id="isPictureInPictureEnabled" aria-labelledby="isPictureInPictureEnabled-label">
 							<span class="ui-switch__track" aria-hidden="true"></span>
 						</label>
 					</div>
 					<div class="container pip-modal-row--dependent">
 						<div class="setting-row__text">
 							<div class="setting-row__title-line">
-								<span>__MSG_options_display_pipAutoRestore__</span>
+								<span id="isPictureInPictureAutoRestoreEnabled-label">__MSG_options_display_pipAutoRestore__</span>
 								<span class="setting-help" tabindex="0" data-tooltip="__MSG_options_display_pipAutoRestoreTooltip__" aria-label="__MSG_options_display_pipAutoRestoreTooltip__">?</span>
 							</div>
 						</div>
 						<label class="ui-switch">
-							<input type="checkbox" role="switch" class="ui-switch__input" id="isPictureInPictureAutoRestoreEnabled">
+							<input type="checkbox" role="switch" class="ui-switch__input" id="isPictureInPictureAutoRestoreEnabled" aria-labelledby="isPictureInPictureAutoRestoreEnabled-label">
 							<span class="ui-switch__track" aria-hidden="true"></span>
 						</label>
 					</div>
@@ -581,16 +581,16 @@
 						<div data-dropdown="pipTextTransition"></div>
 					</div>
 					<div class="container pip-modal-row--dependent">
-						<span>__MSG_options_display_pipMarquee__</span>
+						<span id="pipMarqueeEnabled-label">__MSG_options_display_pipMarquee__</span>
 						<label class="ui-switch">
-							<input type="checkbox" role="switch" class="ui-switch__input" id="pipMarqueeEnabled">
+							<input type="checkbox" role="switch" class="ui-switch__input" id="pipMarqueeEnabled" aria-labelledby="pipMarqueeEnabled-label">
 							<span class="ui-switch__track" aria-hidden="true"></span>
 						</label>
 					</div>
 					<div class="container pip-modal-row--dependent">
-						<span>__MSG_options_display_pipProgressBar__</span>
+						<span id="pipProgressBarEnabled-label">__MSG_options_display_pipProgressBar__</span>
 						<label class="ui-switch">
-							<input type="checkbox" role="switch" class="ui-switch__input" id="pipProgressBarEnabled">
+							<input type="checkbox" role="switch" class="ui-switch__input" id="pipProgressBarEnabled" aria-labelledby="pipProgressBarEnabled-label">
 							<span class="ui-switch__track" aria-hidden="true"></span>
 						</label>
 					</div>
