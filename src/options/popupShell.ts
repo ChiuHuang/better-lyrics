@@ -4,7 +4,7 @@ import { controlIcons, parseSvgString } from "@modules/ui/lyricsDock/icons";
 import { svgIcon } from "@/options/unison/icons";
 import { type CardTabs, initCardTabs } from "@/ui/cardTabs";
 import { attachScrollFade, inlineWheelStep } from "@/ui/scrollFade";
-import { initSegmentedTabs, type SegmentedTabs } from "@/ui/segmentedTabs";
+import { initTabStrip, type TabStrip } from "@/ui/tabStrip";
 
 // -- Version --------------------------
 
@@ -61,7 +61,7 @@ function scrollTabsWithWheel(tabs: HTMLElement, event: WheelEvent): void {
   tabs.scrollLeft += step;
 }
 
-function watchTabOverflow(tabs: HTMLElement, segmented: SegmentedTabs): void {
+function watchTabOverflow(tabs: HTMLElement, segmented: TabStrip): void {
   let hasFade = false;
   const sync = (): void => {
     const clipped = tabs.scrollWidth > tabs.clientWidth;
@@ -99,7 +99,7 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
     if (location.hash.split("/")[0] !== target) history.replaceState(null, "", target);
   };
 
-  const segmented = initSegmentedTabs(tabs, { onChange: (button, direction) => showPage(button, direction, true) });
+  const segmented = initTabStrip(tabs, { onChange: (button, direction) => showPage(button, direction, true) });
   const restored = segmented.tabs.find(b => b.dataset.target === `#${location.hash.slice(1).split("/")[0]}`);
   const initial = restored ?? segmented.tabs[0];
   segmented.select(initial, { animate: false, notify: false });

@@ -1,20 +1,27 @@
 import { observeResize } from "@modules/ui/layout/layoutWidth";
-import { rovingIndex, travelDirection } from "@/ui/cardTabs";
+import { barTransform, rovingIndex, travelDirection } from "@/ui/cardTabs";
 
-interface SegmentedTabsOptions {
+interface TabStripOptions {
+  variant?: "segmented" | "underline";
   onChange?: (tab: HTMLButtonElement, direction: "next" | "prev" | "") => void;
 }
 
-export interface SegmentedTabs {
+export interface TabStrip {
   readonly tabs: HTMLButtonElement[];
   select(tab: HTMLButtonElement, options?: { animate?: boolean; notify?: boolean }): void;
   selected(): HTMLButtonElement | undefined;
   place(animate?: boolean): void;
 }
 
-export function initSegmentedTabs(list: HTMLElement, { onChange }: SegmentedTabsOptions = {}): SegmentedTabs {
-  const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>(".ui-segmented__tab"));
-  const pill = list.querySelector<HTMLElement>(".ui-segmented__pill");
+const PARTS = {
+  segmented: { tab: ".ui-segmented__tab", indicator: ".ui-segmented__pill" },
+  underline: { tab: ".ui-tabs__tab", indicator: ".ui-tabs__bar" },
+} as const;
+
+export function initTabStrip(list: HTMLElement, { variant = "segmented", onChange }: TabStripOptions = {}): TabStrip {
+  const parts = PARTS[variant];
+  const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>(parts.tab));
+  const pill = list.querySelector<HTMLElement>(parts.indicator);
   list.setAttribute("role", "tablist");
 
   const selected = (): HTMLButtonElement | undefined =>
@@ -24,8 +31,12 @@ export function initSegmentedTabs(list: HTMLElement, { onChange }: SegmentedTabs
     const current = selected();
     if (!pill || !current) return;
     if (!animate) pill.style.transition = "none";
-    pill.style.transform = `translateX(${current.offsetLeft}px)`;
-    pill.style.width = `${current.offsetWidth}px`;
+    if (variant === "underline") {
+      pill.style.transform = barTransform(current);
+    } else {
+      pill.style.transform = `translateX(${current.offsetLeft}px)`;
+      pill.style.width = `${current.offsetWidth}px`;
+    }
     if (!animate) {
       void pill.offsetWidth;
       pill.style.transition = "";
@@ -50,7 +61,7 @@ export function initSegmentedTabs(list: HTMLElement, { onChange }: SegmentedTabs
   select(selected() ?? tabs[0], { animate: false, notify: false });
 
   list.addEventListener("click", event => {
-    const tab = (event.target as Element).closest<HTMLButtonElement>(".ui-segmented__tab");
+    const tab = (event.target as Element).closest<HTMLButtonElement>(parts.tab);
     if (tab && tabs.includes(tab) && tab !== selected()) select(tab);
   });
   list.addEventListener("keydown", event => {

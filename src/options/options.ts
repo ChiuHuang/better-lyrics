@@ -40,7 +40,7 @@ import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFie
 import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
 import { renderAboutLinks } from "@/options/aboutPage";
 import { createModal, type Modal } from "@/ui/modal";
-import { initSegmentedTabs, type SegmentedTabs } from "@/ui/segmentedTabs";
+import { initTabStrip, type TabStrip } from "@/ui/tabStrip";
 import { toast } from "@/ui/toast";
 import {
   fitPopupToWindow,
@@ -1341,7 +1341,7 @@ function initLangExclusionsModal(): void {
 
   const tablist = document.getElementById("lang-exclusions-tablist");
   if (tablist) {
-    exclusionTabs = initSegmentedTabs(tablist, {
+    exclusionTabs = initTabStrip(tablist, {
       onChange: tab => switchExclusionTab(tab.dataset.tab === "translation" ? "translation" : "romanization"),
     });
   }
@@ -1378,7 +1378,7 @@ function initLangExclusionsModal(): void {
   });
 }
 
-let exclusionTabs: SegmentedTabs | undefined;
+let exclusionTabs: TabStrip | undefined;
 
 function switchExclusionTab(tab: "romanization" | "translation"): void {
   activeExclusionTab = tab;

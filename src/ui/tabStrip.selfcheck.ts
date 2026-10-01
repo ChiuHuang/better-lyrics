@@ -16,7 +16,7 @@ Object.assign(globalThis, {
   getComputedStyle: window.getComputedStyle.bind(window),
 });
 
-const { initSegmentedTabs } = await import("./segmentedTabs");
+const { initTabStrip } = await import("./tabStrip");
 const doc = window.document;
 
 function build(labels: string[], selectedIndex?: number): HTMLElement {
@@ -44,7 +44,7 @@ const key = (target: Element, k: string): void => {
 // -- Wiring --------------------------
 {
   const list = build(["Romanization", "Translation"]);
-  const segmented = initSegmentedTabs(list);
+  const segmented = initTabStrip(list);
   const [first, second] = segmented.tabs;
   assert.equal(list.getAttribute("role"), "tablist", "the list is a tablist");
   assert.equal(first.getAttribute("role"), "tab", "each button is a tab");
@@ -58,8 +58,31 @@ const key = (target: Element, k: string): void => {
 }
 {
   const list = build(["a", "b", "c"], 2);
-  const segmented = initSegmentedTabs(list);
+  const segmented = initTabStrip(list);
   assert.equal(segmented.selected(), segmented.tabs[2], "a tab marked selected in markup stays selected");
+  list.remove();
+}
+
+// -- Underline variant --------------------------
+{
+  const list = doc.createElement("div");
+  const bar = doc.createElement("span");
+  bar.className = "ui-tabs__bar";
+  list.append(bar);
+  for (const [i, label] of ["Preview", "Changes"].entries()) {
+    const tab = doc.createElement("button");
+    tab.className = "ui-tabs__tab";
+    tab.textContent = label;
+    Object.defineProperty(tab, "offsetLeft", { value: i * 80 });
+    Object.defineProperty(tab, "offsetWidth", { value: 60 });
+    list.append(tab);
+  }
+  doc.body.append(list);
+  const strip = initTabStrip(list, { variant: "underline" });
+  assert.equal(bar.style.transform, "translateX(0px) scaleX(60)", "the bar sits under the first tab");
+  strip.tabs[1].click();
+  assert.equal(bar.style.transform, "translateX(80px) scaleX(60)", "the bar slides to the selected tab");
+  assert.equal(bar.style.width, "", "the bar scales instead of resizing");
   list.remove();
 }
 
@@ -67,7 +90,7 @@ const key = (target: Element, k: string): void => {
 {
   const list = build(["a", "b", "c"]);
   const changes: [string, string][] = [];
-  const segmented = initSegmentedTabs(list, {
+  const segmented = initTabStrip(list, {
     onChange: (tab, direction) => changes.push([tab.textContent ?? "", direction]),
   });
   const [a, b, c] = segmented.tabs;
@@ -96,4 +119,4 @@ const key = (target: Element, k: string): void => {
   list.remove();
 }
 
-console.log("segmentedTabs self-check passed");
+console.log("tabStrip self-check passed");
