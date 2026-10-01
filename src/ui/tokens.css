@@ -24,7 +24,7 @@
   /* -- Surfaces -- */
   --card-bg: rgba(255, 255, 255, 0.05);
   --card-edge: 1px solid rgba(255, 255, 255, 0.1);
-  --card-surface: #333437; /* --card-bg composited over the page, for gradients that must hide what is behind them */
+  --card-surface: #333437;
   --pane-bg: rgba(255, 255, 255, 0.03);
   --pane-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   --raised-bg: rgba(255, 255, 255, 0.05);
