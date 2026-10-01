@@ -733,7 +733,7 @@ function sortableWhenVisible(list: HTMLElement, options: Sortable.Options): void
 
 // -- CSS editor --------------------------
 
-function setupLazyCodeEditor(): void {
+function setupLazyCodeEditor(initialContentReady: Promise<void>): void {
   document.getElementById("back-btn")?.addEventListener("click", openOptions);
   const button = document.getElementById("edit-css-btn");
   if (!button) return;
@@ -745,7 +745,7 @@ function setupLazyCodeEditor(): void {
     isRequested = true;
     button.setAttribute("aria-busy", "true");
     try {
-      const { mountCodeEditor } = await import("@/options/editor/codeEditor");
+      const [{ mountCodeEditor }] = await Promise.all([import("@/options/editor/codeEditor"), initialContentReady]);
       mountCodeEditor();
     } catch (err) {
       isRequested = false;
@@ -770,8 +770,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initStoreUI();
   setupYourThemesButton();
-  localeReady.then(initializeThemes).catch(err => errorCore("Failed to initialize themes:", err));
-  setupLazyCodeEditor();
+  const themesReady = localeReady.then(initializeThemes).catch(err => errorCore("Failed to initialize themes:", err));
+  setupLazyCodeEditor(themesReady);
   initLangExclusionsModal();
 
   document.getElementById("browse-themes-btn")?.addEventListener("click", () => {
