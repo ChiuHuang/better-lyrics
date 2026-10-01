@@ -19,7 +19,7 @@ import {
   invalidateDisplayName,
   signPayload,
 } from "@core/keyIdentity";
-import { clearAllOffsets, clearCache, getOffsetInfo, getUpdatedCacheInfo } from "@core/storage";
+import { clearAllOffsets, clearCache, getOffsetInfo, getUpdatedCacheInfo, saveCacheInfo } from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
@@ -219,44 +219,31 @@ const saveOptionsToStorage = (options: Options): void => {
   });
 };
 
-// Function to clear transient lyrics
-const clearTransientLyrics = async (callback?: () => void): Promise<void> => {
-  const { count } = await getUpdatedCacheInfo();
-  if (count === 0) {
-    toast.info(t("options_alert_nothingToClear"));
-    if (callback && typeof callback === "function") callback();
-    return;
+const reloadYouTubeMusicLyrics = async (): Promise<void> => {
+  const tabs = await chrome.tabs.query({ url: "https://music.youtube.com/*" });
+  const results = await Promise.allSettled(
+    tabs.flatMap(tab => (tab.id == null ? [] : [chrome.tabs.sendMessage(tab.id, { action: "reloadLyrics" })]))
+  );
+  for (const result of results) {
+    if (result.status === "rejected") warnCore("reloadLyrics send failed:", result.reason);
   }
+};
 
-  chrome.tabs.query({ url: "https://music.youtube.com/*" }, async tabs => {
-    if (tabs.length === 0) {
-      try {
-        updateCacheInfo({ cacheInfo: await clearCache() });
-        toast.success(t("options_alert_cacheCleared"));
-      } catch (error) {
-        errorCore("Failed to clear cached lyrics:", error);
-        toast.error(t("options_alert_cacheClearFailed"));
-      }
-      if (callback && typeof callback === "function") callback();
+const clearTransientLyrics = async (): Promise<void> => {
+  try {
+    const { count, size } = await getUpdatedCacheInfo();
+    if (count === 0 && size === 0) {
+      await saveCacheInfo();
+      toast.info(t("options_alert_nothingToClear"));
       return;
     }
-
-    let completedTabs = 0;
-    tabs.forEach(tab => {
-      chrome.tabs.sendMessage(tab.id!, { action: "clearCache" }, response => {
-        completedTabs++;
-        if (completedTabs === tabs.length) {
-          if (response?.success) {
-            if (response.cacheInfo) updateCacheInfo({ cacheInfo: response.cacheInfo });
-            toast.success(t("options_alert_cacheCleared"));
-          } else {
-            toast.error(t("options_alert_cacheClearFailed"));
-          }
-          if (callback && typeof callback === "function") callback();
-        }
-      });
-    });
-  });
+    updateCacheInfo({ cacheInfo: await clearCache() });
+    await reloadYouTubeMusicLyrics();
+    toast.success(t("options_alert_cacheCleared"));
+  } catch (error) {
+    errorCore("Failed to clear cached lyrics:", error);
+    toast.error(t("options_alert_cacheClearFailed"));
+  }
 };
 
 const _formatBytes = (bytes: number, decimals = 2): string => {

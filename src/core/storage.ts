@@ -219,31 +219,26 @@ function extractVideoIdFromCacheKey(key: string): string | null {
  * @returns {Promise<{count: number, size: number}>} Cache statistics
  */
 export async function getUpdatedCacheInfo(): Promise<{ count: number; size: number }> {
-  try {
-    const result = await chrome.storage.local.get(null);
-    const lyricsKeys = Object.keys(result).filter(key => key.startsWith("blyrics_"));
+  const result = await chrome.storage.local.get(null);
+  const lyricsKeys = Object.keys(result).filter(key => key.startsWith("blyrics_"));
 
-    const uniqueVideoIds = new Set<string>();
-    for (const key of lyricsKeys) {
-      const videoId = extractVideoIdFromCacheKey(key);
-      if (videoId) {
-        uniqueVideoIds.add(videoId);
-      }
+  const uniqueVideoIds = new Set<string>();
+  for (const key of lyricsKeys) {
+    const videoId = extractVideoIdFromCacheKey(key);
+    if (videoId) {
+      uniqueVideoIds.add(videoId);
     }
-
-    const totalSize = lyricsKeys.reduce((acc, key) => {
-      const item = result[key];
-      return acc + JSON.stringify(item).length;
-    }, 0);
-
-    return {
-      count: uniqueVideoIds.size,
-      size: totalSize,
-    };
-  } catch (error) {
-    logError(error);
-    return { count: 0, size: 0 };
   }
+
+  const totalSize = lyricsKeys.reduce((acc, key) => {
+    const item = result[key];
+    return acc + JSON.stringify(item).length;
+  }, 0);
+
+  return {
+    count: uniqueVideoIds.size,
+    size: totalSize,
+  };
 }
 
 /**
