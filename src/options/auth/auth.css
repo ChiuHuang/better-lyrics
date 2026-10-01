@@ -1,5 +1,5 @@
 :root {
-  color-scheme: dark light;
+  color-scheme: dark;
 }
 
 *,
@@ -14,9 +14,9 @@ body {
   padding: 0;
   width: 100%;
   min-height: 100vh;
-  background: #1a1a20;
-  color: #ececec;
-  font-family: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--page-bg);
+  color: var(--text);
+  font-family: var(--font-sans);
 }
 
 .auth-page {
@@ -97,7 +97,9 @@ body {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: max-height 220ms ease, opacity 220ms ease;
+  transition:
+    max-height var(--duration-fast) var(--ease-smooth-out),
+    opacity var(--duration-fast) var(--ease-smooth-out);
 }
 
 .auth-card__subtitle[data-ready] {
@@ -131,46 +133,15 @@ body {
   justify-content: flex-end;
 }
 
-.auth-button {
-  font: inherit;
-  font-size: 0.875rem;
-  padding: 8px 16px;
-  border-radius: 0.75rem;
-  border: none;
-	outline: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.auth-button[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.auth-button--primary {
-  background: #f20c32;
-  color: #fff;
-	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05), inset 0 1px rgba(255, 255, 255, .1);
-	outline-color: transparent;
-}
-
-.auth-button--primary:hover:not([disabled]) {
-  background: #d80a2c;
-}
-
-.auth-button--secondary {
-  background: transparent;
-  color: #ececec;
-}
-
-.auth-button--secondary:hover:not([disabled]) {
-  background: rgba(255, 255, 255, 0.06);
-}
-
 .auth-card__error {
   margin: 0 0 16px;
 }
 
 .auth-card__error:empty {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-card__pulse-dot { animation: none; opacity: 0.6; }
+  .auth-card__subtitle { transition: none; }
 }
