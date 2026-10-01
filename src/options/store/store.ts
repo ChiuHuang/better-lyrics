@@ -129,7 +129,7 @@ function setActionButtonContent(button: HTMLElement, text: string, shortcut?: st
 }
 
 function setInstallButtonState(button: HTMLElement, installed: boolean, shortcut?: string): void {
-  button.className = `store-card-btn ${installed ? "store-card-btn-remove" : "store-card-btn-install"}`;
+  button.className = `ui-button store-card-btn ${installed ? "ui-button--danger-tint store-card-btn-remove" : "ui-button--success-tint store-card-btn-install"}`;
   setActionButtonContent(button, t(installed ? "marketplace_remove" : "marketplace_install"), shortcut);
 }
 
@@ -1368,7 +1368,7 @@ function createStoreThemeCard(
   });
 
   const applyBtn = document.createElement("button");
-  applyBtn.className = "store-card-btn store-card-btn-apply";
+  applyBtn.className = "ui-button ui-button--accent-tint store-card-btn store-card-btn-apply";
   const isActive = activeThemeId === theme.id;
   if (isActive) {
     applyBtn.textContent = t("marketplace_active");
