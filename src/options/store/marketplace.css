@@ -437,7 +437,7 @@
 	justify-content: center;
 	box-sizing: border-box;
 	gap: 0.75rem;
-  transition: all 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s;
   width: 100%;
   user-select: none;
 }
@@ -770,7 +770,7 @@
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
   color: rgba(255, 255, 255, 0.8);
   margin: 0;
   padding: 0;
@@ -817,7 +817,7 @@
   border-radius: 1000rem;
   background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, width 0.2s;
 }
 
 .detail-dot:hover {
@@ -1529,7 +1529,11 @@ kbd.kbd-icon svg {
 /* -- Reduced motion ---------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .store-card .store-card-btn {
+  .store-card-btn,
+  .store-card .store-card-btn,
+  .detail-nav-btn,
+  .detail-dot,
+  .detail-dot.active {
     transition: none;
   }
 }

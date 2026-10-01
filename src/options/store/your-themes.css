@@ -222,3 +222,14 @@
     corner-shape: superellipse(1.6);
   }
 }
+
+/* -- Reduced motion ---------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  #your-themes-btn,
+  #your-themes-btn .chevron-icon,
+  .your-themes-item-apply,
+  .store-buttons-row button {
+    transition: none;
+  }
+}
