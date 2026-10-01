@@ -218,8 +218,8 @@ kbd {
 /* -- Lyrics Card --------------------------  */
 
 .unison-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: var(--card-edge);
   border-radius: var(--radius-card);
   overflow: hidden;
   cursor: pointer;
