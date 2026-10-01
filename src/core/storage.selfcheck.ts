@@ -23,7 +23,9 @@ Object.assign(globalThis, {
   },
 });
 
-const { clearLyricCache, getUpdatedCacheInfo, refreshCacheInfo } = await import("@core/storage");
+const { clearLyricCache, getUpdatedCacheInfo, refreshCacheInfo, storageCategoryForKey, summarizeLyricCache } =
+  await import("@core/storage");
+const { compressString } = await import("@core/compression");
 
 const entry = { type: "transient", value: "x", expiry: 0 };
 const seed = (items: Record<string, unknown>): void => {
@@ -121,6 +123,66 @@ const seed = (items: Record<string, unknown>): void => {
   failures.localRemove = true;
   await assert.rejects(clearLyricCache(), /local remove failed/, "a failed removal rejects");
   failures.localRemove = false;
+}
+
+// -- Storage categories --------------------------
+{
+  assert.equal(storageCategoryForKey("blyrics_abcdefghijk_bLyrics-richsynced"), "lyrics");
+  assert.equal(storageCategoryForKey("blyrics_abcdefghijk_metadata"), "lyrics", "metadata belongs to the lyric cache");
+  assert.equal(storageCategoryForKey("storeTheme:abc"), "themes");
+  assert.equal(storageCategoryForKey("storeThemeIndex"), "themes");
+  assert.equal(storageCategoryForKey("customThemes"), "themes");
+  assert.equal(storageCategoryForKey("customCSS"), "themes");
+  assert.equal(storageCategoryForKey("customCSS_chunk_3"), "themes");
+  assert.equal(storageCategoryForKey("userThemeRatings"), "themes");
+  assert.equal(storageCategoryForKey("userThemeInstalls"), "themes");
+  assert.equal(storageCategoryForKey("blyrics_featured_themes"), "themes");
+  assert.equal(storageCategoryForKey("blyricsOffset_abc_bLyrics-synced"), "offsets");
+  assert.equal(storageCategoryForKey("jwtToken"), "other");
+  assert.equal(storageCategoryForKey("userIdentity"), "other");
+  assert.equal(storageCategoryForKey("blyrics_stableReleaseCheck"), "other", "a blyrics_ prefix alone is not lyrics");
+  assert.equal(storageCategoryForKey(""), "other");
+}
+
+// -- Lyric cache summary --------------------------
+{
+  const lyric = (body: object) => ({ type: "transient", value: compressString(JSON.stringify(body)), expiry: 0 });
+  const missing = lyric({ version: 1, missing: true });
+  const found = lyric({ version: 1, lyrics: [{ words: "hi", startTimeMs: 0, durationMs: 1 }] });
+  const summary = summarizeLyricCache({
+    "blyrics_aaaaaaaaaaa_bLyrics-richsynced": missing,
+    "blyrics_aaaaaaaaaaa_lrclib-synced": found,
+    blyrics_aaaaaaaaaaa_metadata: found,
+    "blyrics_bbbbbbbbbbb_musixmatch-richsync": found,
+    "blyrics_bbbbbbbbbbb_yt-lyrics": found,
+    "blyrics_ccccccccccc_bLyrics-richsynced": missing,
+    "blyrics_ddddddddddd_yt-lyrics": found,
+    blyrics_eeeeeeeeeee_metadata: found,
+    blyrics_featured_themes: { themes: [] },
+  });
+  assert.equal(summary.songs, 3, "counts songs with at least one real lyric entry");
+  assert.deepEqual(
+    summary.bySyncType,
+    { syllable: 0, word: 1, line: 1, unsynced: 1 },
+    "each song counts once, at its best sync type"
+  );
+}
+
+// -- Lyric cache summary: edge cases --------------------------
+{
+  assert.deepEqual(summarizeLyricCache({}), { songs: 0, bySyncType: { syllable: 0, word: 0, line: 0, unsynced: 0 } });
+  const legacy = { type: "transient", value: "not json", expiry: 0 };
+  assert.equal(
+    summarizeLyricCache({ "blyrics_aaaaaaaaaaa_lrclib-synced": legacy }).songs,
+    1,
+    "unreadable entries still count as lyrics"
+  );
+  const missingPlain = { type: "transient", value: JSON.stringify({ missing: true }), expiry: 0 };
+  assert.equal(
+    summarizeLyricCache({ "blyrics_aaaaaaaaaaa_lrclib-synced": missingPlain }).songs,
+    0,
+    "uncompressed misses are misses too"
+  );
 }
 
 console.log("storage self-check passed");
