@@ -122,6 +122,7 @@ function setActionButtonContent(button: HTMLElement, text: string, shortcut?: st
   button.appendChild(document.createTextNode(text));
   if (shortcut) {
     const kbd = document.createElement("kbd");
+    kbd.className = "ui-kbd";
     kbd.textContent = shortcut;
     button.appendChild(kbd);
   }
