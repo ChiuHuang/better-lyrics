@@ -22,3 +22,7 @@ export function countDarkFieldWells(css: string): number {
   }
   return count;
 }
+
+export function countRawFontSizes(css: string): number {
+  return countMatches(stripCssComments(css), /(?<![-\w])font-size\s*:(?!\s*(?:var\(|inherit|[\d.]+(?:em|%)))/gi);
+}

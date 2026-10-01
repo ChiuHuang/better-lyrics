@@ -191,7 +191,7 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 }
 .keyfield__box code {
   font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
-  font-size: 0.875rem;
+  font-size: var(--font-size-md);
   letter-spacing: 0.01em;
   color: rgba(255, 255, 255, 0.92);
 }
@@ -251,7 +251,7 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 .pop__status {
   padding: 0 8px;
   color: rgba(255, 255, 255, 0.45);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   opacity: 0;
   transform: translateY(4px);
   transition:
@@ -291,12 +291,12 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
   border-radius: 50%;
   box-shadow: 0 6px 18px -6px color-mix(in srgb, #f20c32 70%, transparent);
 }
-.about__name { position: relative; margin: 0; color: #fff; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
-.about__tagline { position: relative; margin: 3px 0 0; font-size: 0.8125rem; color: rgba(255, 255, 255, 0.6); }
+.about__name { position: relative; margin: 0; color: #fff; font-size: var(--font-size-2xl); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.about__tagline { position: relative; margin: 3px 0 0; font-size: var(--font-size-sm); color: rgba(255, 255, 255, 0.6); }
 .about__section { margin-bottom: 18px; }
 .about__section:last-child { margin-bottom: 0; }
-.about__heading { margin: 0 0 5px; font-size: 0.8125rem; font-weight: 600; }
-.about__body { margin: 0; font-size: 0.8125rem; line-height: 1.55; color: rgba(255, 255, 255, 0.6); text-wrap: pretty; }
+.about__heading { margin: 0 0 5px; font-size: var(--font-size-sm); font-weight: 600; }
+.about__body { margin: 0; font-size: var(--font-size-sm); line-height: 1.55; color: rgba(255, 255, 255, 0.6); text-wrap: pretty; }
 .about__body a {
   color: #fff;
   font-weight: 500;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { countDarkFieldWells, countNativeSelects, countUppercase } = await import("./uiGuardRules");
+const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countUppercase } = await import("./uiGuardRules");
 
 // -- Native select --------------------------
 {
@@ -85,6 +85,16 @@ const { countDarkFieldWells, countNativeSelects, countUppercase } = await import
   );
   assert.equal(countDarkFieldWells(`input { background: rgba(0, 0, 0, 0.25); }`), 0, "other alphas are fine");
   assert.equal(countDarkFieldWells(`/* input { background: rgba(0,0,0,.2) } */`), 0, "comments are ignored");
+}
+
+// -- Raw font size --------------------------
+{
+  assert.equal(countRawFontSizes(`.a { font-size: 0.875rem; } .b{font-size:13px}`), 2, "counts rem and px literals");
+  assert.equal(countRawFontSizes(`.a { font-size: var(--font-size-md); }`), 0, "tokens are fine");
+  assert.equal(countRawFontSizes(`.a { font-size: 0.9em; } .b { font-size: 80%; }`), 0, "relative sizes are fine");
+  assert.equal(countRawFontSizes(`.a { font-size: inherit; }`), 0, "inherit is fine");
+  assert.equal(countRawFontSizes(`:root { --font-size-md: 0.875rem; }`), 0, "token definitions are not declarations");
+  assert.equal(countRawFontSizes(`/* .a { font-size: 12px; } */`), 0, "comments are ignored");
 }
 
 console.log("uiGuardRules self-check passed");

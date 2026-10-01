@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { countDarkFieldWells, countNativeSelects, countUppercase } from "./uiGuardRules";
+import { countDarkFieldWells, countNativeSelects, countRawFontSizes, countUppercase } from "./uiGuardRules";
 
 const root = join(fileURLToPath(import.meta.url), "..", "..");
 const scanDirs = ["src", "pages"].map(dir => join(root, dir));
@@ -23,12 +23,18 @@ const RULES: Rule[] = [
   { name: "native select", count: countNativeSelects, appliesTo: p => !p.startsWith("src/ui/") },
   { name: "uppercase text", count: countUppercase, appliesTo: p => p.endsWith(".css") },
   { name: "dark field well", count: countDarkFieldWells, appliesTo: p => p.endsWith(".css") },
+  {
+    name: "raw font size",
+    count: countRawFontSizes,
+    appliesTo: p => p.endsWith(".css") && /^(src\/ui|src\/options|pages)\//.test(p) && p !== "src/ui/tokens.css",
+  },
 ];
 
 const KNOWN: Record<string, Record<string, number>> = {
   "native select": {},
   "uppercase text": {},
   "dark field well": {},
+  "raw font size": {},
 };
 
 for (const rule of RULES) {
@@ -45,7 +51,7 @@ for (const rule of RULES) {
     const allowed = known[path] ?? 0;
     assert.ok(
       actual <= allowed,
-      `${rule.name}: ${path} has ${actual}, known ${allowed}. New violation(s); use the src/ui primitive instead.`
+      `${rule.name}: ${path} has ${actual}, known ${allowed}. New violation(s); use the src/ui primitive or token instead.`
     );
     assert.ok(
       actual >= allowed,
