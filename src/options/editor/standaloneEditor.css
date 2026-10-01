@@ -9,7 +9,6 @@ body.standalone-editor {
   width: auto;
   margin: 0;
   padding: 0;
-  background: var(--page-bg);
 }
 
 .standalone-editor__shell {
