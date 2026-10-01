@@ -34,6 +34,7 @@ Object.assign(globalThis, {
   Node: window.Node,
   Element: window.Element,
   HTMLElement: window.HTMLElement,
+  HTMLInputElement: window.HTMLInputElement,
   MutationObserver: window.MutationObserver,
   getComputedStyle: window.getComputedStyle.bind(window),
   matchMedia: (query: string) => ({ matches: query.includes("reduce") && reducedMotion }),
@@ -314,6 +315,159 @@ const settle = (): void => advance(1000);
   modal.close();
   settle();
   assert.equal(hidden, 2, "the next real exit reports hidden");
+  overlay.remove();
+}
+
+// -- Focus on body --------------------------
+{
+  const opener = doc.createElement("button");
+  doc.body.append(opener);
+  opener.focus();
+  const overlay = build("body-focus", { field: true });
+  const reasons: string[] = [];
+  const modal = createModal(overlay, { onClose: reason => reasons.push(reason) });
+  modal.open();
+  const confirm = overlay.querySelector(".confirm") as HTMLButtonElement;
+  confirm.focus();
+  confirm.blur();
+  confirm.disabled = true;
+  assert.equal(doc.activeElement, doc.body, "a disabled button drops focus to body");
+  const tab = key(doc.body, { key: "Tab" });
+  assert.ok(tab.defaultPrevented, "Tab from body is pulled back into the modal");
+  assert.equal(
+    doc.activeElement,
+    overlay.querySelector(".ui-modal__close"),
+    "Tab from body lands on the first control"
+  );
+  (doc.activeElement as HTMLElement).blur();
+  key(doc.body, { key: "Tab", shiftKey: true });
+  assert.equal(doc.activeElement, overlay.querySelector(".cancel"), "Shift+Tab from body lands on the last control");
+  (doc.activeElement as HTMLElement).blur();
+  key(doc.body, { key: "Escape" });
+  assert.deepEqual(reasons, ["escape"], "Escape from body closes the open modal");
+  assert.equal(doc.activeElement, opener, "focus returns to the opener even when it had fallen to body");
+  settle();
+  const outside = key(doc.body, { key: "Escape" });
+  assert.equal(outside.defaultPrevented, false, "with no modal open, Escape on body is left alone");
+  opener.remove();
+  overlay.remove();
+}
+{
+  const elsewhere = doc.createElement("input");
+  doc.body.append(elsewhere);
+  const overlay = build("focus-elsewhere");
+  const modal = createModal(overlay);
+  modal.open();
+  elsewhere.removeAttribute("inert");
+  elsewhere.focus();
+  const event = key(elsewhere, { key: "Escape" });
+  assert.equal(event.defaultPrevented, false, "keys from a control outside the modal are not taken");
+  assert.ok(modal.isOpen(), "and do not close it");
+  modal.close();
+  settle();
+  elsewhere.remove();
+  overlay.remove();
+}
+
+// -- Inert page --------------------------
+{
+  const page = doc.createElement("main");
+  const layer = Object.assign(doc.createElement("div"), { className: "ui-toast-layer" });
+  const menu = Object.assign(doc.createElement("div"), { className: "ui-menu" });
+  const tip = Object.assign(doc.createElement("div"), { className: "ui-tooltip" });
+  const live = doc.createElement("div");
+  live.setAttribute("aria-live", "polite");
+  const already = doc.createElement("aside");
+  already.setAttribute("inert", "");
+  doc.body.append(page, layer, menu, tip, live, already);
+  const lower = build("inert-lower");
+  const upper = build("inert-upper");
+  const lowerModal = createModal(lower);
+  const upperModal = createModal(upper);
+
+  lowerModal.open();
+  assert.ok(page.hasAttribute("inert"), "the page behind an open modal is inert");
+  assert.ok(!lower.hasAttribute("inert"), "the open modal itself is not inert");
+  for (const el of [layer, menu, tip, live])
+    assert.ok(!el.hasAttribute("inert"), `${el.className || "live region"} stays live`);
+
+  upperModal.open();
+  assert.ok(lower.hasAttribute("inert"), "a stacked modal makes the one below inert");
+  assert.ok(!upper.hasAttribute("inert"), "the topmost modal stays interactive");
+  assert.ok(upperModal.isTopmost() && !lowerModal.isTopmost(), "isTopmost names the top modal");
+
+  upperModal.close();
+  assert.ok(!lower.hasAttribute("inert"), "closing the top modal wakes the one below");
+  assert.ok(page.hasAttribute("inert"), "the page stays inert while a modal remains");
+  assert.ok(lowerModal.isTopmost(), "the remaining modal becomes topmost");
+
+  lowerModal.close();
+  assert.ok(!page.hasAttribute("inert"), "the page is restored on the last close");
+  assert.ok(already.hasAttribute("inert"), "an element that was inert before keeps its own inert");
+  assert.ok(!lowerModal.isTopmost(), "a closed modal is never topmost");
+  settle();
+  for (const el of [page, layer, menu, tip, live, already, lower, upper]) el.remove();
+}
+
+// -- Opener across a re-open --------------------------
+{
+  const opener = doc.createElement("button");
+  doc.body.append(opener);
+  opener.focus();
+  const overlay = build("reopen-opener");
+  const modal = createModal(overlay);
+  modal.open();
+  modal.close();
+  advance(50);
+  modal.open();
+  assert.ok(overlay.contains(doc.activeElement), "the re-opened modal takes focus again");
+  modal.close();
+  assert.equal(doc.activeElement, opener, "regression: re-opening mid-exit keeps the original opener");
+  settle();
+  opener.remove();
+  overlay.remove();
+}
+
+// -- Focusable set --------------------------
+function bareModal(id: string, children: HTMLElement[]): HTMLElement {
+  const overlay = build(id);
+  overlay.querySelector(".ui-modal__head")?.remove();
+  overlay.querySelector(".ui-modal__foot")?.remove();
+  overlay.querySelector(".ui-modal__body")?.append(...children);
+  return overlay;
+}
+const radio = (name: string, checked = false): HTMLInputElement =>
+  Object.assign(doc.createElement("input"), { type: "radio", name, checked });
+{
+  const a1 = radio("a");
+  const a2 = radio("a", true);
+  const details = doc.createElement("details");
+  const summary = doc.createElement("summary");
+  details.append(summary);
+  const overlay = bareModal("radios-checked", [a1, a2, details]);
+  const modal = createModal(overlay);
+  modal.open();
+  a2.focus();
+  key(a2, { key: "Tab", shiftKey: true });
+  assert.equal(doc.activeElement, summary, "summary is tabbable, and the checked radio is the group's only stop");
+  key(summary, { key: "Tab" });
+  assert.equal(doc.activeElement, a2, "Tab wraps to the checked radio, never the unchecked one before it");
+  modal.close();
+  settle();
+  overlay.remove();
+}
+{
+  const b1 = radio("b");
+  const b2 = radio("b");
+  const button = doc.createElement("button");
+  const overlay = bareModal("radios-unchecked", [button, b1, b2]);
+  const modal = createModal(overlay);
+  modal.open();
+  button.focus();
+  key(button, { key: "Tab", shiftKey: true });
+  assert.equal(doc.activeElement, b1, "with nothing checked, the first radio is the group's stop");
+  modal.close();
+  settle();
   overlay.remove();
 }
 
