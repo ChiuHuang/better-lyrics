@@ -1,7 +1,7 @@
 import { t } from "@core/i18n";
 import { svgIcon } from "@/options/unison/icons";
 import { type DropdownOption, filterOptions, shouldShowSearch } from "@/ui/dropdownFilter";
-import { menuPlacement } from "@/ui/menuPlacement";
+import { positionMenu } from "@/ui/menuPlacement";
 import { quickDurationMs } from "@/ui/motion";
 import { attachScrollFade } from "@/ui/scrollFade";
 
@@ -158,19 +158,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     const rect = trigger.getBoundingClientRect();
     menu.style.minWidth = `${Math.max(rect.width, MENU_MIN_WIDTH_PX)}px`;
     menu.style.width = variant === "stretch" ? `${rect.width}px` : "";
-    const side = rect.left + rect.width / 2 > window.innerWidth / 2 ? "end" : "start";
-    menu.style.maxHeight = "";
-    const { placement, top, maxHeight } = menuPlacement({
-      triggerTop: rect.top,
-      triggerBottom: rect.bottom,
-      menuHeight: menu.offsetHeight,
-      viewportHeight: window.innerHeight,
-    });
-    menu.dataset.side = side;
-    menu.dataset.placement = placement;
-    menu.style.left = `${side === "end" ? rect.right - menu.offsetWidth : rect.left}px`;
-    menu.style.top = `${top}px`;
-    menu.style.maxHeight = `${maxHeight}px`;
+    positionMenu(menu, trigger);
   }
 
   // -- Open / close --------------------------
