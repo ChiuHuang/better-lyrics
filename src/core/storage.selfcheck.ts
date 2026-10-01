@@ -2,16 +2,23 @@ import assert from "node:assert/strict";
 
 const local: Record<string, unknown> = {};
 const sync: Record<string, unknown> = {};
+const failures = { localRemove: false, syncSet: false };
 Object.assign(globalThis, {
   chrome: {
     storage: {
       local: {
         get: async () => ({ ...local }),
         remove: async (keys: string[]) => {
+          if (failures.localRemove) throw new Error("local remove failed");
           for (const key of keys) delete local[key];
         },
       },
-      sync: { set: async (items: Record<string, unknown>) => void Object.assign(sync, items) },
+      sync: {
+        set: async (items: Record<string, unknown>) => {
+          if (failures.syncSet) throw new Error("sync set failed");
+          Object.assign(sync, items);
+        },
+      },
     },
   },
 });
@@ -75,6 +82,24 @@ const seed = (items: Record<string, unknown>): void => {
   await clearLyricCache();
   await clearLyricCache();
   assert.deepEqual(Object.keys(local), ["blyrics_featured_themes"], "clearing twice is idempotent");
+}
+
+// -- Error paths --------------------------
+{
+  seed({ "blyrics_abcdefghijk_yt-lyrics": entry, blyrics_featured_themes: {} });
+  failures.syncSet = true;
+  await clearLyricCache();
+  failures.syncSet = false;
+  assert.deepEqual(
+    Object.keys(local),
+    ["blyrics_featured_themes"],
+    "regression: a failed stat refresh still counts as cleared once the lyrics are removed"
+  );
+
+  seed({ "blyrics_abcdefghijk_yt-lyrics": entry });
+  failures.localRemove = true;
+  await assert.rejects(clearLyricCache(), /local remove failed/, "a failed removal rejects");
+  failures.localRemove = false;
 }
 
 console.log("storage self-check passed");
