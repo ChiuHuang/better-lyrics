@@ -1,5 +1,6 @@
 import { type IconKey, svgIcon } from "@/options/unison/icons";
 import { prefersReducedMotion, quickDurationMs } from "@/ui/motion";
+import { isAnyModalOpen } from "@/ui/modal";
 import { isTextEntry } from "@/ui/textEntry";
 
 type ToastKind = "success" | "error" | "info" | "loading";
@@ -148,7 +149,7 @@ document.addEventListener("keydown", event => {
   if (event.key !== "Enter" || event.repeat || event.defaultPrevented || event.isComposing) return;
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
   const active = document.activeElement;
-  if (isTextEntry(active)) return;
+  if (isTextEntry(active) || isAnyModalOpen() || active?.closest(".ui-modal")) return;
   const keyboardOnOtherControl =
     active instanceof HTMLElement &&
     active !== document.body &&

@@ -42,7 +42,8 @@ Object.assign(globalThis, {
 });
 Date.now = () => now;
 
-const { toast } = await import("@/ui/toast");
+const { toast } = await import("./toast");
+const { createModal } = await import("./modal");
 
 const doc = window.document;
 const toasts = (): HTMLElement[] => Array.from(doc.querySelectorAll<HTMLElement>(".ui-toast"));
@@ -454,6 +455,42 @@ const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector
   advance(5000);
   pressEnter();
   assert.equal(applied, 0, "an expired toast no longer answers Enter");
+  reset();
+}
+
+// -- Modals --------------------------
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  const overlay = doc.createElement("div");
+  overlay.className = "ui-modal";
+  const surface = doc.createElement("div");
+  surface.className = "ui-modal__surface";
+  overlay.append(surface);
+  doc.body.append(overlay);
+  const modal = createModal(overlay);
+  modal.open();
+  const blocked = pressEnter();
+  assert.equal(applied, 0, "Enter never reaches a toast action through an open modal");
+  assert.equal(blocked.defaultPrevented, false, "the modal keeps its own Enter");
+  modal.close();
+  advance(1000);
+  const stray = doc.createElement("button");
+  stray.className = "ui-modal";
+  doc.body.append(stray);
+  overlay.remove();
+  reset();
+  toast.success("Installed again", { action: { label: "Apply", onClick: () => applied++ } });
+  stray.tabIndex = -1;
+  const inner = doc.createElement("span");
+  inner.tabIndex = -1;
+  stray.append(inner);
+  inner.focus();
+  pressEnter();
+  assert.equal(applied, 0, "focus inside a .ui-modal also stands the shortcut down");
+  stray.remove();
+  pressEnter();
+  assert.equal(applied, 1, "once the modal is gone, Enter runs the action again");
   reset();
 }
 
