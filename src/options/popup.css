@@ -33,7 +33,8 @@ body.options-page {
 .page.active { display: flex; }
 .page--flow { flex: none; }
 
-.options-page :where(.ui-button, .ui-card__tab, .ui-dropdown__trigger) { width: auto; }
+/* options.css sizes every popup button to full width; primitives size themselves */
+.options-page :where(.ui-button:not(.ui-button--icon), .ui-card__tab, .ui-dropdown__trigger) { width: auto; }
 
 /* -- Nav ------------------------------------------------------------------- */
 
