@@ -661,7 +661,12 @@ function updateSortChipsUI(animate = true): void {
       label.setAttribute("aria-pressed", "true");
       label.setAttribute(
         "aria-label",
-        `${labelSpan.textContent}, ${currentFilters.sortDirection === "desc" ? "descending" : "ascending"}. Click to reverse.`
+        t(
+          currentFilters.sortDirection === "desc"
+            ? "marketplace_sortDescendingLabel"
+            : "marketplace_sortAscendingLabel",
+          labelSpan.textContent ?? ""
+        )
       );
     } else {
       labelSpan.textContent = labelDesc;
@@ -1477,7 +1482,7 @@ async function confirmIncompatibleInstall(theme: StoreTheme): Promise<boolean> {
   const floor = themeFloorVersion(theme);
   return showConfirm(
     t("marketplace_install"),
-    `This theme needs Better Lyrics v${floor}+ and may not work on your version. Install anyway?`,
+    t("marketplace_incompatibleConfirm", floor),
     false,
     t("marketplace_install")
   );
@@ -2126,14 +2131,14 @@ async function handleUrlInstall(): Promise<void> {
       if (inputEl) inputEl.value = url;
     }
 
-    installBtn.textContent = "Validating...";
+    installBtn.textContent = t("marketplace_urlValidating");
 
     const validation = await validateThemeRepo(repo, branch);
     if (!validation.valid) {
       throw new Error(validation.errors.join("; "));
     }
 
-    installBtn.textContent = "Installing...";
+    installBtn.textContent = t("marketplace_urlInstalling");
 
     const theme = await fetchFullTheme(repo, branch);
     const sourceUrl = branch ? `https://github.com/${repo}/tree/${branch}` : `https://github.com/${repo}`;

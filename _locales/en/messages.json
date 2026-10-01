@@ -606,6 +606,31 @@
     "message": "Storage is full. Clear the lyrics cache in settings, then try again",
     "description": "Toast when saving the custom CSS editor content fails because extension storage is full"
   },
+  "editor_prompt_saveMessage": {
+    "message": "Enter a name for this theme",
+    "description": "Message in the save as theme dialog"
+  },
+  "editor_prompt_renameMessage": {
+    "message": "Enter a new name for this theme",
+    "description": "Message in the rename theme dialog"
+  },
+  "editor_prompt_themeName": {
+    "message": "Theme name",
+    "description": "Placeholder of the theme name field in the save and rename dialogs"
+  },
+  "editor_prompt_deleteMessage": {
+    "message": "Delete the theme $NAME$? This cannot be undone.",
+    "description": "Message in the delete custom theme dialog",
+    "placeholders": { "name": { "content": "$1", "example": "Night drive" } }
+  },
+  "editor_findReplaceTitle": {
+    "message": "Find and replace",
+    "description": "Title of the dialog shown when find and replace is used in the small popup editor"
+  },
+  "editor_findReplaceBody": {
+    "message": "Find and replace is only available in the full editor. Open it in a new tab to use it.",
+    "description": "Message of the dialog shown when find and replace is used in the small popup editor"
+  },
   "editor_alert_importFailed": {
     "message": "Could not import the theme file. Try again",
     "description": "Toast when importing a theme file fails"
@@ -1243,6 +1268,29 @@
   "marketplace_ricsBadge": {
     "message": "This theme uses RICS",
     "description": "Tooltip and accessible label on the RICS badge in the theme detail view"
+  },
+  "marketplace_urlValidating": {
+    "message": "Validating...",
+    "description": "Install button text while a theme repository URL is being checked"
+  },
+  "marketplace_urlInstalling": {
+    "message": "Installing...",
+    "description": "Install button text while a theme from a repository URL is being installed"
+  },
+  "marketplace_incompatibleConfirm": {
+    "message": "This theme needs Better Lyrics v$VERSION$+ and may not work on your version. Install anyway?",
+    "description": "Confirm dialog before installing a theme that needs a newer extension version",
+    "placeholders": { "version": { "content": "$1", "example": "2.4.0" } }
+  },
+  "marketplace_sortDescendingLabel": {
+    "message": "$LABEL$, descending. Activate to reverse.",
+    "description": "Accessible label of the selected sort chip when sorting in descending order",
+    "placeholders": { "label": { "content": "$1", "example": "Highest rated" } }
+  },
+  "marketplace_sortAscendingLabel": {
+    "message": "$LABEL$, ascending. Activate to reverse.",
+    "description": "Accessible label of the selected sort chip when sorting in ascending order",
+    "placeholders": { "label": { "content": "$1", "example": "Lowest rated" } }
   },
   "marketplace_requiresVersion": {
     "message": "Requires v$version$+",

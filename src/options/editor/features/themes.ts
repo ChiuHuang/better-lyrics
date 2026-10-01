@@ -983,7 +983,12 @@ export async function handleSaveTheme() {
     return;
   }
 
-  const themeName = await showPrompt(t("options_editor_saveAsTheme"), "Enter a name for this theme:", "", "Theme name");
+  const themeName = await showPrompt(
+    t("options_editor_saveAsTheme"),
+    t("editor_prompt_saveMessage"),
+    "",
+    t("editor_prompt_themeName")
+  );
   if (!themeName || themeName.trim() === "" || themeName.trim().startsWith(STORE_THEME_PREFIX)) {
     return;
   }
@@ -1014,9 +1019,9 @@ export async function handleRenameTheme() {
 
   const newName = await showPrompt(
     t("options_editor_renameTheme"),
-    "Enter a new name for this theme:",
+    t("editor_prompt_renameMessage"),
     themeName,
-    "Theme name"
+    t("editor_prompt_themeName")
   );
   if (!newName || newName.trim() === "" || newName.trim() === themeName) {
     return;
@@ -1047,11 +1052,12 @@ export async function handleDeleteTheme() {
 
   if (!themeName || !isCustom) return;
 
+  const NAME_SLOT = "@@name@@";
+  const [before, after = ""] = t("editor_prompt_deleteMessage", NAME_SLOT).split(NAME_SLOT);
   const message = document.createDocumentFragment();
-  message.append("Are you sure you want to delete the theme ");
   const code = document.createElement("code");
   code.textContent = themeName;
-  message.append(code, "?");
+  message.append(before, code, after);
 
   const confirmed = await showConfirm(t("options_editor_deleteTheme"), message, true);
   if (!confirmed) return;

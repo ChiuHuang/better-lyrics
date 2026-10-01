@@ -37,15 +37,10 @@ function initializeEditorKeyboardShortcuts() {
           openSearchPanel(view);
         }
       } else {
-        const message = document.createDocumentFragment();
-        message.append(t("options_editor_findReplaceFullscreenOnly"));
-        message.append(document.createElement("br"), document.createElement("br"));
-        message.append(t("options_editor_findReplaceOpenHint"));
-
         showModal({
-          title: "Find & replace",
-          message,
-          confirmText: "Open Fullscreen Editor",
+          title: t("editor_findReplaceTitle"),
+          message: t("editor_findReplaceBody"),
+          confirmText: t("options_editor_openInNewTab"),
           cancelText: t("ui_close"),
         }).then(result => {
           if (result) {
