@@ -56,7 +56,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
   menu.className = "ui-menu";
   const search = document.createElement("input");
   search.type = "text";
-  search.className = "ui-menu__search";
+  search.className = "ui-field ui-menu__search";
   search.placeholder = searchPlaceholder;
   search.setAttribute("aria-label", searchPlaceholder);
   const list = document.createElement("div");

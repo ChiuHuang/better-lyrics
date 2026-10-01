@@ -412,22 +412,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-menu[data-placement="above"][data-side="end"] { transform-origin: bottom right; }
 .ui-menu.is-open { transform: none; opacity: 1; }
 .ui-menu.is-closing { transform: scale(var(--scale-menu-close)); opacity: 0; pointer-events: none; transition-duration: var(--duration-quick); }
-.ui-menu__search {
-  flex: none;
-  height: 32px;
-  margin: 0 0 4px;
-  padding: 0 10px;
-  border: none;
-  border-radius: var(--radius-control);
-  background: var(--field-bg);
-  box-shadow: var(--field-edge);
-  color: #fff;
-  font: inherit;
-  font-size: 0.8125rem;
-  outline: none;
-}
-.ui-menu__search::placeholder { color: var(--text-faint); }
-.ui-menu__search:focus { background: var(--field-bg-focus); box-shadow: var(--field-edge-focus); }
+.ui-menu__search { flex: none; height: 32px; margin: 0 0 4px; padding: 0 10px; font-size: 0.8125rem; }
 .ui-menu__options { display: flex; flex-direction: column; max-height: 248px; overflow-y: auto; scrollbar-width: none; }
 .ui-menu__options::-webkit-scrollbar { display: none; }
 .ui-menu__option {
@@ -654,7 +639,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 @supports (corner-shape: superellipse(1.6)) {
   .ui-card, .ui-modal__surface { border-radius: var(--radius-card); }
   .ui-button, .ui-field, .ui-card, .ui-row, .ui-sync-tag, .ui-dropdown__trigger,
-  .ui-menu, .ui-menu__search, .ui-menu__option, .ui-frame, .ui-toast, .ui-modal__surface {
+  .ui-menu, .ui-menu__option, .ui-frame, .ui-toast, .ui-modal__surface {
     corner-shape: superellipse(1.6);
   }
 }
