@@ -73,7 +73,6 @@ body {
     background: var(--page-bg);
     color: #fff;
     margin: 0;
-    padding: 0 calc(2rem + 8px) calc(1rem + 8px);
     overflow: hidden;
 }
 
@@ -266,14 +265,6 @@ body {
     z-index: 1;
 }
 
-.discord-btn {
-    background-color: #5865f2;
-}
-
-.discord-btn:hover {
-    background-color: #4053d6;
-}
-
 #edit-css-btn[aria-busy="true"] {
     opacity: 0.6;
     pointer-events: none;
@@ -306,34 +297,6 @@ body {
 
 #back-btn {
 	width: fit-content;
-}
-
-.selector {
-    color: #e06c75;
-}
-
-.property {
-    color: #61afef;
-}
-
-.value {
-    color: #98c379;
-}
-
-.comment {
-    color: #5c6370;
-}
-
-.string {
-    color: #e5c07b;
-}
-
-.important {
-    color: #c678dd;
-}
-
-.punctuation {
-    color: #abb2bf;
 }
 
 .note {
@@ -420,40 +383,6 @@ body {
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 0.5rem;
-}
-
-.CodeMirror-hints {
-    background: var(--menu-bg) !important;
-    border: var(--menu-edge) !important;
-}
-
-.CodeMirror-hint {
-    color: #fff !important;
-}
-
-#theme-selector {
-    max-width: 18ch;
-    width: fit-content;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin: 0;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-}
-
-.btn-group {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
 }
 
 .text-group {
@@ -1155,10 +1084,6 @@ input.cm-textfield:focus-visible {
 	color: #d08b52;
 }
 
-
-
-
-
 .theme-name-display {
   color: rgba(255, 255, 255, .75);
   align-items: center;
@@ -1546,10 +1471,6 @@ input.cm-textfield:focus-visible {
 .lang-exclusions-tab-content.active {
 	display: block;
 }
-
-
-
-
 
 /* -- Reduced motion -------------------------- */
 

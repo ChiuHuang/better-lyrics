@@ -504,9 +504,6 @@
   transform: translateX(100%);
 }
 
-.detail-slideshow-img.no-transition {
-  transition: none;
-}
 
 .detail-nav-btn {
   position: absolute;
