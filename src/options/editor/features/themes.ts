@@ -995,7 +995,7 @@ export async function handleSaveTheme() {
     return;
   }
 
-  const themeName = await showPrompt("Save as Theme", "Enter a name for this theme:", "", "Theme name");
+  const themeName = await showPrompt(t("options_editor_saveAsTheme"), "Enter a name for this theme:", "", "Theme name");
   if (!themeName || themeName.trim() === "" || themeName.trim().startsWith(STORE_THEME_PREFIX)) {
     return;
   }
@@ -1024,7 +1024,12 @@ export async function handleRenameTheme() {
 
   if (!themeName || !isCustom) return;
 
-  const newName = await showPrompt("Rename Theme", "Enter a new name for this theme:", themeName, "Theme name");
+  const newName = await showPrompt(
+    t("options_editor_renameTheme"),
+    "Enter a new name for this theme:",
+    themeName,
+    "Theme name"
+  );
   if (!newName || newName.trim() === "" || newName.trim() === themeName) {
     return;
   }
@@ -1060,7 +1065,7 @@ export async function handleDeleteTheme() {
   code.textContent = themeName;
   message.append(code, "?");
 
-  const confirmed = await showConfirm("Delete Theme", message, true);
+  const confirmed = await showConfirm(t("options_editor_deleteTheme"), message, true);
   if (!confirmed) return;
 
   try {

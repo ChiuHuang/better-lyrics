@@ -1774,10 +1774,6 @@ input.cm-textfield:focus-visible {
 	opacity: 1;
 }
 
-#modal-overlay {
-	z-index: 10001;
-}
-
 @keyframes slideUp {
 	from {
 		opacity: 0;

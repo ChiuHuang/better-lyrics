@@ -1449,6 +1449,10 @@
     "message": "Search languages...",
     "description": "Search input placeholder"
   },
+  "ui_close": {
+    "message": "Close",
+    "description": "Accessible label and button text that closes a dialog"
+  },
   "ui_dropdownSearch": {
     "message": "Search",
     "description": "Placeholder for the search box inside a long dropdown menu"

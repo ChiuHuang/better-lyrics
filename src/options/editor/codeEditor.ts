@@ -45,8 +45,8 @@ function initializeEditorKeyboardShortcuts() {
         showModal({
           title: t("options_editor_findReplaceTitle"),
           message,
-          confirmText: t("options_editor_openFullscreen"),
-          cancelText: t("options_editor_close"),
+          confirmText: "Open Fullscreen Editor",
+          cancelText: t("ui_close"),
         }).then(result => {
           if (result) {
             chrome.tabs.create({

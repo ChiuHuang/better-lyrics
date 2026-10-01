@@ -489,7 +489,18 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-modal__close { flex: none; }
 .ui-modal__body { min-height: 0; overflow-y: auto; padding: var(--text-inset); color: var(--text); }
 .ui-modal__message { margin: 0 0 1rem; font-size: 0.9375rem; line-height: 1.5; text-wrap: pretty; }
-.ui-modal__message:last-child { margin-bottom: 0; }
+.ui-modal__message:last-child,
+.ui-modal__message:has(+ [hidden]:last-child) { margin-bottom: 0; }
+.ui-modal__body > .ui-field { width: 100%; }
+.ui-modal__message code {
+  padding: 0.1em 0.4em;
+  border-radius: 0.375rem;
+  background: var(--raised-bg);
+  box-shadow: var(--raised-edge);
+  color: var(--text-strong);
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.875em;
+}
 .ui-modal__foot {
   flex: none;
   display: flex;
