@@ -8,12 +8,12 @@ const viewportHeight = 800;
 {
   assert.deepEqual(
     menuPlacement({ triggerTop: 100, triggerBottom: 132, menuHeight: 200, viewportHeight }),
-    { placement: "below", top: 136 },
+    { placement: "below", top: 136, maxHeight: 656 },
     "room below: opens below with a 4px gap"
   );
   assert.deepEqual(
     menuPlacement({ triggerTop: 700, triggerBottom: 732, menuHeight: 200, viewportHeight }),
-    { placement: "above", top: 496 },
+    { placement: "above", top: 496, maxHeight: 688 },
     "no room below, room above: opens above with a 4px gap"
   );
 }
@@ -22,22 +22,22 @@ const viewportHeight = 800;
 {
   assert.deepEqual(
     menuPlacement({ triggerTop: 500, triggerBottom: 532, menuHeight: 1000, viewportHeight }),
-    { placement: "above", top: 8 },
+    { placement: "above", top: 8, maxHeight: 488 },
     "fits neither side: top clamps to the viewport margin"
   );
   assert.deepEqual(
     menuPlacement({ triggerTop: 200, triggerBottom: 232, menuHeight: 1000, viewportHeight }),
-    { placement: "below", top: 236 },
+    { placement: "below", top: 236, maxHeight: 556 },
     "fits neither side, more room below: stays below"
   );
   assert.deepEqual(
     menuPlacement({ triggerTop: -40, triggerBottom: -8, menuHeight: 100, viewportHeight }),
-    { placement: "below", top: 8 },
+    { placement: "below", top: 8, maxHeight: 784 },
     "trigger scrolled above the viewport: top never goes above the margin"
   );
   assert.deepEqual(
     menuPlacement({ triggerTop: 100, triggerBottom: 132, menuHeight: 0, viewportHeight }),
-    { placement: "below", top: 136 },
+    { placement: "below", top: 136, maxHeight: 656 },
     "empty menu opens below"
   );
 }
@@ -48,6 +48,29 @@ const viewportHeight = 800;
     const { top } = menuPlacement({ triggerTop, triggerBottom: triggerTop + 32, menuHeight: 300, viewportHeight });
     assert.ok(top >= 8, `top ${top} stays inside the margin for trigger at ${triggerTop}`);
   }
+  for (const triggerTop of [0, 50, 390, 760, 900]) {
+    for (const menuHeight of [120, 600, 2000]) {
+      const { top, maxHeight } = menuPlacement({
+        triggerTop,
+        triggerBottom: triggerTop + 32,
+        menuHeight,
+        viewportHeight,
+      });
+      assert.ok(
+        top + Math.min(menuHeight, maxHeight) <= viewportHeight - 8,
+        `menu of ${menuHeight}px at trigger ${triggerTop} ends inside the viewport`
+      );
+    }
+  }
+}
+
+// -- Regressions --------------------------
+{
+  const shortWindow = 300;
+  const below = menuPlacement({ triggerTop: 40, triggerBottom: 72, menuHeight: 600, viewportHeight: shortWindow });
+  assert.deepEqual(below, { placement: "below", top: 76, maxHeight: 216 }, "regression: tall menu is capped below");
+  const above = menuPlacement({ triggerTop: 240, triggerBottom: 272, menuHeight: 600, viewportHeight: shortWindow });
+  assert.deepEqual(above, { placement: "above", top: 8, maxHeight: 228 }, "regression: tall menu is capped above");
 }
 
 console.log("menuPlacement self-check passed");

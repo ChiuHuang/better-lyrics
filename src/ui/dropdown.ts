@@ -164,7 +164,8 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     menu.style.minWidth = `${Math.max(rect.width, MENU_MIN_WIDTH_PX)}px`;
     menu.style.width = variant === "stretch" ? `${rect.width}px` : "";
     const side = rect.left + rect.width / 2 > window.innerWidth / 2 ? "end" : "start";
-    const { placement, top } = menuPlacement({
+    menu.style.maxHeight = "";
+    const { placement, top, maxHeight } = menuPlacement({
       triggerTop: rect.top,
       triggerBottom: rect.bottom,
       menuHeight: menu.offsetHeight,
@@ -174,6 +175,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     menu.dataset.placement = placement;
     menu.style.left = `${side === "end" ? rect.right - menu.offsetWidth : rect.left}px`;
     menu.style.top = `${top}px`;
+    menu.style.maxHeight = `${maxHeight}px`;
   }
 
   // -- Open / close --------------------------
