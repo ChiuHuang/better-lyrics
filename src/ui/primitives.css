@@ -663,7 +663,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-dropdown__trigger:focus-visible { outline: var(--focus-ring); outline-offset: 1px; }
 .ui-dropdown__value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ui-dropdown__chevron { width: 14px; height: 14px; flex: none; color: rgba(255, 255, 255, 0.5); transition: rotate var(--duration-fast) var(--ease-smooth-out); }
-.ui-dropdown__trigger[aria-expanded="true"] .ui-dropdown__chevron { rotate: 180deg; }
+[aria-expanded="true"] > .ui-dropdown__chevron { rotate: 180deg; }
+.ui-button .ui-dropdown__chevron { transition: color var(--duration-quick) ease-out, rotate var(--duration-fast) var(--ease-smooth-out); }
 
 .ui-menu {
   position: fixed;
@@ -765,7 +766,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-frame--field:focus-within { box-shadow: var(--field-edge-focus); }
 
 /* -- Spinner -- */
-.ui-spinner { width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.15); border-top-color: #fff; border-radius: 50%; animation: ui-spin 0.8s linear infinite; }
+.ui-spinner { width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.15); border-top-color: #fff; border-radius: 50%; animation: ui-spin var(--duration-spin) linear infinite; }
 @keyframes ui-spin { to { rotate: 360deg; } }
 
 /* -- Toast (top centre, newest first) -- */
@@ -1011,7 +1012,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 /* -- Reduced motion -- */
 @media (prefers-reduced-motion: reduce) {
   .ui-button, .ui-field, .ui-card__tab, .ui-card__bar, .ui-card__body, .ui-panel.is-active,
-  .ui-row, .ui-row__chevron, .ui-chip, .ui-dropdown__trigger, .ui-dropdown__chevron,
+  .ui-row, .ui-row__chevron, .ui-chip, .ui-dropdown__trigger, .ui-dropdown__chevron, .ui-button .ui-dropdown__chevron,
   .ui-menu, .ui-menu__option, .ui-scroll-fade, .ui-frame--field, .ui-tooltip--visible {
     transition: none;
     animation: none;

@@ -6,21 +6,6 @@ nav {
     margin-bottom: 2rem;
 }
 
-nav a {
-    all: unset;
-    background: rgba(0, 0, 0, 0.2);
-    height: 2rem;
-    width: 2rem;
-    display: grid;
-    place-items: center;
-    border-radius: 0.75rem;
-    cursor: pointer;
-}
-
-nav a:hover {
-    background: rgba(0, 0, 0, 0.3);
-}
-
 .nav-container {
     display: flex;
     gap: 0.5rem;
@@ -753,7 +738,7 @@ hr {
 }
 
 .nickname-status-spinner {
-	animation: ui-spin 700ms linear infinite;
+	animation: ui-spin var(--duration-spin) linear infinite;
 }
 
 .provider-name {

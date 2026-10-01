@@ -166,8 +166,6 @@
 .store-loading-spinner {
   width: 2rem;
   height: 2rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-top-color: rgba(255, 255, 255, 0.6);
 }
 
 .store-error {

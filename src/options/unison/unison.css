@@ -819,7 +819,7 @@
   gap: 0.375rem;
 }
 
-.unison-video-link-form .unison-input {
+.unison-video-link-form .ui-field {
   flex: 1;
   min-width: 0;
 }
@@ -1058,28 +1058,6 @@
   color: rgba(165, 180, 252, 0.75);
 }
 
-.unison-input {
-  box-sizing: border-box;
-  height: 38px;
-  padding: 0 12px;
-  border: none;
-  border-radius: var(--radius-control);
-  background: var(--field-bg);
-  box-shadow: var(--field-edge);
-  color: #fff;
-  font-family: inherit;
-  font-size: var(--font-size-sm);
-  outline: none;
-  transition:
-    background var(--duration-quick) ease-out,
-    box-shadow var(--duration-quick) ease-out;
-}
-
-.unison-input:focus {
-  background: var(--field-bg-focus);
-  box-shadow: var(--field-edge-focus);
-}
-
 .unison-input--mono {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
@@ -1248,9 +1226,9 @@
 }
 
 .unison-preview-content {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
+  background: var(--pane-bg);
+  box-shadow: var(--pane-edge);
+  border-radius: var(--radius-card);
   padding: 1rem;
   max-height: 70vh;
   overflow: auto;
@@ -1405,8 +1383,8 @@
   min-height: 44px;
   padding: 0 8px 0 var(--text-inset);
   margin-bottom: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--pane-bg);
+  box-shadow: var(--pane-edge);
   border-radius: var(--radius-card);
 }
 
@@ -1784,9 +1762,9 @@
 }
 
 .unison-rev-diff {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
+  background: var(--pane-bg);
+  box-shadow: var(--pane-edge);
+  border-radius: var(--radius-card);
   padding: 0.5rem 0;
   overflow: hidden;
 }
@@ -1975,8 +1953,6 @@
   height: 0.625rem;
   box-sizing: border-box;
   border-width: 1.5px;
-  border-color: rgba(255, 255, 255, 0.18);
-  border-top-color: rgb(165, 180, 252);
 }
 
 .unison-rev-link:focus-visible {
@@ -2065,16 +2041,14 @@
 }
 
 .unison-rev-table__item {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--pane-bg);
+  box-shadow: var(--pane-edge);
   border-radius: var(--radius-card);
-  transition:
-    background var(--duration-quick),
-    border-color var(--duration-quick);
+  transition: box-shadow var(--duration-quick);
 }
 
 .unison-rev-table__item:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 0 0 1px var(--card-edge-color-hover);
 }
 
 .unison-rev-table__panel {
@@ -2165,39 +2139,18 @@
 /* Feature-gated: browsers without corner-shape keep the original radii above. */
 
 @supports (corner-shape: superellipse(1.6)) {
-  .unison-card {
+  .unison-rev-savebar {
     border-radius: var(--radius-card);
-  }
-
-  .unison-preview-content {
-    border-radius: 1rem;
   }
 
   .unison-card,
   .unison-preview-content,
-  .unison-input,
-  .unison-token-input {
-    corner-shape: superellipse(1.6);
-  }
-
+  .unison-token-input,
   .unison-rev-diff,
-  .unison-rev-diff-empty {
-    border-radius: 1rem;
-    corner-shape: superellipse(1.6);
-  }
-
-  .unison-rev-table__item {
-    border-radius: var(--radius-card);
-    corner-shape: superellipse(1.6);
-  }
-
-  .unison-rev-savebar {
-    border-radius: var(--radius-card);
-    corner-shape: superellipse(1.6);
-  }
-
+  .unison-rev-diff-empty,
+  .unison-rev-table__item,
+  .unison-rev-savebar,
   .unison-rev-bar {
-    border-radius: var(--radius-card);
     corner-shape: superellipse(1.6);
   }
 }
@@ -2213,7 +2166,6 @@
   }
 
   .unison-card,
-  .unison-input,
   .unison-token-input,
   .unison-rev-link,
   .unison-rev-chev,

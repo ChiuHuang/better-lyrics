@@ -1677,7 +1677,7 @@ function createManualVideoLinkForm(onLink: (videoId: string) => Promise<string |
 
   const field = document.createElement("input");
   field.type = "text";
-  field.className = "unison-input unison-input--mono";
+  field.className = "ui-field unison-input--mono";
   field.placeholder = t("unison_linkVideoPlaceholder");
   field.setAttribute("aria-label", t("unison_linkVideoPlaceholder"));
 

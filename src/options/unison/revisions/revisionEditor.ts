@@ -370,7 +370,7 @@ function createUploadButton(textarea: HTMLTextAreaElement, onLoad: (text: string
 function createIsrcInput(current: string | undefined): HTMLInputElement {
   const input = document.createElement("input");
   input.type = "text";
-  input.className = "unison-input unison-input--mono";
+  input.className = "ui-field unison-input--mono";
   input.value = current ?? "";
   input.placeholder = t("unison_placeholder_isrc");
   input.spellcheck = false;
@@ -380,7 +380,7 @@ function createIsrcInput(current: string | undefined): HTMLInputElement {
 function createAlbumInput(current: string | undefined): HTMLInputElement {
   const input = document.createElement("input");
   input.type = "text";
-  input.className = "unison-input";
+  input.className = "ui-field";
   input.value = current ?? "";
   input.placeholder = t("unison_placeholder_album");
   input.maxLength = 500;

@@ -3,14 +3,6 @@
   position: relative;
 }
 
-#your-themes-btn .chevron-icon {
-  transition: rotate var(--duration-fast) var(--ease-smooth-out);
-}
-
-#your-themes-btn[aria-expanded="true"] .chevron-icon {
-  rotate: 180deg;
-}
-
 .your-themes-menu {
   max-width: 350px;
 }
@@ -97,7 +89,6 @@
 /* -- Reduced motion ---------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  #your-themes-btn .chevron-icon,
   .store-buttons-row button {
     transition: none;
   }
