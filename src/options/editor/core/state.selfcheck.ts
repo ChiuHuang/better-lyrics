@@ -22,6 +22,7 @@ function fakeView(initial: string) {
 
 {
   assert.equal(editorStateManager.getContent(), null, "no view and no buffer reads as null");
+  assert.equal(editorStateManager.hasLoadedContent(), false, "nothing is loaded before any content is set");
 }
 {
   await editorStateManager.setEditorContent("", "test-empty", false);
@@ -34,10 +35,16 @@ function fakeView(initial: string) {
 {
   await editorStateManager.setEditorContent("/* b */", "test-overwrite", false);
   assert.equal(editorStateManager.getContent(), "/* b */", "last write wins in the buffer");
+  assert.equal(editorStateManager.hasLoadedContent(), false, "buffered content without a view is not loaded yet");
 }
 {
-  const view = fakeView("Loading...");
+  const view = fakeView("Wird geladen...");
   editorStateManager.setEditor(view as never);
+  assert.equal(
+    editorStateManager.hasLoadedContent(),
+    true,
+    "regression: flushed content marks the editor loaded whatever the placeholder says"
+  );
   assert.equal(view.state.doc.toString(), "/* b */", "buffer flushed into the view on mount");
   assert.equal(editorStateManager.getContent(), "/* b */", "getContent reads the view after mount");
 }

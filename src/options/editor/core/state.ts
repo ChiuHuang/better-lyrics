@@ -13,6 +13,7 @@ interface Operation {
 class EditorStateManager {
   private editor: EditorView | null = null;
   private pendingContent: string | null = null;
+  private contentLoaded = false;
   private operationQueue: Operation[] = [];
   private isProcessing = false;
   private currentThemeName: string | null = null;
@@ -31,10 +32,15 @@ class EditorStateManager {
     if (this.pendingContent !== null) {
       const css = this.pendingContent;
       this.pendingContent = null;
+      this.contentLoaded = true;
       this.isProgrammaticChange = true;
       editor.dispatch({ changes: { from: 0, to: editor.state.doc.length, insert: css } });
       this.isProgrammaticChange = false;
     }
+  }
+
+  hasLoadedContent(): boolean {
+    return this.contentLoaded;
   }
 
   getContent(): string | null {
@@ -195,6 +201,7 @@ class EditorStateManager {
       return;
     }
 
+    this.contentLoaded = true;
     const currentContent = this.editor.state.doc.toString();
 
     if (currentContent === css) {
