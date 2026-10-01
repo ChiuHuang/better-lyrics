@@ -286,7 +286,7 @@ function routeFromParams(): void {
     searchInput.value = query;
     showView("search");
     showSearchResults();
-    performSearch(query);
+    void performSearch(query, view);
     return;
   }
 
@@ -860,11 +860,12 @@ function isInputFocused(): boolean {
   return active instanceof HTMLElement && active.closest("[role=listbox]") !== null;
 }
 
-async function performSearch(query: string): Promise<void> {
+async function performSearch(query: string, view: AbortSignal): Promise<void> {
   resultsGrid.replaceChildren();
   noResults.hidden = true;
 
   const result = await searchLyrics(query);
+  if (view.aborted) return;
   renderResultsMeta(query, result.success ? result.data.length : 0);
 
   if (!result.success || result.data.length === 0) {
