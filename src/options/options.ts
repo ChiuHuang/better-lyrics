@@ -600,10 +600,10 @@ function syncFullscreenDependents(): void {
 
 const LETTER_WAVE_ORDER: LetterWavePref[] = ["off", "auto", "on"];
 
-const LETTER_WAVE_STATE_LABELS: Record<LetterWavePref, string> = {
-  off: "Off",
-  auto: "Auto",
-  on: "On",
+const LETTER_WAVE_STATE_KEYS: Record<LetterWavePref, string> = {
+  off: "options_display_letterWaveOff",
+  auto: "options_display_videoQualityAuto",
+  on: "options_display_letterWaveOn",
 };
 
 function getLetterWaveSwitchState(): LetterWavePref {
@@ -616,7 +616,7 @@ function setLetterWaveSwitchState(pref: LetterWavePref): void {
   if (!el) return;
   el.dataset.state = pref;
   el.setAttribute("aria-valuenow", String(LETTER_WAVE_ORDER.indexOf(pref)));
-  el.setAttribute("aria-valuetext", LETTER_WAVE_STATE_LABELS[pref]);
+  el.setAttribute("aria-valuetext", t(LETTER_WAVE_STATE_KEYS[pref]));
 }
 
 function initLetterWaveSwitch(): void {

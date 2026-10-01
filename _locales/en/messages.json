@@ -94,6 +94,14 @@
     "message": "Letter wave",
     "description": "Label for the per-letter wave lyric animation toggle"
   },
+  "options_display_letterWaveOff": {
+    "message": "Off",
+    "description": "Spoken value of the letter wave three-way switch when the effect is off"
+  },
+  "options_display_letterWaveOn": {
+    "message": "On",
+    "description": "Spoken value of the letter wave three-way switch when the effect is always on"
+  },
   "options_display_letterWaveBadge": {
     "message": "Experimental",
     "description": "Badge shown next to the letter wave setting marking it as experimental"
