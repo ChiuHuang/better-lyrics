@@ -91,34 +91,6 @@
   gap: 8px;
 }
 
-.marketplace-url-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.15s;
-  margin: 0;
-  margin-left: auto;
-  align-self: center;
-}
-
-.marketplace-url-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-.marketplace-url-btn svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
 .marketplace-url-btn kbd {
   margin-left: 0.125rem;
   height: 1rem;
@@ -128,30 +100,10 @@
   box-shadow: none;
 }
 
-.marketplace-submit-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.75rem;
-  text-decoration: none;
-  transition: all 0.15s;
-  align-self: center;
-}
-
-.marketplace-submit-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.marketplace-submit-link svg {
-  width: 0.875rem;
-  height: 0.875rem;
+.marketplace-header-right .ui-button {
+  height: 34px;
+  padding: 0 12px;
+  font-size: 0.8125rem;
 }
 
 .marketplace-filter-group {
@@ -334,27 +286,10 @@
 }
 
 .store-search-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
-  padding: 0.375rem 0.625rem 0.375rem 2rem;
-  font-size: 0.8125rem;
-  color: #fff;
   width: 180px;
-  height: 2rem;
-  outline: none;
-  transition: all 0.2s;
-  font-family: inherit;
-	box-sizing: border-box;
-}
-
-.store-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.store-search-input:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.2);
+  height: 34px;
+  padding: 0 0.625rem 0 2rem;
+  font-size: 0.8125rem;
 }
 
 /* Filter Container */
@@ -493,28 +428,15 @@
   border-color: rgba(255, 255, 255, 0.6);
 }
 
-.store-refresh-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 0.375rem;
-  padding: 0.375rem;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: all 0.2s;
-  width: 2rem;
-  height: 2rem;
-  margin: 0;
-}
-
-.store-refresh-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+.marketplace-header-right .store-refresh-btn {
+  justify-content: center;
+  width: 34px;
+  padding: 0;
 }
 
 .store-refresh-btn svg {
   width: 1rem;
   height: 1rem;
-  color: rgba(255, 255, 255, 0.7);
 }
 
 .store-modal-body {
@@ -1536,19 +1458,6 @@
   color: rgb(239, 68, 68);
   font-size: 0.8125rem;
   margin-top: 0.5rem;
-}
-
-#url-install-btn {
-  background: transparent;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
-	width: fit-content;
-}
-
-#url-install-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
 }
 
 /* Scrollbar for store modal */
