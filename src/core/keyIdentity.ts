@@ -58,10 +58,11 @@ interface IdentityExport {
 const STORAGE_KEY = "userIdentity";
 const REGISTERED_KEY = "identityRegistered";
 const CERTIFICATE_KEY = "keyCertificate";
+const DISPLAY_NAME_KEY = "identityDisplayName";
 const ECDSA_PARAMS: EcKeyGenParams = { name: "ECDSA", namedCurve: "P-256" };
 const HASH_ALGORITHM = "SHA-256";
 
-let cachedIdentity: KeyIdentity | null = null;
+let cachedIdentity: Promise<KeyIdentity> | null = null;
 
 // -- Public API -------------------------------
 
@@ -69,19 +70,24 @@ export async function getStoredKeyId(): Promise<string | null> {
   return (await loadFromStorage())?.keyId ?? null;
 }
 
-export async function getIdentity(): Promise<KeyIdentity> {
-  if (cachedIdentity) return cachedIdentity;
+export function getIdentity(): Promise<KeyIdentity> {
+  cachedIdentity ??= loadOrCreateIdentity().catch(error => {
+    cachedIdentity = null;
+    throw error;
+  });
+  return cachedIdentity;
+}
 
+async function loadOrCreateIdentity(): Promise<KeyIdentity> {
   const stored = await loadFromStorage();
-  if (stored) {
-    cachedIdentity = stored;
-    return stored;
-  }
+  if (stored) return stored;
 
-  const identity = await generateKeyIdentity();
-  await saveToStorage(identity);
-  cachedIdentity = identity;
-  return identity;
+  const generated = await generateKeyIdentity();
+  const storedMeanwhile = await loadFromStorage();
+  if (storedMeanwhile) return storedMeanwhile;
+
+  await saveToStorage(generated);
+  return generated;
 }
 
 export async function signRating(themeId: string, rating: number): Promise<SignedRating> {
@@ -213,7 +219,7 @@ export async function importIdentity(json: string): Promise<KeyIdentity> {
     await clearCertificate();
   }
 
-  cachedIdentity = identity;
+  cachedIdentity = Promise.resolve(identity);
   invalidateDisplayName();
 
   return identity;
@@ -242,6 +248,7 @@ async function fetchResolvedProfile(): Promise<ResolvedProfile | null> {
       };
       if (json.success && typeof json.data?.displayName === "string") {
         const avatarUrl = json.data.avatarUrl;
+        rememberDisplayName(signed.payload.keyId, json.data.displayName);
         return { displayName: json.data.displayName, avatarUrl: typeof avatarUrl === "string" ? avatarUrl : null };
       }
     }
@@ -271,12 +278,32 @@ export async function getDisplayName(): Promise<string> {
   const resolved = await getResolvedDisplayName();
   if (resolved !== null) return resolved;
   if (lastSavedDisplayName !== null) return lastSavedDisplayName;
+  return getLastKnownDisplayName();
+}
+
+export async function getLastKnownDisplayName(): Promise<string> {
   const { keyId } = await getIdentity();
+  const result = await getLocalStorage<{ [DISPLAY_NAME_KEY]?: { keyId?: unknown; displayName?: unknown } }>([
+    DISPLAY_NAME_KEY,
+  ]);
+  const remembered = result[DISPLAY_NAME_KEY];
+  if (remembered?.keyId === keyId && typeof remembered.displayName === "string") return remembered.displayName;
   return generatePetName(keyId);
+}
+
+function rememberDisplayName(keyId: string, displayName: string): void {
+  chrome.storage.local
+    .set({ [DISPLAY_NAME_KEY]: { keyId, displayName } })
+    .catch(err => warnCore("Failed to remember the display name:", err));
 }
 
 export function invalidateDisplayName(newValue?: string): void {
   lastSavedDisplayName = newValue ?? null;
+  if (newValue !== undefined) {
+    getIdentity()
+      .then(({ keyId }) => rememberDisplayName(keyId, newValue))
+      .catch(err => warnCore("Failed to remember the display name:", err));
+  }
   if (newValue === undefined) {
     cachedResolvedProfile = null;
     return;

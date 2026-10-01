@@ -13,6 +13,7 @@ import {
   exportIdentity,
   getDisplayName,
   getIdentity,
+  getLastKnownDisplayName,
   getResolvedProfile,
   importIdentity,
   invalidateDisplayName,
@@ -798,7 +799,13 @@ async function initIdentityUI(): Promise<void> {
   onBackupFlagChanged(() => void syncBackupWarning());
 
   try {
-    displayNameEl.textContent = await getDisplayName();
+    const lastKnown = await getLastKnownDisplayName();
+    displayNameEl.textContent = lastKnown;
+    getDisplayName()
+      .then(current => {
+        if (displayNameEl.textContent === lastKnown) displayNameEl.textContent = current;
+      })
+      .catch(error => errorCore("Failed to resolve the display name:", error));
   } catch (error) {
     errorCore("Failed to load identity:", error);
     displayNameEl.textContent = t("options_alert_identityLoadError");
