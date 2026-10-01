@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { cssTimeMs } = await import("./motion");
+const { cssTimeMs } = await import("@/ui/motion");
 
 // -- Happy paths --------------------------
 assert.equal(cssTimeMs("150ms", 0), 150, "milliseconds pass through");

@@ -39,7 +39,7 @@ Object.assign(globalThis, {
 });
 Date.now = () => now;
 
-const { toast } = await import("./toast");
+const { toast } = await import("@/ui/toast");
 
 const doc = window.document;
 const toasts = (): HTMLElement[] => Array.from(doc.querySelectorAll<HTMLElement>(".ui-toast"));
