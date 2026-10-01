@@ -26,6 +26,7 @@ const KIND_ICONS: Record<Exclude<ToastKind, "loading">, IconKey> = {
 };
 
 const ANNOUNCE_DELAY_MS = 50;
+const DISMISS_KEYS = new Set(["Escape", "Enter", " "]);
 
 type Politeness = "polite" | "assertive";
 
@@ -110,6 +111,7 @@ function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): Toas
     return existing;
   }
   const el = document.createElement("div");
+  el.tabIndex = 0;
   render(el, kind, message);
   el.classList.add("is-entering");
 
@@ -117,26 +119,21 @@ function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): Toas
   let startedAt = 0;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let hovered = false;
+  let focused = false;
   let closed = false;
 
   const run = (): void => {
     clearTimeout(timer);
-    if (remaining === null || hovered || closed) return;
+    if (remaining === null || hovered || focused || closed) return;
     startedAt = Date.now();
     timer = setTimeout(dismiss, remaining);
   };
 
   const pause = (): void => {
-    hovered = true;
     if (timer === undefined || remaining === null) return;
     clearTimeout(timer);
     timer = undefined;
     remaining = Math.max(0, remaining - (Date.now() - startedAt));
-  };
-
-  const resume = (): void => {
-    hovered = false;
-    run();
   };
 
   function dismiss(): void {
@@ -149,8 +146,28 @@ function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): Toas
     setTimeout(() => el.remove(), prefersReducedMotion() ? 0 : quickDurationMs());
   }
 
-  el.addEventListener("pointerenter", pause);
-  el.addEventListener("pointerleave", resume);
+  el.addEventListener("pointerenter", () => {
+    hovered = true;
+    pause();
+  });
+  el.addEventListener("pointerleave", () => {
+    hovered = false;
+    run();
+  });
+  el.addEventListener("focusin", () => {
+    focused = true;
+    pause();
+  });
+  el.addEventListener("focusout", event => {
+    if (event.relatedTarget instanceof Node && el.contains(event.relatedTarget)) return;
+    focused = false;
+    run();
+  });
+  el.addEventListener("keydown", event => {
+    if (!DISMISS_KEYS.has(event.key)) return;
+    event.preventDefault();
+    dismiss();
+  });
   el.addEventListener("click", dismiss);
 
   const handle: ToastHandle = {

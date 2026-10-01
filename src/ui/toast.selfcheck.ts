@@ -25,6 +25,7 @@ Object.assign(globalThis, {
   window,
   document: window.document,
   DOMParser: window.DOMParser,
+  Node: window.Node,
   getComputedStyle: window.getComputedStyle.bind(window),
   matchMedia: (query: string) => ({ matches: query.includes("reduce") && reducedMotion }),
   setTimeout: (fn: () => void, ms = 0) => {
@@ -165,6 +166,53 @@ const reset = (): void => {
   toast.success("click me");
   toasts()[0].dispatchEvent(new window.Event("click"));
   assert.equal(live().length, 0, "click dismisses");
+  reset();
+}
+
+// -- Keyboard --------------------------
+{
+  toast.success("focus me");
+  const [el] = toasts();
+  assert.equal(el.tabIndex, 0, "a toast is reachable with the keyboard");
+  advance(1000);
+  el.dispatchEvent(new window.FocusEvent("focusin", { bubbles: true }));
+  advance(10_000);
+  assert.equal(live().length, 1, "focus pauses the timer");
+  el.dispatchEvent(new window.FocusEvent("focusout", { bubbles: true, relatedTarget: el.firstElementChild }));
+  advance(10_000);
+  assert.equal(live().length, 1, "focus moving inside the toast keeps the pause");
+  el.dispatchEvent(new window.FocusEvent("focusout", { bubbles: true, relatedTarget: null }));
+  advance(1499);
+  assert.equal(live().length, 1, "blur resumes with the remaining time");
+  advance(1);
+  assert.equal(live().length, 0, "dismisses when the remaining time runs out after blur");
+  reset();
+}
+{
+  toast.success("hover and focus");
+  const [el] = toasts();
+  el.dispatchEvent(new window.Event("pointerenter"));
+  el.dispatchEvent(new window.FocusEvent("focusin", { bubbles: true }));
+  el.dispatchEvent(new window.Event("pointerleave"));
+  advance(10_000);
+  assert.equal(live().length, 1, "leaving with the pointer keeps the pause while focused");
+  el.dispatchEvent(new window.FocusEvent("focusout", { bubbles: true, relatedTarget: null }));
+  advance(2500);
+  assert.equal(live().length, 0, "the timer runs once neither hover nor focus holds it");
+  reset();
+}
+for (const key of ["Escape", "Enter", " "]) {
+  toast.error(`press ${key}`);
+  const event = new window.KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+  toasts()[0].dispatchEvent(event);
+  assert.equal(live().length, 0, `${JSON.stringify(key)} dismisses the focused toast`);
+  assert.ok(event.defaultPrevented, `${JSON.stringify(key)} does not also activate the page`);
+  reset();
+}
+{
+  toast.info("ignore tab");
+  toasts()[0].dispatchEvent(new window.KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+  assert.equal(live().length, 1, "other keys leave the toast alone");
   reset();
 }
 

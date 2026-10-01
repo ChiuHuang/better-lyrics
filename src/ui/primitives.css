@@ -405,6 +405,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   pointer-events: auto;
   cursor: pointer;
 }
+.ui-toast:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
 .ui-toast > .ui-toast__icon { width: 20px; height: 20px; flex: none; }
 .ui-toast--success .ui-toast__icon { color: var(--success); }
 .ui-toast--error .ui-toast__icon { color: var(--danger); }
