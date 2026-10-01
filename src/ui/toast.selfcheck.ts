@@ -456,6 +456,21 @@ const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector
   reset();
 }
 
+// -- Dismiss by id --------------------------
+{
+  let applied = 0;
+  toast.success("Installed Minimal", { id: "install:minimal", action: { label: "Apply", onClick: () => applied++ } });
+  toast.success("Installed Lucid", { id: "install:lucid" });
+  toast.dismiss("install:minimal");
+  assert.deepEqual(live().map(text), ["Installed Lucid"], "dismiss by id closes only that toast");
+  pressEnter();
+  assert.equal(applied, 0, "a toast dismissed by id no longer answers Enter");
+  toast.dismiss("install:missing");
+  toast.dismiss("install:minimal");
+  assert.equal(live().length, 1, "dismissing an unknown or closed id is a no-op");
+  reset();
+}
+
 // -- Action invariants --------------------------
 {
   let applied = 0;

@@ -256,4 +256,5 @@ export const toast = {
   error: (message: string, options?: ToastOptions): ToastHandle => show("error", message, options),
   info: (message: string, options?: ToastOptions): ToastHandle => show("info", message, options),
   loading: (message: string, options?: ToastOptions): ToastHandle => show("loading", message, options),
+  dismiss: (id: string): void => liveToasts.get(id)?.dismiss(),
 };

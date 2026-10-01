@@ -1650,7 +1650,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
         const cardApplyBtn = card?.querySelector(".store-card-btn-apply") as HTMLButtonElement | null;
         if (cardApplyBtn) cardApplyBtn.style.display = "none";
       }
-      toast.success(t("marketplace_alert_removed", theme.title));
+      showRemovedToast(theme);
     } else {
       if (!(await confirmIncompatibleInstall(theme))) {
         return;
@@ -2037,7 +2037,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         if (isRemoveButton) {
           await removeTheme(theme.id);
           setInstallButtonState(actionBtn, false, "I");
-          toast.success(t("marketplace_alert_removed", theme.title));
+          showRemovedToast(theme);
           updateRatingEnabled?.(false);
           updateDetailApplyBtn(false, false);
         } else {
@@ -2420,10 +2420,18 @@ async function updateYourThemesDropdown(): Promise<void> {
   }
 }
 
+const installToastId = (themeId: string): string => `install:${themeId}`;
+
 function showInstalledToast(message: string, installedTheme: InstalledStoreTheme): void {
   toast.success(message, {
+    id: installToastId(installedTheme.id),
     action: { label: t("marketplace_apply"), onClick: () => void handleApplyTheme(installedTheme) },
   });
+}
+
+function showRemovedToast(theme: StoreTheme): void {
+  toast.dismiss(installToastId(theme.id));
+  toast.success(t("marketplace_alert_removed", theme.title));
 }
 
 async function handleApplyTheme(theme: InstalledStoreTheme): Promise<boolean> {
