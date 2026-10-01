@@ -860,8 +860,9 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   border-bottom: 1px solid var(--divider-strong);
 }
 .ui-modal__title { margin: 0; font-size: var(--font-size-lg); font-weight: 500; color: var(--text-strong); text-wrap: balance; }
-.ui-modal__close { flex: none; }
-.ui-modal__body { min-height: 0; overflow-y: auto; padding: var(--text-inset); color: var(--text); }
+.ui-modal__close { flex: none; width: 28px; height: 28px; }
+.ui-modal__close svg { width: 1.125rem; height: 1.125rem; }
+.ui-modal__body { min-height: 0; overflow-y: auto; padding: var(--text-inset); color: var(--text); font-size: var(--font-size-base); }
 .ui-modal__message { margin: 0 0 1rem; font-size: var(--font-size-base); line-height: 1.5; text-wrap: pretty; }
 .ui-modal__message:last-child,
 .ui-modal__message:has(+ [hidden]:last-child) { margin-bottom: 0; }
