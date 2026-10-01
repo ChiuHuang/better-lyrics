@@ -18,7 +18,7 @@ import {
   invalidateDisplayName,
   signPayload,
 } from "@core/keyIdentity";
-import { clearAllOffsets, getOffsetInfo } from "@core/storage";
+import { clearAllOffsets, clearCache, getOffsetInfo } from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
@@ -222,8 +222,9 @@ const saveOptionsToStorage = (options: Options): void => {
 const clearTransientLyrics = (callback?: () => void): void => {
   chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
     if (tabs.length === 0) {
-      toast.success(t("options_alert_cacheCleared"));
-      if (callback && typeof callback === "function") callback();
+      clearCache()
+        .then(() => toast.success(t("options_alert_cacheCleared")))
+        .finally(() => callback?.());
       return;
     }
 
