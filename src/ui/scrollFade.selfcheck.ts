@@ -80,8 +80,6 @@ const { fadeEdges, fadeInlineEdges, inlineWheelStep } = await import("@/ui/scrol
   );
 }
 
-console.log("scrollFade self-check passed");
-
 // -- Inline wheel --------------------------
 {
   const metrics = { clientWidth: 100, scrollWidth: 300 };
@@ -150,3 +148,5 @@ console.log("scrollFade self-check passed");
   assert.equal(inlineWheelStep(up, { ...metrics, scrollLeft: -200 }, true), 100, "rtl wheel up at end scrolls back");
   assert.equal(inlineWheelStep(up, { ...metrics, scrollLeft: 0 }, true), null, "rtl wheel up at start leaves the page");
 }
+
+console.log("scrollFade self-check passed");
