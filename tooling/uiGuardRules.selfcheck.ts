@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
-const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countUppercase } = await import("./uiGuardRules");
+const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countRawWhiteAlphas, countUppercase } =
+  await import("./uiGuardRules");
 
 // -- Native select --------------------------
 {
@@ -124,6 +125,46 @@ const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countUpperca
     0,
     "setProperty with a token is fine"
   );
+}
+
+// -- Raw white alpha --------------------------
+{
+  const spellings = [
+    "rgba(255, 255, 255, 0.5)",
+    "rgba(255,255,255,.5)",
+    "rgb(255 255 255 / 0.5)",
+    "RGBA(255, 255, 255, 1)",
+    "#fff",
+    "#FFF",
+    "#ffffff",
+    "#ffffff13",
+  ];
+  for (const colour of spellings) {
+    assert.equal(countRawWhiteAlphas(`.a { color: ${colour}; }`), 1, `color: ${colour} counts`);
+  }
+  assert.equal(
+    countRawWhiteAlphas(`.a { box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), 0 0 0 1px #fff; }`),
+    1,
+    "one declaration counts once"
+  );
+  assert.equal(countRawWhiteAlphas(`.a { color: #fff; background: #fff }`), 2, "each declaration counts");
+  assert.equal(
+    countRawWhiteAlphas(`.a { color: color-mix(in srgb, var(--tone) 50%, #fff); }`),
+    1,
+    "a literal inside color-mix still counts"
+  );
+}
+
+// -- Raw white alpha: exclusions --------------------------
+{
+  assert.equal(countRawWhiteAlphas(`:root { --text: rgba(255, 255, 255, 0.85); }`), 0, "token definitions are fine");
+  assert.equal(countRawWhiteAlphas(`.a { --tint: #fff; color: var(--tint); }`), 0, "local custom properties are fine");
+  assert.equal(countRawWhiteAlphas(`/* color: #fff; */ .a { color: var(--text); }`), 0, "comments are ignored");
+  assert.equal(countRawWhiteAlphas(`.a { color: #fffe0a; }`), 0, "other hex colours are fine");
+  assert.equal(countRawWhiteAlphas(`.a { color: #ffff00; }`), 0, "six-digit lookalikes are fine");
+  assert.equal(countRawWhiteAlphas(`.a { color: rgba(255, 255, 0, 0.5); }`), 0, "other rgb colours are fine");
+  assert.equal(countRawWhiteAlphas(`#fff-panel { color: var(--text); }`), 0, "selectors are not declarations");
+  assert.equal(countRawWhiteAlphas(""), 0, "empty source has none");
 }
 
 console.log("uiGuardRules self-check passed");

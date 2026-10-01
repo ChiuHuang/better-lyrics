@@ -38,3 +38,14 @@ const RAW_FONT_SIZE = new RegExp(
 export function countRawFontSizes(source: string): number {
   return countMatches(stripCssComments(source), RAW_FONT_SIZE);
 }
+
+const WHITE_LITERAL = /rgba?\(\s*255[\s,]+255[\s,]+255\b|#fff(?:fff(?:[\da-f]{2})?)?(?![\da-f])/i;
+const DECLARATION = /(?<![\w-])(-{0,2}[a-z][\w-]*)\s*:\s*([^;{}]+)(?=[;}])/gi;
+
+export function countRawWhiteAlphas(css: string): number {
+  let count = 0;
+  for (const [, property, value] of stripCssComments(css).matchAll(DECLARATION)) {
+    if (!property.startsWith("--") && WHITE_LITERAL.test(value)) count++;
+  }
+  return count;
+}

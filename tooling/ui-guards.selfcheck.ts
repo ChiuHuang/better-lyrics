@@ -2,7 +2,13 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { countDarkFieldWells, countNativeSelects, countRawFontSizes, countUppercase } from "./uiGuardRules";
+import {
+  countDarkFieldWells,
+  countNativeSelects,
+  countRawFontSizes,
+  countRawWhiteAlphas,
+  countUppercase,
+} from "./uiGuardRules";
 
 const root = join(fileURLToPath(import.meta.url), "..", "..");
 const scanDirs = ["src", "pages"].map(dir => join(root, dir));
@@ -28,6 +34,11 @@ const RULES: Rule[] = [
     count: countRawFontSizes,
     appliesTo: p => /^(src\/ui|src\/options|pages)\//.test(p) && p !== "src/ui/tokens.css",
   },
+  {
+    name: "raw white alpha",
+    count: countRawWhiteAlphas,
+    appliesTo: p => p.endsWith(".css") && !p.startsWith("src/ui/"),
+  },
 ];
 
 const KNOWN: Record<string, Record<string, number>> = {
@@ -35,6 +46,14 @@ const KNOWN: Record<string, Record<string, number>> = {
   "uppercase text": {},
   "dark field well": {},
   "raw font size": {},
+  "raw white alpha": {
+    "src/modules/unison/gamification.css": 4,
+    "src/options/auth/auth.css": 1,
+    "src/options/editor/editor.css": 10,
+    "src/options/popup.css": 36,
+    "src/options/store/marketplace.css": 22,
+    "src/options/unison/unison.css": 32,
+  },
 };
 
 for (const rule of RULES) {
