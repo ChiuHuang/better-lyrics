@@ -11,6 +11,7 @@ import { attachHoldRepeat } from "@core/holdRepeat";
 import { getLanguageDisplayName, initI18n, loadLocaleOverride, SUPPORTED_LOCALES, t } from "@core/i18n";
 import {
   exportIdentity,
+  forgetDisplayName,
   getDisplayName,
   getIdentity,
   getLastKnownDisplayName,
@@ -1079,7 +1080,7 @@ function initNicknameModal(): void {
         invalidateDisplayName(responseDisplayName);
         resolvedDisplayName = responseDisplayName;
       } else {
-        invalidateDisplayName();
+        await forgetDisplayName();
         resolvedDisplayName = await getDisplayName();
       }
       applyDisplayName(resolvedDisplayName);

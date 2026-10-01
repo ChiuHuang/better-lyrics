@@ -63,6 +63,7 @@ const ECDSA_PARAMS: EcKeyGenParams = { name: "ECDSA", namedCurve: "P-256" };
 const HASH_ALGORITHM = "SHA-256";
 
 let cachedIdentity: Promise<KeyIdentity> | null = null;
+let importCount = 0;
 
 // -- Public API -------------------------------
 
@@ -71,19 +72,25 @@ export async function getStoredKeyId(): Promise<string | null> {
 }
 
 export function getIdentity(): Promise<KeyIdentity> {
-  cachedIdentity ??= loadOrCreateIdentity().catch(error => {
-    cachedIdentity = null;
+  if (cachedIdentity) return cachedIdentity;
+  const pending: Promise<KeyIdentity> = loadOrCreateIdentity().catch(error => {
+    if (cachedIdentity === pending) cachedIdentity = null;
     throw error;
   });
-  return cachedIdentity;
+  cachedIdentity = pending;
+  return pending;
 }
 
 async function loadOrCreateIdentity(): Promise<KeyIdentity> {
+  const importsAtStart = importCount;
+  const importedMeanwhile = (): boolean => importCount !== importsAtStart;
   const stored = await loadFromStorage();
+  if (importedMeanwhile()) return getIdentity();
   if (stored) return stored;
 
   const generated = await generateKeyIdentity();
   const storedMeanwhile = await loadFromStorage();
+  if (importedMeanwhile()) return getIdentity();
   if (storedMeanwhile) return storedMeanwhile;
 
   await saveToStorage(generated);
@@ -210,18 +217,28 @@ export async function importIdentity(json: string): Promise<KeyIdentity> {
     createdAt: Date.now(),
   };
 
+  importCount++;
+  const committed = commitImportedIdentity(identity, parsed.certificate);
+  cachedIdentity = committed;
+  try {
+    await committed;
+  } catch (error) {
+    if (cachedIdentity === committed) cachedIdentity = null;
+    throw error;
+  }
+  invalidateDisplayName();
+
+  return identity;
+}
+
+async function commitImportedIdentity(identity: KeyIdentity, certificate: string | undefined): Promise<KeyIdentity> {
   await saveToStorage(identity);
   await chrome.storage.local.remove(REGISTERED_KEY);
-
-  if (parsed.certificate) {
-    await setCertificate(parsed.certificate);
+  if (certificate) {
+    await setCertificate(certificate);
   } else {
     await clearCertificate();
   }
-
-  cachedIdentity = Promise.resolve(identity);
-  invalidateDisplayName();
-
   return identity;
 }
 
@@ -310,6 +327,11 @@ export function invalidateDisplayName(newValue?: string): void {
   }
   const base = cachedResolvedProfile ?? fetchResolvedProfile();
   rememberResolvedProfile(base.then(profile => profile && { ...profile, displayName: newValue }));
+}
+
+export async function forgetDisplayName(): Promise<void> {
+  invalidateDisplayName();
+  await chrome.storage.local.remove(DISPLAY_NAME_KEY).catch(err => warnCore("Failed to forget the display name:", err));
 }
 
 export async function isKeyRegistered(): Promise<boolean> {
