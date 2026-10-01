@@ -48,19 +48,45 @@
     "description": "Hint under the clear cached lyrics label"
   },
   "options_general_clearCache": {
-    "message": "Clear cache",
+    "message": "Limpiar caché",
     "description": "Clear cache button label"
   },
   "options_general_totalLyrics": {
     "message": "Total de letras en caché",
     "description": "Total lyrics in cache label"
   },
-  "options_general_cacheSize": {
-    "message": "Tamaño del caché",
-    "description": "Cache size label"
+  "options_general_storageUsed": {
+    "message": "Storage used",
+    "description": "Popup General tab: label under the total local storage size"
+  },
+  "options_general_segment": {
+    "message": "$LABEL$: $VALUE$",
+    "description": "Popup General tab: tooltip on one segment of a breakdown bar, e.g. 'Syllable: 120' or 'Themes: 0.4 MB'",
+    "placeholders": {
+      "label": {
+        "content": "$1",
+        "example": "Syllable"
+      },
+      "value": {
+        "content": "$2",
+        "example": "120"
+      }
+    }
+  },
+  "options_general_browseThemes": {
+    "message": "Browse themes",
+    "description": "Popup General tab: one-line description on the Theme Marketplace shortcut"
+  },
+  "options_general_whatsNew": {
+    "message": "What's new",
+    "description": "Popup General tab: shortcut to the latest release notes"
+  },
+  "options_general_whatsNewHint": {
+    "message": "Latest release notes",
+    "description": "Popup General tab: one-line description on the What's new shortcut"
   },
   "options_display_fullscreenTab": {
-    "message": "Fullscreen",
+    "message": "Pantalla completa",
     "description": "Header tab in Display for fullscreen settings"
   },
   "options_display_videoTab": {
@@ -92,11 +118,11 @@
     "description": "Label for the per-letter wave lyric animation toggle"
   },
   "options_display_letterWaveOff": {
-    "message": "Off",
+    "message": "apagado",
     "description": "Spoken value of the letter wave three-way switch when the effect is off"
   },
   "options_display_letterWaveOn": {
-    "message": "On",
+    "message": "Encendido",
     "description": "Spoken value of the letter wave three-way switch when the effect is always on"
   },
   "options_display_letterWaveBadge": {
@@ -316,7 +342,7 @@
     "description": "Label in the offset settings modal preceding the list of sync types a given offset affects"
   },
   "options_language_displayLanguage": {
-    "message": "Display language",
+    "message": "Idioma mostrado",
     "description": "Label for the UI language selector dropdown"
   },
   "options_language_displayLanguageAuto": {
@@ -336,7 +362,7 @@
     "description": "Translation language setting label"
   },
   "options_sources_title": {
-    "message": "Lyric source preference",
+    "message": "Preferencia de fuente de letras",
     "description": "Sources settings section title"
   },
   "options_sources_description": {
@@ -348,7 +374,7 @@
     "description": "Label on the small button in the Sources section header that opens the Unison page"
   },
   "options_themes_title": {
-    "message": "Theme settings",
+    "message": "Configuración de temas",
     "description": "Theme settings section title"
   },
   "options_themes_theme": {
@@ -364,11 +390,11 @@
     "description": "Change theme button label"
   },
   "options_themes_customTheme": {
-    "message": "Custom theme",
+    "message": "Tema personalizado",
     "description": "Display name for unnamed custom themes"
   },
   "options_themes_customStyles": {
-    "message": "Custom styles",
+    "message": "Estilos personalizados",
     "description": "Custom styles label"
   },
   "options_themes_create": {
@@ -384,7 +410,7 @@
     "description": "Theme marketplace button label"
   },
   "options_themes_installedThemes": {
-    "message": "Installed themes",
+    "message": "Temas instalados",
     "description": "Installed themes button label"
   },
   "options_identity_backupTitle": {
@@ -400,7 +426,7 @@
     "description": "Your identity label"
   },
   "options_identity_unisonStats": {
-    "message": "Unison stats",
+    "message": "Estadísticas de Unison",
     "description": "Section title above the user's own Unison level, tier, rank and badges on the Identity tab"
   },
   "options_identity_loading": {
@@ -408,23 +434,23 @@
     "description": "Loading identity placeholder"
   },
   "options_identity_exportImport": {
-    "message": "Export/import",
+    "message": "Exportar/Importar",
     "description": "Export/Import section label"
   },
   "options_identity_exportKey": {
-    "message": "Export key",
+    "message": "Exportar clave",
     "description": "Export key button label"
   },
   "options_identity_importKey": {
-    "message": "Import key",
+    "message": "Importar clave",
     "description": "Import key button label"
   },
   "options_identityImport_title": {
-    "message": "Import identity",
+    "message": "Importar identidad",
     "description": "Title of the import identity modal"
   },
   "options_identityImport_chooseFile": {
-    "message": "Choose file",
+    "message": "Escoger archivo",
     "description": "Label for the file picker button in the import identity modal"
   },
   "options_identityImport_or": {
@@ -516,7 +542,7 @@
     "description": "Shown when the user clicks Import with no JSON provided"
   },
   "options_modal_selectTheme": {
-    "message": "Select a theme",
+    "message": "Seleccionar un tema",
     "description": "Theme modal title"
   },
   "options_modal_cancel": {
@@ -536,7 +562,7 @@
     "description": "Cache clear failed message"
   },
   "options_alert_nothingToClear": {
-    "message": "Nothing to clear :/",
+    "message": "¡Nada que limpiar!",
     "description": "Nothing to clear message"
   },
   "options_alert_exportFailed": {
@@ -596,7 +622,7 @@
     "description": "Message in the rename theme dialog"
   },
   "editor_prompt_themeName": {
-    "message": "Theme name",
+    "message": "Nombre del tema",
     "description": "Placeholder of the theme name field in the save and rename dialogs"
   },
   "editor_prompt_deleteMessage": {
@@ -662,7 +688,7 @@
     "description": "Toast when renaming a custom theme fails"
   },
   "editor_alert_themeDeleted": {
-    "message": "Custom theme deleted",
+    "message": "Tema personalizado eliminado",
     "description": "Toast after a custom theme is deleted"
   },
   "editor_alert_themeDeleteFailed": {
@@ -690,7 +716,7 @@
     "description": "Open in new tab tooltip"
   },
   "options_editor_backToSettings": {
-    "message": "Back to settings",
+    "message": "Volver a configuración",
     "description": "Back to settings button label"
   },
   "options_editor_fullExperienceNote": {
@@ -702,7 +728,7 @@
     "description": "Open in new tab link text"
   },
   "options_editor_stylingGuide": {
-    "message": "Styling guide",
+    "message": "Guía de estilos",
     "description": "Styling guide link text"
   },
   "options_editor_renameTheme": {
@@ -734,7 +760,7 @@
     "description": "Confirm button in the find and replace modal that opens the fullscreen editor"
   },
   "options_editor_close": {
-    "message": "Close",
+    "message": "Cerrar",
     "description": "Cancel button that closes the find and replace modal"
   },
   "options_editor_notReady": {
@@ -774,7 +800,7 @@
     "description": "YouTube provider name"
   },
   "options_provider_youtubeCaptions": {
-    "message": "YouTube captions",
+    "message": "Subtítulos de YouTube",
     "description": "YouTube Captions provider name"
   },
   "options_provider_binilyrics": {
@@ -938,7 +964,7 @@
     "description": "Empty state message"
   },
   "marketplace_grantPermission": {
-    "message": "Grant permission",
+    "message": "Conceder permiso",
     "description": "Grant permission button"
   },
   "marketplace_install": {
@@ -986,7 +1012,7 @@
     "description": "Cancel button"
   },
   "marketplace_urlPermissionTitle": {
-    "message": "Additional permission required",
+    "message": "Permiso adicional requerido",
     "description": "URL permission modal title"
   },
   "marketplace_urlPermissionWhy": {
@@ -1014,7 +1040,7 @@
     "description": "URL permission note"
   },
   "marketplace_shortcutsTitle": {
-    "message": "Keyboard shortcuts",
+    "message": "Atajos de teclado",
     "description": "Shortcuts modal title"
   },
   "marketplace_shortcutsNavigation": {
@@ -1078,11 +1104,11 @@
     "description": "Toggle compatible shortcut"
   },
   "marketplace_shortcutsDetails": {
-    "message": "Theme details",
+    "message": "Detalles del tema",
     "description": "Theme details shortcuts group"
   },
   "marketplace_shortcutsInstallRemove": {
-    "message": "Install / remove",
+    "message": "Instalar / Eliminar",
     "description": "Install/remove shortcut"
   },
   "marketplace_shortcutsApply": {
@@ -1296,11 +1322,11 @@
     "description": "Tooltip and accessible label on the RICS badge in the theme detail view"
   },
   "marketplace_urlValidating": {
-    "message": "Validating...",
+    "message": "Validando...",
     "description": "Install button text while a theme repository URL is being checked"
   },
   "marketplace_urlInstalling": {
-    "message": "Installing...",
+    "message": "Instalando...",
     "description": "Install button text while a theme from a repository URL is being installed"
   },
   "marketplace_incompatibleConfirm": {
@@ -1428,7 +1454,7 @@
     }
   },
   "editor_pageTitle": {
-    "message": "Better Lyrics styles editor",
+    "message": "Editor CSS de Better Lyrics",
     "description": "Standalone editor page title"
   },
   "editor_importFromFile": {
@@ -1500,7 +1526,7 @@
     "description": "Message when no lyrics are available"
   },
   "lyrics_resumeAutoscroll": {
-    "message": "Resume autoscroll",
+    "message": "Reajustar",
     "description": "Resume Autoscroll button label"
   },
   "options_language_exclusions": {
@@ -1528,15 +1554,15 @@
     "description": "About page section heading"
   },
   "options_about_does1": {
-    "message": "Time-synced lyrics on YouTube Music, seek by clicking any line.",
+    "message": "Lyrics that follow the song. Click any line to jump to it.",
     "description": "About page feature list item"
   },
   "options_about_does2": {
-    "message": "Translations and romanization for foreign-language tracks.",
+    "message": "Translation and romanization for songs in other languages.",
     "description": "About page feature list item"
   },
   "options_about_does3": {
-    "message": "Full-screen mode, with the UI available in multiple languages.",
+    "message": "A full-screen view and a floating lyrics window.",
     "description": "About page feature list item"
   },
   "options_about_does4": {
@@ -1544,7 +1570,11 @@
     "description": "About page feature list item"
   },
   "options_about_does5": {
-    "message": "Customizable lyrics providers from multiple sources.",
+    "message": "Themes from the Marketplace, or your own in the built-in editor.",
+    "description": "About page feature list item"
+  },
+  "options_about_does6": {
+    "message": "Lyrics from many sources, in an order you choose.",
     "description": "About page feature list item"
   },
   "options_about_openSourceHeading": {
@@ -1593,6 +1623,26 @@
     "message": "Discord",
     "description": "Link text in the About page that opens the Discord server"
   },
+  "options_about_supportHeading": {
+    "message": "Support the project",
+    "description": "About page heading for the donation links"
+  },
+  "options_about_supportBody": {
+    "message": "Better Lyrics is a labor of love, and we fuss over it more than we'd like to admit... It's free, with no ads or tracking, and it always will be. If it's made your listening experience a little better, you can help keep it going! A star on GitHub helps too, and it's free :)",
+    "description": "About page note above the donation links, written in the makers' own voice"
+  },
+  "options_about_supportStar": {
+    "message": "Star us on GitHub",
+    "description": "About page link to star the Better Lyrics repository on GitHub"
+  },
+  "options_about_supportCoffee": {
+    "message": "Buy us a coffee",
+    "description": "About page link to the Buy Me a Coffee page"
+  },
+  "options_about_supportSponsors": {
+    "message": "Sponsor on GitHub",
+    "description": "About page link to GitHub Sponsors"
+  },
   "options_about_madeByHeading": {
     "message": "Made by",
     "description": "About page section heading"
@@ -1611,8 +1661,18 @@
       }
     }
   },
+  "options_about_badgesBody": {
+    "message": "Special thanks to $KIYOSHI$ for the time and care behind every badge across Better Lyrics and Unison <3",
+    "description": "About page credit for the Unison badge artist; the name becomes a link",
+    "placeholders": {
+      "kiyoshi": {
+        "content": "$1",
+        "example": "Kiyoshi"
+      }
+    }
+  },
   "options_language_exclusionsTitle": {
-    "message": "Language exclusions",
+    "message": "Exclusión de idiomas",
     "description": "Modal title for language exclusions"
   },
   "options_romanization_tab": {
@@ -1648,7 +1708,7 @@
     "description": "Hint text for translation exclusions"
   },
   "options_resetToDefault": {
-    "message": "Reset $TYPE$ to default",
+    "message": "Resetear $TYPE$ a Predeterminado",
     "description": "Reset to default button label",
     "placeholders": {
       "type": {
@@ -1658,7 +1718,7 @@
     }
   },
   "options_romanization_resetTitle": {
-    "message": "Reset $TYPE$ exclusions",
+    "message": "Resetear exclusiones de $TYPE$",
     "description": "Modal title for resetting exclusions",
     "placeholders": {
       "type": {
@@ -1710,7 +1770,7 @@
     }
   },
   "theme_author_prefix": {
-    "message": "By $AUTHOR$",
+    "message": "Por $AUTHOR$",
     "description": "Author prefix shown on theme selector button",
     "placeholders": {
       "author": {
@@ -1720,7 +1780,7 @@
     }
   },
   "theme_author_you": {
-    "message": "By you",
+    "message": "Por Ti",
     "description": "Author label for custom user themes on theme selector button"
   },
   "symlink_installFailed": {
@@ -1738,11 +1798,11 @@
     }
   },
   "theme_modal_section_featured": {
-    "message": "Featured themes",
+    "message": "Temas presentados",
     "description": "Section title for featured themes (top marketplace picks and built-ins) in the theme chooser modal"
   },
   "theme_modal_section_all": {
-    "message": "All themes",
+    "message": "Todos los temas",
     "description": "Section title for the user's installed marketplace themes in the theme chooser modal"
   },
   "theme_modal_browse": {
@@ -1750,7 +1810,7 @@
     "description": "Link in the theme chooser modal that opens the full Theme Marketplace page"
   },
   "theme_modal_section_custom": {
-    "message": "Custom themes",
+    "message": "Temas personalizados",
     "description": "Section title for custom themes in the theme chooser modal"
   },
   "lyrics_submitToUnison": {
@@ -2190,7 +2250,7 @@
     "description": "Feed tab label for recent submissions"
   },
   "unison_tabMySubmissions": {
-    "message": "My submissions",
+    "message": "Mis envíos",
     "description": "Feed tab label for user's own submissions"
   },
   "unison_noSubmissions": {
@@ -2318,7 +2378,7 @@
     }
   },
   "unison_xpToNext": {
-    "message": "$xp$ XP to level $level$",
+    "message": "$xp$ XP hasta el Nivel $level$",
     "description": "Explains how much experience remains before the next Unison level. $xp$ is a positive integer, $level$ is the next level number",
     "placeholders": {
       "xp": {
@@ -2346,15 +2406,15 @@
     }
   },
   "unison_viewProfile": {
-    "message": "View profile",
+    "message": "Ver perfil completo",
     "description": "Link on the Identity tab that opens the user's full Unison profile in a new tab"
   },
   "unison_changePicture": {
-    "message": "Change pfp",
+    "message": "Cambiar imagen",
     "description": "Link on the Identity tab, shown when the user has a Unison profile picture, that opens the Unison website where they can pick a different one"
   },
   "unison_addPicture": {
-    "message": "Add a pfp",
+    "message": "Añadir imagen",
     "description": "Link on the Identity tab, shown when the user has no Unison profile picture, that opens the Unison website where they can pick one"
   },
   "unison_submitted_this": {
