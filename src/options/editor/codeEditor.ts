@@ -43,7 +43,7 @@ function initializeEditorKeyboardShortcuts() {
         message.append(t("options_editor_findReplaceOpenHint"));
 
         showModal({
-          title: t("options_editor_findReplaceTitle"),
+          title: "Find & replace",
           message,
           confirmText: "Open Fullscreen Editor",
           cancelText: t("ui_close"),

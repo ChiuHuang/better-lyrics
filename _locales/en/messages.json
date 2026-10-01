@@ -420,7 +420,7 @@
     "description": "Import key button label"
   },
   "options_identityImport_title": {
-    "message": "Import Identity",
+    "message": "Import identity",
     "description": "Title of the import identity modal"
   },
   "options_identityImport_chooseFile": {
@@ -517,7 +517,7 @@
   },
 
   "options_modal_selectTheme": {
-    "message": "Select a Theme",
+    "message": "Select a theme",
     "description": "Theme modal title"
   },
   "options_modal_cancel": {
@@ -930,7 +930,7 @@
   },
 
   "marketplace_grantPermission": {
-    "message": "Grant Permission",
+    "message": "Grant permission",
     "description": "Grant permission button"
   },
 
@@ -982,7 +982,7 @@
   },
 
   "marketplace_urlPermissionTitle": {
-    "message": "Additional Permission Required",
+    "message": "Additional permission required",
     "description": "URL permission modal title"
   },
   "marketplace_urlPermissionWhy": {
@@ -1434,7 +1434,7 @@
     }
   },
   "options_language_exclusionsTitle": {
-    "message": "Language Exclusions",
+    "message": "Language exclusions",
     "description": "Modal title for language exclusions"
   },
   "options_romanization_tab": {
@@ -1470,7 +1470,7 @@
     "description": "Hint text for translation exclusions"
   },
   "options_resetToDefault": {
-    "message": "Reset $TYPE$ to Default",
+    "message": "Reset $TYPE$ to default",
     "description": "Reset to default button label",
     "placeholders": {
       "type": {
@@ -1480,7 +1480,7 @@
     }
   },
   "options_romanization_resetTitle": {
-    "message": "Reset $TYPE$ Exclusions",
+    "message": "Reset $TYPE$ exclusions",
     "description": "Modal title for resetting exclusions",
     "placeholders": {
       "type": {
