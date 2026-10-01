@@ -1207,10 +1207,10 @@ kbd {
   position: absolute;
   margin-top: 0.25rem;
   min-width: 160px;
-  background: #3e3e41;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--menu-bg);
+  border: var(--menu-edge);
   border-radius: 0.5rem;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 30px -5px;
+  box-shadow: var(--menu-shadow);
   z-index: 100;
   overflow: hidden;
   padding: 0.25rem;
@@ -1228,7 +1228,9 @@ kbd {
   font-size: 0.8125rem;
   text-align: left;
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    background var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out;
 }
 
 .unison-report-dropdown-item:hover {
@@ -2933,7 +2935,8 @@ kbd {
   .unison-input,
   .unison-token-input,
   .unison-back-btn,
-  .unison-search-input {
+  .unison-search-input,
+  .unison-report-dropdown-item {
     transition: none;
   }
 }
