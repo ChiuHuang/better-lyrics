@@ -95,4 +95,27 @@ assert.deepEqual(readableTtml(""), { text: "", readable: false }, "empty text is
   );
 }
 
+// -- Partial pastes keep the layout --------------------------
+
+for (const src of [MINIFIED_388, MINIFIED_BG]) {
+  const shown = readableTtml(src).text;
+  const pastedWord = shown.replace(">smoke<", ">smoke again<").replace(">tail<", ">tail end<");
+  assert.equal(
+    readableTtml(compactTtml(pastedWord)).readable,
+    true,
+    "an edit inside the readable text still compacts to readable TTML"
+  );
+  const twoChunks = shown.replace("</div>", '<p begin="0:30.000" end="0:31.000">new</p></div>');
+  assert.equal(
+    readableTtml(compactTtml(twoChunks)).readable,
+    true,
+    "a pasted minified line inside the readable text keeps the layout"
+  );
+  assert.equal(
+    readableTtml(pastedWord).readable,
+    false,
+    "the readable text is not minified, so it is never laid out again"
+  );
+}
+
 console.log("ttml layout self-check passed");

@@ -47,8 +47,8 @@ import { matchLanguageOption } from "@/options/unison/languages";
 import { renderPreviewInto } from "@/options/unison/lyricsPreview";
 import { detectFormat } from "@/options/unison/lyricsPreviewLines";
 import { searchResultsMessage, splitSearchResultsMessage } from "@/options/unison/searchResultsLabel";
+import { type ReadableLyricsField, bindReadableLyricsField } from "@/options/unison/readableLyricsField";
 import { createSubmitterByline } from "@/options/unison/submitterByline";
-import { compactTtml, readableTtml } from "@/options/unison/ttmlLayout";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { IS_DEV, devFixtureHint, devFixtures } from "@modules/unison/devFixtures";
 import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
@@ -59,7 +59,7 @@ import { createDropdown, type Dropdown } from "@/ui/dropdown";
 import { attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
 import { initTooltips } from "@/ui/tooltip";
-import { attachEditor, type EditorHandle, highlightInto } from "@braccato/highlight";
+import { attachEditor, highlightInto } from "@braccato/highlight";
 import { XMLParser } from "fast-xml-parser";
 
 // -- Icons --------------------------
@@ -116,8 +116,7 @@ let previewHead: HTMLElement;
 let lyricsTextarea: HTMLTextAreaElement;
 let submitLanguageDropdown: Dropdown;
 let submitFormatDropdown: Dropdown;
-let lyricsEditor: EditorHandle;
-const lyricsLayout = { typed: false, readable: false };
+let lyricsField: ReadableLyricsField;
 let composerLink: HTMLAnchorElement;
 
 // -- Feed State --------------------------
@@ -1959,15 +1958,17 @@ function setupSubmitForm(): void {
     isrcHint.append(`${t("unison_isrcHintPrefix")} `, finderLink);
   }
 
+  const lyricsFrame = document.createElement("div");
+  lyricsFrame.className = "ui-frame ui-frame--field unison-submit-lyrics-frame";
+  lyricsTextarea.before(lyricsFrame);
+  lyricsFrame.appendChild(lyricsTextarea);
+  const lyricsEditor = attachEditor(lyricsTextarea);
+  attachScrollFade(lyricsEditor.wrap, lyricsTextarea);
+  lyricsField = bindReadableLyricsField(lyricsTextarea, lyricsEditor);
+
   updatePreview();
 
-  lyricsTextarea.addEventListener("input", event => {
-    const inputType = event instanceof InputEvent ? event.inputType : "";
-    if (inputType === "insertFromPaste" || inputType === "insertFromDrop") {
-      if (!lyricsLayout.typed) showReadableLyrics(lyricsTextarea.value);
-    } else {
-      lyricsLayout.typed = lyricsTextarea.value !== "";
-    }
+  lyricsTextarea.addEventListener("input", () => {
     updatePreview();
     autoDetectFormat();
     autoDetectLanguage();
@@ -1976,40 +1977,15 @@ function setupSubmitForm(): void {
 
   lyricsTextarea.addEventListener(LYRICS_FILE_READING_EVENT, syncSubmitButton);
   bindLyricsFileDrop(lyricsTextarea, text => {
-    if (lyricsLayout.typed) {
-      lyricsTextarea.value = text;
-      lyricsLayout.readable = false;
-      lyricsEditor.refresh();
-    } else {
-      showReadableLyrics(text);
-    }
+    lyricsField.replace(text);
     updatePreview();
     autoDetectFormat();
     autoDetectLanguage();
     autoDetectIsrc();
   });
-
-  const lyricsFrame = document.createElement("div");
-  lyricsFrame.className = "ui-frame ui-frame--field unison-submit-lyrics-frame";
-  lyricsTextarea.before(lyricsFrame);
-  lyricsFrame.appendChild(lyricsTextarea);
-  lyricsEditor = attachEditor(lyricsTextarea);
-  attachScrollFade(lyricsEditor.wrap, lyricsTextarea);
 }
 
 function ignoreChange(): void {}
-
-function showReadableLyrics(text: string): void {
-  const layout = readableTtml(text);
-  lyricsTextarea.value = layout.text;
-  lyricsLayout.readable = layout.readable;
-  lyricsEditor.refresh();
-}
-
-function submittedLyrics(): string {
-  const text = lyricsTextarea.value;
-  return (lyricsLayout.readable ? compactTtml(text) : text).trim();
-}
 
 function setupNavButtons(): void {
   const navBtn = document.getElementById("unison-submit-nav-btn");
@@ -2361,7 +2337,7 @@ async function handleSubmit(): Promise<void> {
   const videoId = (document.getElementById("unison-field-videoId") as HTMLInputElement).value.trim();
   const isrc = (document.getElementById("unison-field-isrc") as HTMLInputElement).value.trim();
   const language = submitLanguageDropdown.getValue();
-  const lyrics = submittedLyrics();
+  const lyrics = lyricsField.text();
   const chosenFormat = submitFormatDropdown.getValue();
 
   if (!song || !artist || !videoId || !lyrics) {
