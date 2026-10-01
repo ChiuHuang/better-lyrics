@@ -8,7 +8,7 @@ const DARK_WELL_BACKGROUND = new RegExp(String.raw`background(?:-color)?\s*:[^;}
 const INNERMOST_RULE = /([^{}]+)\{([^{}]*)\}/g;
 
 export function countNativeSelects(source: string): number {
-  return countMatches(source, /<select\b|createElement\("select"\)/g);
+  return countMatches(source, /<select\b|createElement\(\s*(["'`])select\1\s*\)/g);
 }
 
 export function countUppercase(css: string): number {

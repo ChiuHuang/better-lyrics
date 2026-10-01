@@ -6,6 +6,15 @@ const { countDarkFieldWells, countNativeSelects, countUppercase } = await import
 {
   assert.equal(countNativeSelects(`<select id="a"></select><select>`), 2, "counts every opening select tag");
   assert.equal(countNativeSelects(`document.createElement("select")`), 1, "counts createElement(select)");
+  assert.equal(countNativeSelects(`document.createElement('select')`), 1, "counts single-quoted createElement(select)");
+  assert.equal(countNativeSelects("document.createElement(`select`)"), 1, "counts backtick createElement(select)");
+  assert.equal(
+    countNativeSelects(`document.createElement( "select" )`),
+    1,
+    "counts createElement(select) with inner spaces"
+  );
+  assert.equal(countNativeSelects(`document.createElement("select')`), 0, "ignores mismatched quotes");
+  assert.equal(countNativeSelects(`document.createElement("selection")`), 0, "ignores other element names");
   assert.equal(countNativeSelects(`<selected-item>`), 0, "ignores tags that only start with select");
   assert.equal(countNativeSelects(""), 0, "empty source has none");
 }
