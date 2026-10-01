@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 const local: Record<string, unknown> = {};
 const heldGet: { release?: () => void } = {};
 let holdNextGet = false;
+const heldIdentitySet: { release?: () => void } = {};
+let holdNextIdentitySet = false;
 
 const pick = (keys: string[]): Record<string, unknown> =>
   Object.fromEntries(keys.filter(key => key in local).map(key => [key, structuredClone(local[key])]));
@@ -19,7 +21,15 @@ Object.assign(globalThis, {
             heldGet.release = () => resolve(snapshot);
           });
         },
-        set: async (items: Record<string, unknown>) => void Object.assign(local, structuredClone(items)),
+        set: (items: Record<string, unknown>) => {
+          const snapshot = structuredClone(items);
+          const write = (): void => void Object.assign(local, snapshot);
+          if (!holdNextIdentitySet || !("userIdentity" in items)) return Promise.resolve(write());
+          holdNextIdentitySet = false;
+          return new Promise<void>(resolve => {
+            heldIdentitySet.release = () => resolve(write());
+          });
+        },
         remove: async (keys: string | string[]) => {
           for (const key of [keys].flat()) delete local[key];
         },
@@ -94,6 +104,23 @@ const storedKeyId = (): unknown => (local.userIdentity as { keyId?: unknown } | 
   assert.equal(storedKeyId(), next.keyId, "a second import replaces the stored identity");
   await assert.rejects(importIdentity("{"), /Invalid JSON/, "malformed JSON is rejected");
   assert.equal((await getIdentity()).keyId, next.keyId, "a rejected import leaves the identity alone");
+}
+
+// -- Overlapping imports --------------------------
+{
+  const first = await exportFixture();
+  const second = await exportFixture();
+  holdNextIdentitySet = true;
+  const firstImport = importIdentity(first.json);
+  await waitFor(() => heldIdentitySet.release !== undefined, "the first import to start writing");
+
+  const secondImport = importIdentity(second.json);
+  for (let attempt = 0; attempt < 200 && storedKeyId() !== second.keyId; attempt++) await tick();
+  heldIdentitySet.release?.();
+  await Promise.all([firstImport, secondImport]);
+
+  assert.equal(storedKeyId(), second.keyId, "regression: the last import wins in storage");
+  assert.equal((await getIdentity()).keyId, second.keyId, "regression: the cache matches the stored identity");
 }
 
 console.log("keyIdentity self-check passed");

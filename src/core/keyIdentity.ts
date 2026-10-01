@@ -64,6 +64,13 @@ const HASH_ALGORITHM = "SHA-256";
 
 let cachedIdentity: Promise<KeyIdentity> | null = null;
 let importCount = 0;
+let identityCommits: Promise<unknown> = Promise.resolve();
+
+function queueIdentityCommit<T>(commit: () => Promise<T>): Promise<T> {
+  const run = identityCommits.then(commit);
+  identityCommits = Promise.allSettled([run]);
+  return run;
+}
 
 // -- Public API -------------------------------
 
@@ -93,8 +100,12 @@ async function loadOrCreateIdentity(): Promise<KeyIdentity> {
   if (importedMeanwhile()) return getIdentity();
   if (storedMeanwhile) return storedMeanwhile;
 
-  await saveToStorage(generated);
-  return generated;
+  const saved = await queueIdentityCommit(async () => {
+    if (importedMeanwhile()) return false;
+    await saveToStorage(generated);
+    return true;
+  });
+  return saved ? generated : getIdentity();
 }
 
 export async function signRating(themeId: string, rating: number): Promise<SignedRating> {
@@ -218,7 +229,7 @@ export async function importIdentity(json: string): Promise<KeyIdentity> {
   };
 
   importCount++;
-  const committed = commitImportedIdentity(identity, parsed.certificate);
+  const committed = queueIdentityCommit(() => commitImportedIdentity(identity, parsed.certificate));
   cachedIdentity = committed;
   try {
     await committed;
