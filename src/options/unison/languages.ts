@@ -1,4 +1,4 @@
-import { warnUnison } from "@core/logger";
+import { getLanguageDisplayName } from "@core/i18n";
 import { findBestLanguageMatch } from "@utils";
 import type { DropdownOption } from "@/ui/dropdownFilter";
 
@@ -46,19 +46,9 @@ const LANGUAGE_OPTIONS = [
   "sw",
 ];
 
-function languageDisplayNames(): Intl.DisplayNames | null {
-  try {
-    return new Intl.DisplayNames(undefined, { type: "language" });
-  } catch (err) {
-    warnUnison("Intl.DisplayNames unavailable, falling back to language codes", err);
-    return null;
-  }
-}
-
 export function languageOptionList(opts: { leading?: DropdownOption; current?: string } = {}): DropdownOption[] {
-  const names = languageDisplayNames();
   const list: DropdownOption[] = opts.leading ? [opts.leading] : [];
-  for (const code of LANGUAGE_OPTIONS) list.push({ value: code, label: names?.of(code) ?? code });
+  for (const code of LANGUAGE_OPTIONS) list.push({ value: code, label: getLanguageDisplayName(code) });
   if (opts.current && !list.some(option => option.value === opts.current)) {
     list.push({ value: opts.current, label: opts.current });
   }
