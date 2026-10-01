@@ -467,7 +467,7 @@ function createPills(preview: PreviewResult): HTMLElement {
     const status = !check || preview.noChanges ? "idle" : check.status;
     const pill = document.createElement("span");
     pill.className = `ui-badge ${CHECK_TONE[status]}`;
-    if (check) pill.title = check.message;
+    if (check) pill.dataset.tooltip = check.message;
     pill.append(svgIcon(CHECK_ICON[status]), messageText(checkFieldLabel(field)));
     pills.appendChild(pill);
   }

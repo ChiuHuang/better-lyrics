@@ -1344,6 +1344,10 @@ function initLangExclusionsModal(): void {
     exclusionTabs = initTabStrip(tablist, {
       onChange: tab => switchExclusionTab(tab.dataset.tab === "translation" ? "translation" : "romanization"),
     });
+    tablist.addEventListener("click", event => {
+      if (!(event.target as Element).closest(".ui-segmented__tab")) return;
+      (document.getElementById(`${activeExclusionTab}-search`) as HTMLInputElement | null)?.focus();
+    });
   }
 
   romanizationSearchInput?.addEventListener("input", () => {
@@ -1419,7 +1423,7 @@ function clearExclusionSearch(): void {
 function createLanguageChip(langCode: string, included: boolean): HTMLLabelElement {
   const langName = getLanguageDisplayName(langCode);
   const chip = document.createElement("label");
-  chip.className = "ui-chip lang-chip";
+  chip.className = "ui-chip";
   chip.dataset.langCode = langCode;
   chip.dataset.langName = langName.toLowerCase();
   const input = document.createElement("input");

@@ -5,6 +5,7 @@ interface TabStripOptions {
   variant?: "segmented" | "underline";
   onChange?: (tab: HTMLButtonElement, direction: "next" | "prev" | "") => void;
   onReselect?: (tab: HTMLButtonElement) => void;
+  onResize?: () => void;
 }
 
 export interface TabStrip {
@@ -21,7 +22,7 @@ const PARTS = {
 
 export function initTabStrip(
   list: HTMLElement,
-  { variant = "segmented", onChange, onReselect }: TabStripOptions = {}
+  { variant = "segmented", onChange, onReselect, onResize }: TabStripOptions = {}
 ): TabStrip {
   const parts = PARTS[variant];
   const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>(parts.tab));
@@ -84,7 +85,10 @@ export function initTabStrip(
     tabs[index].focus();
     select(tabs[index]);
   });
-  observeResize([list, ...tabs], () => place(false));
+  observeResize([list, ...tabs], () => {
+    onResize?.();
+    place(false);
+  });
   pill?.addEventListener("transitionend", event => {
     if (variant === "segmented" && event.propertyName === "transform") place(false);
   });

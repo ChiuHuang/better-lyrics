@@ -1,10 +1,9 @@
 import { warnCore } from "@core/logger";
-import { observeResize } from "@modules/ui/layout/layoutWidth";
 import { controlIcons, parseSvgString } from "@modules/ui/lyricsDock/icons";
 import { svgIcon } from "@/options/unison/icons";
 import { type CardTabs, initCardTabs } from "@/ui/cardTabs";
 import { attachScrollFade, inlineWheelStep } from "@/ui/scrollFade";
-import { initTabStrip, type TabStrip } from "@/ui/tabStrip";
+import { initTabStrip } from "@/ui/tabStrip";
 
 // -- Version --------------------------
 
@@ -61,23 +60,19 @@ function scrollTabsWithWheel(tabs: HTMLElement, event: WheelEvent): void {
   tabs.scrollLeft += step;
 }
 
-function watchTabOverflow(tabs: HTMLElement, segmented: TabStrip): void {
+function trackTabOverflow(tabs: HTMLElement): () => void {
   let hasFade = false;
-  const sync = (): void => {
-    const clipped = tabs.scrollWidth > tabs.clientWidth;
-    if (clipped !== tabs.hasAttribute("data-scrollable")) {
-      tabs.toggleAttribute("data-scrollable", clipped);
-      if (clipped && !hasFade) {
-        attachScrollFade(tabs, tabs, { axis: "x" });
-        hasFade = true;
-      }
-      revealActiveTab(tabs, false);
-    }
-    segmented.place(false);
-  };
   tabs.addEventListener("wheel", event => scrollTabsWithWheel(tabs, event), { passive: false });
-  observeResize([tabs, ...segmented.tabs], sync);
-  void document.fonts.ready.then(sync);
+  return () => {
+    const clipped = tabs.scrollWidth > tabs.clientWidth;
+    if (clipped === tabs.hasAttribute("data-scrollable")) return;
+    tabs.toggleAttribute("data-scrollable", clipped);
+    if (clipped && !hasFade) {
+      attachScrollFade(tabs, tabs, { axis: "x" });
+      hasFade = true;
+    }
+    revealActiveTab(tabs, false);
+  };
 }
 
 // -- Page switching --------------------------
@@ -99,12 +94,19 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
     if (location.hash.split("/")[0] !== target) history.replaceState(null, "", target);
   };
 
-  const segmented = initTabStrip(tabs, { onChange: (button, direction) => showPage(button, direction, true) });
+  const syncOverflow = trackTabOverflow(tabs);
+  const segmented = initTabStrip(tabs, {
+    onChange: (button, direction) => showPage(button, direction, true),
+    onResize: syncOverflow,
+  });
   const restored = segmented.tabs.find(b => b.dataset.target === `#${location.hash.slice(1).split("/")[0]}`);
   const initial = restored ?? segmented.tabs[0];
   segmented.select(initial, { animate: false, notify: false });
   showPage(initial, "", false);
-  watchTabOverflow(tabs, segmented);
+  void document.fonts.ready.then(() => {
+    syncOverflow();
+    segmented.place(false);
+  });
 }
 
 // -- Cards --------------------------

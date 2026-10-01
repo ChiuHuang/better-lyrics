@@ -779,7 +779,7 @@
 }
 
 .unison-match-mark--related {
-  color: rgb(254, 240, 138);
+  color: var(--pending);
 }
 
 .unison-match-mark--different {
@@ -1527,11 +1527,11 @@
 }
 
 .unison-rev-meter--over .unison-rev-meter__fill {
-  background: rgb(254, 240, 138);
+  background: var(--pending);
 }
 
 .unison-rev-meter--over .unison-rev-meter__val b {
-  color: rgb(254, 240, 138);
+  color: var(--pending);
 }
 
 .unison-rev-meter--idle .unison-rev-meter__val {
@@ -1587,7 +1587,7 @@
 }
 
 .unison-rev-savebar__issues .unison-rev-issue--warn {
-  color: rgb(254, 240, 138);
+  color: var(--pending);
 }
 
 .unison-rev-savebar__foot {
@@ -1790,7 +1790,7 @@
 }
 
 .unison-rev-swatch--timing {
-  background: rgba(125, 211, 252, 0.5);
+  background: color-mix(in srgb, var(--info) 50%, transparent);
 }
 
 .unison-rev-diff {
@@ -1852,12 +1852,12 @@
 }
 
 .unison-rev-diff-row--timing {
-  background: rgba(125, 211, 252, 0.06);
+  background: color-mix(in srgb, var(--info) 6%, transparent);
 }
 
 .unison-rev-diff-row--timing .unison-rev-diff-time,
 .unison-rev-diff-row--timing .unison-rev-diff-mark {
-  color: rgb(125, 211, 252);
+  color: var(--info);
 }
 
 .unison-rev-diff-row--timing .unison-rev-diff-mark .unison-icon {
@@ -1868,7 +1868,7 @@
 
 .unison-rev-timing-tag {
   font-size: 0.6875rem;
-  color: rgb(125, 211, 252);
+  color: var(--info);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -1969,7 +1969,7 @@
 .unison-rev-count--bare .unison-icon {
   width: 0.875rem;
   height: 0.875rem;
-  color: rgb(254, 240, 138);
+  color: var(--pending);
 }
 
 .unison-rev-tab[aria-selected="true"] > .unison-rev-count:not(.unison-rev-count--bare) {

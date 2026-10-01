@@ -123,6 +123,9 @@
   /* -- Warning -- */
   --warning: #f5b942;
 
+  /* -- Pending (awaiting review; paler than --warning on purpose) -- */
+  --pending: rgb(254, 240, 138);
+
   /* -- Info -- */
   --info: rgb(125, 211, 252);
 
