@@ -226,6 +226,7 @@ function showView(view: View): void {
   viewDetail.hidden = view !== "detail";
   viewSubmit.hidden = view !== "submit";
   viewRevisions.hidden = view !== "revisions";
+  if (view !== "submit") cancelLyricsChecks();
   const submitNav = document.getElementById("unison-submit-nav-btn");
   if (view === "submit") submitNav?.setAttribute("aria-current", "page");
   else submitNav?.removeAttribute("aria-current");
@@ -1981,12 +1982,16 @@ function setupSubmitForm(): void {
 let lyricsChecksTimer: ReturnType<typeof setTimeout> | undefined;
 
 function runLyricsChecks(): void {
-  clearTimeout(lyricsChecksTimer);
-  lyricsChecksTimer = undefined;
+  cancelLyricsChecks();
   updatePreview();
   autoDetectFormat();
   autoDetectLanguage();
   autoDetectIsrc();
+}
+
+function cancelLyricsChecks(): void {
+  clearTimeout(lyricsChecksTimer);
+  lyricsChecksTimer = undefined;
 }
 
 function scheduleLyricsChecks(): void {
