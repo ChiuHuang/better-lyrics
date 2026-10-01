@@ -357,8 +357,7 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 .text-btn:active { scale: var(--scale-press); }
 .text-btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.08); color: #fff; }
 .text-btn svg { width: 14px; height: 14px; flex: none; }
-.text-btn .refresh-icon { transition: rotate var(--duration-spin) var(--ease-smooth-out); }
-.text-btn.is-spinning .refresh-icon { rotate: 360deg; }
+.text-btn.is-refreshing .refresh-icon { animation: ui-spin var(--duration-spin) linear infinite; }
 
 .pop__status {
   padding: 0 8px;
@@ -377,7 +376,8 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .text-btn, .text-btn .refresh-icon, .pop__status { transition: none; }
+  .text-btn, .pop__status { transition: none; }
+  .text-btn.is-refreshing .refresh-icon { animation-duration: 2s; }
 }
 
 /* -- About ------------------------------------------------------------------ */

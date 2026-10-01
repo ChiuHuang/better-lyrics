@@ -165,13 +165,6 @@ export function flashSaved(): void {
   savedTimer = setTimeout(() => status.classList.remove("is-shown"), SAVED_STATUS_MS);
 }
 
-function resetSpin(button: HTMLElement, icon: SVGElement): void {
-  icon.style.transition = "none";
-  button.classList.remove("is-spinning");
-  void icon.getBoundingClientRect();
-  icon.style.removeProperty("transition");
-}
-
 async function refreshYouTubeMusicTabs(): Promise<boolean> {
   const tabs = await chrome.tabs.query({ url: "https://music.youtube.com/*" });
   const results = await Promise.allSettled(
@@ -187,14 +180,27 @@ export function initRefreshLyricsButton(onFailed: () => void): void {
   const button = document.getElementById("refresh-lyrics-btn");
   const icon = button?.querySelector<SVGElement>(".refresh-icon");
   if (!button || !icon) return;
-  icon.addEventListener("transitionend", () => resetSpin(button, icon));
+  let latestRefresh = 0;
   button.addEventListener("click", async () => {
-    resetSpin(button, icon);
-    button.classList.add("is-spinning");
-    if (await refreshYouTubeMusicTabs()) return;
-    resetSpin(button, icon);
-    onFailed();
+    const refresh = ++latestRefresh;
+    const isLatest = (): boolean => refresh === latestRefresh;
+    button.classList.add("is-refreshing");
+    const refreshed = await refreshYouTubeMusicTabs().catch(error => {
+      warnCore("refreshLyrics failed:", error);
+      return false;
+    });
+    if (!isLatest()) return;
+    stopRefreshSpinAfterTurn(button, icon, isLatest);
+    if (!refreshed) onFailed();
   });
+}
+
+function stopRefreshSpinAfterTurn(button: HTMLElement, icon: SVGElement, isLatest: () => boolean): void {
+  const stop = (): void => {
+    if (isLatest()) button.classList.remove("is-refreshing");
+  };
+  if (icon.getAnimations().length === 0) stop();
+  else icon.addEventListener("animationiteration", stop, { once: true });
 }
 
 // -- About --------------------------
