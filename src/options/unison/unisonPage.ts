@@ -226,7 +226,7 @@ function showView(view: View): void {
   viewDetail.hidden = view !== "detail";
   viewSubmit.hidden = view !== "submit";
   viewRevisions.hidden = view !== "revisions";
-  if (view !== "submit") cancelLyricsChecks();
+  if (view !== "submit") flushLyricsChecks();
   const submitNav = document.getElementById("unison-submit-nav-btn");
   if (view === "submit") submitNav?.setAttribute("aria-current", "page");
   else submitNav?.removeAttribute("aria-current");
@@ -1980,9 +1980,11 @@ function setupSubmitForm(): void {
 }
 
 let lyricsChecksTimer: ReturnType<typeof setTimeout> | undefined;
+let lastCheckedLyrics = "";
 
 function runLyricsChecks(): void {
   cancelLyricsChecks();
+  lastCheckedLyrics = lyricsTextarea.value;
   updatePreview();
   autoDetectFormat();
   autoDetectLanguage();
@@ -1992,6 +1994,11 @@ function runLyricsChecks(): void {
 function cancelLyricsChecks(): void {
   clearTimeout(lyricsChecksTimer);
   lyricsChecksTimer = undefined;
+}
+
+function flushLyricsChecks(): void {
+  if (lyricsTextarea.value !== lastCheckedLyrics) runLyricsChecks();
+  else cancelLyricsChecks();
 }
 
 function scheduleLyricsChecks(): void {
@@ -2344,7 +2351,7 @@ function syncSubmitButton(): void {
 }
 
 async function handleSubmit(): Promise<void> {
-  if (lyricsChecksTimer !== undefined) runLyricsChecks();
+  flushLyricsChecks();
   const song = (document.getElementById("unison-field-song") as HTMLInputElement).value.trim();
   const artist = (document.getElementById("unison-field-artist") as HTMLInputElement).value.trim();
   const album = (document.getElementById("unison-field-album") as HTMLInputElement).value.trim();
