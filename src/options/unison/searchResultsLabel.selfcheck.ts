@@ -31,6 +31,7 @@ assert.deepEqual(
 // -- Edge cases --------------------------
 
 assert.equal(searchResultsMessage(0).key, "unison_searchResults", "zero uses plural");
+assert.equal(searchResultsMessage(1234).subs[1], (1234).toLocaleString(), "large counts use locale digit grouping");
 assert.equal(render("  love  ", 3).query, "love", "query is trimmed");
 assert.equal(render("日本語", 2).query, "日本語", "unicode query survives");
 assert.deepEqual(

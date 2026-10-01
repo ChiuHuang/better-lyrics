@@ -9,7 +9,7 @@ interface SearchResultsLabel {
 export function searchResultsMessage(count: number): { key: string; subs: string[] } {
   return count === 1
     ? { key: "unison_searchResultsOne", subs: [QUERY_SLOT] }
-    : { key: "unison_searchResults", subs: [QUERY_SLOT, String(count)] };
+    : { key: "unison_searchResults", subs: [QUERY_SLOT, count.toLocaleString()] };
 }
 
 /** Splits the translated message around the query so the view can style it; translators keep full control of order. */

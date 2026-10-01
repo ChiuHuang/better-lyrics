@@ -12,6 +12,7 @@ const PASTE_INPUT_TYPES = new Set(["insertFromPaste", "insertFromDrop"]);
 export function bindReadableLyricsField(textarea: HTMLTextAreaElement, editor: EditorHandle): ReadableLyricsField {
   let readable = false;
   let replacesAll = false;
+  let relayingOut = false;
 
   const apply = (text: string): void => {
     const layout = readableTtml(text);
@@ -20,14 +21,27 @@ export function bindReadableLyricsField(textarea: HTMLTextAreaElement, editor: E
     editor.refresh();
   };
 
+  // Inserting through the editing pipeline keeps the paste undoable; assigning value would wipe the undo stack.
+  const relayoutPaste = (): void => {
+    const layout = readableTtml(textarea.value);
+    readable = layout.readable;
+    if (!layout.readable) return;
+    relayingOut = true;
+    textarea.select();
+    const inserted = document.execCommand("insertText", false, layout.text);
+    relayingOut = false;
+    if (!inserted) apply(textarea.value);
+  };
+
   textarea.addEventListener("beforeinput", () => {
     const { selectionStart, selectionEnd, value } = textarea;
     replacesAll = value === "" || (selectionStart === 0 && selectionEnd === value.length);
   });
   textarea.addEventListener("input", event => {
+    if (relayingOut) return;
     const inputType = event instanceof InputEvent ? event.inputType : "";
     if (textarea.value === "") readable = false;
-    else if (replacesAll && PASTE_INPUT_TYPES.has(inputType)) apply(textarea.value);
+    else if (replacesAll && PASTE_INPUT_TYPES.has(inputType)) relayoutPaste();
   });
 
   return {
