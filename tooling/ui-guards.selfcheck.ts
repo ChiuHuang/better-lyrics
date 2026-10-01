@@ -26,7 +26,7 @@ const RULES: Rule[] = [
   {
     name: "raw font size",
     count: countRawFontSizes,
-    appliesTo: p => p.endsWith(".css") && /^(src\/ui|src\/options|pages)\//.test(p) && p !== "src/ui/tokens.css",
+    appliesTo: p => /^(src\/ui|src\/options|pages)\//.test(p) && p !== "src/ui/tokens.css",
   },
 ];
 

@@ -95,6 +95,22 @@ const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countUpperca
   assert.equal(countRawFontSizes(`.a { font-size: inherit; }`), 0, "inherit is fine");
   assert.equal(countRawFontSizes(`:root { --font-size-md: 0.875rem; }`), 0, "token definitions are not declarations");
   assert.equal(countRawFontSizes(`/* .a { font-size: 12px; } */`), 0, "comments are ignored");
+  assert.equal(
+    countRawFontSizes(`.a { font-size: var(--font-size-md, 12px); }`),
+    1,
+    "a raw fallback is still a raw size"
+  );
+  assert.equal(countRawFontSizes(`.a { font-size: var(--card-size); }`), 1, "only type scale tokens count as tokens");
+  assert.equal(countRawFontSizes(`<p style="font-size: 12px">`), 1, "inline HTML styles count");
+  assert.equal(countRawFontSizes(`el.style.fontSize = "12px";`), 1, "fontSize assignments count");
+  assert.equal(countRawFontSizes(`Object.assign(el.style, { fontSize: '1rem' });`), 1, "fontSize object keys count");
+  assert.equal(countRawFontSizes(`el.style.setProperty("font-size", "12px");`), 1, "setProperty counts");
+  assert.equal(countRawFontSizes(`el.style.fontSize = "var(--font-size-md)";`), 0, "a token in TypeScript is fine");
+  assert.equal(
+    countRawFontSizes(`el.style.setProperty("font-size", "var(--font-size-md)");`),
+    0,
+    "setProperty with a token is fine"
+  );
 }
 
 console.log("uiGuardRules self-check passed");
