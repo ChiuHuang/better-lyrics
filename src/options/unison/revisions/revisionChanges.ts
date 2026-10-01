@@ -135,7 +135,7 @@ export function mountChangesTabs(surface: ChangesSurface, host: RevisionHost, ha
     badge.classList.toggle("unison-rev-count--bare", state.loading || state.failed);
     if (state.loading) {
       const spinner = document.createElement("span");
-      spinner.className = "unison-rev-spin";
+      spinner.className = "ui-spinner unison-rev-spin";
       spinner.setAttribute("role", "img");
       spinner.setAttribute("aria-label", t("unison_rev_updating"));
       badge.replaceChildren(spinner);

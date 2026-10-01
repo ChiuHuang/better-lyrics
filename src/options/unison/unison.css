@@ -2789,22 +2789,9 @@ kbd {
   width: 0.625rem;
   height: 0.625rem;
   box-sizing: border-box;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-width: 1.5px;
+  border-color: rgba(255, 255, 255, 0.18);
   border-top-color: rgb(165, 180, 252);
-  animation: unison-rev-spin 0.8s linear infinite;
-}
-
-@keyframes unison-rev-spin {
-  to {
-    rotate: 360deg;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .unison-rev-spin {
-    animation: none;
-  }
 }
 
 .unison-rev-tab:focus-visible,
