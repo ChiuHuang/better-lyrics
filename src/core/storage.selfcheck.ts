@@ -16,7 +16,7 @@ Object.assign(globalThis, {
   },
 });
 
-const { clearLyricCache, getUpdatedCacheInfo } = await import("./storage");
+const { clearLyricCache, getUpdatedCacheInfo } = await import("@core/storage");
 
 const entry = { type: "transient", value: "x", expiry: 0 };
 const seed = (items: Record<string, unknown>): void => {

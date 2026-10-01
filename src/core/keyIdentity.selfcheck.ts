@@ -39,7 +39,7 @@ Object.assign(globalThis, {
 });
 
 const { forgetDisplayName, generatePetName, getIdentity, getLastKnownDisplayName, importIdentity } = await import(
-  "./keyIdentity"
+  "@core/keyIdentity"
 );
 
 const tick = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0));
