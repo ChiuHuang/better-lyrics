@@ -49,6 +49,7 @@ import { detectFormat } from "@/options/unison/lyricsPreviewLines";
 import { searchResultsMessage, splitSearchResultsMessage } from "@/options/unison/searchResultsLabel";
 import { type ReadableLyricsField, bindReadableLyricsField } from "@/options/unison/readableLyricsField";
 import { createSubmitterByline } from "@/options/unison/submitterByline";
+import { readableTtml } from "@/options/unison/ttmlLayout";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { IS_DEV, devFixtureHint, devFixtures } from "@modules/unison/devFixtures";
 import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
@@ -1131,7 +1132,7 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   frame.className = "ui-frame";
   const pre = document.createElement("pre");
   pre.className = "unison-detail-pre";
-  highlightInto(pre, entry.lyrics, { pretty: true });
+  highlightInto(pre, readableTtml(entry.lyrics).text);
   frame.appendChild(pre);
   detailLyrics.appendChild(frame);
   const fade = attachScrollFade(pre, pre, { pane: true });
