@@ -410,11 +410,11 @@
 			</div>
 		</div>
 
-		<div id="lang-exclusions-modal-overlay" class="modal-overlay">
-			<div class="modal lang-exclusions-modal">
-				<div class="modal-header">
-					<h3 class="modal-title">__MSG_options_language_exclusionsTitle__</h3>
-					<button id="lang-exclusions-modal-close" class="modal-close-btn" aria-label="Close">
+		<div id="lang-exclusions-modal-overlay" class="ui-modal" hidden>
+			<div class="ui-modal__surface lang-exclusions-modal">
+				<div class="ui-modal__head">
+					<h3 class="ui-modal__title">__MSG_options_language_exclusionsTitle__</h3>
+					<button id="lang-exclusions-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
 						</svg>
@@ -451,28 +451,28 @@
 					<div id="translation-pills-container" class="lang-pills"></div>
 				</div>
 
-				<div class="modal-footer">
+				<div class="ui-modal__foot">
 					<button id="lang-exclusions-reset-btn" type="button" class="ui-button ui-button--header">__MSG_options_resetToDefault__</button>
 				</div>
 			</div>
 		</div>
 
-		<div id="unison-actions-modal-overlay" class="modal-overlay">
-			<div class="modal unison-actions-modal">
-				<div class="modal-header">
-					<h3 class="modal-title">__MSG_options_unisonModal_title__</h3>
-					<button id="unison-actions-modal-close" class="modal-close-btn" aria-label="Close">
+		<div id="unison-actions-modal-overlay" class="ui-modal" hidden>
+			<div class="ui-modal__surface unison-actions-modal">
+				<div class="ui-modal__head">
+					<h3 class="ui-modal__title">__MSG_options_unisonModal_title__</h3>
+					<button id="unison-actions-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
 						</svg>
 					</button>
 				</div>
 
-				<div class="modal-body" id="unison-actions-modal-body" data-scroll-fade>
+				<div class="ui-modal__body" id="unison-actions-modal-body" data-scroll-fade>
 					<div class="container unison-modal-row">
 						<div class="unison-modal-row__text">
 							<span>__MSG_options_unisonModal_showPinned__</span>
-							<p class="modal-row-hint">__MSG_options_unisonModal_showPinned_hint__</p>
+							<p class="unison-modal-row__hint">__MSG_options_unisonModal_showPinned_hint__</p>
 						</div>
 						<label>
 							<input type="checkbox" id="isUnisonPinnedDockEnabled">
@@ -482,7 +482,7 @@
 					<div class="container unison-modal-row unison-modal-row--dependent">
 						<div class="unison-modal-row__text">
 							<span>__MSG_options_unisonModal_autoHide__</span>
-							<p class="modal-row-hint">__MSG_options_unisonModal_autoHide_hint__</p>
+							<p class="unison-modal-row__hint">__MSG_options_unisonModal_autoHide_hint__</p>
 						</div>
 						<label>
 							<input type="checkbox" id="isUnisonAutoHideInFullscreenEnabled">
@@ -532,23 +532,23 @@
 						</div>
 					</div>
 				</div>
-				<div class="modal-footer">
+				<div class="ui-modal__foot">
 					<button id="dock-settings-reset" type="button" class="ui-button ui-button--header">__MSG_options_reset__</button>
 				</div>
 			</div>
 		</div>
 
-		<div id="pip-modal-overlay" class="modal-overlay">
-			<div class="modal">
-				<div class="modal-header">
-					<h3 class="modal-title">__MSG_options_display_pipWindow__</h3>
-					<button id="pip-modal-close" class="modal-close-btn" aria-label="Close">
+		<div id="pip-modal-overlay" class="ui-modal" hidden>
+			<div class="ui-modal__surface">
+				<div class="ui-modal__head">
+					<h3 class="ui-modal__title">__MSG_options_display_pipWindow__</h3>
+					<button id="pip-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body" id="pip-modal-body" data-scroll-fade>
+				<div class="ui-modal__body" id="pip-modal-body" data-scroll-fade>
 					<div class="container">
 						<span>__MSG_options_display_pipEnabled__</span>
 						<label>
@@ -598,17 +598,17 @@
 			</div>
 		</div>
 
-		<div id="offset-modal-overlay" class="modal-overlay">
-			<div class="modal">
-				<div class="modal-header">
-					<h3 class="modal-title">__MSG_options_unisonModal_controlOffset__</h3>
-					<button id="offset-modal-close" class="modal-close-btn" aria-label="Close">
+		<div id="offset-modal-overlay" class="ui-modal" hidden>
+			<div class="ui-modal__surface">
+				<div class="ui-modal__head">
+					<h3 class="ui-modal__title">__MSG_options_unisonModal_controlOffset__</h3>
+					<button id="offset-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body" data-scroll-fade>
+				<div class="ui-modal__body" data-scroll-fade>
 					<div class="container offset-row">
 						<div class="offset-info">
 							<span>__MSG_lyricsDock_offsetGlobal__</span>
@@ -668,36 +668,38 @@
 						</p>
 					</div>
 				</div>
-				<div class="modal-footer">
+				<div class="ui-modal__foot">
 					<button id="offset-modal-reset" type="button" class="ui-button ui-button--header">__MSG_options_reset__</button>
 				</div>
 			</div>
 		</div>
 
-		<div id="import-identity-modal-overlay" class="modal-overlay">
-			<div class="modal import-identity-modal">
-				<div class="modal-header">
-					<h3 class="modal-title">__MSG_options_identityImport_title__</h3>
-					<button id="import-identity-modal-close" class="modal-close-btn" aria-label="Close">
+		<div id="import-identity-modal-overlay" class="ui-modal" hidden>
+			<div class="ui-modal__surface import-identity-modal">
+				<div class="ui-modal__head">
+					<h3 class="ui-modal__title">__MSG_options_identityImport_title__</h3>
+					<button id="import-identity-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body" data-scroll-fade>
+				<div class="ui-modal__body" data-scroll-fade>
 					<button id="import-identity-file-btn" type="button" class="ui-button import-identity-file-btn">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
 							<path fill-rule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v11.69l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.22 3.22V3a.75.75 0 0 1 .75-.75Zm-9 13.5a.75.75 0 0 1 .75.75v2.25a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5V16.5a.75.75 0 0 1 1.5 0v2.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V16.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"></path>
 						</svg>
 						<span>__MSG_options_identityImport_chooseFile__</span>
 					</button>
-					<div class="modal-divider">
+					<div class="import-identity-divider">
 						<span>__MSG_options_identityImport_or__</span>
 					</div>
-					<textarea id="import-identity-textarea" class="modal-textarea" rows="6" spellcheck="false" placeholder="__MSG_options_identityImport_pastePlaceholder__"></textarea>
+					<div class="ui-frame ui-frame--field import-identity-frame">
+						<textarea id="import-identity-textarea" class="import-identity-textarea" rows="6" spellcheck="false" placeholder="__MSG_options_identityImport_pastePlaceholder__"></textarea>
+					</div>
 				</div>
-				<div class="modal-footer">
-					<button id="import-identity-cancel" type="button" class="ui-button ui-button--header">
+				<div class="ui-modal__foot">
+					<button id="import-identity-cancel" type="button" data-modal-close class="ui-button ui-button--header">
 						__MSG_options_modal_cancel__
 					</button>
 					<button id="import-identity-confirm" type="button" class="ui-button ui-button--header ui-button--primary">
@@ -707,26 +709,26 @@
 			</div>
 		</div>
 
-		<div id="nickname-modal-overlay" class="modal-overlay">
-			<div class="modal nickname-modal">
-				<div class="modal-header">
-					<h3 class="modal-title">__MSG_options_nickname_modalTitle__</h3>
-					<button id="nickname-modal-close" class="modal-close-btn" aria-label="Close">
+		<div id="nickname-modal-overlay" class="ui-modal" hidden>
+			<div class="ui-modal__surface nickname-modal">
+				<div class="ui-modal__head">
+					<h3 class="ui-modal__title">__MSG_options_nickname_modalTitle__</h3>
+					<button id="nickname-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body" data-scroll-fade>
-					<p class="modal-message">__MSG_options_nickname_description__</p>
-					<input type="text" id="nickname-modal-input" class="modal-input" maxlength="20" autocomplete="off" spellcheck="false" placeholder="__MSG_options_nickname_placeholder__">
+				<div class="ui-modal__body" data-scroll-fade>
+					<p class="ui-modal__message">__MSG_options_nickname_description__</p>
+					<input type="text" id="nickname-modal-input" class="ui-field" maxlength="20" autocomplete="off" spellcheck="false" placeholder="__MSG_options_nickname_placeholder__">
 					<p id="nickname-modal-status" role="status"></p>
 				</div>
-				<div class="modal-footer">
+				<div class="ui-modal__foot">
 					<button id="nickname-modal-reset" type="button" class="ui-button ui-button--header">
 						__MSG_options_nickname_reset__
 					</button>
-					<button id="nickname-modal-cancel" type="button" class="ui-button ui-button--header">
+					<button id="nickname-modal-cancel" type="button" data-modal-close class="ui-button ui-button--header">
 						__MSG_options_modal_cancel__
 					</button>
 					<button id="nickname-modal-save" type="button" class="ui-button ui-button--header ui-button--primary">
@@ -736,17 +738,17 @@
 			</div>
 		</div>
 
-		<div id="theme-modal-overlay" class="modal-overlay">
-			<div class="modal theme-modal">
-				<div class="modal-header">
-					<h3 class="modal-title">__MSG_options_modal_selectTheme__</h3>
-					<button id="theme-modal-close" class="modal-close-btn" aria-label="Close">
+		<div id="theme-modal-overlay" class="ui-modal" hidden>
+			<div class="ui-modal__surface theme-modal">
+				<div class="ui-modal__head">
+					<h3 class="ui-modal__title">__MSG_options_modal_selectTheme__</h3>
+					<button id="theme-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
 						</svg>
 					</button>
 				</div>
-				<div class="theme-modal-body" data-scroll-fade>
+				<div class="ui-modal__body theme-modal-body" data-scroll-fade>
 					<div id="theme-modal-grid"></div>
 				</div>
 			</div>

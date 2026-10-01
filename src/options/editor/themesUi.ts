@@ -1,6 +1,5 @@
 import { storageManager } from "@/options/editor/features/storage";
 import {
-  closeThemeModal,
   handleDeleteTheme,
   handleRenameTheme,
   handleSaveTheme,
@@ -9,35 +8,14 @@ import {
   openThemeModal,
   preloadInstalledThemeImages,
   setThemeName,
-} from "@/options/editor/features/themes";
-import {
-  deleteThemeBtn,
-  editThemeBtn,
-  themeModalClose,
-  themeModalOverlay,
-  themeNameText,
-  themeSelectorBtn,
-} from "@/options/editor/ui/dom";
+} from "./features/themes";
+import { deleteThemeBtn, editThemeBtn, themeNameText, themeSelectorBtn } from "./ui/dom";
 import { logEditor } from "@core/logger";
 
 // -- Theme picker, theme actions, storage sync (no CodeMirror) --------------------------
 
 function initializeThemeModal() {
   themeSelectorBtn?.addEventListener("click", openThemeModal);
-
-  themeModalClose?.addEventListener("click", closeThemeModal);
-
-  themeModalOverlay?.addEventListener("click", e => {
-    if (e.target === themeModalOverlay) {
-      closeThemeModal();
-    }
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && themeModalOverlay?.classList.contains("active")) {
-      closeThemeModal();
-    }
-  });
 }
 
 function initializeThemeActions() {

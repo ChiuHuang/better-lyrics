@@ -39,6 +39,7 @@ import { syncVideoQualityControls, videoQualityOptions } from "@/options/videoQu
 import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFields";
 import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
 import { renderAboutLinks } from "@/options/aboutPage";
+import { createModal, type Modal } from "@/ui/modal";
 import { toast } from "@/ui/toast";
 import {
   fitPopupToWindow,
@@ -869,54 +870,38 @@ interface NicknameMutationResponse {
   };
 }
 
+let nicknameModal: Modal | undefined;
+
 function getNicknameModalElements() {
   const overlay = document.getElementById("nickname-modal-overlay");
-  const closeBtn = document.getElementById("nickname-modal-close");
-  const cancelBtn = document.getElementById("nickname-modal-cancel");
   const saveBtn = document.getElementById("nickname-modal-save") as HTMLButtonElement | null;
   const resetBtn = document.getElementById("nickname-modal-reset") as HTMLButtonElement | null;
   const input = document.getElementById("nickname-modal-input") as HTMLInputElement | null;
   const status = document.getElementById("nickname-modal-status");
-  return { overlay, closeBtn, cancelBtn, saveBtn, resetBtn, input, status };
+  return { overlay, saveBtn, resetBtn, input, status };
 }
 
 function openNicknameModal(): void {
-  const { overlay, input, saveBtn } = getNicknameModalElements();
-  if (!overlay || !input || !saveBtn) return;
+  const { input, saveBtn } = getNicknameModalElements();
+  if (!nicknameModal || !input || !saveBtn) return;
   const display = document.getElementById("identity-display-name");
   input.value = display?.textContent ?? "";
   saveBtn.disabled = true;
-  overlay.classList.add("active");
-  setTimeout(() => {
-    input.focus();
-    input.select();
-  }, 100);
+  nicknameModal.open();
+  input.select();
 }
 
 function closeNicknameModal(): void {
-  const { overlay } = getNicknameModalElements();
-  overlay?.classList.remove("active");
+  nicknameModal?.close();
 }
 
 function initNicknameModal(): void {
-  const { overlay, closeBtn, cancelBtn, saveBtn, resetBtn, input, status } = getNicknameModalElements();
-  if (!overlay || !closeBtn || !cancelBtn || !saveBtn || !resetBtn || !input || !status) return;
+  const { overlay, saveBtn, resetBtn, input, status } = getNicknameModalElements();
+  if (!overlay || !saveBtn || !resetBtn || !input || !status) return;
+  nicknameModal = createModal(overlay);
 
   const editBtn = document.getElementById("nickname-edit-btn");
   editBtn?.addEventListener("click", openNicknameModal);
-
-  closeBtn.addEventListener("click", closeNicknameModal);
-  cancelBtn.addEventListener("click", closeNicknameModal);
-
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) closeNicknameModal();
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && overlay.classList.contains("active")) {
-      closeNicknameModal();
-    }
-  });
 
   let checkSeq = 0;
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -1157,27 +1142,25 @@ async function handleImportIdentity(): Promise<void> {
 
 // -- Import Identity Modal --------------------------
 
+let importIdentityModal: Modal | undefined;
+
 function getImportIdentityModalElements() {
   const overlay = document.getElementById("import-identity-modal-overlay");
-  const closeBtn = document.getElementById("import-identity-modal-close");
   const fileBtn = document.getElementById("import-identity-file-btn");
-  const cancelBtn = document.getElementById("import-identity-cancel");
   const confirmBtn = document.getElementById("import-identity-confirm");
   const textarea = document.getElementById("import-identity-textarea") as HTMLTextAreaElement | null;
-  return { overlay, closeBtn, fileBtn, cancelBtn, confirmBtn, textarea };
+  return { overlay, fileBtn, confirmBtn, textarea };
 }
 
 function openImportIdentityModal(): void {
-  const { overlay, textarea } = getImportIdentityModalElements();
-  if (!overlay || !textarea) return;
+  const { textarea } = getImportIdentityModalElements();
+  if (!importIdentityModal || !textarea) return;
   textarea.value = "";
-  overlay.classList.add("active");
-  setTimeout(() => textarea.focus(), 100);
+  importIdentityModal.open();
 }
 
 function closeImportIdentityModal(): void {
-  const { overlay } = getImportIdentityModalElements();
-  overlay?.classList.remove("active");
+  importIdentityModal?.close();
 }
 
 async function importIdentityFromJson(json: string): Promise<void> {
@@ -1221,21 +1204,9 @@ function triggerIdentityFilePicker(): void {
 }
 
 function initImportIdentityModal(): void {
-  const { overlay, closeBtn, fileBtn, cancelBtn, confirmBtn, textarea } = getImportIdentityModalElements();
-  if (!overlay || !closeBtn || !fileBtn || !cancelBtn || !confirmBtn || !textarea) return;
-
-  closeBtn.addEventListener("click", closeImportIdentityModal);
-  cancelBtn.addEventListener("click", closeImportIdentityModal);
-
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) closeImportIdentityModal();
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && overlay.classList.contains("active")) {
-      closeImportIdentityModal();
-    }
-  });
+  const { overlay, fileBtn, confirmBtn, textarea } = getImportIdentityModalElements();
+  if (!overlay || !fileBtn || !confirmBtn || !textarea) return;
+  importIdentityModal = createModal(overlay);
 
   fileBtn.addEventListener("click", triggerIdentityFilePicker);
 
@@ -1339,40 +1310,28 @@ function initLangExclusionsModal(): void {
   const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
   const translateToggle = document.getElementById("translate") as HTMLInputElement;
   const modalOverlay = document.getElementById("lang-exclusions-modal-overlay");
-  const modalClose = document.getElementById("lang-exclusions-modal-close");
   const romanizationSearchInput = document.getElementById("romanization-search") as HTMLInputElement;
   const translationSearchInput = document.getElementById("translation-search") as HTMLInputElement;
   const resetBtn = document.getElementById("lang-exclusions-reset-btn");
   const tabButtons = modalOverlay?.querySelectorAll(".modal-tab");
 
   if (!modalOverlay) return;
+  langExclusionsModal = createModal(modalOverlay, {
+    onClose: clearExclusionSearch,
+    initialFocus: () => (activeExclusionTab === "romanization" ? romanizationSearchInput : translationSearchInput),
+  });
 
   romanizationToggle?.addEventListener("change", updateExclusionsConfigVisibility);
   translateToggle?.addEventListener("change", updateExclusionsConfigVisibility);
 
   const openExclusions = (tab: "romanization" | "translation"): void => {
     switchExclusionTab(tab);
-    modalOverlay.classList.add("active");
-    (tab === "romanization" ? romanizationSearchInput : translationSearchInput)?.focus();
+    langExclusionsModal?.open();
   };
   document
     .getElementById("romanization-exclusions-btn")
     ?.addEventListener("click", () => openExclusions("romanization"));
   document.getElementById("translation-exclusions-btn")?.addEventListener("click", () => openExclusions("translation"));
-
-  modalClose?.addEventListener("click", closeLangExclusionsModal);
-
-  modalOverlay.addEventListener("click", e => {
-    if (e.target === modalOverlay) {
-      closeLangExclusionsModal();
-    }
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && modalOverlay.classList.contains("active")) {
-      closeLangExclusionsModal();
-    }
-  });
 
   // Tab switching
   tabButtons?.forEach(btn => {
@@ -1441,12 +1400,15 @@ function switchExclusionTab(tab: "romanization" | "translation"): void {
   searchInput?.focus();
 }
 
+let langExclusionsModal: Modal | undefined;
+
 function closeLangExclusionsModal(): void {
-  const modalOverlay = document.getElementById("lang-exclusions-modal-overlay");
+  langExclusionsModal?.close();
+}
+
+function clearExclusionSearch(): void {
   const romanizationSearchInput = document.getElementById("romanization-search") as HTMLInputElement;
   const translationSearchInput = document.getElementById("translation-search") as HTMLInputElement;
-
-  modalOverlay?.classList.remove("active");
 
   if (romanizationSearchInput) {
     romanizationSearchInput.value = "";
@@ -1595,25 +1557,14 @@ function resetDockSettings(): void {
 function setupUnisonActionsModal(): void {
   const openBtn = document.getElementById("unison-actions-btn");
   const overlay = document.getElementById("unison-actions-modal-overlay");
-  const closeBtn = document.getElementById("unison-actions-modal-close");
   const frame = document.getElementById("unison-position-frame");
   const pinnedToggle = document.getElementById("isUnisonPinnedDockEnabled") as HTMLInputElement | null;
   const autoHideToggle = document.getElementById("isUnisonAutoHideInFullscreenEnabled") as HTMLInputElement | null;
 
-  if (!openBtn || !overlay || !closeBtn || !frame || !pinnedToggle || !autoHideToggle) return;
+  if (!openBtn || !overlay || !frame || !pinnedToggle || !autoHideToggle) return;
 
-  const closeModal = (): void => overlay.classList.remove("active");
-
-  openBtn.addEventListener("click", () => overlay.classList.add("active"));
-  closeBtn.addEventListener("click", closeModal);
-
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) closeModal();
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && overlay.classList.contains("active")) closeModal();
-  });
+  const modal = createModal(overlay);
+  openBtn.addEventListener("click", () => modal.open());
 
   frame.addEventListener("click", e => {
     const cell = (e.target as HTMLElement).closest<HTMLElement>(".position-cell");
@@ -1670,18 +1621,10 @@ function setOffsetDisplay(id: string, value: number): void {
 function initPictureInPictureModal(): void {
   const openBtn = document.getElementById("pip-settings-btn");
   const overlay = document.getElementById("pip-modal-overlay");
-  const closeBtn = document.getElementById("pip-modal-close");
-  if (!openBtn || !overlay || !closeBtn) return;
+  if (!openBtn || !overlay) return;
 
-  const close = (): void => overlay.classList.remove("active");
-  openBtn.addEventListener("click", () => overlay.classList.add("active"));
-  closeBtn.addEventListener("click", close);
-  overlay.addEventListener("click", event => {
-    if (event.target === overlay) close();
-  });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && overlay.classList.contains("active")) close();
-  });
+  const modal = createModal(overlay);
+  openBtn.addEventListener("click", () => modal.open());
 
   for (const control of overlay.querySelectorAll("input, select")) {
     control.addEventListener("change", saveOptions);
@@ -1700,25 +1643,17 @@ function syncPictureInPictureModalDependentState(enabled: boolean): void {
 function initOffsetModal(): void {
   const openBtn = document.getElementById("offset-settings-btn");
   const overlay = document.getElementById("offset-modal-overlay");
-  const closeBtn = document.getElementById("offset-modal-close");
-  if (!openBtn || !overlay || !closeBtn) return;
+  if (!openBtn || !overlay) return;
 
   const offsetCount = document.getElementById("offset-count");
   const refreshOffsetCount = async (): Promise<void> => {
     if (offsetCount) offsetCount.textContent = String((await getOffsetInfo()).count);
   };
 
-  const close = (): void => overlay.classList.remove("active");
+  const modal = createModal(overlay);
   openBtn.addEventListener("click", () => {
-    overlay.classList.add("active");
+    modal.open();
     void refreshOffsetCount();
-  });
-  closeBtn.addEventListener("click", close);
-  overlay.addEventListener("click", event => {
-    if (event.target === overlay) close();
-  });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && overlay.classList.contains("active")) close();
   });
 
   document.getElementById("offset-modal-reset")?.addEventListener("click", () => {

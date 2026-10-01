@@ -16,7 +16,6 @@ export const themePreviewName = document.getElementById("theme-preview-name") as
 export const themePreviewBadge = document.getElementById("theme-preview-badge") as HTMLElement | null;
 export const themePreviewAuthor = document.getElementById("theme-preview-author") as HTMLElement | null;
 export const themeModalOverlay = document.getElementById("theme-modal-overlay") as HTMLElement | null;
-export const themeModalClose = document.getElementById("theme-modal-close") as HTMLButtonElement | null;
 export const themeModalGrid = document.getElementById("theme-modal-grid") as HTMLElement | null;
 
 const EDITING_CLASS = "is-editing";

@@ -39,6 +39,7 @@ import {
 import { showConfirm, showPrompt } from "../ui/feedback";
 import { applyStoreThemeComplete, broadcastRICSToTabs, showSyncError, showSyncSuccess } from "./storage";
 import { errorEditor, logEditor, warnEditor } from "@core/logger";
+import { createModal, type Modal } from "@/ui/modal";
 import { toast } from "@/ui/toast";
 
 const preloadedImages = new Set<string>();
@@ -904,35 +905,17 @@ async function selectTheme(isCustom: boolean, index: number, themeName: string) 
   }
 }
 
+let themeModal: Modal | undefined;
+
 export function openThemeModal() {
-  if (themeModalOverlay) {
-    populateThemeModal();
-    themeModalOverlay.style.display = "flex";
-    requestAnimationFrame(() => {
-      if (themeModalOverlay) {
-        themeModalOverlay.classList.add("active");
-      }
-    });
-  }
+  if (!themeModalOverlay) return;
+  themeModal ??= createModal(themeModalOverlay);
+  populateThemeModal();
+  themeModal.open();
 }
 
 export function closeThemeModal() {
-  if (themeModalOverlay) {
-    const modal = themeModalOverlay.querySelector(".theme-modal");
-    if (modal) {
-      modal.classList.add("closing");
-    }
-    themeModalOverlay.classList.remove("active");
-
-    setTimeout(() => {
-      if (themeModalOverlay) {
-        themeModalOverlay.style.display = "none";
-        if (modal) {
-          modal.classList.remove("closing");
-        }
-      }
-    }, 200);
-  }
+  themeModal?.close();
 }
 
 export async function setThemeName() {
