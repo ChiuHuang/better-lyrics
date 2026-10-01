@@ -153,7 +153,7 @@
 
 .unison-card:hover {
   background: var(--card-bg-hover);
-  border-color: var(--card-edge-hover);
+  border-color: var(--card-edge-color-hover);
 }
 
 .unison-card-header {

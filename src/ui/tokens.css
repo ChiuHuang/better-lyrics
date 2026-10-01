@@ -30,7 +30,7 @@
   --card-bg: rgba(255, 255, 255, 0.05);
   --card-edge: 1px solid rgba(255, 255, 255, 0.1);
   --card-bg-hover: rgba(255, 255, 255, 0.08);
-  --card-edge-hover: rgba(255, 255, 255, 0.2);
+  --card-edge-color-hover: rgba(255, 255, 255, 0.2);
   --card-surface: #333437; /* --card-bg composited over the page, for gradients that must hide what is behind them */
   --pane-bg: rgba(255, 255, 255, 0.03);
   --pane-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
