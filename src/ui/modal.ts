@@ -5,6 +5,7 @@ export type ModalCloseReason = "escape" | "backdrop" | "dismiss" | "api";
 
 interface ModalOptions {
   onClose?: (reason: ModalCloseReason) => void;
+  onHidden?: () => void;
   initialFocus?: () => HTMLElement | null | undefined;
 }
 
@@ -45,7 +46,7 @@ function syncScrollLock(): void {
   document.documentElement.classList.toggle("ui-modal-open", openModals.length > 0);
 }
 
-export function createModal(overlay: HTMLElement, { onClose, initialFocus }: ModalOptions = {}): Modal {
+export function createModal(overlay: HTMLElement, { onClose, onHidden, initialFocus }: ModalOptions = {}): Modal {
   const surface = overlay.querySelector<HTMLElement>(".ui-modal__surface");
   if (!surface) throw new Error("ui-modal needs a .ui-modal__surface");
 
@@ -75,6 +76,7 @@ export function createModal(overlay: HTMLElement, { onClose, initialFocus }: Mod
     state = "closed";
     overlay.classList.remove("is-closing");
     overlay.hidden = true;
+    onHidden?.();
   };
 
   const modal: Modal = {

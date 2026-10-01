@@ -296,6 +296,27 @@ const settle = (): void => advance(1000);
   upper.remove();
 }
 
+// -- Hidden callback --------------------------
+{
+  const overlay = build("hidden-callback");
+  let hidden = 0;
+  const modal = createModal(overlay, { onHidden: () => hidden++ });
+  modal.open();
+  modal.close();
+  assert.equal(hidden, 0, "onHidden waits for the exit");
+  advance(150);
+  assert.equal(hidden, 1, "onHidden runs once the overlay hides");
+  modal.open();
+  modal.close();
+  modal.open();
+  settle();
+  assert.equal(hidden, 1, "a cancelled exit never reports hidden");
+  modal.close();
+  settle();
+  assert.equal(hidden, 2, "the next real exit reports hidden");
+  overlay.remove();
+}
+
 // -- Reduced motion --------------------------
 {
   reducedMotion = true;

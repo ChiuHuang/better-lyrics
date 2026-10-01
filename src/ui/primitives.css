@@ -34,6 +34,8 @@
 .ui-button--primary:hover { background: var(--button-primary-bg-hover); }
 .ui-button--danger { background: var(--danger); box-shadow: inset rgba(255, 255, 255, 0.18) 0 1px 0 0; color: #fff; --button-icon: currentColor; --button-icon-hover: currentColor; }
 .ui-button--danger:hover { background: var(--danger-hover); }
+.ui-button--accent { background: var(--accent); box-shadow: inset rgba(255, 255, 255, 0.18) 0 1px 0 0; color: #fff; --button-icon: currentColor; --button-icon-hover: currentColor; }
+.ui-button--accent:hover { background: color-mix(in srgb, var(--accent) 85%, #000); color: #fff; }
 .ui-button--compact { height: 30px; padding: 0 12px 0 10px; gap: 6px; font-size: 0.8125rem; }
 .ui-button--header {
   height: 34px;

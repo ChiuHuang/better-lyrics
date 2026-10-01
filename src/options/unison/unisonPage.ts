@@ -1,4 +1,5 @@
 import { UNISON_API_BASE_URL, UNISON_LYRICS_PREVIEW_DEBOUNCE_MS, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
+import { createModal } from "@/ui/modal";
 import { getLanguageDisplayName, t } from "@core/i18n";
 import { formatTimeAgo } from "@core/relativeTime";
 import {
@@ -1482,49 +1483,53 @@ function createVideoPreview(suggestion: SuggestedVideo): HTMLElement {
 
 function confirmLinkVideo(song: string, suggestion: SuggestedVideo): Promise<boolean> {
   return new Promise(resolve => {
-    const dialog = document.createElement("dialog");
-    dialog.className = "unison-confirm";
+    const overlay = document.createElement("div");
+    overlay.className = "ui-modal";
+    const surface = document.createElement("div");
+    surface.className = "ui-modal__surface unison-confirm";
 
+    const head = document.createElement("div");
+    head.className = "ui-modal__head";
     const heading = document.createElement("h3");
-    heading.className = "unison-confirm-title";
+    heading.className = "ui-modal__title";
     heading.textContent = t("unison_linkConfirmTitle");
+    head.append(heading);
 
-    const body = document.createElement("p");
-    body.className = "unison-confirm-body";
-    body.textContent = t("unison_linkConfirmBody", [suggestion.title, song]);
+    const body = document.createElement("div");
+    body.className = "ui-modal__body";
+    const message = document.createElement("p");
+    message.className = "ui-modal__message";
+    message.textContent = t("unison_linkConfirmBody", [suggestion.title, song]);
+    body.append(message, createVideoPreview(suggestion));
 
-    const actions = document.createElement("div");
-    actions.className = "unison-confirm-actions";
+    const foot = document.createElement("div");
+    foot.className = "ui-modal__foot";
     const cancelBtn = document.createElement("button");
     cancelBtn.type = "button";
-    cancelBtn.className = "unison-confirm-btn unison-confirm-btn--cancel";
+    cancelBtn.className = "ui-button ui-button--header";
+    cancelBtn.dataset.modalClose = "";
     cancelBtn.textContent = t("options_modal_cancel");
     const confirmBtn = document.createElement("button");
     confirmBtn.type = "button";
-    confirmBtn.className = "unison-confirm-btn unison-confirm-btn--save";
+    confirmBtn.className = "ui-button ui-button--header ui-button--accent";
     confirmBtn.textContent = t("unison_addVideo");
-    actions.append(cancelBtn, confirmBtn);
+    foot.append(cancelBtn, confirmBtn);
 
-    dialog.append(heading, body, createVideoPreview(suggestion), actions);
+    surface.append(head, body, foot);
+    overlay.append(surface);
+    document.body.appendChild(overlay);
 
-    const close = (confirmed: boolean): void => {
-      dialog.close();
-      dialog.remove();
-      resolve(confirmed);
-    };
-    cancelBtn.addEventListener("click", () => close(false));
-    confirmBtn.addEventListener("click", () => close(true));
-    dialog.addEventListener("cancel", event => {
-      event.preventDefault();
-      close(false);
+    let confirmed = false;
+    const modal = createModal(overlay, {
+      initialFocus: () => cancelBtn,
+      onClose: () => resolve(confirmed),
+      onHidden: () => overlay.remove(),
     });
-    dialog.addEventListener("click", event => {
-      if (event.target === dialog) close(false);
+    confirmBtn.addEventListener("click", () => {
+      confirmed = true;
+      modal.close();
     });
-
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    cancelBtn.focus();
+    modal.open();
   });
 }
 
