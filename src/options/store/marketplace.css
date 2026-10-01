@@ -656,7 +656,11 @@
 .store-card .store-card-btn {
   height: 34px;
   border-radius: calc(var(--radius-card) - 11px);
-  transition: background var(--duration-quick) ease-out, scale var(--duration-quick) ease-out;
+  transition:
+    background var(--duration-quick) ease-out,
+    border-color var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out,
+    scale var(--duration-quick) ease-out;
 }
 
 .store-card .store-card-btn:active:not(:disabled) {
