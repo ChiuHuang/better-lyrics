@@ -43,18 +43,18 @@
 			<div class="ui-segmented tabs-wrap">
 				<div class="ui-segmented__list tabs" role="tablist">
 					<span class="ui-segmented__pill" aria-hidden="true"></span>
-					<button class="ui-segmented__tab" aria-selected="true" id="general-tab" data-target="#general-content" role="tab" type="button">__MSG_options_tab_general__</button>
-					<button class="ui-segmented__tab" id="display-tab" data-target="#display-content" role="tab" type="button">__MSG_options_tab_display__</button>
-					<button class="ui-segmented__tab" id="language-tab" data-target="#language-content" role="tab" type="button">__MSG_options_tab_language__</button>
-					<button class="ui-segmented__tab" id="sources-tab" data-target="#sources-content" role="tab" type="button">__MSG_options_tab_sources__</button>
-					<button class="ui-segmented__tab" id="identity-tab" data-target="#identity-content" role="tab" type="button">__MSG_options_tab_identity__</button>
-					<button class="ui-segmented__tab" id="themes-tab" data-target="#themes-content" role="tab" type="button">__MSG_options_tab_themes__</button>
+					<button class="ui-segmented__tab" aria-selected="true" id="general-tab" data-target="#general-content" aria-controls="general-content" role="tab" type="button">__MSG_options_tab_general__</button>
+					<button class="ui-segmented__tab" id="display-tab" data-target="#display-content" aria-controls="display-content" role="tab" type="button">__MSG_options_tab_display__</button>
+					<button class="ui-segmented__tab" id="language-tab" data-target="#language-content" aria-controls="language-content" role="tab" type="button">__MSG_options_tab_language__</button>
+					<button class="ui-segmented__tab" id="sources-tab" data-target="#sources-content" aria-controls="sources-content" role="tab" type="button">__MSG_options_tab_sources__</button>
+					<button class="ui-segmented__tab" id="identity-tab" data-target="#identity-content" aria-controls="identity-content" role="tab" type="button">__MSG_options_tab_identity__</button>
+					<button class="ui-segmented__tab" id="themes-tab" data-target="#themes-content" aria-controls="themes-content" role="tab" type="button">__MSG_options_tab_themes__</button>
 				</div>
 			</div>
 		</div></div>
 		</div></div></div>
 		<main id="options" class="pop__body">
-			<section class="page tab-content active" id="general-content">
+			<section class="page tab-content active" id="general-content" role="tabpanel" aria-labelledby="general-tab">
 				<div class="ui-card">
 					<div class="ui-card__body">
 						<div class="ui-panel is-active">
@@ -82,7 +82,7 @@
 					</div>
 				</div>
 			</section>
-			<section class="page tab-content" id="display-content">
+			<section class="page tab-content" id="display-content" role="tabpanel" aria-labelledby="display-tab">
 				<div class="ui-card">
 					<div class="ui-card__head">
 						<div class="ui-card__tabs">
@@ -175,7 +175,7 @@
 					</div>
 				</div>
 			</section>
-			<section class="page tab-content" id="language-content">
+			<section class="page tab-content" id="language-content" role="tabpanel" aria-labelledby="language-tab">
 				<div class="ui-card">
 					<div class="ui-card__head">
 						<div class="ui-card__tabs">
@@ -219,7 +219,7 @@
 					</div>
 				</div>
 			</section>
-			<section class="page tab-content" id="sources-content">
+			<section class="page tab-content" id="sources-content" role="tabpanel" aria-labelledby="sources-tab">
 				<div class="ui-card">
 					<div class="ui-card__head">
 						<span class="ui-card__title">
@@ -241,7 +241,7 @@
 					</div>
 				</div>
 			</section>
-			<section class="page tab-content" id="themes-content">
+			<section class="page tab-content" id="themes-content" role="tabpanel" aria-labelledby="themes-tab">
 				<div class="ui-card">
 					<div class="ui-card__head"><span class="ui-card__title">__MSG_options_themes_title__</span></div>
 					<div class="ui-card__body">
@@ -293,7 +293,7 @@
 					</div>
 				</div>
 			</section>
-			<section class="page tab-content" id="identity-content">
+			<section class="page tab-content" id="identity-content" role="tabpanel" aria-labelledby="identity-tab">
 				<div class="ui-card">
 					<div class="ui-card__head">
 						<div class="ui-card__tabs">

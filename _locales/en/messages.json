@@ -2134,6 +2134,10 @@
     "message": "ISRC lookup tool",
     "description": "Link text for ISRC finder"
   },
+  "unison_feedTabsLabel": {
+    "message": "Lyrics lists",
+    "description": "Accessible name of the tab list that switches between the community feed and the user's own submissions"
+  },
   "unison_tabFeed": {
     "message": "Feed",
     "description": "Feed tab label for recent submissions"

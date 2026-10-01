@@ -641,6 +641,8 @@ function createFeedTab(name: FeedTabName, label: string): HTMLButtonElement {
   tab.type = "button";
   tab.className = "ui-tabs__tab";
   tab.dataset.tab = name;
+  tab.id = `unison-feed-tab-${name}`;
+  tab.setAttribute("aria-controls", "unison-feed");
   tab.textContent = label;
   return tab;
 }
@@ -651,7 +653,7 @@ function setupFeedTabs(): void {
 
   const strip = document.createElement("div");
   strip.className = "ui-tabs";
-  strip.setAttribute("aria-label", t("unison_title"));
+  strip.setAttribute("aria-label", t("unison_feedTabsLabel"));
   const bar = document.createElement("span");
   bar.className = "ui-tabs__bar";
   bar.setAttribute("aria-hidden", "true");
@@ -668,6 +670,8 @@ function setupFeedTabs(): void {
   tabsRow.append(strip, resultsMeta);
   const anchor = filterBar ?? feedContainer;
   anchor.parentElement?.insertBefore(tabsRow, anchor);
+  feedContainer.setAttribute("role", "tabpanel");
+  feedContainer.setAttribute("aria-labelledby", `unison-feed-tab-${activeFeedTab}`);
   feedTabs = initTabStrip(strip, {
     variant: "underline",
     onChange: tab => onTabClick(tab.dataset.tab === "mine" ? "mine" : "recent"),
@@ -695,6 +699,7 @@ function switchTab(next: FeedTabName): void {
 function updateTabActiveState(): void {
   const tab = feedTabs?.tabs.find(candidate => candidate.dataset.tab === activeFeedTab);
   if (feedTabs && tab) feedTabs.select(tab, { notify: false });
+  feedContainer?.setAttribute("aria-labelledby", `unison-feed-tab-${activeFeedTab}`);
 }
 
 // -- Feed --------------------------
