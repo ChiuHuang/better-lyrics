@@ -215,7 +215,7 @@ function extractVideoIdFromCacheKey(key: string): string | null {
   return null;
 }
 
-function isLyricCacheKey(key: string): boolean {
+export function isLyricCacheKey(key: string): boolean {
   return extractVideoIdFromCacheKey(key) !== null;
 }
 
