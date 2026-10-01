@@ -391,7 +391,7 @@
     "description": "Theme marketplace button label"
   },
   "options_themes_installedThemes": {
-    "message": "Installed Themes",
+    "message": "Installed themes",
     "description": "Installed themes button label"
   },
 
@@ -934,7 +934,7 @@
   },
 
   "marketplace_shortcutsTitle": {
-    "message": "Keyboard Shortcuts",
+    "message": "Keyboard shortcuts",
     "description": "Shortcuts modal title"
   },
   "marketplace_shortcutsNavigation": {
@@ -1001,7 +1001,7 @@
   },
 
   "marketplace_shortcutsDetails": {
-    "message": "Theme Details",
+    "message": "Theme details",
     "description": "Theme details shortcuts group"
   },
   "marketplace_shortcutsInstallRemove": {
