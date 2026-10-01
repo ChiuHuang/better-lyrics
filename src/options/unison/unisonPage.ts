@@ -56,6 +56,7 @@ import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
 import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revisions/revisionEditor";
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createBackButton, createButton } from "@/options/unison/revisions/revisionUi";
+import { createActionMenu } from "@/ui/actionMenu";
 import { createDropdown, type Dropdown } from "@/ui/dropdown";
 import { createModal, isAnyModalOpen } from "@/ui/modal";
 import { attachScrollFade } from "@/ui/scrollFade";
@@ -1259,7 +1260,7 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   if (!isOwn) {
     const reportBtn = createButton({ label: t("unison_report"), icon: "report" });
     reportBtn.classList.add("unison-vote-btn--report");
-    reportBtn.addEventListener("click", () => showReportMenu(unisonId, reportBtn));
+    createReportMenu(unisonId, reportBtn);
     row.appendChild(reportBtn);
   }
 
@@ -1878,39 +1879,22 @@ async function loadRevisions(id: number, openRevNo: number | null, view: AbortSi
   renderRevisionsPage(loaded.entry, revisionsRoot, revisionHost(view), loaded.isOwner, openRevNo);
 }
 
-function showReportMenu(unisonId: number, anchor: HTMLButtonElement): void {
-  const existing = document.querySelector(".unison-report-dropdown");
-  if (existing) existing.remove();
+const REPORT_REASONS: ReportReason[] = ["wrong_song", "bad_sync", "offensive", "spam", "other"];
 
-  const menu = document.createElement("div");
-  menu.className = "unison-report-dropdown";
-
-  const reasons: ReportReason[] = ["wrong_song", "bad_sync", "offensive", "spam", "other"];
-
-  for (const reason of reasons) {
-    const btn = document.createElement("button");
-    btn.className = "unison-report-dropdown-item";
-    btn.textContent = t(`unison_report_${reason}`);
-    btn.addEventListener("click", async () => {
-      menu.remove();
-      const result = await reportLyrics(unisonId, reason);
-      if (result.success) {
-        anchor.replaceChildren(svgIcon("report"), t("unison_reportSuccess"));
-        anchor.disabled = true;
-      }
-    });
-    menu.appendChild(btn);
-  }
-
-  anchor.parentElement?.appendChild(menu);
-
-  const dismiss = (e: MouseEvent) => {
-    if (!menu.contains(e.target as Node)) {
-      menu.remove();
-      document.removeEventListener("click", dismiss);
-    }
-  };
-  setTimeout(() => document.addEventListener("click", dismiss), 0);
+function createReportMenu(unisonId: number, anchor: HTMLButtonElement): void {
+  createActionMenu(anchor, {
+    label: t("unison_report"),
+    items: () =>
+      REPORT_REASONS.map(reason => ({
+        label: t(`unison_report_${reason}`),
+        onSelect: async () => {
+          const result = await reportLyrics(unisonId, reason);
+          if (!result.success) return;
+          anchor.replaceChildren(svgIcon("report"), t("unison_reportSuccess"));
+          anchor.disabled = true;
+        },
+      })),
+  });
 }
 
 // -- Submit Form --------------------------
