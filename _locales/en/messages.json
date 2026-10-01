@@ -50,7 +50,7 @@
     "description": "Hint under the clear cached lyrics label"
   },
   "options_general_clearCache": {
-    "message": "Clear Cache",
+    "message": "Clear cache",
     "description": "Clear cache button label"
   },
   "options_general_totalLyrics": {
@@ -320,7 +320,7 @@
   },
 
   "options_language_displayLanguage": {
-    "message": "Display Language",
+    "message": "Display language",
     "description": "Label for the UI language selector dropdown"
   },
   "options_language_displayLanguageAuto": {
@@ -342,7 +342,7 @@
   },
 
   "options_sources_title": {
-    "message": "Lyric Source Preference",
+    "message": "Lyric source preference",
     "description": "Sources settings section title"
   },
   "options_sources_description": {
@@ -355,7 +355,7 @@
   },
 
   "options_themes_title": {
-    "message": "Theme Settings",
+    "message": "Theme settings",
     "description": "Theme settings section title"
   },
   "options_themes_theme": {
@@ -371,11 +371,11 @@
     "description": "Change theme button label"
   },
   "options_themes_customTheme": {
-    "message": "Custom Theme",
+    "message": "Custom theme",
     "description": "Display name for unnamed custom themes"
   },
   "options_themes_customStyles": {
-    "message": "Custom Styles",
+    "message": "Custom styles",
     "description": "Custom styles label"
   },
   "options_themes_create": {
@@ -408,7 +408,7 @@
     "description": "Your identity label"
   },
   "options_identity_unisonStats": {
-    "message": "Unison Stats",
+    "message": "Unison stats",
     "description": "Section title above the user's own Unison level, tier, rank and badges on the Identity tab"
   },
   "options_identity_loading": {
@@ -416,15 +416,15 @@
     "description": "Loading identity placeholder"
   },
   "options_identity_exportImport": {
-    "message": "Export/Import",
+    "message": "Export/import",
     "description": "Export/Import section label"
   },
   "options_identity_exportKey": {
-    "message": "Export Key",
+    "message": "Export key",
     "description": "Export key button label"
   },
   "options_identity_importKey": {
-    "message": "Import Key",
+    "message": "Import key",
     "description": "Import key button label"
   },
   "options_identityImport_title": {
@@ -432,7 +432,7 @@
     "description": "Title of the import identity modal"
   },
   "options_identityImport_chooseFile": {
-    "message": "Choose File",
+    "message": "Choose file",
     "description": "Label for the file picker button in the import identity modal"
   },
   "options_identityImport_or": {
@@ -680,7 +680,7 @@
     "description": "Open in new tab tooltip"
   },
   "options_editor_backToSettings": {
-    "message": "Back to Settings",
+    "message": "Back to settings",
     "description": "Back to settings button label"
   },
   "options_editor_fullExperienceNote": {
@@ -692,7 +692,7 @@
     "description": "Open in new tab link text"
   },
   "options_editor_stylingGuide": {
-    "message": "Styling Guide",
+    "message": "Styling guide",
     "description": "Styling guide link text"
   },
   "options_editor_renameTheme": {
@@ -765,7 +765,7 @@
     "description": "YouTube provider name"
   },
   "options_provider_youtubeCaptions": {
-    "message": "YouTube Captions",
+    "message": "YouTube captions",
     "description": "YouTube Captions provider name"
   },
   "options_provider_binilyrics": {
@@ -1090,7 +1090,7 @@
     "description": "Theme details shortcuts group"
   },
   "marketplace_shortcutsInstallRemove": {
-    "message": "Install / Remove",
+    "message": "Install / remove",
     "description": "Install/remove shortcut"
   },
   "marketplace_shortcutsApply": {
@@ -1284,7 +1284,7 @@
   },
 
   "editor_pageTitle": {
-    "message": "Better Lyrics Styles Editor",
+    "message": "Better Lyrics styles editor",
     "description": "Standalone editor page title"
   },
   "editor_importFromFile": {
@@ -1359,7 +1359,7 @@
     "description": "Message when no lyrics are available"
   },
   "lyrics_resumeAutoscroll": {
-    "message": "Resume Autoscroll",
+    "message": "Resume autoscroll",
     "description": "Resume Autoscroll button label"
   },
   "options_language_exclusions": {
@@ -1580,7 +1580,7 @@
     }
   },
   "theme_author_you": {
-    "message": "by You",
+    "message": "by you",
     "description": "Author label for custom user themes on theme selector button"
   },
   "symlink_installFailed": {
@@ -1598,11 +1598,11 @@
     }
   },
   "theme_modal_section_featured": {
-    "message": "Featured Themes",
+    "message": "Featured themes",
     "description": "Section title for featured themes (top marketplace picks and built-ins) in the theme chooser modal"
   },
   "theme_modal_section_all": {
-    "message": "All Themes",
+    "message": "All themes",
     "description": "Section title for the user's installed marketplace themes in the theme chooser modal"
   },
   "theme_modal_browse": {
@@ -1610,7 +1610,7 @@
     "description": "Link in the theme chooser modal that opens the full Theme Marketplace page"
   },
   "theme_modal_section_custom": {
-    "message": "Custom Themes",
+    "message": "Custom themes",
     "description": "Section title for custom themes in the theme chooser modal"
   },
   "lyrics_submitToUnison": {
@@ -2040,7 +2040,7 @@
     "description": "Feed tab label for recent submissions"
   },
   "unison_tabMySubmissions": {
-    "message": "My Submissions",
+    "message": "My submissions",
     "description": "Feed tab label for user's own submissions"
   },
   "unison_noSubmissions": {
@@ -2170,7 +2170,7 @@
     }
   },
   "unison_xpToNext": {
-    "message": "$xp$ XP to Level $level$",
+    "message": "$xp$ XP to level $level$",
     "description": "Explains how much experience remains before the next Unison level. $xp$ is a positive integer, $level$ is the next level number",
     "placeholders": {
       "xp": {
