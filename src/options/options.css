@@ -173,7 +173,6 @@ h1 img {
     font-weight: 400;
 }
 
-/* The popup is a lighter sheet over the browser chrome; full pages sit on the darker page token. */
 .options-page {
     --page-bg: #28292c;
 }
