@@ -1030,17 +1030,17 @@ function renderDetailSkeleton(): void {
   savebarSlot.replaceChildren();
 
   const titleSkel = document.createElement("div");
-  titleSkel.className = "unison-skeleton";
+  titleSkel.className = "ui-skeleton";
   titleSkel.style.width = "60%";
   titleSkel.style.height = "1.25rem";
 
   const artistSkel = document.createElement("div");
-  artistSkel.className = "unison-skeleton";
+  artistSkel.className = "ui-skeleton";
   artistSkel.style.width = "40%";
   artistSkel.style.height = "0.875rem";
 
   const metaSkel = document.createElement("div");
-  metaSkel.className = "unison-skeleton";
+  metaSkel.className = "ui-skeleton";
   metaSkel.style.width = "100%";
   metaSkel.style.height = "6rem";
 
@@ -1050,13 +1050,13 @@ function renderDetailSkeleton(): void {
 
   renderPreviewInto(detailPreview, "", false, detailPreviewHead);
   const previewSkel = document.createElement("div");
-  previewSkel.className = "unison-skeleton";
+  previewSkel.className = "ui-skeleton";
   previewSkel.style.width = "100%";
   previewSkel.style.height = "50vh";
   detailPreview.appendChild(previewSkel);
 
   const lyricsSkel = document.createElement("div");
-  lyricsSkel.className = "unison-skeleton";
+  lyricsSkel.className = "ui-skeleton";
   lyricsSkel.style.width = "100%";
   lyricsSkel.style.height = "50vh";
   detailLyrics.appendChild(lyricsSkel);
@@ -1885,7 +1885,7 @@ function fitToViewport(frame: HTMLElement, view: AbortSignal): void {
 
 async function loadRevisions(id: number, openRevNo: number | null, view: AbortSignal): Promise<void> {
   const skeleton = document.createElement("div");
-  skeleton.className = "unison-skeleton";
+  skeleton.className = "ui-skeleton";
   skeleton.style.width = "100%";
   skeleton.style.height = "50vh";
   revisionsRoot.replaceChildren(skeleton);

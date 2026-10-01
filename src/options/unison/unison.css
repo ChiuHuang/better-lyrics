@@ -396,14 +396,15 @@
   color: transparent;
   -webkit-text-fill-color: transparent;
   border: none;
-  outline: none;
+  border-radius: var(--radius-control);
   background-color: transparent;
+  cursor: pointer;
   animation: unison-shimmer-text 3s linear infinite;
 }
 
-.unison-feed-more:focus,
 .unison-feed-more:focus-visible {
-  outline: none;
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .unison-feed-more[hidden] {
@@ -1001,28 +1002,6 @@
 .unison-inline-link:hover {
   color: rgb(189, 200, 255);
   text-decoration: underline;
-}
-
-/* -- Skeleton Loader --------------------------  */
-
-.unison-skeleton {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 0.375rem;
-  overflow: hidden;
-  position: relative;
-}
-
-.unison-skeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 50%, transparent 100%);
-  animation: unison-shimmer 1.5s ease-in-out infinite;
-}
-
-@keyframes unison-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
 }
 
 /* -- Form Fields --------------------------  */
@@ -2290,6 +2269,13 @@
 /* -- Reduced motion ---------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
+  .unison-feed-more {
+    animation: none;
+    background: none;
+    color: var(--text-muted);
+    -webkit-text-fill-color: currentColor;
+  }
+
   .unison-card,
   .unison-input,
   .unison-token-input {
