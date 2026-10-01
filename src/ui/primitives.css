@@ -967,7 +967,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 :is(
   .ui-button, .ui-card, .ui-card__head, .ui-card__tabs, .ui-panel, .ui-row, .ui-row__label, .ui-row__sub, .ui-action-strip, .ui-badge,
   .ui-chip, .ui-sync-tag, .ui-dropdown, .ui-dropdown__trigger, .ui-menu, .ui-menu__options, .ui-menu__option, .ui-frame,
-  .ui-modal__foot, .ui-callout, .ui-filter-bar
+  .ui-modal__foot, .ui-callout, .ui-filter-bar, .ui-stat__bar
 )[hidden] {
   display: none;
 }
