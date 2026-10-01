@@ -2225,5 +2225,6 @@
 
   .unison-token--flash {
     animation: none;
+    box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.5);
   }
 }
