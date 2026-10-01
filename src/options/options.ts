@@ -1498,12 +1498,22 @@ function setUnisonPositionInForm(position: string): void {
   const frame = document.getElementById("unison-position-frame");
   if (!frame) return;
   frame.querySelectorAll<HTMLElement>(".position-cell").forEach(cell => {
-    if (cell.dataset.pos === position) {
-      cell.dataset.selected = "true";
-    } else {
-      delete cell.dataset.selected;
-    }
+    const selected = cell.dataset.pos === position;
+    if (selected) cell.dataset.selected = "true";
+    else delete cell.dataset.selected;
+    cell.setAttribute("aria-checked", String(selected));
+    cell.tabIndex = selected ? 0 : -1;
   });
+}
+
+const POSITION_KEYS_FORWARD = new Set(["ArrowRight", "ArrowDown"]);
+const POSITION_KEYS_BACK = new Set(["ArrowLeft", "ArrowUp"]);
+
+function choosePosition(cell: HTMLElement, focus: boolean): void {
+  if (!cell.dataset.pos) return;
+  setUnisonPositionInForm(cell.dataset.pos);
+  if (focus) cell.focus();
+  saveOptions();
 }
 
 function syncUnisonModalDependentState(enabled: boolean): void {
@@ -1541,9 +1551,21 @@ function setupUnisonActionsModal(): void {
 
   frame.addEventListener("click", e => {
     const cell = (e.target as HTMLElement).closest<HTMLElement>(".position-cell");
-    if (!cell?.dataset.pos) return;
-    setUnisonPositionInForm(cell.dataset.pos);
-    saveOptions();
+    if (cell) choosePosition(cell, false);
+  });
+  frame.addEventListener("keydown", e => {
+    const cells = Array.from(frame.querySelectorAll<HTMLElement>(".position-cell"));
+    const current = cells.indexOf(document.activeElement as HTMLElement);
+    if (current < 0) return;
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      choosePosition(cells[current], true);
+      return;
+    }
+    const step = POSITION_KEYS_FORWARD.has(e.key) ? 1 : POSITION_KEYS_BACK.has(e.key) ? -1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    choosePosition(cells[(current + step + cells.length) % cells.length], true);
   });
 
   pinnedToggle.addEventListener("change", () => {

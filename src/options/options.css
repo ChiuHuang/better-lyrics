@@ -1492,6 +1492,11 @@ input.cm-textfield:focus-visible {
 	background: rgba(255, 255, 255, 0.55);
 }
 
+.position-cell:focus-visible {
+	outline: var(--focus-ring);
+	outline-offset: 2px;
+}
+
 .position-cell[data-selected="true"] {
 	background: hsla(232, 84%, 70%, 0.18);
 }
