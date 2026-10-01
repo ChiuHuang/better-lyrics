@@ -978,7 +978,7 @@ export async function setThemeName() {
 export async function handleSaveTheme() {
   const css = editorStateManager.getContent();
   if (css === null) {
-    showAlert("Editor not initialized!");
+    showAlert(t("options_editor_notReady"));
     return;
   }
   if (!css || css.trim() === "") {

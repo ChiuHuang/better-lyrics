@@ -1,5 +1,6 @@
 import { openSearchPanel } from "@codemirror/search";
 import { GITHUB_REPO_URL } from "@constants";
+import { t } from "@core/i18n";
 import { createEditorState, createEditorView } from "@/options/editor/core/editor";
 import { editorStateManager } from "@/options/editor/core/state";
 import { generateDefaultFilename, importManager, saveCSSToFile } from "@/options/editor/features/import";
@@ -36,18 +37,15 @@ function initializeEditorKeyboardShortcuts() {
         }
       } else {
         const message = document.createDocumentFragment();
-        message.append("Find & Replace is only available in the fullscreen editor.");
+        message.append(t("options_editor_findReplaceFullscreenOnly"));
         message.append(document.createElement("br"), document.createElement("br"));
-        message.append("Click ");
-        const strong = document.createElement("strong");
-        strong.textContent = "Open Fullscreen Editor";
-        message.append(strong, " to access all editor features.");
+        message.append(t("options_editor_findReplaceOpenHint"));
 
         showModal({
-          title: "Find & Replace",
+          title: t("options_editor_findReplaceTitle"),
           message,
-          confirmText: "Open Fullscreen Editor",
-          cancelText: "Close",
+          confirmText: t("options_editor_openFullscreen"),
+          cancelText: t("options_editor_close"),
         }).then(result => {
           if (result) {
             chrome.tabs.create({
@@ -81,11 +79,11 @@ function initializeFileOperations() {
   document.getElementById("file-export-btn")?.addEventListener("click", async () => {
     const css = editorStateManager.getContent();
     if (css === null) {
-      showAlert("Editor not initialized!");
+      showAlert(t("options_editor_notReady"));
       return;
     }
     if (!css) {
-      showAlert("No styles to export!");
+      showAlert(t("options_editor_nothingToExport"));
       return;
     }
 
@@ -118,7 +116,10 @@ export function mountCodeEditor(): void {
 
   const editorElement = document.getElementById("editor")!;
   const isStandalone = document.querySelector(".theme-name-display.standalone") !== null;
-  const view = createEditorView(createEditorState("Loading...", { enableSearch: isStandalone }), editorElement);
+  const view = createEditorView(
+    createEditorState(t("options_identity_loading"), { enableSearch: isStandalone }),
+    editorElement
+  );
   try {
     editorStateManager.setEditor(view);
   } catch (err) {
