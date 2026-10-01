@@ -622,6 +622,34 @@
     "message": "Double-click to rename",
     "description": "Double-click to rename tooltip"
   },
+  "options_editor_findReplaceTitle": {
+    "message": "Find and replace",
+    "description": "Title of the modal shown when find and replace is used in the popup editor"
+  },
+  "options_editor_findReplaceFullscreenOnly": {
+    "message": "Find and replace is only available in the fullscreen editor.",
+    "description": "Modal body explaining that find and replace needs the fullscreen editor"
+  },
+  "options_editor_findReplaceOpenHint": {
+    "message": "Open the fullscreen editor to use every editor feature.",
+    "description": "Second line of the find and replace modal, pointing to the fullscreen editor"
+  },
+  "options_editor_openFullscreen": {
+    "message": "Open fullscreen editor",
+    "description": "Confirm button in the find and replace modal that opens the fullscreen editor"
+  },
+  "options_editor_close": {
+    "message": "Close",
+    "description": "Cancel button that closes the find and replace modal"
+  },
+  "options_editor_notReady": {
+    "message": "Editor not initialized",
+    "description": "Alert shown when an editor action runs before the editor has loaded"
+  },
+  "options_editor_nothingToExport": {
+    "message": "No styles to export",
+    "description": "Alert shown when exporting while the editor is empty"
+  },
 
   "options_provider_betterLyrics": {
     "message": "Better Lyrics",

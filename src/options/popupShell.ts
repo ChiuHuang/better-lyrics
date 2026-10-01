@@ -1,8 +1,9 @@
 import { warnCore } from "@core/logger";
+import { observeResize } from "@modules/ui/layout/layoutWidth";
 import { controlIcons, parseSvgString } from "@modules/ui/lyricsDock/icons";
 import { svgIcon } from "@/options/unison/icons";
 import { type CardTabs, initCardTabs, rovingIndex, travelDirection } from "@/ui/cardTabs";
-import { attachScrollFade } from "@/ui/scrollFade";
+import { attachScrollFade, inlineWheelStep } from "@/ui/scrollFade";
 
 // -- Version --------------------------
 
@@ -37,20 +38,31 @@ function revealActiveTab(tabs: HTMLElement, animate: boolean): void {
   });
 }
 
-const WHEEL_LINE_PX = 16;
-
 function scrollTabsWithWheel(tabs: HTMLElement, event: WheelEvent): void {
-  if (event.deltaX !== 0 || event.deltaY === 0) return;
-  const delta = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? event.deltaY * WHEEL_LINE_PX : event.deltaY;
-  tabs.scrollLeft += getComputedStyle(tabs).direction === "rtl" ? -delta : delta;
+  if (!tabs.hasAttribute("data-scrollable")) return;
+  const step = inlineWheelStep(event, tabs, getComputedStyle(tabs).direction === "rtl");
+  if (step === null) return;
+  event.preventDefault();
+  tabs.scrollLeft += step;
 }
 
-function enableTabScrollIfClipped(tabs: HTMLElement): void {
-  if (tabs.hasAttribute("data-scrollable") || tabs.scrollWidth <= tabs.clientWidth) return;
-  tabs.setAttribute("data-scrollable", "");
-  attachScrollFade(tabs, tabs, { axis: "x" });
-  tabs.addEventListener("wheel", event => scrollTabsWithWheel(tabs, event), { passive: true });
-  revealActiveTab(tabs, false);
+function watchTabOverflow(tabs: HTMLElement): void {
+  let hasFade = false;
+  const sync = (): void => {
+    const clipped = tabs.scrollWidth > tabs.clientWidth;
+    if (clipped !== tabs.hasAttribute("data-scrollable")) {
+      tabs.toggleAttribute("data-scrollable", clipped);
+      if (clipped && !hasFade) {
+        attachScrollFade(tabs, tabs, { axis: "x" });
+        hasFade = true;
+      }
+      revealActiveTab(tabs, false);
+    }
+    movePill(tabs, false);
+  };
+  tabs.addEventListener("wheel", event => scrollTabsWithWheel(tabs, event), { passive: false });
+  observeResize([tabs, ...tabs.querySelectorAll(".tab")], sync);
+  void document.fonts.ready.then(sync);
 }
 
 // -- Page switching --------------------------
@@ -99,10 +111,7 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
 
   const restored = buttons.find(b => b.dataset.target === `#${location.hash.slice(1).split("/")[0]}`);
   activate(restored ?? buttons[0], false);
-  void document.fonts.ready.then(() => {
-    enableTabScrollIfClipped(tabs);
-    movePill(tabs, false);
-  });
+  watchTabOverflow(tabs);
 }
 
 // -- Cards --------------------------

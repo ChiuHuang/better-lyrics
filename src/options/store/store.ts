@@ -2,13 +2,12 @@ import { formatCreators } from "@core/customCss";
 import { t } from "@core/i18n";
 import { formatTimeAgo } from "@core/relativeTime";
 import { getLocalStorage, getSyncStorage } from "@core/storage";
-import autoAnimate, { type AnimationController } from "@formkit/auto-animate";
-import DOMPurify from "dompurify";
-import { marked } from "marked";
+import type { AnimationController } from "@formkit/auto-animate";
 import { applyStoreThemeComplete } from "../editor/features/storage";
 import type { AllThemeStats, InstalledStoreTheme, StoreTheme, ThemeStats } from "./types";
 
 let gridAnimationController: AnimationController | null = null;
+let gridAnimationGeneration = 0;
 
 import { getDisplayName, hasCertificate } from "@core/keyIdentity";
 import { type AlertAction, showAlert, showConfirm } from "../editor/ui/feedback";
@@ -448,38 +447,6 @@ function getTestStats(): AllThemeStats {
     };
   }
   return stats;
-}
-
-marked.setOptions({
-  breaks: true,
-  gfm: true,
-});
-
-const renderer = new marked.Renderer();
-renderer.link = ({ href, text }) => {
-  return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-};
-renderer.image = ({ href, title, text }) => {
-  const src = href.replace(
-    /^https?:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/(.+)/,
-    "https://raw.githubusercontent.com/$1/$2"
-  );
-  const titleAttr = title ? ` title="${title}"` : "";
-  return `<img src="${src}" alt="${text}"${titleAttr} />`;
-};
-marked.use({ renderer });
-
-function parseMarkdown(text: string): DocumentFragment {
-  // https://marked.js.org/#usage
-  const content = text.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, "");
-  const html = marked.parse(content, { async: false }) as string;
-
-  const sanitized = DOMPurify.sanitize(html.trim());
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(`<template>${sanitized}</template>`, "text/html");
-  const template = doc.querySelector("template");
-  return template ? template.content : document.createDocumentFragment();
 }
 
 function createShaderIcon(): SVGSVGElement {
@@ -1048,8 +1015,14 @@ async function loadMarketplace(): Promise<void> {
 
     await applyFiltersToGrid();
 
-    gridAnimationController = autoAnimate(grid, { duration: 200, easing: "cubic-bezier(0.2, 0, 0, 1)" });
-    gridAnimationController.enable();
+    const generation = ++gridAnimationGeneration;
+    import("@formkit/auto-animate")
+      .then(({ default: autoAnimate }) => {
+        if (generation !== gridAnimationGeneration || !grid.isConnected || gridAnimationController) return;
+        gridAnimationController = autoAnimate(grid, { duration: 200, easing: "cubic-bezier(0.2, 0, 0, 1)" });
+        gridAnimationController.enable();
+      })
+      .catch(err => warnStore("Grid animation unavailable:", err));
 
     openThemeFromUrlParam();
   } catch (err) {
@@ -1074,6 +1047,7 @@ function openThemeFromUrlParam(): void {
 }
 
 async function refreshMarketplace(): Promise<void> {
+  gridAnimationGeneration++;
   if (gridAnimationController) {
     gridAnimationController.disable();
     gridAnimationController = null;
@@ -1718,6 +1692,30 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
   }
 }
 
+let parseMarkdown: ((text: string) => DocumentFragment) | null = null;
+
+function renderDescription(descEl: HTMLElement, theme: StoreTheme): void {
+  if (parseMarkdown) {
+    descEl.style.visibility = "";
+    descEl.replaceChildren(parseMarkdown(theme.description));
+    return;
+  }
+  descEl.style.visibility = "hidden";
+  const isCurrent = () => currentDetailTheme?.id === theme.id;
+  import("@/options/store/markdown")
+    .then(module => {
+      parseMarkdown = module.parseMarkdown;
+      if (isCurrent()) descEl.replaceChildren(module.parseMarkdown(theme.description));
+    })
+    .catch(err => {
+      errorStore("Failed to render theme description:", err);
+      if (isCurrent()) descEl.textContent = theme.description;
+    })
+    .finally(() => {
+      if (isCurrent()) descEl.style.visibility = "";
+    });
+}
+
 async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): Promise<void> {
   currentDetailTheme = theme;
   currentSlideIndex = 0;
@@ -1742,7 +1740,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
     }
   }
   if (authorEl) authorEl.textContent = `By ${formatCreators(theme.creators)} · v${theme.version}`;
-  if (descEl) descEl.replaceChildren(parseMarkdown(theme.description));
+  if (descEl) renderDescription(descEl, theme);
 
   const statsEl = document.getElementById("detail-stats");
   const ratingSectionEl = document.getElementById("detail-rating-section");

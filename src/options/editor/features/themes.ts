@@ -12,7 +12,7 @@ import { fetchStoreThemesByIds } from "../../store/themeStoreService";
 import type { AllThemeStats, ThemeSource, ThemeStats } from "../../store/types";
 import type { Theme } from "../../themes";
 import THEMES, { deleteCustomTheme, getCustomThemes, renameCustomTheme, saveCustomTheme } from "../../themes";
-import { SAVE_CUSTOM_THEME_DEBOUNCE, SAVE_DEBOUNCE_DELAY } from "../core/editor";
+import { SAVE_CUSTOM_THEME_DEBOUNCE, SAVE_DEBOUNCE_DELAY } from "@/options/editor/constants";
 import { editorStateManager } from "../core/state";
 import type { ThemeCardOptions } from "../types";
 import {
@@ -475,10 +475,8 @@ function debounceSaveCustomTheme() {
       const isCustom = editorStateManager.getIsCustomTheme();
 
       if (themeName && isCustom) {
-        const currentEditor = editorStateManager.getEditor();
-        if (!currentEditor) return;
-
-        const css = currentEditor.state.doc.toString();
+        const css = editorStateManager.getContent();
+        if (css === null) return;
         const cleanCss = css.replace(/^\/\*.*?\*\/\n\n/s, "").trim();
 
         try {
@@ -500,15 +498,14 @@ function debounceSave() {
 
 export function saveToStorage(isTheme = false) {
   logEditor("saveToStorage called, isTheme:", isTheme);
-  const currentEditor = editorStateManager.getEditor();
-  if (!currentEditor) {
+  const css = editorStateManager.getContent();
+  if (css === null) {
     errorEditor("Cannot save: editor not initialized");
     return;
   }
 
   editorStateManager.incrementSaveCount();
   editorStateManager.setIsSaving(true);
-  const css = currentEditor.state.doc.toString();
   logEditor("saveToStorage CSS length:", css.length);
 
   const isCustom = editorStateManager.getIsCustomTheme();
@@ -979,13 +976,11 @@ export async function setThemeName() {
 }
 
 export async function handleSaveTheme() {
-  const currentEditor = editorStateManager.getEditor();
-  if (!currentEditor) {
-    showAlert("Editor not initialized!");
+  const css = editorStateManager.getContent();
+  if (css === null) {
+    showAlert(t("options_editor_notReady"));
     return;
   }
-
-  const css = currentEditor.state.doc.toString();
   if (!css || css.trim() === "") {
     showAlert("No CSS to save as theme!");
     return;

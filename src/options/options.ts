@@ -24,7 +24,9 @@ import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
 import { mergePreferredProviders } from "@modules/lyrics/providers/providerList";
 import { fetchOwnGamification, renderIdentityStats } from "@modules/unison/gamificationRender";
-import Sortable from "sortablejs";
+import type Sortable from "sortablejs";
+import { initializeThemes } from "@/options/editor/themesUi";
+import { openEditCSS, openOptions } from "@/options/editor/ui/dom";
 import { showModal } from "./editor/ui/feedback";
 import { initStoreUI, setupYourThemesButton } from "./store/store";
 import { checkForStableRelease } from "./updateNotice";
@@ -684,9 +686,15 @@ function mountDropdownFields(): void {
 }
 
 // Event listeners
-document.addEventListener("DOMContentLoaded", async () => {
+const localeReady = new Promise<void>(resolve => {
+  document.addEventListener("DOMContentLoaded", () => resolve(), { once: true });
+}).then(async () => {
   await loadLocaleOverride();
   initI18n();
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await localeReady;
   renderAppVersion(document.getElementById("app-version"));
   mountIcons(document);
   initRefreshLyricsButton(() => showAlert(t("options_alert_refreshFailed")));
@@ -710,8 +718,48 @@ document.getElementById("options")?.addEventListener("change", event => {
   saveOptions();
 });
 
+// -- Drag sorting --------------------------
+
+function sortableWhenVisible(list: HTMLElement, options: Sortable.Options): void {
+  const observer = new IntersectionObserver(entries => {
+    if (!entries.some(entry => entry.isIntersecting)) return;
+    observer.disconnect();
+    import("sortablejs")
+      .then(({ default: SortableList }) => new SortableList(list, options))
+      .catch(err => errorCore("Failed to load drag sorting:", err));
+  });
+  observer.observe(list);
+}
+
+// -- CSS editor --------------------------
+
+function setupLazyCodeEditor(initialContentReady: Promise<void>): void {
+  document.getElementById("back-btn")?.addEventListener("click", openOptions);
+  const button = document.getElementById("edit-css-btn");
+  if (!button) return;
+  let isRequested = false;
+
+  button.addEventListener("click", async () => {
+    openEditCSS();
+    if (isRequested) return;
+    isRequested = true;
+    button.setAttribute("aria-busy", "true");
+    try {
+      const [{ mountCodeEditor }] = await Promise.all([import("@/options/editor/codeEditor"), initialContentReady]);
+      mountCodeEditor();
+    } catch (err) {
+      isRequested = false;
+      errorCore("Failed to load the CSS editor:", err);
+      openOptions();
+      showAlert(t("unison_rev_error"));
+    } finally {
+      button.removeAttribute("aria-busy");
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  new Sortable(document.getElementById("providers-list")!, {
+  sortableWhenVisible(document.getElementById("providers-list")!, {
     animation: 150,
     ghostClass: "dragging",
     forceFallback: true,
@@ -722,6 +770,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initStoreUI();
   setupYourThemesButton();
+  const themesReady = localeReady.then(initializeThemes).catch(err => errorCore("Failed to initialize themes:", err));
+  setupLazyCodeEditor(themesReady);
   initLangExclusionsModal();
 
   document.getElementById("browse-themes-btn")?.addEventListener("click", () => {
@@ -1602,7 +1652,7 @@ function setupUnisonActionsModal(): void {
 
   const picker = document.querySelector<HTMLElement>(".controls-shown-picker");
   if (picker) {
-    new Sortable(picker, {
+    sortableWhenVisible(picker, {
       animation: 150,
       ghostClass: "dragging",
       forceFallback: true,

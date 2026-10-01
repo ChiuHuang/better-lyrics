@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { fadeEdges, fadeInlineEdges } = await import("@/ui/scrollFade");
+const { fadeEdges, fadeInlineEdges, inlineWheelStep } = await import("@/ui/scrollFade");
 
 {
   assert.deepEqual(
@@ -81,3 +81,52 @@ const { fadeEdges, fadeInlineEdges } = await import("@/ui/scrollFade");
 }
 
 console.log("scrollFade self-check passed");
+
+// -- Inline wheel --------------------------
+{
+  const metrics = { clientWidth: 100, scrollWidth: 300 };
+  const down = { deltaX: 0, deltaY: 100, deltaMode: 0 };
+  const up = { deltaX: 0, deltaY: -100, deltaMode: 0 };
+  assert.equal(inlineWheelStep(down, { ...metrics, scrollLeft: 0 }), 100, "wheel down at start scrolls forward");
+  assert.equal(inlineWheelStep(up, { ...metrics, scrollLeft: 80 }), -100, "wheel up mid-strip scrolls back");
+  assert.equal(inlineWheelStep(up, { ...metrics, scrollLeft: 0 }), null, "wheel up at start leaves the page to scroll");
+  assert.equal(
+    inlineWheelStep(down, { ...metrics, scrollLeft: 200 }),
+    null,
+    "wheel down at end leaves the page to scroll"
+  );
+  assert.equal(inlineWheelStep(down, { ...metrics, scrollLeft: 199.4 }), null, "sub-pixel end counts as end");
+  assert.equal(inlineWheelStep(up, { ...metrics, scrollLeft: 200 }), -100, "wheel up at end scrolls back");
+  assert.equal(
+    inlineWheelStep({ deltaX: 0, deltaY: 3, deltaMode: 1 }, { ...metrics, scrollLeft: 0 }),
+    48,
+    "line-mode deltas convert to pixels"
+  );
+  assert.equal(
+    inlineWheelStep({ deltaX: 40, deltaY: 10, deltaMode: 0 }, { ...metrics, scrollLeft: 0 }),
+    null,
+    "horizontal wheel is left to the browser"
+  );
+  assert.equal(
+    inlineWheelStep({ deltaX: 0, deltaY: 0, deltaMode: 0 }, { ...metrics, scrollLeft: 0 }),
+    null,
+    "zero delta does nothing"
+  );
+  assert.equal(
+    inlineWheelStep(down, { clientWidth: 300, scrollWidth: 300, scrollLeft: 0 }),
+    null,
+    "a strip that fits never takes the wheel"
+  );
+  assert.equal(
+    inlineWheelStep(down, { ...metrics, scrollLeft: 0 }, true),
+    -100,
+    "rtl wheel down scrolls toward the end"
+  );
+  assert.equal(
+    inlineWheelStep(down, { ...metrics, scrollLeft: -200 }, true),
+    null,
+    "rtl at end leaves the page to scroll"
+  );
+  assert.equal(inlineWheelStep(up, { ...metrics, scrollLeft: -200 }, true), 100, "rtl wheel up at end scrolls back");
+  assert.equal(inlineWheelStep(up, { ...metrics, scrollLeft: 0 }, true), null, "rtl wheel up at start leaves the page");
+}
