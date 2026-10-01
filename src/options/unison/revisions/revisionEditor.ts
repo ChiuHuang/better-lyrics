@@ -483,6 +483,7 @@ function renderIssues(list: HTMLUListElement, preview: PreviewResult | null): vo
 
 function toggleInvalid(control: HTMLElement, invalid: boolean): void {
   control.classList.toggle("unison-rev-input--error", invalid);
+  control.closest(".ui-frame")?.classList.toggle("unison-frame--error", invalid);
   if (invalid) {
     control.setAttribute("aria-invalid", "true");
   } else {

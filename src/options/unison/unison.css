@@ -2390,11 +2390,11 @@ kbd {
   line-height: 1.7;
 }
 
-.ui-frame--field:has(.unison-rev-input--error) {
+.ui-frame--field.unison-frame--error {
   box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.5);
 }
 
-.ui-frame--field:has(.unison-textarea--dragover) {
+.ui-frame--field.unison-frame--dragover {
   box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.5);
 }
 
