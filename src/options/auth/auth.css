@@ -133,12 +133,8 @@ body {
   justify-content: flex-end;
 }
 
-.auth-card__error {
+.auth-card__error:not(:empty) {
   margin: 0 0 16px;
-}
-
-.auth-card__error:empty {
-  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
