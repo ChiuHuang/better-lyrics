@@ -20,6 +20,7 @@ export interface Dropdown {
   setValue(value: string): void;
   getValue(): string;
   setHidden(hidden: boolean): void;
+  setDisabled(disabled: boolean): void;
   destroy(): void;
 }
 
@@ -291,6 +292,10 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     setHidden(hidden) {
       if (hidden) close(false);
       root.hidden = hidden;
+    },
+    setDisabled(disabled) {
+      if (disabled) close(false);
+      trigger.disabled = disabled;
     },
     destroy() {
       close(false);

@@ -121,6 +121,19 @@ dropdown.setOptions(options(3), "v1");
   doc.documentElement.style.removeProperty("--duration-quick");
 }
 
+// -- Disabled --------------------------
+{
+  trigger.click();
+  dropdown.setDisabled(true);
+  assert.equal(trigger.disabled, true, "setDisabled disables the trigger");
+  assert.equal(trigger.getAttribute("aria-expanded"), "false", "setDisabled closes an open menu");
+  trigger.click();
+  assert.equal(trigger.getAttribute("aria-expanded"), "false", "a disabled trigger does not open");
+  dropdown.setDisabled(false);
+  assert.equal(trigger.disabled, false, "setDisabled(false) re-enables the trigger");
+  await new Promise(resolve => setTimeout(resolve, 200));
+}
+
 // -- Hidden and destroy --------------------------
 {
   trigger.click();

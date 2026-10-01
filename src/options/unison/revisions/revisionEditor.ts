@@ -19,12 +19,13 @@ import {
 import type { FieldCheck, PreviewResult, RevisionDraft, UnisonLyricsEntry } from "@modules/unison/types";
 import { previewRevision, saveRevision } from "@modules/unison/unisonApi";
 import { svgIcon } from "@/options/unison/icons";
-import { appendLanguageOptions } from "@/options/unison/languages";
+import { createLanguageDropdown } from "@/options/unison/languageDropdown";
 import { bindLyricsFileDrop, createLyricsFileInput, LYRICS_FILE_READING_EVENT } from "@/options/unison/lyricsFile";
 import { renderPreviewInto } from "@/options/unison/lyricsPreview";
 import { detectFormat } from "@/options/unison/lyricsPreviewLines";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { mountChangesTabs } from "@/options/unison/revisions/revisionChanges";
+import { compactTtml, readableTtml } from "@/options/unison/ttmlLayout";
 import {
   type RevisionHost,
   createButton,
@@ -33,6 +34,9 @@ import {
   messagesText,
   setButtonContent,
 } from "@/options/unison/revisions/revisionUi";
+import type { Dropdown } from "@/ui/dropdown";
+import { attachScrollFade } from "@/ui/scrollFade";
+import { attachEditor } from "@braccato/highlight";
 
 // -- Types --------------------------
 
@@ -47,7 +51,7 @@ export interface EditorSurface {
 
 interface SidebarControls {
   upload: HTMLElement;
-  languageSelect: HTMLSelectElement;
+  language: Dropdown;
   isrcInput: HTMLInputElement;
   isrcError: HTMLElement;
   albumInput: HTMLInputElement;
@@ -75,16 +79,24 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   const id = String(entry.id);
   const liveRevNo = entry.revision?.revNo ?? 1;
 
-  const textarea = createLyricsTextarea(entry.lyrics);
+  let layout = readableTtml(entry.lyrics);
+  const textarea = createLyricsTextarea(layout.text);
   const replaceLyrics = (text: string): void => {
-    textarea.value = text;
+    layout = readableTtml(text);
+    textarea.value = layout.text;
     textarea.dispatchEvent(new Event("input"));
   };
   bindLyricsFileDrop(textarea, replaceLyrics);
 
   const controls: SidebarControls = {
     upload: createUploadButton(textarea, replaceLyrics),
-    languageSelect: createLanguageSelect(entry.language),
+    language: createLanguageDropdown({
+      label: t("unison_language"),
+      leading: { value: "", label: t("unison_languageUnspecified") },
+      value: entry.language ?? "",
+      variant: "stretch",
+      onChange: () => schedulePreview(),
+    }),
     isrcInput: createIsrcInput(entry.isrc),
     isrcError: createFieldError(),
     albumInput: createAlbumInput(entry.album),
@@ -93,7 +105,16 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   };
   const formatCell = renderSidebar(entry, surface.meta, host, controls);
 
-  surface.lyrics.replaceChildren(textarea);
+  const frame = document.createElement("div");
+  frame.className = "ui-frame ui-frame--field unison-rev-lyrics-frame";
+  surface.lyrics.replaceChildren(frame);
+  frame.appendChild(textarea);
+  const editor = attachEditor(textarea);
+  const fade = attachScrollFade(editor.wrap, textarea, { pane: true });
+  host.onLeave(() => {
+    fade.destroy();
+    editor.destroy();
+  });
 
   const bar = createSaveBar();
   surface.savebar.replaceChildren(bar.root);
@@ -116,9 +137,9 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   });
 
   const draft = (): RevisionDraft => {
-    const lyrics = textarea.value.trim();
+    const lyrics = (layout.readable ? compactTtml(textarea.value) : textarea.value).trim();
     const body: RevisionDraft = { lyrics, format: detectFormat(lyrics) };
-    const language = draftField(controls.languageSelect.value, entry.language);
+    const language = draftField(controls.language.getValue(), entry.language);
     const isrc = draftField(controls.isrcInput.value, entry.isrc);
     if (language !== undefined) body.language = language;
     if (isrc !== undefined) body.isrc = isrc;
@@ -232,14 +253,13 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     renderPreviewInto(surface.preview, textarea.value, false, surface.previewHead);
     schedulePreview();
   });
-  controls.languageSelect.addEventListener("change", schedulePreview);
   controls.isrcInput.addEventListener("input", schedulePreview);
   controls.albumInput.addEventListener("input", schedulePreview);
 
   const setSaving = (value: boolean): void => {
     saving = value;
     textarea.disabled = value;
-    controls.languageSelect.disabled = value;
+    controls.language.setDisabled(value);
     controls.isrcInput.disabled = value;
     controls.albumInput.disabled = value;
   };
@@ -308,7 +328,7 @@ function renderSidebar(
   const fields = document.createElement("div");
   fields.className = "unison-rev-sidebar-fields";
   fields.append(
-    createField(t("unison_language"), controls.languageSelect),
+    createField(t("unison_language"), controls.language.root),
     createField(t("unison_isrc"), controls.isrcInput, controls.isrcError),
     createField(t("unison_album"), controls.albumInput, controls.albumError)
   );
@@ -317,8 +337,8 @@ function renderSidebar(
   return formatCell;
 }
 
-function createField(label: string, ...controls: HTMLElement[]): HTMLLabelElement {
-  const field = document.createElement("label");
+function createField(label: string, ...controls: HTMLElement[]): HTMLElement {
+  const field = document.createElement(controls[0] instanceof HTMLInputElement ? "label" : "div");
   field.className = "unison-field";
   const name = document.createElement("span");
   name.className = "unison-field-label";
@@ -335,24 +355,6 @@ function createUploadButton(textarea: HTMLTextAreaElement, onLoad: (text: string
   wrap.className = "unison-rev-upload";
   wrap.append(button, input);
   return wrap;
-}
-
-function createLanguageSelect(current: string | undefined): HTMLSelectElement {
-  const select = document.createElement("select");
-  select.className = "unison-input";
-  const unspecified = document.createElement("option");
-  unspecified.value = "";
-  unspecified.textContent = t("unison_languageUnspecified");
-  select.appendChild(unspecified);
-  appendLanguageOptions(select);
-  if (current && !Array.from(select.options).some(option => option.value === current)) {
-    const extra = document.createElement("option");
-    extra.value = current;
-    extra.textContent = current;
-    select.appendChild(extra);
-  }
-  select.value = current ?? "";
-  return select;
 }
 
 function createIsrcInput(current: string | undefined): HTMLInputElement {
@@ -391,7 +393,7 @@ function createRateLine(): HTMLElement {
 
 function createLyricsTextarea(lyrics: string): HTMLTextAreaElement {
   const textarea = document.createElement("textarea");
-  textarea.className = "unison-textarea unison-rev-inline-textarea";
+  textarea.className = "unison-rev-inline-textarea";
   textarea.rows = 24;
   textarea.spellcheck = false;
   textarea.value = lyrics;
