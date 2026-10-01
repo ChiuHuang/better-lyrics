@@ -39,10 +39,11 @@ import { showConfirm, showPrompt } from "../ui/feedback";
 import {
   applyStoreThemeComplete,
   broadcastRICSToTabs,
+  cancelSyncSaving,
   showSyncError,
   showSyncSaving,
   showSyncSuccess,
-} from "./storage";
+} from "@/options/editor/features/storage";
 import { errorEditor, logEditor, warnEditor } from "@core/logger";
 import { createModal, type Modal } from "@/ui/modal";
 import { toast } from "@/ui/toast";
@@ -348,7 +349,6 @@ class ThemeManager {
         throw new Error(`Failed to save theme: ${result.error?.message || "Unknown error"}`);
       }
 
-      showSyncSuccess();
       await broadcastRICSToTabs(css, result.strategy);
     } finally {
       editorStateManager.setIsSaving(false);
@@ -511,9 +511,11 @@ function debounceSave() {
 
 export function saveToStorage(isTheme = false) {
   logEditor("saveToStorage called, isTheme:", isTheme);
+  const save = showSyncSaving();
   const css = editorStateManager.getContent();
   if (css === null) {
     errorEditor("Cannot save: editor not initialized");
+    cancelSyncSaving(save);
     return;
   }
 
@@ -531,7 +533,7 @@ export function saveToStorage(isTheme = false) {
     .then(result => {
       logEditor("saveCustomCss result:", result);
       if (result.success && result.strategy) {
-        showSyncSuccess();
+        showSyncSuccess(save);
         broadcastRICSToTabs(css, result.strategy);
       } else {
         throw result.error;

@@ -68,21 +68,32 @@ async function loadCustomCSS(): Promise<string> {
 }
 
 const SAVE_TOAST_ID = "editor-save";
-let saveInFlight = false;
+let saveToastOpen = false;
+let latestSave = 0;
 
-export function showSyncSaving(): void {
-  saveInFlight = true;
-  toast.loading(t("options_editor_saving"), { id: SAVE_TOAST_ID });
+export function showSyncSaving(): number {
+  latestSave++;
+  if (!saveToastOpen) {
+    saveToastOpen = true;
+    toast.loading(t("options_editor_saving"), { id: SAVE_TOAST_ID });
+  }
+  return latestSave;
 }
 
-export function showSyncSuccess(): void {
-  if (!saveInFlight) return;
-  saveInFlight = false;
+export function showSyncSuccess(save: number): void {
+  if (!saveToastOpen || save !== latestSave) return;
+  saveToastOpen = false;
   toast.success(t("options_nickname_status_saved"), { id: SAVE_TOAST_ID });
 }
 
+export function cancelSyncSaving(save: number): void {
+  if (!saveToastOpen || save !== latestSave) return;
+  saveToastOpen = false;
+  toast.dismiss(SAVE_TOAST_ID);
+}
+
 export function showSyncError(error: unknown): void {
-  saveInFlight = false;
+  saveToastOpen = false;
   const message = error instanceof Error ? error.message : "";
   const storageFull = message.includes("quota") || message.includes("QUOTA_BYTES");
   toast.error(t(storageFull ? "editor_alert_storageFull" : "editor_alert_saveFailed"), { id: SAVE_TOAST_ID });
@@ -287,7 +298,6 @@ class StorageManager {
 
       const result = await saveCustomCss(themeContent);
       if (result.success && result.strategy) {
-        showSyncSuccess();
         await broadcastRICSToTabs(themeContent, result.strategy);
         logEditor("Store theme update synced to customCSS");
       }

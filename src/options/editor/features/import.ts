@@ -1,7 +1,7 @@
 import { saveCustomCss } from "@core/customCss";
 import { t } from "@core/i18n";
 import { editorStateManager } from "../core/state";
-import { broadcastRICSToTabs, showSyncSuccess } from "./storage";
+import { broadcastRICSToTabs } from "@/options/editor/features/storage";
 import { hideThemeName, updateThemeSelectorButton } from "./themes";
 import { errorEditor, logEditor } from "@core/logger";
 import { toast } from "@/ui/toast";
@@ -132,7 +132,6 @@ class ImportManager {
         }
 
         logEditor(` Step 5: Sending update message`);
-        showSyncSuccess();
         await broadcastRICSToTabs(css, result.strategy);
 
         logEditor(` Import completed successfully`);
