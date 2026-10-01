@@ -68,7 +68,7 @@ h1 img {
     display: grid;
     grid-template-rows: 0fr;
     margin: 0 calc(-2rem - 8px);
-    transition: grid-template-rows 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: grid-template-rows var(--duration-fast) var(--ease-smooth-out);
 }
 
 #bl-update-notice.bl-show {
@@ -152,7 +152,7 @@ h1 img {
     background: none;
     color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: background var(--duration-quick) ease, color var(--duration-quick) ease;
 }
 
 #bl-update-bar .bl-update-dismiss:hover {
@@ -469,7 +469,7 @@ body {
     color: rgba(255, 255, 255, 0.5);
     text-decoration: underline;
     text-underline-offset: 0.2em;
-		transition: color 0.15s ease-out;
+		transition: color var(--duration-quick) ease-out;
 }
 
 .note a:hover {
@@ -502,7 +502,7 @@ body {
 .rics-footer a {
     color: rgba(255, 255, 255, 0.5);
     text-decoration: none;
-    transition: color 0.15s ease-out;
+    transition: color var(--duration-quick) ease-out;
 }
 
 .rics-footer a:hover {
@@ -942,7 +942,7 @@ hr {
 	margin: 0.5rem 0 0;
 	font-size: 0.8125rem;
 	color: rgba(255, 255, 255, 0.55);
-	transition: color 120ms ease;
+	transition: color var(--duration-quick) ease;
 }
 
 #nickname-modal-status:empty {
@@ -1040,7 +1040,7 @@ hr {
 }
 
 input.cm-textfield{
-	transition: border 0.15s;
+	transition: border var(--duration-quick);
 }
 
 input.cm-textfield:focus-visible {
@@ -1070,7 +1070,10 @@ input.cm-textfield:focus-visible {
 	padding: 0.25rem 0.5rem;
 	border-radius: 0.25rem;
 	border: 1px solid rgba(255, 255, 255, 0.1);
-	transition: all 0.15s;
+	transition:
+		background var(--duration-quick) ease-out,
+		border-color var(--duration-quick) ease-out,
+		color var(--duration-quick) ease-out;
 	user-select: none;
 }
 
@@ -1093,7 +1096,7 @@ input.cm-textfield:focus-visible {
 	padding: 0.25rem 0.5rem;
 	color: rgba(255, 255, 255, 0.8);
 	cursor: pointer;
-	transition: background 0.15s, color 0.15s;
+	transition: background var(--duration-quick), color var(--duration-quick);
 	width: auto;
 	margin: 0;
 }
@@ -1187,7 +1190,7 @@ input.cm-textfield:focus-visible {
 	font-weight: 500;
 	color: rgba(255, 255, 255, 0.45);
 	cursor: pointer;
-	transition: color 0.15s ease;
+	transition: color var(--duration-quick) ease;
 }
 
 .section-browse-link:hover {
@@ -1211,7 +1214,9 @@ input.cm-textfield:focus-visible {
 	border-radius: 0.5rem;
 	padding: 0.75rem;
 	cursor: pointer;
-	transition: all 0.2s;
+	transition:
+		background var(--duration-quick) ease-out,
+		border-color var(--duration-quick) ease-out;
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -1499,7 +1504,7 @@ input.cm-textfield:focus-visible {
 	cursor: pointer;
 	display: grid;
 	place-items: center;
-	transition: background 0.15s ease;
+	transition: background var(--duration-quick) ease;
 }
 
 .position-cell::before {
@@ -1508,7 +1513,7 @@ input.cm-textfield:focus-visible {
 	height: 8px;
 	border-radius: 50%;
 	background: rgba(255, 255, 255, 0.28);
-	transition: background 0.15s ease, transform 0.15s ease;
+	transition: background var(--duration-quick) ease, transform var(--duration-quick) ease;
 }
 
 .position-cell:hover {
@@ -1583,7 +1588,7 @@ input.cm-textfield:focus-visible {
 	background: rgba(255, 255, 255, 0.04);
 	color: rgba(255, 255, 255, 0.45);
 	cursor: grab;
-	transition: background 0.15s ease, color 0.15s ease;
+	transition: background var(--duration-quick) ease, color var(--duration-quick) ease;
 }
 
 .control-cell:active {
