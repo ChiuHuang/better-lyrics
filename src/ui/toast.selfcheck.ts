@@ -333,6 +333,17 @@ const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector
   reset();
 }
 {
+  toast.success("Installed Minimal", { action: { label: "Apply", onClick: () => {} } });
+  const button = actionOf(toasts()[0]);
+  button?.focus();
+  const event = new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+  button?.dispatchEvent(event);
+  assert.equal(event.defaultPrevented, false, "regression: Enter on a focused action is left to the button");
+  assert.equal(live().length, 1, "regression: Enter on a focused action does not dismiss before it runs");
+  button?.blur();
+  reset();
+}
+{
   toast.success("Plain");
   assert.equal(actionOf(toasts()[0]), null, "no action, no button");
   const event = pressEnter();

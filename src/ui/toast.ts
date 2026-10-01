@@ -150,11 +150,9 @@ document.addEventListener("keydown", event => {
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
   const active = document.activeElement;
   if (isTextEntry(active) || isAnyModalOpen() || active?.closest(".ui-modal")) return;
+  if (active && layer?.contains(active)) return;
   const keyboardOnOtherControl =
-    active instanceof HTMLElement &&
-    active !== document.body &&
-    !layer?.contains(active) &&
-    active.matches(":focus-visible");
+    active instanceof HTMLElement && active !== document.body && active.matches(":focus-visible");
   if (keyboardOnOtherControl) return;
   const target = newestActionToast();
   if (!target) return;
@@ -243,6 +241,7 @@ function show(kind: ToastKind, message: string, { id, action }: ToastOptions = {
   });
   el.addEventListener("keydown", event => {
     if (!DISMISS_KEYS.has(event.key)) return;
+    if (event.key !== "Escape" && event.target !== el) return;
     event.preventDefault();
     dismiss();
   });
