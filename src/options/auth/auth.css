@@ -24,7 +24,7 @@ body {
   flex-direction: column;
   justify-content: center;
   min-height: 100vh;
-  padding: 24px;
+  padding: var(--page-pad);
 }
 
 .auth-card__header {

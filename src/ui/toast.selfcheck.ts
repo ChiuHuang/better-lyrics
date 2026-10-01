@@ -327,6 +327,10 @@ const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector
   assert.equal(button?.getAttribute("type"), "button", "the action never submits a form");
   assert.equal(button?.getAttribute("aria-keyshortcuts"), "Enter", "the shortcut is exposed to assistive tech");
   assert.ok(text(el).startsWith("Installed MinimalApply"), "the label follows the message");
+  const hint = button?.querySelector("svg.ui-toast__enter");
+  assert.ok(hint, "regression: the Enter hint is an icon, not a font glyph Satoshi lacks");
+  assert.equal(hint?.getAttribute("aria-hidden"), "true", "the hint is decorative");
+  assert.equal(button?.textContent, "Apply", "no glyph text rides along with the label");
   button?.dispatchEvent(new window.Event("click", { bubbles: true }));
   assert.equal(applied, 1, "clicking the action runs it once");
   assert.equal(live().length, 0, "clicking the action dismisses the toast");

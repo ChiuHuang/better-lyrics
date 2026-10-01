@@ -904,7 +904,7 @@ interface LyricsCardOptions {
 
 function createLyricsCard(entry: UnisonSearchEntry | UnisonFeedEntry, options: LyricsCardOptions = {}): HTMLElement {
   const card = document.createElement("a");
-  card.className = "unison-card";
+  card.className = "ui-tile unison-card";
 
   const navParams: Record<string, string> = { id: String(entry.id) };
   if (options.fromMine) navParams.mine = "1";
@@ -1186,20 +1186,25 @@ function createUploaderCell(submitter: UnisonSubmitter): HTMLElement {
 
 function createFulfilledBlock(submitter?: UnisonSubmitter): HTMLElement {
   const block = document.createElement("div");
-  block.className = "unison-fulfilled";
+  block.className = "ui-callout ui-callout--success";
 
-  const badge = document.createElement("span");
-  badge.className = "unison-fulfilled-badge";
-  badge.appendChild(svgIcon("success"));
-  badge.append(t("unison_fulfilledBadge"));
-  block.appendChild(badge);
+  const icon = svgIcon("success");
+  icon.classList.add("ui-callout__icon");
+  const body = document.createElement("div");
+  body.className = "ui-callout__body";
+  block.append(icon, body);
+
+  const title = document.createElement("p");
+  title.className = "ui-callout__title";
+  title.textContent = t("unison_fulfilledBadge");
+  body.appendChild(title);
 
   const name = submitter ? submitter.displayName || generatePetName(submitter.keyId) : "";
   if (name) {
     const note = document.createElement("p");
-    note.className = "unison-fulfilled-note";
+    note.className = "ui-callout__text";
     note.textContent = t("unison_fulfilledNote", [name]);
-    block.appendChild(note);
+    body.appendChild(note);
   }
 
   const boardLink = document.createElement("a");
@@ -1209,7 +1214,7 @@ function createFulfilledBlock(submitter?: UnisonSubmitter): HTMLElement {
   boardLink.rel = "noreferrer noopener";
   boardLink.appendChild(svgIcon("externalLink"));
   boardLink.append(t("unison_fulfilledBoardLink"));
-  block.appendChild(boardLink);
+  body.appendChild(boardLink);
 
   return block;
 }
@@ -1677,7 +1682,7 @@ function createManualVideoLinkForm(onLink: (videoId: string) => Promise<string |
 
   const field = document.createElement("input");
   field.type = "text";
-  field.className = "unison-input unison-input--mono";
+  field.className = "ui-field unison-input--mono";
   field.placeholder = t("unison_linkVideoPlaceholder");
   field.setAttribute("aria-label", t("unison_linkVideoPlaceholder"));
 
@@ -1731,14 +1736,14 @@ async function renderOwnerVideoTools(entry: UnisonLyricsEntry, view: AbortSignal
   section.className = "unison-detail-videos";
 
   const linkedHeading = document.createElement("h3");
-  linkedHeading.className = "unison-detail-videos-heading";
+  linkedHeading.className = "ui-section-label unison-detail-videos-heading";
   linkedHeading.textContent = t("unison_linkedVideos");
 
   const linkedList = document.createElement("ul");
   linkedList.className = "unison-video-list";
 
   const suggestHeading = document.createElement("h3");
-  suggestHeading.className = "unison-detail-videos-heading";
+  suggestHeading.className = "ui-section-label unison-detail-videos-heading";
   suggestHeading.textContent = t("unison_suggestedVideos");
 
   const suggestList = document.createElement("ul");
@@ -2224,7 +2229,7 @@ function createVideoIdTokenInput(
 ): VideoIdTokenInput {
   const tokens: VideoIdToken[] = [];
 
-  container.classList.add("unison-token-input");
+  container.classList.add("ui-frame--field", "unison-token-input");
 
   const field = document.createElement("input");
   field.type = "text";
@@ -2248,8 +2253,8 @@ function createVideoIdTokenInput(
     for (const pill of container.querySelectorAll(".unison-token")) pill.remove();
     tokens.forEach((token, index) => {
       const pill = document.createElement("span");
-      pill.className = "unison-token";
-      pill.classList.toggle("unison-token--invalid", !token.id);
+      pill.className = "ui-badge unison-token";
+      pill.classList.toggle("ui-badge--danger", !token.id);
       pill.classList.toggle("unison-token--suggested", token.suggested);
       if (token.id) pill.dataset.tokenId = token.id;
 

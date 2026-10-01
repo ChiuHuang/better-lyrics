@@ -351,7 +351,7 @@ function createField(label: string, ...controls: HTMLElement[]): HTMLElement {
   const field = document.createElement(controls[0] instanceof HTMLInputElement ? "label" : "div");
   field.className = "unison-field";
   const name = document.createElement("span");
-  name.className = "unison-field-label";
+  name.className = "ui-section-label";
   name.textContent = label;
   field.append(name, ...controls);
   return field;
@@ -370,7 +370,7 @@ function createUploadButton(textarea: HTMLTextAreaElement, onLoad: (text: string
 function createIsrcInput(current: string | undefined): HTMLInputElement {
   const input = document.createElement("input");
   input.type = "text";
-  input.className = "unison-input unison-input--mono";
+  input.className = "ui-field unison-input--mono";
   input.value = current ?? "";
   input.placeholder = t("unison_placeholder_isrc");
   input.spellcheck = false;
@@ -380,7 +380,7 @@ function createIsrcInput(current: string | undefined): HTMLInputElement {
 function createAlbumInput(current: string | undefined): HTMLInputElement {
   const input = document.createElement("input");
   input.type = "text";
-  input.className = "unison-input";
+  input.className = "ui-field";
   input.value = current ?? "";
   input.placeholder = t("unison_placeholder_album");
   input.maxLength = 500;
@@ -497,7 +497,6 @@ function renderIssues(list: HTMLUListElement, preview: PreviewResult | null): vo
 
 function toggleInvalid(control: HTMLElement, invalid: boolean): void {
   control.classList.toggle("unison-rev-input--error", invalid);
-  control.closest(".ui-frame")?.classList.toggle("unison-frame--error", invalid);
   if (invalid) {
     control.setAttribute("aria-invalid", "true");
   } else {

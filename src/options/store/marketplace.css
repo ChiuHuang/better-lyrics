@@ -1,75 +1,7 @@
-/* Standalone Marketplace Page */
-.marketplace-standalone {
-  background: var(--page-bg);
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
-.marketplace-page {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 2.5rem 3rem;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
-@media (max-width: 1200px) {
-  .marketplace-page {
-    padding: 2rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .marketplace-page {
-    padding: 1.5rem 1rem;
-  }
-}
-
-.marketplace-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.marketplace-header-left {
-  flex: 1;
-  min-width: 200px;
-}
-
-.marketplace-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: var(--font-size-4xl);
-  font-weight: 700;
-  color: #fff;
-  margin: 0 0 0.25rem 0;
-}
-
 .marketplace-title svg {
   width: 1.5rem;
   height: 1.5rem;
   color: rgba(255, 255, 255, 0.75);
-}
-
-.marketplace-subtitle {
-  font-size: var(--font-size-md);
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0;
-}
-
-.marketplace-header-right {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
 }
 
 .store-search .ui-search__input {
@@ -87,41 +19,6 @@
 
 .marketplace-url-btn kbd {
   margin-left: 0.125rem;
-  height: 1rem;
-  min-width: 1rem;
-  padding: 0 0.25rem;
-  font-size: var(--font-size-4xs);
-  box-shadow: none;
-}
-
-.marketplace-filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.marketplace-filter-label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-label);
-}
-
-.marketplace-filter-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-}
-
-.marketplace-filter-chip {
-  font-size: var(--font-size-xs);
-}
-
-.marketplace-filter-chip--sort {
-  cursor: pointer;
-}
-
-.marketplace-filter-chip__label {
-  transition: color var(--duration-quick) ease;
 }
 
 .marketplace-content {
@@ -166,8 +63,6 @@
 .store-loading-spinner {
   width: 2rem;
   height: 2rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-top-color: rgba(255, 255, 255, 0.6);
 }
 
 .store-error {
@@ -180,7 +75,7 @@
 }
 
 .store-error-message {
-  color: rgb(239, 68, 68);
+  color: var(--danger);
   font-size: var(--font-size-md);
 }
 
@@ -248,7 +143,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
   padding: 3rem 2rem;
   font-size: var(--font-size-md);
 	height: 100%;
@@ -257,12 +152,8 @@
 
 /* Store Card */
 .store-card {
-  background: var(--card-bg);
-  border: var(--card-edge);
   border-radius: var(--radius-card);
   overflow: hidden;
-  cursor: pointer;
-  transition: background var(--duration-quick), border-color var(--duration-quick);
   position: relative;
 }
 
@@ -280,11 +171,6 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-.store-card:hover {
-  background: var(--card-bg-hover);
-  border-color: var(--card-edge-color-hover);
 }
 
 .store-card-cover {
@@ -312,7 +198,7 @@
 .store-card-title {
   font-weight: 600;
   font-size: var(--font-size-sm);
-  color: #fff;
+  color: var(--text-strong);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -320,7 +206,7 @@
 
 .store-card-author {
   font-size: var(--font-size-2xs);
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -358,14 +244,10 @@
   gap: 0.75rem;
   width: 100%;
   margin-top: 0.375rem;
-  font-size: var(--font-size-xs);
-  font-weight: 600;
   user-select: none;
 }
 
 .store-card .store-card-btn {
-  height: 34px;
-  padding: 0 0.75rem;
   border-radius: calc(var(--radius-card) - 11px);
 }
 
@@ -380,13 +262,6 @@
   margin-top: 0;
 }
 
-.store-card-btn .ui-kbd {
-  height: 1rem;
-  min-width: 1rem;
-  padding: 0 0.25rem;
-  font-size: var(--font-size-4xs);
-}
-
 .store-card-badge {
   position: absolute;
   top: 11px;
@@ -394,8 +269,6 @@
 }
 
 .store-card-badge-url {
-  --badge-bg: rgba(255, 255, 255, 0.15);
-  --badge-fg: rgba(255, 255, 255, 0.9);
   right: auto;
   left: 11px;
 }
@@ -418,6 +291,8 @@
 
 .detail-modal .ui-modal__head {
   gap: 1rem;
+  min-height: 0;
+  padding: var(--row-pad) var(--text-inset);
 }
 
 .detail-header-info {
@@ -431,7 +306,7 @@
   gap: 0.5rem;
   font-size: var(--font-size-lg);
   font-weight: 600;
-  color: #fff;
+  color: var(--text-strong);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -455,8 +330,6 @@
 }
 
 .detail-header-actions .store-card-btn {
-  height: 32px;
-	padding: 0 1rem;
   width: auto;
   margin: 0;
 }
@@ -502,9 +375,6 @@
   transform: translateX(100%);
 }
 
-.detail-slideshow-img.no-transition {
-  transition: none;
-}
 
 .detail-nav-btn {
   position: absolute;
@@ -526,7 +396,7 @@
 
 .detail-nav-btn:hover:not(.disabled) {
   background: rgba(0, 0, 0, 0.7);
-  color: #fff;
+  color: var(--text-strong);
 }
 
 .detail-nav-btn.disabled {
@@ -601,7 +471,7 @@
   align-items: center;
   gap: 0.25rem;
   font-size: var(--font-size-2xs);
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
 }
 
 .detail-stat svg {
@@ -662,7 +532,7 @@
   margin: 0.75rem 0;
   padding: 0.5rem 0.75rem;
   border-left: 3px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--raised-bg);
   border-radius: 0 0.25rem 0.25rem 0;
 }
 
@@ -717,7 +587,7 @@
   gap: 0.5rem;
   margin-top: 0.875rem;
   padding-top: 0.875rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: var(--card-edge);
 }
 
 .detail-rating-column {
@@ -785,11 +655,11 @@
 
 .detail-rating-status {
   font-size: var(--font-size-xs);
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
 }
 
 .detail-rating-status.success {
-  color: rgb(134, 239, 172);
+  color: var(--success-text);
 }
 
 .detail-rating-status.error {
@@ -811,7 +681,7 @@
   gap: 0.75rem;
   margin-top: 0.875rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--divider-strong);
 }
 
 .detail-meta-chip {
@@ -819,7 +689,7 @@
   align-items: center;
   gap: 0.3rem;
   font-size: var(--font-size-2xs);
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
   min-width: 0;
   max-width: 100%;
 }
@@ -848,7 +718,7 @@
 }
 
 .detail-meta-link:hover {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text);
 }
 
 .detail-repo-link {
@@ -859,7 +729,7 @@
   margin-top: 1rem;
   padding-top: 1rem;
   padding-bottom: 0.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--divider-strong);
 }
 
 .detail-footer-link {
@@ -904,7 +774,7 @@
 .detail-repo-link-left svg {
   width: 1rem;
   height: 1rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
   flex-shrink: 0;
 }
 
@@ -948,7 +818,7 @@
 
 #url-modal-error {
   display: none;
-  color: rgb(239, 68, 68);
+  color: var(--danger);
   font-size: var(--font-size-sm);
   margin-top: 0.5rem;
 }
@@ -969,11 +839,11 @@
 
 .shortcuts-group {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--divider-strong);
 }
 
 .shortcuts-group:nth-child(odd) {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid var(--divider-strong);
 }
 
 .shortcuts-group:nth-last-child(-n+2) {
@@ -981,9 +851,6 @@
 }
 
 .shortcuts-group-title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-label);
   margin-bottom: 0.5rem;
 }
 
@@ -1012,14 +879,13 @@
 
 .shortcut-keys span {
   font-size: var(--font-size-2xs);
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-faint);
 }
 
 /* -- Squircle corners ---------------------------- */
 /* Feature-gated: browsers without corner-shape keep the original radii above. */
 
 @supports (corner-shape: superellipse(1.6)) {
-  .store-card,
   .store-card-stats {
     corner-shape: superellipse(1.6);
   }
@@ -1033,8 +899,7 @@
   .detail-dot.active,
   .detail-slideshow-img,
   .detail-star,
-  .detail-star::before,
-  .store-card {
+  .detail-star::before {
     transition: none;
   }
 

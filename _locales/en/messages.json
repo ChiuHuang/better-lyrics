@@ -1371,7 +1371,7 @@
     }
   },
   "blUpdate_storeDelay": {
-    "message": "store may lag briefly",
+    "message": "The store may lag briefly",
     "description": "Trailing note on the update banner for Chrome and Edge, whose store approval can lag the release"
   },
   "blUpdate_action": {

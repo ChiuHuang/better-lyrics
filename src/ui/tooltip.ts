@@ -9,6 +9,11 @@ let tooltip: HTMLDivElement | undefined;
 let anchor: HTMLElement | null = null;
 let visibleFrom = Number.POSITIVE_INFINITY;
 let lastHiddenAt = Number.NEGATIVE_INFINITY;
+const anchorIcons = new WeakMap<HTMLElement, Element>();
+
+export function setTooltipIcon(target: HTMLElement, icon: Element): void {
+  anchorIcons.set(target, icon);
+}
 
 function tooltipTiming(): { delayMs: number; skipDelayMs: number } {
   const root = window.getComputedStyle(document.documentElement);
@@ -25,7 +30,13 @@ function tooltipAnchor(target: EventTarget | null): HTMLElement | null {
 function showTooltip(target: HTMLElement): void {
   if (!tooltip) return;
   anchor = target;
-  tooltip.textContent = target.dataset.tooltip ?? "";
+  const icon = anchorIcons.get(target)?.cloneNode(true) as Element | undefined;
+  icon?.classList.add("ui-tooltip__icon");
+  tooltip.replaceChildren(...(icon ? [icon] : []), target.dataset.tooltip ?? "");
+  const tone = target.dataset.tooltipTone;
+  tooltip.classList.toggle("ui-tooltip--toned", Boolean(tone));
+  if (tone) tooltip.style.setProperty("--tooltip-tone", tone);
+  else tooltip.style.removeProperty("--tooltip-tone");
 
   const box = target.getBoundingClientRect();
   const inset = parseFloat(window.getComputedStyle(target).getPropertyValue("--tooltip-inset-block")) || 0;

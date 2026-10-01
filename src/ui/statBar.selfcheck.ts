@@ -24,6 +24,18 @@ const { renderStatBar } = await import("@/ui/statBar");
   assert.equal(spans[0].style.background, "", "the hit area itself stays transparent");
   assert.equal(spans[0].dataset.tooltip, "Syllable: 3");
   assert.equal(bar.hidden, false);
+  assert.equal(spans[0].dataset.tooltipTone, undefined, "segments are neutral unless toned");
+}
+
+// -- Tone --------------------------
+{
+  const bar = document.createElement("div");
+  renderStatBar(bar, [{ value: 1, color: "var(--sync-line)", label: "Line: 1", tone: "var(--sync-line)" }]);
+  assert.equal(
+    (bar.firstElementChild as HTMLElement).dataset.tooltipTone,
+    "var(--sync-line)",
+    "a toned segment tints its tooltip"
+  );
 }
 
 // -- Edge cases --------------------------
