@@ -2109,7 +2109,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         URL.revokeObjectURL(url);
       } catch (err) {
         errorStore("Shader config download failed:", err);
-        toast.error(t("options_alert_fileSaveFailed"));
+        toast.error(t("marketplace_shaderFetchFailed"));
       }
     };
   }
