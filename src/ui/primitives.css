@@ -148,10 +148,10 @@
   transition: transform var(--duration-fast) var(--ease-smooth-out);
 }
 .ui-switch__input:checked + .ui-switch__track { background: var(--switch-on); }
-.ui-switch__input:checked + .ui-switch__track::before { transform: translateX(var(--switch-travel)); transform-origin: right center; }
-.ui-switch:active > .ui-switch__input:not(:disabled) + .ui-switch__track::before { transform: scaleX(1.2); }
+.ui-switch__input:checked + .ui-switch__track::before { transform: translateX(var(--switch-travel)); }
+.ui-switch:active > .ui-switch__input:not(:disabled) + .ui-switch__track::before { transform: translateX(0) scaleX(1.2); }
 .ui-switch:active > .ui-switch__input:checked:not(:disabled) + .ui-switch__track::before {
-  transform: translateX(var(--switch-travel)) scaleX(1.2);
+  transform: translateX(calc(var(--switch-travel) - var(--switch-h) * 0.2)) scaleX(1.2);
 }
 .ui-switch__input:focus-visible + .ui-switch__track,
 .ui-switch--tri:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
