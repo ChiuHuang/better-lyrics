@@ -229,18 +229,6 @@ body {
     gap: 0.4rem;
 }
 
-.setting-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.1rem 0.4rem;
-    border-radius: 0.5rem;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0;
-    color: #fcd34d;
-    background: rgba(252, 211, 77, 0.15);
-}
-
 .setting-help {
     position: relative;
     display: inline-grid;
@@ -415,30 +403,8 @@ body {
     display: none;
 }
 
-.theme-preview-badge {
+.theme-preview-badge:not(.active) {
     display: none;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0;
-    padding: 0.15rem 0.4rem;
-    border-radius: 0.25rem;
-    border: 0.5px solid rgba(255, 255, 255, 0.1);
-		background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(2px);
-    color: rgba(255, 255, 255, 0.625);
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.theme-preview-badge.active {
-    display: inline-flex;
-}
-
-.theme-preview-badge svg {
-    width: 0.75rem;
-    height: 0.75rem;
 }
 
 .options-page :where(button) {
@@ -1503,28 +1469,12 @@ input.cm-textfield:focus-visible {
 }
 
 .theme-source-badge {
-  display: none;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  padding: 0.2rem 0.4rem;
-  border-radius: 0.375rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
-  flex-shrink: 0;
 	margin-left: auto;
 	margin-right: -0.6rem;
 }
 
-.theme-source-badge.active {
-  display: inline-flex;
-}
-
-.theme-source-badge svg {
-  width: 0.75rem;
-  height: 0.75rem;
+.theme-source-badge:not(.active) {
+	display: none;
 }
 
 .edit-theme-btn,

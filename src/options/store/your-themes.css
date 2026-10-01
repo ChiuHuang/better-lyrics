@@ -131,25 +131,6 @@
   text-overflow: ellipsis;
 }
 
-.your-themes-item-url-badge {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.1875rem;
-  background: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.your-themes-item-url-badge svg {
-  width: 0.625rem;
-  height: 0.625rem;
-}
-
 .your-themes-item-meta {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.5);

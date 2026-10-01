@@ -2248,7 +2248,7 @@ async function updateYourThemesDropdown(): Promise<void> {
 
     if (theme.source === "url") {
       const badgeTitle = theme.sourceUrl || `Installed from ${theme.repo}`;
-      const badge = createGitHubBadge("your-themes-item-url-badge", badgeTitle);
+      const badge = createGitHubBadge("ui-badge", badgeTitle);
       titleRow.appendChild(badge);
     }
 
