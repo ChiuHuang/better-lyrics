@@ -277,9 +277,9 @@ export function listenForPopupMessages(): void {
       reloadLyrics();
     } else if (request.action === "clearCache") {
       clearCache().then(
-        () => {
+        cacheInfo => {
           reloadLyrics();
-          sendResponse({ success: true });
+          sendResponse({ success: true, cacheInfo });
         },
         error => {
           logContent("clearCache failed:", error);

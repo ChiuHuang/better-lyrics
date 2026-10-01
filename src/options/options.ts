@@ -224,7 +224,10 @@ const clearTransientLyrics = (callback?: () => void): void => {
     if (tabs.length === 0) {
       clearCache()
         .then(
-          () => toast.success(t("options_alert_cacheCleared")),
+          cacheInfo => {
+            updateCacheInfo({ cacheInfo });
+            toast.success(t("options_alert_cacheCleared"));
+          },
           error => {
             errorCore("Failed to clear cached lyrics:", error);
             toast.error(t("options_alert_cacheClearFailed"));
@@ -240,6 +243,7 @@ const clearTransientLyrics = (callback?: () => void): void => {
         completedTabs++;
         if (completedTabs === tabs.length) {
           if (response?.success) {
+            if (response.cacheInfo) updateCacheInfo({ cacheInfo: response.cacheInfo });
             toast.success(t("options_alert_cacheCleared"));
           } else {
             toast.error(t("options_alert_cacheClearFailed"));
