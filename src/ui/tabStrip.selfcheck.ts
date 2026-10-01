@@ -110,8 +110,13 @@ const key = (target: Element, k: string): void => {
   assert.deepEqual(changes, [["c", "next"]], "a click selects and reports forward travel");
   assert.equal(
     list.querySelector<HTMLElement>(".ui-segmented__pill")?.style.transform,
-    "translateX(200px)",
-    "the pill follows"
+    "translateX(200px) scaleX(1)",
+    "the pill follows with a transform only"
+  );
+  assert.equal(
+    list.querySelector<HTMLElement>(".ui-segmented__pill")?.style.width,
+    "90px",
+    "the pill keeps its rest width while moving"
   );
   c.click();
   assert.equal(changes.length, 1, "clicking the selected tab does not report a change");

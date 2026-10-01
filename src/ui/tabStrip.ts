@@ -31,15 +31,20 @@ export function initTabStrip(
   const selected = (): HTMLButtonElement | undefined =>
     tabs.find(tab => tab.getAttribute("aria-selected") === "true") ?? tabs[0];
 
+  let pillWidth = 0;
+
   function place(animate = true): void {
     const current = selected();
     if (!pill || !current) return;
     if (!animate) pill.style.transition = "none";
     if (variant === "underline") {
       pill.style.transform = barTransform(current);
-    } else {
+    } else if (!animate || !pillWidth) {
+      pillWidth = current.offsetWidth;
+      pill.style.width = `${pillWidth}px`;
       pill.style.transform = `translateX(${current.offsetLeft}px)`;
-      pill.style.width = `${current.offsetWidth}px`;
+    } else {
+      pill.style.transform = `translateX(${current.offsetLeft}px) scaleX(${current.offsetWidth / pillWidth})`;
     }
     if (!animate) {
       void pill.offsetWidth;
@@ -80,6 +85,9 @@ export function initTabStrip(
     select(tabs[index]);
   });
   observeResize([list, ...tabs], () => place(false));
+  pill?.addEventListener("transitionend", event => {
+    if (variant === "segmented" && event.propertyName === "transform") place(false);
+  });
 
   return { tabs, select, selected, place };
 }

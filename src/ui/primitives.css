@@ -251,10 +251,9 @@
   background: rgba(255, 255, 255, 0.05);
   box-shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px, inset rgba(255, 255, 255, 0.1) 0 1px 0 0;
   pointer-events: none;
-  transition:
-    transform var(--duration-fast) var(--ease-smooth-out),
-    width var(--duration-fast) var(--ease-smooth-out);
-  will-change: transform, width;
+  transform-origin: left center;
+  transition: transform var(--duration-fast) var(--ease-smooth-out);
+  will-change: transform;
 }
 
 /* -- Underline tabs (standalone; the card head has its own) -- */
