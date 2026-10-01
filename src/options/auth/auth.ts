@@ -82,9 +82,13 @@ const STATUS_ICON_TEMPLATE = new DOMParser().parseFromString(STATUS_ICON_MARKUP,
 function showError(messageKey: string, state: "error" | "warning" = "error"): void {
   const error = document.getElementById("auth-error");
   if (!error) return;
-  error.dataset.state = state;
-  const icon = STATUS_ICON_TEMPLATE.cloneNode(true);
-  const text = document.createTextNode(t(messageKey));
+  error.className = `ui-callout ui-callout--${state === "error" ? "danger" : "warning"} auth-card__error`;
+  const icon = document.createElement("span");
+  icon.className = "ui-callout__icon";
+  icon.append(STATUS_ICON_TEMPLATE.cloneNode(true));
+  const text = document.createElement("span");
+  text.className = "ui-callout__text";
+  text.textContent = t(messageKey);
   error.replaceChildren(icon, text);
 }
 
