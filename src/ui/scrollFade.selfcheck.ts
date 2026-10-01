@@ -103,6 +103,11 @@ console.log("scrollFade self-check passed");
     "line-mode deltas convert to pixels"
   );
   assert.equal(
+    inlineWheelStep({ ...down, ctrlKey: true }, { ...metrics, scrollLeft: 0 }),
+    null,
+    "ctrl+wheel is left to the browser for zoom"
+  );
+  assert.equal(
     inlineWheelStep({ deltaX: 40, deltaY: 10, deltaMode: 0 }, { ...metrics, scrollLeft: 0 }),
     null,
     "horizontal wheel is left to the browser"

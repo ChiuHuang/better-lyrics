@@ -39,10 +39,11 @@ interface WheelDelta {
   deltaX: number;
   deltaY: number;
   deltaMode: number;
+  ctrlKey?: boolean;
 }
 
 export function inlineWheelStep(wheel: WheelDelta, metrics: InlineScrollMetrics, rtl = false): number | null {
-  if (wheel.deltaX !== 0 || wheel.deltaY === 0) return null;
+  if (wheel.ctrlKey || wheel.deltaX !== 0 || wheel.deltaY === 0) return null;
   const { start, end } = fadeInlineEdges(metrics, rtl);
   const forward = wheel.deltaY > 0;
   if (forward ? !end : !start) return null;
