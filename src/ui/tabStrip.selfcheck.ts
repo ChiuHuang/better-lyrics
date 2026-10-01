@@ -14,6 +14,7 @@ Object.assign(globalThis, {
   window,
   document: window.document,
   HTMLElement: window.HTMLElement,
+  AbortController: window.AbortController,
   getComputedStyle: window.getComputedStyle.bind(window),
   matchMedia: (query: string) => ({ matches: query.includes("reduce") && reducedMotion }),
 });
@@ -149,6 +150,17 @@ const key = (target: Element, k: string): void => {
   assert.equal(pill?.style.transition, "", "the pill transition is restored after the snap");
   list.remove();
   reducedMotion = false;
+}
+
+// -- Destroy --------------------------
+{
+  const changes: string[] = [];
+  const list = build(["a", "b"]);
+  const strip = initTabStrip(list, { onChange: tab => changes.push(tab.textContent ?? "") });
+  strip.destroy();
+  strip.tabs[1].click();
+  assert.deepEqual(changes, [], "regression: a destroyed strip ignores clicks");
+  list.remove();
 }
 
 console.log("tabStrip self-check passed");

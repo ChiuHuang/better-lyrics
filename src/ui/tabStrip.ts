@@ -14,6 +14,7 @@ export interface TabStrip {
   select(tab: HTMLButtonElement, options?: { animate?: boolean; notify?: boolean }): void;
   selected(): HTMLButtonElement | undefined;
   place(animate?: boolean): void;
+  destroy(): void;
 }
 
 const PARTS = {
@@ -72,28 +73,47 @@ export function initTabStrip(
   }
   select(selected() ?? tabs[0], { animate: false, notify: false });
 
-  list.addEventListener("click", event => {
-    const tab = (event.target as Element).closest<HTMLButtonElement>(parts.tab);
-    if (!tab || !tabs.includes(tab)) return;
-    if (tab === selected()) onReselect?.(tab);
-    else select(tab);
-  });
-  list.addEventListener("keydown", event => {
-    const focused = tabs.indexOf(document.activeElement as HTMLButtonElement);
-    if (focused < 0) return;
-    const index = rovingIndex(focused, event.key, tabs.length, getComputedStyle(list).direction === "rtl");
-    if (index < 0) return;
-    event.preventDefault();
-    tabs[index].focus();
-    select(tabs[index]);
-  });
-  observeResize([list, ...tabs], () => {
+  const listeners = new AbortController();
+  const { signal } = listeners;
+  list.addEventListener(
+    "click",
+    event => {
+      const tab = (event.target as Element).closest<HTMLButtonElement>(parts.tab);
+      if (!tab || !tabs.includes(tab)) return;
+      if (tab === selected()) onReselect?.(tab);
+      else select(tab);
+    },
+    { signal }
+  );
+  list.addEventListener(
+    "keydown",
+    event => {
+      const focused = tabs.indexOf(document.activeElement as HTMLButtonElement);
+      if (focused < 0) return;
+      const index = rovingIndex(focused, event.key, tabs.length, getComputedStyle(list).direction === "rtl");
+      if (index < 0) return;
+      event.preventDefault();
+      tabs[index].focus();
+      select(tabs[index]);
+    },
+    { signal }
+  );
+  const resize = observeResize([list, ...tabs], () => {
     onResize?.();
     place(false);
   });
-  pill?.addEventListener("transitionend", event => {
-    if (variant === "segmented" && event.propertyName === "transform") place(false);
-  });
+  pill?.addEventListener(
+    "transitionend",
+    event => {
+      if (variant === "segmented" && event.propertyName === "transform") place(false);
+    },
+    { signal }
+  );
 
-  return { tabs, select, selected, place };
+  function destroy(): void {
+    listeners.abort();
+    resize.destroy();
+  }
+
+  return { tabs, select, selected, place, destroy };
 }

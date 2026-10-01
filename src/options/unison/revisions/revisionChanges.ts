@@ -87,6 +87,7 @@ export function mountChangesTabs(surface: ChangesSurface, host: RevisionHost, ha
   let diffView: HTMLElement | null = null;
 
   const teardown = (): void => {
+    strip.destroy();
     previewHead.replaceChildren(...originalHead);
     previewHead.classList.remove(HEAD_TABS_CLASS, HEAD_CHANGES_CLASS);
     lyricsHead.classList.remove(HEAD_TABS_CLASS);
