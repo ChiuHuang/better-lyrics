@@ -27,7 +27,7 @@
 .ui-button { --button-icon: rgba(255, 255, 255, 0.55); --button-icon-hover: rgba(255, 255, 255, 0.8); }
 .ui-button:hover { background: var(--button-bg-hover); color: var(--text-strong); }
 .ui-button:active { scale: var(--scale-press); }
-.ui-button:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
+.ui-button:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
 .ui-button svg { width: 0.875rem; height: 0.875rem; flex: none; color: var(--button-icon); transition: color var(--duration-quick) ease-out; }
 .ui-button:hover svg { color: var(--button-icon-hover); }
 .ui-button--primary { background: var(--button-primary-bg); color: var(--text-strong); --button-icon: currentColor; --button-icon-hover: currentColor; }
@@ -68,6 +68,74 @@
 }
 .ui-field::placeholder { color: rgba(255, 255, 255, 0.35); }
 .ui-field:focus { background: var(--field-bg-focus); box-shadow: var(--field-edge-focus); }
+
+/* -- Switch (checkbox with role="switch"; --tri is a button with data-state) -- */
+.ui-switch {
+  --switch-w: 36px;
+  --switch-h: 20px;
+  --switch-travel: calc(var(--switch-w) - var(--switch-h));
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  cursor: pointer;
+}
+.ui-switch--compact { --switch-w: 32px; --switch-h: 16px; }
+.ui-switch__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.ui-switch__track,
+.ui-switch--tri {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-block;
+  width: var(--switch-w);
+  height: var(--switch-h);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-switch);
+  background: var(--switch-off);
+  cursor: pointer;
+  transition: background var(--duration-quick) ease-out;
+}
+.ui-switch__track::before,
+.ui-switch--tri::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--switch-h);
+  height: var(--switch-h);
+  border-radius: var(--radius-switch);
+  background: var(--switch-thumb);
+  box-shadow: var(--switch-thumb-shadow);
+  transform-origin: left center;
+  transition: transform var(--duration-fast) var(--ease-smooth-out);
+}
+.ui-switch__input:checked + .ui-switch__track { background: var(--switch-on); }
+.ui-switch__input:checked + .ui-switch__track::before { transform: translateX(var(--switch-travel)); transform-origin: right center; }
+.ui-switch:active > .ui-switch__input:not(:disabled) + .ui-switch__track::before { transform: scaleX(1.2); }
+.ui-switch:active > .ui-switch__input:checked:not(:disabled) + .ui-switch__track::before {
+  transform: translateX(var(--switch-travel)) scaleX(1.2);
+}
+.ui-switch__input:focus-visible + .ui-switch__track,
+.ui-switch--tri:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.ui-switch__input:disabled + .ui-switch__track,
+.ui-switch--tri:disabled { opacity: 0.5; cursor: not-allowed; }
+.ui-switch:has(> .ui-switch__input:disabled) { cursor: not-allowed; }
+.ui-switch--tri::before { transform-origin: center; }
+.ui-switch--tri[data-state="auto"] { background: var(--switch-mid); }
+.ui-switch--tri[data-state="auto"]::before { transform: translateX(calc(var(--switch-travel) / 2)) scale(0.6, 0.2); }
+.ui-switch--tri[data-state="on"] { background: var(--switch-on); }
+.ui-switch--tri[data-state="on"]::before { transform: translateX(var(--switch-travel)); }
 
 /* -- Card with header tabs -- */
 .ui-card {
@@ -185,7 +253,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-chip::after { content: ""; position: absolute; inset: -7px 0; }
 .ui-chip:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15); color: #fff; }
 .ui-chip:has(input:checked) { background: rgba(129, 140, 248, 0.15); border-color: rgba(129, 140, 248, 0.4); color: rgb(165, 180, 252); }
-.ui-chip:has(input:focus-visible) { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
+.ui-chip:has(input:focus-visible) { outline: var(--focus-ring); outline-offset: 2px; }
 
 /* -- Sync tag -- */
 .ui-sync-tag {
@@ -268,7 +336,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-dropdown__trigger:active { scale: var(--scale-press); }
 .ui-dropdown__trigger:disabled { background: var(--raised-bg); opacity: 0.5; cursor: default; }
 .ui-dropdown__trigger:disabled:active { scale: none; }
-.ui-dropdown__trigger:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 1px; }
+.ui-dropdown__trigger:focus-visible { outline: var(--focus-ring); outline-offset: 1px; }
 .ui-dropdown__value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ui-dropdown__chevron { width: 14px; height: 14px; flex: none; color: rgba(255, 255, 255, 0.5); transition: rotate var(--duration-fast) var(--ease-smooth-out); }
 .ui-dropdown__trigger[aria-expanded="true"] .ui-dropdown__chevron { rotate: 180deg; }
@@ -555,4 +623,5 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   .ui-spinner { animation-duration: 2s; }
   .ui-toast.is-entering, .ui-toast.is-leaving { animation-duration: 1ms; }
   .ui-modal__backdrop, .ui-modal__surface { transition: none; }
+  .ui-switch__track, .ui-switch__track::before, .ui-switch--tri, .ui-switch--tri::before { transition: none; }
 }

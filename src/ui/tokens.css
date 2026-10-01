@@ -71,6 +71,17 @@
   --scale-modal-close: 0.98;
   --tooltip-delay: 300ms;
 
+  /* -- Focus -- */
+  --focus-ring: 2px solid rgba(255, 255, 255, 0.4);
+
+  /* -- Switch -- */
+  --switch-off: rgba(255, 255, 255, 0.1);
+  --switch-mid: rgba(255, 255, 255, 0.28);
+  --switch-on: rgba(255, 255, 255, 0.5);
+  --switch-thumb: #fff;
+  --switch-thumb-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
+  --radius-switch: 0.375rem;
+
   /* -- Scroll fades (mask on the inner scroller, never the surface) -- */
   --fade-top-size: 40px;
   --fade-bottom-size: 56px;
