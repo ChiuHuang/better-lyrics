@@ -71,10 +71,23 @@ export const DISCORD_INVITE_URL = "https://discord.gg/UsHE3d5fWF" as const;
 export const GITHUB_REPO_URL = "https://github.com/better-lyrics/better-lyrics" as const;
 export const BUY_ME_A_COFFEE_URL = "https://buymeacoffee.com/boidu" as const;
 export const GITHUB_SPONSORS_URL = "https://github.com/sponsors/boidushya" as const;
-export const ABOUT_MAKERS: readonly { name: string; href: string }[] = [
-  { name: "Boidu", href: "https://boidu.dev" },
-  { name: "Adalie", href: "https://adalie.me/" },
+interface AboutCredit {
+  name: string;
+  href: string;
+  avatar: string;
+  avatarRound?: boolean;
+}
+
+export const ABOUT_MAKERS: readonly AboutCredit[] = [
+  { name: "Boidu", href: "https://boidu.dev", avatar: "/images/credits/boidushya.jpg" },
+  { name: "Adalie", href: "https://adalie.me/", avatar: "/images/credits/adaliea.jpg" },
 ];
+export const ABOUT_BADGE_ARTIST: AboutCredit = {
+  name: "Kiyoshi",
+  href: "https://github.com/KiyoshiTheDevil",
+  avatar: "/images/credits/kiyoshithedevil.png",
+  avatarRound: true,
+};
 export const SHADERS_CWS_URL =
   "https://chromewebstore.google.com/detail/better-lyrics-shaders/mffpncjphfmkppebdoaehdlnagnlpfai" as const;
 export const SHADERS_SITE_URL = "https://shaders.betterlyrics.org" as const;

@@ -1582,6 +1582,16 @@
       }
     }
   },
+  "options_about_badgesBody": {
+    "message": "Special thanks to $KIYOSHI$ for the time and care behind every badge across Better Lyrics and Unison <3",
+    "description": "About page credit for the Unison badge artist; the name becomes a link",
+    "placeholders": {
+      "kiyoshi": {
+        "content": "$1",
+        "example": "Kiyoshi"
+      }
+    }
+  },
   "options_language_exclusionsTitle": {
     "message": "Language exclusions",
     "description": "Modal title for language exclusions"

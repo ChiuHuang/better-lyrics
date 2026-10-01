@@ -306,6 +306,9 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
   transition: text-decoration-color var(--duration-quick) ease-out;
 }
 .about__body a:hover { text-decoration-color: currentColor; }
+.about__avatar { width: 16px; height: 16px; margin-inline-end: 5px; border-radius: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 2px 3px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.12); outline: 1px solid rgba(255, 255, 255, 0.08); outline-offset: -1px; vertical-align: -3px; object-fit: cover; }
+.about__avatar--round { border-radius: 50%; }
+.about__body + .about__body { margin-top: 0.5rem; }
 .about__body a svg { width: 0.75rem; height: 0.75rem; margin-inline-start: 3px; vertical-align: -1px; color: var(--text-muted); }
 .about__body:has(+ .about__list) { margin-bottom: 0.5rem; }
 .about__list { margin: 0; padding-left: 16px; }
