@@ -534,16 +534,22 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
   const labelElem = document.createElement("label");
   labelElem.classList.add("checkbox-container");
 
+  const switchElem = document.createElement("span");
+  switchElem.className = "ui-switch ui-switch--compact";
+
   const checkboxElem = document.createElement("input");
-  checkboxElem.classList.add("provider-checkbox");
+  checkboxElem.className = "ui-switch__input provider-checkbox";
   checkboxElem.type = "checkbox";
+  checkboxElem.setAttribute("role", "switch");
   checkboxElem.checked = checked;
   checkboxElem.id = "p-" + providerId + "-checkbox";
-  labelElem.appendChild(checkboxElem);
 
-  const checkmarkElem = document.createElement("span");
-  checkmarkElem.classList.add("checkmark");
-  labelElem.appendChild(checkmarkElem);
+  const trackElem = document.createElement("span");
+  trackElem.className = "ui-switch__track";
+  trackElem.setAttribute("aria-hidden", "true");
+
+  switchElem.append(checkboxElem, trackElem);
+  labelElem.appendChild(switchElem);
 
   const textElem = document.createElement("span");
   textElem.classList.add("provider-name");
