@@ -418,6 +418,8 @@
 
 .detail-modal .ui-modal__head {
   gap: 1rem;
+  min-height: 0;
+  padding: var(--row-pad) var(--text-inset);
 }
 
 .detail-header-info {
