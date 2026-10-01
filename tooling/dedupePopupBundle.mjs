@@ -44,7 +44,6 @@ export function sameModuleSet(a, b) {
   return b.every(id => set.has(id));
 }
 
-// The two entries' JS differs only in the entry chunk id, so equivalence is judged on bundled modules.
 export const dedupePopupBundle = {
   apply(compiler) {
     const { Compilation, WebpackError, sources } = compiler.webpack;

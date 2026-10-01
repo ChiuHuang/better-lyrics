@@ -21,7 +21,6 @@ renderer.image = ({ href, title, text }) => {
 marked.use({ renderer });
 
 export function parseMarkdown(text: string): DocumentFragment {
-  // https://marked.js.org/#usage
   const content = text.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, "");
   const html = marked.parse(content, { async: false }) as string;
 

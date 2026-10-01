@@ -41,7 +41,6 @@ interface WheelDelta {
   deltaMode: number;
 }
 
-/** scrollLeft change a vertical wheel should apply to an inline strip, or null when the strip cannot move that way. */
 export function inlineWheelStep(wheel: WheelDelta, metrics: InlineScrollMetrics, rtl = false): number | null {
   if (wheel.deltaX !== 0 || wheel.deltaY === 0) return null;
   const { start, end } = fadeInlineEdges(metrics, rtl);
