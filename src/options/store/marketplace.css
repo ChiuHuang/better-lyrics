@@ -1,75 +1,7 @@
-/* Standalone Marketplace Page */
-.marketplace-standalone {
-  background: var(--page-bg);
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
-.marketplace-page {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 2.5rem 3rem;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
-@media (max-width: 1200px) {
-  .marketplace-page {
-    padding: 2rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .marketplace-page {
-    padding: 1.5rem 1rem;
-  }
-}
-
-.marketplace-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.marketplace-header-left {
-  flex: 1;
-  min-width: 200px;
-}
-
-.marketplace-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: var(--font-size-4xl);
-  font-weight: 700;
-  color: #fff;
-  margin: 0 0 0.25rem 0;
-}
-
 .marketplace-title svg {
   width: 1.5rem;
   height: 1.5rem;
   color: rgba(255, 255, 255, 0.75);
-}
-
-.marketplace-subtitle {
-  font-size: var(--font-size-md);
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0;
-}
-
-.marketplace-header-right {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
 }
 
 .store-search .ui-search__input {
@@ -87,18 +19,6 @@
 
 .marketplace-url-btn kbd {
   margin-left: 0.125rem;
-}
-
-.marketplace-filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.marketplace-filter-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
 }
 
 .marketplace-content {

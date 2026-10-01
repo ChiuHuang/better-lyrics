@@ -8,6 +8,15 @@ html {
   scrollbar-color: var(--scrollbar-thumb) transparent;
   scrollbar-gutter: stable;
 }
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--page-bg);
+  color: var(--text-strong);
+}
+* { font-family: var(--font-sans); font-weight: 400; }
+h1 { display: flex; align-items: center; gap: 0.875rem; margin: 0; }
+hr { border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 
 /* -- Button -- */
 .ui-button {
@@ -452,6 +461,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   background: var(--pane-bg);
   box-shadow: var(--pane-edge);
 }
+.ui-filter-bar__group { display: flex; flex-direction: column; gap: 0.5rem; }
+.ui-filter-bar__options { display: flex; flex-wrap: wrap; gap: 0.375rem; }
 
 /* -- Sync tag -- */
 .ui-sync-tag {
