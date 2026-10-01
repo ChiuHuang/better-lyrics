@@ -1345,7 +1345,7 @@ function initLangExclusionsModal(): void {
       onChange: tab => switchExclusionTab(tab.dataset.tab === "translation" ? "translation" : "romanization"),
     });
     tablist.addEventListener("click", event => {
-      if (!(event.target as Element).closest(".ui-segmented__tab")) return;
+      if (event.detail === 0 || !(event.target as Element).closest(".ui-segmented__tab")) return;
       (document.getElementById(`${activeExclusionTab}-search`) as HTMLInputElement | null)?.focus();
     });
   }
