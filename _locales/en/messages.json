@@ -1207,6 +1207,35 @@
       }
     }
   },
+  "marketplace_tooltipInstalls": {
+    "message": "$COUNT$ installs",
+    "description": "Tooltip on a theme's install count",
+    "placeholders": { "count": { "content": "$1", "example": "1204" } }
+  },
+  "marketplace_tooltipRating": {
+    "message": "$AVERAGE$ average from $COUNT$ ratings",
+    "description": "Tooltip on a theme's star rating",
+    "placeholders": { "average": { "content": "$1", "example": "4.8" }, "count": { "content": "$2", "example": "52" } }
+  },
+  "marketplace_tooltipOlderBuild": {
+    "message": "You're on v$CURRENT$. Latest is v$LATEST$",
+    "description": "Tooltip on the badge shown when an installed theme build is older than the latest one",
+    "placeholders": { "current": { "content": "$1", "example": "1.2.0" }, "latest": { "content": "$2", "example": "1.4.0" } }
+  },
+  "marketplace_tooltipOlderBuildFloor": {
+    "message": "You're on v$CURRENT$. Latest v$LATEST$ needs Better Lyrics $FLOOR$+",
+    "description": "Tooltip on the older build badge when the latest build needs a newer extension version",
+    "placeholders": { "current": { "content": "$1", "example": "1.2.0" }, "latest": { "content": "$2", "example": "1.4.0" }, "floor": { "content": "$3", "example": "2.4.0" } }
+  },
+  "marketplace_installedFrom": {
+    "message": "Installed from $REPO$",
+    "description": "Tooltip on the GitHub badge of a theme installed from a repository URL",
+    "placeholders": { "repo": { "content": "$1", "example": "owner/theme" } }
+  },
+  "marketplace_ricsBadge": {
+    "message": "This theme uses RICS",
+    "description": "Tooltip and accessible label on the RICS badge in the theme detail view"
+  },
   "marketplace_requiresVersion": {
     "message": "Requires v$version$+",
     "description": "Footer chip in the theme detail modal showing the minimum Better Lyrics version a theme needs",

@@ -503,7 +503,7 @@ function createGitHubIcon(): SVGSVGElement {
 function createGitHubBadge(className: string, title: string): HTMLSpanElement {
   const badge = document.createElement("span");
   badge.className = className;
-  badge.title = title;
+  badge.dataset.tooltip = title;
   badge.appendChild(createGitHubIcon());
   badge.appendChild(document.createTextNode(t("marketplace_githubBadge")));
   return badge;
@@ -1342,7 +1342,7 @@ function createStoreThemeCard(
   // Incompatible themes stay installable: the button is never disabled, but it carries a hint
   // and the install handler confirms with the user first.
   if (!isCompatible && !isInstalled) {
-    actionBtn.title = `Requires Better Lyrics v${themeFloorVersion(theme)}+`;
+    actionBtn.dataset.tooltip = t("marketplace_requiresVersion", themeFloorVersion(theme));
   }
 
   actionBtn.addEventListener("click", async e => {
@@ -1405,7 +1405,7 @@ function createStoreThemeCard(
     if (stats.installs > 0) {
       const installStat = document.createElement("span");
       installStat.className = "store-card-stat";
-      installStat.title = `${stats.installs} installs`;
+      installStat.dataset.tooltip = t("marketplace_tooltipInstalls", String(stats.installs));
       installStat.appendChild(createDownloadIcon());
       installStat.appendChild(document.createTextNode(formatNumber(stats.installs)));
       statsRow.appendChild(installStat);
@@ -1414,7 +1414,7 @@ function createStoreThemeCard(
     if (stats.ratingCount > 0) {
       const ratingStat = document.createElement("span");
       ratingStat.className = "store-card-stat";
-      ratingStat.title = `${stats.rating.toFixed(1)} average from ${stats.ratingCount} ratings`;
+      ratingStat.dataset.tooltip = t("marketplace_tooltipRating", [stats.rating.toFixed(1), String(stats.ratingCount)]);
       ratingStat.appendChild(createStarIcon());
       ratingStat.appendChild(document.createTextNode(stats.rating.toFixed(1)));
       statsRow.appendChild(ratingStat);
@@ -1433,7 +1433,7 @@ function createStoreThemeCard(
   }
 
   if (urlThemeInfo) {
-    const title = urlThemeInfo.sourceUrl || `Installed from ${urlThemeInfo.repo}`;
+    const title = urlThemeInfo.sourceUrl || t("marketplace_installedFrom", urlThemeInfo.repo);
     card.appendChild(createGitHubBadge("ui-badge store-card-badge store-card-badge-url", title));
   }
 
@@ -1441,7 +1441,7 @@ function createStoreThemeCard(
     const floor = themeFloorVersion(theme);
     const incompatBadge = document.createElement("span");
     incompatBadge.className = "ui-badge ui-badge--warning store-card-badge-warn";
-    incompatBadge.title = `Requires Better Lyrics v${floor} or higher`;
+    incompatBadge.dataset.tooltip = t("marketplace_requiresVersion", floor);
 
     const warnIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     warnIcon.setAttribute("viewBox", "0 0 24 24");
@@ -1489,8 +1489,9 @@ function createOlderBuildBadge(
 ): HTMLSpanElement {
   const badge = document.createElement("span");
   badge.className = "ui-badge ui-badge--info store-card-badge-older";
-  const floorHint = latestMinVersion ? ` needs Better Lyrics ${latestMinVersion}+` : "";
-  badge.title = `You're on v${resolvedVersion}. Latest v${latestVersion}${floorHint}`;
+  badge.dataset.tooltip = latestMinVersion
+    ? t("marketplace_tooltipOlderBuildFloor", [resolvedVersion, latestVersion, latestMinVersion])
+    : t("marketplace_tooltipOlderBuild", [resolvedVersion, latestVersion]);
   badge.appendChild(createInfoIcon());
   badge.appendChild(document.createTextNode(`v${resolvedVersion}`));
   return badge;
@@ -1622,7 +1623,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
       titleEl.appendChild(createShaderBadge("ui-badge ui-badge--accent-solid"));
     }
     if (urlThemeInfo) {
-      const title = urlThemeInfo.sourceUrl || `Installed from ${urlThemeInfo.repo}`;
+      const title = urlThemeInfo.sourceUrl || t("marketplace_installedFrom", urlThemeInfo.repo);
       titleEl.appendChild(createGitHubBadge("ui-badge", title));
     }
   }
@@ -1646,7 +1647,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         if (themeStats.installs > 0) {
           const installStat = document.createElement("span");
           installStat.className = "detail-stat";
-          installStat.title = `${themeStats.installs} downloads`;
+          installStat.dataset.tooltip = t("marketplace_tooltipInstalls", String(themeStats.installs));
           installStat.appendChild(createDownloadIcon());
           installStat.appendChild(document.createTextNode(formatNumber(themeStats.installs)));
           statsRow.appendChild(installStat);
@@ -2212,7 +2213,7 @@ function createYourThemesRow(theme: InstalledStoreTheme, isActive: boolean): HTM
   title.textContent = theme.title;
   titleRow.appendChild(title);
   if (theme.source === "url") {
-    titleRow.appendChild(createGitHubBadge("ui-badge", theme.sourceUrl || `Installed from ${theme.repo}`));
+    titleRow.appendChild(createGitHubBadge("ui-badge", theme.sourceUrl || t("marketplace_installedFrom", theme.repo)));
   }
 
   const meta = document.createElement("span");
