@@ -1,4 +1,4 @@
-/* Installed Themes Button & Dropdown */
+/* -- Installed themes button and dropdown ---------------------------- */
 .your-themes-container {
   position: relative;
 }
@@ -16,7 +16,7 @@
   cursor: pointer;
   font-size: 0.875rem;
   margin: 0;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 #your-themes-btn:hover,
@@ -169,7 +169,7 @@
   border: none;
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.8);
-  transition: all 0.15s;
+  transition: background 0.15s, color 0.15s;
   margin: 0;
   width: auto;
 }
@@ -185,7 +185,7 @@
   cursor: default;
 }
 
-/* Store Buttons Row */
+/* -- Store buttons row ---------------------------- */
 .store-buttons-row {
   display: flex;
   justify-content: space-between;
@@ -202,7 +202,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
   display: flex;
   align-items: center;
   gap: 0.5rem;
