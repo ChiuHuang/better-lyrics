@@ -58,6 +58,7 @@ import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createBackButton, createButton } from "@/options/unison/revisions/revisionUi";
 import { createDropdown, type Dropdown } from "@/ui/dropdown";
 import { attachScrollFade } from "@/ui/scrollFade";
+import { isTextEntry } from "@/ui/textEntry";
 import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
 import { initTooltips } from "@/ui/tooltip";
 import { attachEditor, highlightInto } from "@braccato/highlight";
@@ -409,7 +410,7 @@ function applyActiveTabContent(): void {
 function setupFilterBar(): void {
   filterBar.querySelectorAll<HTMLLabelElement>(".unison-filter-chip--sort").forEach(chip => {
     chip.addEventListener("click", e => {
-      e.preventDefault();
+      if (!(e.target instanceof HTMLInputElement)) e.preventDefault();
       const input = chip.querySelector<HTMLInputElement>('input[type="radio"]');
       if (!input) return;
       const cache = feedTabCache[activeFeedTab];
@@ -433,7 +434,7 @@ function setupFilterBar(): void {
     '.unison-filter-chip:has(input[name="unison-filter-sync"])'
   )) {
     chip.addEventListener("click", e => {
-      e.preventDefault();
+      if (!(e.target instanceof HTMLInputElement)) e.preventDefault();
       const value = chip.querySelector<HTMLInputElement>('input[type="radio"]')?.value;
       if (!isSyncChip(value)) return;
       const cache = feedTabCache[activeFeedTab];
@@ -456,7 +457,7 @@ function setupFilterBar(): void {
   for (const [name, key] of radioGroups) {
     filterBar.querySelectorAll<HTMLLabelElement>(`.unison-filter-chip:has(input[name="${name}"])`).forEach(chip => {
       chip.addEventListener("click", e => {
-        e.preventDefault();
+        if (!(e.target instanceof HTMLInputElement)) e.preventDefault();
         const input = chip.querySelector<HTMLInputElement>('input[type="radio"]');
         if (!input) return;
         const cache = feedTabCache[activeFeedTab];
@@ -470,6 +471,14 @@ function setupFilterBar(): void {
         renderFilterBarFromActiveTab();
         onFilterChange();
       });
+    });
+  }
+
+  for (const chip of filterBar.querySelectorAll<HTMLLabelElement>('.unison-filter-chip:has(input[type="radio"])')) {
+    chip.addEventListener("keydown", e => {
+      if (e.key !== " " && e.key !== "Enter") return;
+      e.preventDefault();
+      chip.click();
     });
   }
 
@@ -856,7 +865,7 @@ function setupSearch(): void {
 
 function isInputFocused(): boolean {
   const active = document.activeElement;
-  if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) return true;
+  if (isTextEntry(active)) return true;
   return active instanceof HTMLElement && active.closest("[role=listbox]") !== null;
 }
 

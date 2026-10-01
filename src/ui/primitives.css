@@ -183,7 +183,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-chip::after { content: ""; position: absolute; inset: -7px 0; }
 .ui-chip:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15); color: #fff; }
 .ui-chip:has(input:checked) { background: rgba(129, 140, 248, 0.15); border-color: rgba(129, 140, 248, 0.4); color: rgb(165, 180, 252); }
-.ui-chip input { display: none; }
+.ui-chip:has(input:focus-visible) { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
 
 /* -- Sync tag -- */
 .ui-sync-tag {
@@ -427,8 +427,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 }
 @keyframes ui-toast-out { to { opacity: 0; transform: translateY(calc(var(--distance-toast) / -2)) scale(var(--scale-menu-close)); } }
 
-/* -- Visually hidden (screen readers only) -- */
-.ui-visually-hidden {
+/* -- Visually hidden (screen readers only; chip inputs stay focusable) -- */
+.ui-visually-hidden, .ui-chip input {
   position: absolute;
   width: 1px;
   height: 1px;

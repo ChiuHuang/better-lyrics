@@ -43,6 +43,7 @@ import { cleanupTurnstile, getTurnstileToken } from "./turnstile";
 import { errorStore, warnStore } from "@core/logger";
 import { menuPlacement } from "@/ui/menuPlacement";
 import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
+import { isTextEntry } from "@/ui/textEntry";
 
 let detailModalOverlay: HTMLElement | null = null;
 let urlModalOverlay: HTMLElement | null = null;
@@ -709,7 +710,7 @@ function setupMarketplaceFilters(): void {
     const input = label.querySelector("input") as HTMLInputElement;
 
     label.addEventListener("click", e => {
-      e.preventDefault();
+      if (!(e.target instanceof HTMLInputElement)) e.preventDefault();
       const newSortBy = input.value as FilterState["sortBy"];
 
       if (currentFilters.sortBy === newSortBy) {
@@ -833,12 +834,7 @@ function isAnyModalOpen(): boolean {
 }
 
 function isInputFocused(): boolean {
-  const activeElement = document.activeElement;
-  return (
-    activeElement instanceof HTMLInputElement ||
-    activeElement instanceof HTMLTextAreaElement ||
-    (activeElement instanceof HTMLElement && activeElement.isContentEditable)
-  );
+  return isTextEntry(document.activeElement);
 }
 
 function setSortFilter(value: "rating" | "downloads" | "newest", toggleDirection = false): void {
