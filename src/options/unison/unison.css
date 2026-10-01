@@ -1675,9 +1675,9 @@ kbd {
 }
 
 .unison-feedback--success {
-  background: rgba(34, 197, 94, 0.1);
-  color: rgb(34, 197, 94);
-  border: 1px solid rgba(34, 197, 94, 0.15);
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 15%, transparent);
 }
 
 .unison-feedback--error {
@@ -2262,7 +2262,7 @@ kbd {
 }
 
 .unison-rev-outcome--live {
-  color: rgb(34, 197, 94);
+  color: var(--success);
 }
 
 .unison-rev-outcome--review {
@@ -2453,7 +2453,7 @@ kbd {
 }
 
 .unison-rev-swatch--add {
-  background: rgba(34, 197, 94, 0.5);
+  background: color-mix(in srgb, var(--success) 50%, transparent);
 }
 
 .unison-rev-swatch--del {
@@ -2496,7 +2496,7 @@ kbd {
 }
 
 .unison-rev-diff-row--add {
-  background: rgba(34, 197, 94, 0.08);
+  background: color-mix(in srgb, var(--success) 8%, transparent);
 }
 
 .unison-rev-diff-row--add .unison-rev-diff-text,
@@ -2552,7 +2552,7 @@ kbd {
 
 .unison-rev-diff-text ins {
   text-decoration: none;
-  background: rgba(34, 197, 94, 0.18);
+  background: color-mix(in srgb, var(--success) 18%, transparent);
   color: rgb(134, 239, 172);
 }
 
