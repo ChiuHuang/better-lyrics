@@ -64,6 +64,7 @@ export function renderAboutLinks(root: ParentNode): void {
   }
   const externalLinks: Record<string, Link> = {
     shaders: { href: SHADERS_SITE_URL, text: t("lyrics_getShaders") },
+    star: { href: GITHUB_REPO_URL, text: t("options_about_supportStar") },
     coffee: { href: BUY_ME_A_COFFEE_URL, text: t("options_about_supportCoffee") },
     sponsors: { href: GITHUB_SPONSORS_URL, text: t("options_about_supportSponsors") },
   };
