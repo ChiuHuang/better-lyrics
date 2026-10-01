@@ -17,8 +17,14 @@ export function readableTtml(src: string): { text: string; readable: boolean } {
   return { text: pretty, readable: true };
 }
 
+/** True only for text in exactly the readable form of compactable TTML, so the layout is read from the text, never tracked. */
+export function isReadableLayout(text: string): boolean {
+  const layout = readableTtml(compactTtml(text));
+  return layout.readable && layout.text === text;
+}
+
 /** Text to save: undoes the readable layout, and keeps the stored bytes exactly when nothing changed (the server hashes them). */
-export function lyricsForSave(text: string, { readable, original }: { readable: boolean; original?: string }): string {
-  const source = readable ? compactTtml(text) : text;
+export function lyricsForSave(text: string, original?: string): string {
+  const source = isReadableLayout(text) ? compactTtml(text) : text;
   return source === original ? source : source.trim();
 }

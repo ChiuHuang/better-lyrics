@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { prettyTtml } from "@braccato/highlight";
-import { compactTtml, lyricsForSave, readableTtml } from "@/options/unison/ttmlLayout";
+import { compactTtml, isReadableLayout, lyricsForSave, readableTtml } from "@/options/unison/ttmlLayout";
 
 // -- Fixtures --------------------------
 
@@ -124,24 +124,59 @@ for (const src of [MINIFIED_388, MINIFIED_BG]) {
   const stored = `${MINIFIED_388}\n`;
   const shown = readableTtml(stored);
   assert.equal(shown.readable, true, "a trailing newline does not stop the readable layout");
+  assert.equal(lyricsForSave(shown.text, stored), stored, "regression: unchanged lyrics keep their trailing newline");
   assert.equal(
-    lyricsForSave(shown.text, { readable: true, original: stored }),
-    stored,
-    "regression: unchanged lyrics keep their trailing newline"
-  );
-  assert.equal(
-    lyricsForSave(`${FORMATTED}\n`, { readable: false, original: `${FORMATTED}\n` }),
+    lyricsForSave(`${FORMATTED}\n`, `${FORMATTED}\n`),
     `${FORMATTED}\n`,
     "unchanged formatted lyrics keep their edge whitespace"
   );
   const edited = shown.text.replace(">smoke<", ">smog<");
   assert.equal(
-    lyricsForSave(edited, { readable: true, original: stored }),
+    lyricsForSave(edited, stored),
     MINIFIED_388.replace(">smoke<", ">smog<"),
     "edited lyrics are compacted and trimmed"
   );
-  assert.equal(lyricsForSave("  [00:01.00]hi\n", { readable: false }), "[00:01.00]hi", "new lyrics are trimmed");
-  assert.equal(lyricsForSave("", { readable: false, original: "" }), "", "empty stays empty");
+  assert.equal(lyricsForSave("  [00:01.00]hi\n"), "[00:01.00]hi", "new lyrics are trimmed");
+  assert.equal(lyricsForSave("", ""), "", "empty stays empty");
+}
+
+// -- Layout is read from the text --------------------------
+
+for (const src of [MINIFIED_388, MINIFIED_BG]) {
+  assert.equal(isReadableLayout(readableTtml(src).text), true, "the readable form reads as readable");
+  assert.equal(isReadableLayout(src), false, "the minified source is not the readable form");
+}
+assert.equal(isReadableLayout(FORMATTED), false, "hand-formatted TTML is not the readable form");
+assert.equal(isReadableLayout("[00:01.00]Never gonna\n[00:02.00]give you up"), false, "LRC is never readable layout");
+assert.equal(isReadableLayout("plain words\nmore words"), false, "plain text is never readable layout");
+assert.equal(isReadableLayout(""), false, "empty text is never readable layout");
+
+// -- Regressions: undo and redo after a full paste --------------------------
+
+{
+  const opened = readableTtml(MINIFIED_388).text;
+  const pastedFormatted = FORMATTED;
+  assert.equal(
+    lyricsForSave(pastedFormatted, MINIFIED_388),
+    FORMATTED.trim(),
+    "regression: pasted formatted text is saved as written"
+  );
+  assert.equal(
+    lyricsForSave(opened, MINIFIED_388),
+    MINIFIED_388,
+    "regression: undoing back to the opened readable text saves the stored bytes"
+  );
+}
+
+{
+  const original = `${FORMATTED}\n`;
+  const pastedMinified = readableTtml(MINIFIED_388).text;
+  assert.equal(lyricsForSave(pastedMinified, original), MINIFIED_388, "a pasted minified lyric is compacted on save");
+  assert.equal(
+    lyricsForSave(original, original),
+    original,
+    "regression: undoing back to formatted text saves it untouched"
+  );
 }
 
 console.log("ttml layout self-check passed");
