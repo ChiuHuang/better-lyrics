@@ -36,6 +36,33 @@
 .ui-button--danger:hover { background: var(--danger-hover); }
 .ui-button--accent { background: var(--accent); box-shadow: inset rgba(255, 255, 255, 0.18) 0 1px 0 0; color: #fff; --button-icon: currentColor; --button-icon-hover: currentColor; }
 .ui-button--accent:hover { background: color-mix(in srgb, var(--accent) 85%, #000); color: #fff; }
+.ui-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.ui-button:disabled:active { scale: none; }
+.ui-button--success-tint { --tint: var(--success); }
+.ui-button--danger-tint { --tint: var(--danger); }
+.ui-button--accent-tint { --tint: var(--accent); }
+.ui-button:is(.ui-button--success-tint, .ui-button--danger-tint, .ui-button--accent-tint) {
+  background: color-mix(in srgb, var(--tint) 20%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tint) 30%, transparent);
+  color: color-mix(in srgb, var(--tint) 50%, #fff);
+  --button-icon: currentColor;
+  --button-icon-hover: currentColor;
+}
+.ui-button:is(.ui-button--success-tint, .ui-button--danger-tint, .ui-button--accent-tint):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--tint) 30%, transparent);
+  color: color-mix(in srgb, var(--tint) 40%, #fff);
+}
+.ui-button:is(.ui-button--success-tint, .ui-button--danger-tint, .ui-button--accent-tint):disabled:hover {
+  background: color-mix(in srgb, var(--tint) 20%, transparent);
+}
+.ui-button:is(.ui-button--success-tint, .ui-button--danger-tint, .ui-button--accent-tint) .ui-kbd {
+  border-color: color-mix(in srgb, var(--tint) 30%, transparent);
+  background: color-mix(in srgb, var(--tint) 15%, transparent);
+  box-shadow: none;
+  color: inherit;
+}
+.ui-button--ghost { background: transparent; box-shadow: none; color: var(--text-muted); }
+.ui-button--ghost:hover { background: var(--button-bg); color: var(--text-strong); }
 .ui-button--compact { height: 30px; padding: 0 12px 0 10px; gap: 6px; font-size: 0.8125rem; }
 .ui-button--header {
   height: 34px;
