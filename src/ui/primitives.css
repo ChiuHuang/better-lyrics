@@ -255,6 +255,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-dropdown--chip .ui-dropdown__trigger { height: 26px; font-size: 0.8125rem; border-radius: 0.625rem; }
 .ui-dropdown__trigger:hover, .ui-dropdown__trigger[aria-expanded="true"] { background: var(--raised-bg-hover); }
 .ui-dropdown__trigger:active { scale: var(--scale-press); }
+.ui-dropdown__trigger:disabled { background: var(--raised-bg); opacity: 0.5; cursor: default; }
+.ui-dropdown__trigger:disabled:active { scale: none; }
 .ui-dropdown__trigger:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 1px; }
 .ui-dropdown__value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ui-dropdown__chevron { width: 14px; height: 14px; flex: none; color: rgba(255, 255, 255, 0.5); transition: rotate var(--duration-fast) var(--ease-smooth-out); }

@@ -87,6 +87,7 @@ export const THEME_STORE_API_URL = "https://themes.betterlyrics.org" as const;
 export const UNISON_API_BASE_URL = "https://unison.betterlyrics.org" as const;
 export const UNISON_TRANSLATE_URL = `${UNISON_API_BASE_URL}/translate` as const;
 export const UNISON_REVISION_PREVIEW_DEBOUNCE_MS = 400;
+export const UNISON_LYRICS_PREVIEW_DEBOUNCE_MS = 150;
 export const UNISON_REVISION_PREVIEW_RETRY_MS = 5000;
 export const UNISON_REVISION_PREVIEW_RETRY_MAX_MS = 10000;
 export const UNISON_PICTURE_URL = `${UNISON_API_BASE_URL}/me` as const;

@@ -1,5 +1,5 @@
-import { UNISON_API_BASE_URL, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
-import { t } from "@core/i18n";
+import { UNISON_API_BASE_URL, UNISON_LYRICS_PREVIEW_DEBOUNCE_MS, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
+import { getLanguageDisplayName, t } from "@core/i18n";
 import { formatTimeAgo } from "@core/relativeTime";
 import {
   DEFAULT_FEED_FILTERS,
@@ -40,17 +40,27 @@ import { warnUnison } from "@core/logger";
 import { observeResize } from "@modules/ui/layout/layoutWidth";
 import { bindLyricsFileDrop, LYRICS_FILE_READING_EVENT } from "@/options/unison/lyricsFile";
 import { createFeedback, fillFeedback } from "@/options/unison/feedback";
+import { activeSyncChip, applyFormatChip, applySyncChip, isSyncChip } from "@/options/unison/feedSyncFilter";
 import { type IconKey, svgIcon } from "@/options/unison/icons";
-import { appendLanguageOptions, matchLanguageOption } from "@/options/unison/languages";
+import { createLanguageDropdown } from "@/options/unison/languageDropdown";
+import { matchLanguageOption } from "@/options/unison/languages";
 import { renderPreviewInto } from "@/options/unison/lyricsPreview";
 import { detectFormat } from "@/options/unison/lyricsPreviewLines";
+import { searchResultsMessage, splitSearchResultsMessage } from "@/options/unison/searchResultsLabel";
+import { type ReadableLyricsField, bindReadableLyricsField } from "@/options/unison/readableLyricsField";
+import { createSubmitterByline } from "@/options/unison/submitterByline";
+import { readableTtml } from "@/options/unison/ttmlLayout";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { IS_DEV, devFixtureHint, devFixtures } from "@modules/unison/devFixtures";
 import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
 import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revisions/revisionEditor";
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
-import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
+import { type RevisionHost, createBackButton, createButton } from "@/options/unison/revisions/revisionUi";
+import { createDropdown, type Dropdown } from "@/ui/dropdown";
+import { attachScrollFade } from "@/ui/scrollFade";
+import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
 import { initTooltips } from "@/ui/tooltip";
+import { attachEditor, highlightInto } from "@braccato/highlight";
 import { XMLParser } from "fast-xml-parser";
 
 // -- Icons --------------------------
@@ -91,7 +101,7 @@ let noResults: HTMLElement;
 let feedContainer: HTMLElement;
 let feedMoreBtn: HTMLElement;
 let filterBar: HTMLElement;
-let filterLanguageSelect: HTMLSelectElement;
+let filterLanguage: Dropdown;
 let detailMeta: HTMLElement;
 let detailFrame: HTMLElement;
 let detailPreviewHead: HTMLElement;
@@ -105,8 +115,9 @@ let submitFeedback: HTMLElement;
 let previewContent: HTMLElement;
 let previewHead: HTMLElement;
 let lyricsTextarea: HTMLTextAreaElement;
-let formatSelect: HTMLSelectElement;
-let submitLanguageSelect: HTMLSelectElement;
+let submitLanguageDropdown: Dropdown;
+let submitFormatDropdown: Dropdown;
+let lyricsField: ReadableLyricsField;
 let composerLink: HTMLAnchorElement;
 
 // -- Feed State --------------------------
@@ -215,16 +226,10 @@ function showView(view: View): void {
   viewDetail.hidden = view !== "detail";
   viewSubmit.hidden = view !== "submit";
   viewRevisions.hidden = view !== "revisions";
-
-  const isSubmit = view === "submit";
-  const headerSearch = document.getElementById("unison-header-search");
-  const submitNavBtn = document.getElementById("unison-submit-nav-btn");
-  const headerIdentity = document.getElementById("unison-header-identity");
-  const leftIdentity = document.getElementById("unison-identity");
-  if (headerSearch) headerSearch.style.display = isSubmit ? "none" : "";
-  if (submitNavBtn) submitNavBtn.style.display = isSubmit ? "none" : "";
-  if (headerIdentity) headerIdentity.style.display = isSubmit ? "" : "none";
-  if (leftIdentity) leftIdentity.style.display = isSubmit ? "none" : "";
+  if (view !== "submit") flushLyricsChecks();
+  const submitNav = document.getElementById("unison-submit-nav-btn");
+  if (view === "submit") submitNav?.setAttribute("aria-current", "page");
+  else submitNav?.removeAttribute("aria-current");
 }
 
 function navigateTo(params: Record<string, string>, options: { replace?: boolean } = {}): void {
@@ -281,7 +286,7 @@ function routeFromParams(): void {
     searchInput.value = query;
     showView("search");
     showSearchResults();
-    performSearch(query);
+    void performSearch(query, view);
     return;
   }
 
@@ -311,7 +316,6 @@ export function initUnisonPage(): void {
   feedContainer = document.getElementById("unison-feed") as HTMLElement;
   feedMoreBtn = document.getElementById("unison-feed-more") as HTMLElement;
   filterBar = document.getElementById("unison-filters") as HTMLElement;
-  filterLanguageSelect = document.getElementById("unison-filter-language") as HTMLSelectElement;
   detailMeta = document.getElementById("unison-detail-meta") as HTMLElement;
   detailFrame = viewDetail.querySelector(".unison-rev-detail-main") as HTMLElement;
   detailPreviewHead = document.getElementById("unison-detail-preview-head") as HTMLElement;
@@ -325,8 +329,6 @@ export function initUnisonPage(): void {
   previewContent = document.getElementById("unison-preview-content") as HTMLElement;
   previewHead = document.getElementById("unison-preview-head") as HTMLElement;
   lyricsTextarea = document.getElementById("unison-field-lyrics") as HTMLTextAreaElement;
-  formatSelect = document.getElementById("unison-field-format") as HTMLSelectElement;
-  submitLanguageSelect = document.getElementById("unison-field-language") as HTMLSelectElement;
   composerLink = document.getElementById("unison-composer-link") as HTMLAnchorElement;
 
   setupFeedTabs();
@@ -337,6 +339,7 @@ export function initUnisonPage(): void {
   setupSubmitForm();
   setupNavButtons();
   initTooltips(document.querySelector(".unison-page") as HTMLElement);
+  attachScrollFade(detailPreview, detailPreview, { pane: true });
   loadIdentity();
   routeFromParams();
 
@@ -348,11 +351,8 @@ export function initUnisonPage(): void {
 async function loadIdentity(): Promise<void> {
   try {
     const name = await getDisplayName();
-    const text = `${t("unison_interactingAs")} ${name}`;
-    for (const id of ["unison-identity", "unison-header-identity"]) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = text;
-    }
+    const identity = document.getElementById("unison-identity");
+    if (identity) identity.textContent = `${t("unison_interactingAs")} ${name}`;
   } catch (err) {
     warnUnison("Failed to load identity:", err);
   }
@@ -361,6 +361,7 @@ async function loadIdentity(): Promise<void> {
 // -- Feed / Search Visibility --------------------------
 
 function showFeed(): void {
+  resultsMeta.hidden = true;
   feedContainer.hidden = false;
   filterBar.hidden = false;
   resultsGrid.hidden = true;
@@ -378,6 +379,8 @@ function showSearchResults(): void {
   filterBar.hidden = true;
   resultsGrid.hidden = false;
   noResults.hidden = true;
+  resultsMeta.hidden = true;
+  updateTabActiveState();
 }
 
 function saveActiveTabContent(): void {
@@ -404,8 +407,6 @@ function applyActiveTabContent(): void {
 // -- Filter Bar --------------------------
 
 function setupFilterBar(): void {
-  populateLanguageOptions();
-
   filterBar.querySelectorAll<HTMLLabelElement>(".unison-filter-chip--sort").forEach(chip => {
     chip.addEventListener("click", e => {
       e.preventDefault();
@@ -428,8 +429,27 @@ function setupFilterBar(): void {
     });
   });
 
+  for (const chip of filterBar.querySelectorAll<HTMLLabelElement>(
+    '.unison-filter-chip:has(input[name="unison-filter-sync"])'
+  )) {
+    chip.addEventListener("click", e => {
+      e.preventDefault();
+      const value = chip.querySelector<HTMLInputElement>('input[type="radio"]')?.value;
+      if (!isSyncChip(value)) return;
+      const cache = feedTabCache[activeFeedTab];
+      const next = activeSyncChip(cache.filters) === value && value !== "all" ? "all" : value;
+      cache.filters = applySyncChip(cache.filters, next);
+      renderFilterBarFromActiveTab();
+      onFilterChange();
+    });
+  }
+  for (const chip of filterBar.querySelectorAll<HTMLElement>("[data-sync-chip]")) {
+    const type = chip.dataset.syncChip;
+    const icon = isSyncChip(type) && type !== "all" ? createSyncIcon(type) : null;
+    if (icon) chip.querySelector(".unison-filter-chip__sync-icon")?.appendChild(icon);
+  }
+
   const radioGroups: ReadonlyArray<readonly [string, keyof FeedFilters]> = [
-    ["unison-filter-sync", "syncType"],
     ["unison-filter-tier", "tier"],
     ["unison-filter-format", "format"],
   ];
@@ -442,22 +462,28 @@ function setupFilterBar(): void {
         const cache = feedTabCache[activeFeedTab];
         const current = cache.filters[key] as string;
         const next = current === input.value && input.value !== "all" ? "all" : input.value;
-        (cache.filters[key] as string) = next;
+        if (key === "format") {
+          cache.filters = applyFormatChip(cache.filters, next as FeedFilters["format"]);
+        } else {
+          (cache.filters[key] as string) = next;
+        }
         renderFilterBarFromActiveTab();
         onFilterChange();
       });
     });
   }
 
-  filterLanguageSelect.addEventListener("change", () => {
-    const cache = feedTabCache[activeFeedTab];
-    cache.filters.language = filterLanguageSelect.value;
-    onFilterChange();
+  filterLanguage = createLanguageDropdown({
+    label: t("unison_language"),
+    leading: { value: "all", label: t("unison_languageAll") },
+    value: feedTabCache[activeFeedTab].filters.language,
+    variant: "chip",
+    onChange: value => {
+      feedTabCache[activeFeedTab].filters.language = value;
+      onFilterChange();
+    },
   });
-}
-
-function populateLanguageOptions(): void {
-  appendLanguageOptions(filterLanguageSelect);
+  document.getElementById("unison-filter-language-mount")?.appendChild(filterLanguage.root);
 }
 
 function detectTtmlLanguage(text: string): string | null {
@@ -466,13 +492,13 @@ function detectTtmlLanguage(text: string): string | null {
 }
 
 function autoDetectLanguage(): void {
-  if (submitLanguageSelect.value) return;
+  if (submitLanguageDropdown.getValue()) return;
   const text = lyricsTextarea.value;
   if (!text.trim()) return;
   const lang = detectTtmlLanguage(text);
   if (!lang) return;
   const matched = matchLanguageOption(lang);
-  if (matched) submitLanguageSelect.value = matched;
+  if (matched) submitLanguageDropdown.setValue(matched);
 }
 
 const ttmlMetaParser = new XMLParser({ ignoreAttributes: false, removeNSPrefix: true });
@@ -550,11 +576,11 @@ function renderFilterBarFromActiveTab(animateSort = false): void {
     }
   }
 
-  setFilterRadio("unison-filter-sync", filters.syncType);
+  setFilterRadio("unison-filter-sync", activeSyncChip(filters));
   setFilterRadio("unison-filter-tier", filters.tier);
   setFilterRadio("unison-filter-format", filters.format);
 
-  filterLanguageSelect.value = filters.language;
+  filterLanguage.setValue(filters.language);
 }
 
 function setFilterRadio(name: string, value: string): void {
@@ -568,7 +594,10 @@ function setupFilterShortcuts(): void {
   for (const chip of filterBar.querySelectorAll<HTMLLabelElement>(".unison-filter-chip")) {
     const kbd = chip.querySelector("kbd");
     if (!kbd?.textContent) continue;
-    shortcutMap.set(kbd.textContent.trim().toUpperCase(), chip);
+    const key = kbd.textContent.trim().toUpperCase();
+    shortcutMap.set(key, chip);
+    const name = Array.from(chip.querySelectorAll("span"), span => span.textContent?.trim()).find(Boolean);
+    if (name) chip.dataset.tooltip = `${name} · ${key}`;
   }
 
   document.addEventListener("keydown", e => {
@@ -612,6 +641,7 @@ function appendToTab(tab: FeedTabName, node: Node): void {
 
 let tabRecent: HTMLButtonElement;
 let tabMine: HTMLButtonElement;
+let resultsMeta: HTMLElement;
 
 function setupFeedTabs(): void {
   const tabsRow = document.createElement("div");
@@ -620,17 +650,25 @@ function setupFeedTabs(): void {
   tabRecent = document.createElement("button");
   tabRecent.className = "unison-feed-tab unison-feed-tab--active";
   tabRecent.textContent = t("unison_tabFeed");
-  tabRecent.addEventListener("click", () => switchTab("recent"));
+  tabRecent.addEventListener("click", () => onTabClick("recent"));
 
   tabMine = document.createElement("button");
   tabMine.className = "unison-feed-tab";
   tabMine.textContent = t("unison_tabMySubmissions");
-  tabMine.addEventListener("click", () => switchTab("mine"));
+  tabMine.addEventListener("click", () => onTabClick("mine"));
 
-  tabsRow.appendChild(tabRecent);
-  tabsRow.appendChild(tabMine);
+  resultsMeta = document.createElement("span");
+  resultsMeta.className = "unison-results-meta";
+  resultsMeta.hidden = true;
+
+  tabsRow.append(tabRecent, tabMine, resultsMeta);
   const anchor = filterBar ?? feedContainer;
   anchor.parentElement?.insertBefore(tabsRow, anchor);
+}
+
+function onTabClick(next: FeedTabName): void {
+  if (resultsGrid.hidden) switchTab(next);
+  else navigateTo(next === "mine" ? { tab: "mine" } : {});
 }
 
 function switchTab(next: FeedTabName): void {
@@ -666,13 +704,26 @@ function isDefaultFilters(filters: FeedFilters): boolean {
 function createFeedEmptyState(tab: FeedTabName, filters: FeedFilters): HTMLElement {
   const wrap = document.createElement("div");
   wrap.className = "unison-empty-state";
-  const p = document.createElement("p");
-  if (isDefaultFilters(filters)) {
-    p.textContent = tab === "mine" ? t("unison_noSubmissions") : t("unison_noFeedYet");
-  } else {
-    p.textContent = t("unison_noFilterResults");
+  const title = document.createElement("p");
+  title.className = "unison-empty-state__title";
+  if (!isDefaultFilters(filters)) {
+    title.textContent = t("unison_noFilterResults");
+    wrap.appendChild(title);
+    return wrap;
   }
-  wrap.appendChild(p);
+  title.textContent = tab === "mine" ? t("unison_noSubmissions") : t("unison_noFeedYet");
+  wrap.appendChild(title);
+  if (tab === "mine") {
+    const hint = document.createElement("p");
+    hint.className = "unison-empty-state__hint";
+    hint.textContent = t("unison_emptyMineHint");
+    const submit = document.createElement("button");
+    submit.type = "button";
+    submit.className = "ui-button ui-button--header";
+    submit.append(svgIcon("submit"), t("unison_submit"));
+    submit.addEventListener("click", () => navigateTo({ submit: "true" }));
+    wrap.append(hint, submit);
+  }
   return wrap;
 }
 
@@ -805,16 +856,17 @@ function setupSearch(): void {
 
 function isInputFocused(): boolean {
   const active = document.activeElement;
-  return (
-    active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement || active instanceof HTMLSelectElement
-  );
+  if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) return true;
+  return active instanceof HTMLElement && active.closest("[role=listbox]") !== null;
 }
 
-async function performSearch(query: string): Promise<void> {
+async function performSearch(query: string, view: AbortSignal): Promise<void> {
   resultsGrid.replaceChildren();
   noResults.hidden = true;
 
   const result = await searchLyrics(query);
+  if (view.aborted) return;
+  renderResultsMeta(query, result.success ? result.data.length : 0);
 
   if (!result.success || result.data.length === 0) {
     noResults.hidden = false;
@@ -824,6 +876,15 @@ async function performSearch(query: string): Promise<void> {
   for (const entry of result.data) {
     resultsGrid.appendChild(createLyricsCard(entry));
   }
+}
+
+function renderResultsMeta(query: string, count: number): void {
+  const { key, subs } = searchResultsMessage(count);
+  const { before, query: term, after } = splitSearchResultsMessage(t(key, subs), query);
+  const bold = document.createElement("b");
+  bold.textContent = term;
+  resultsMeta.replaceChildren(before, bold, after);
+  resultsMeta.hidden = false;
 }
 
 function formatScoreNumber(score: number): string {
@@ -882,10 +943,7 @@ function createLyricsCard(entry: UnisonSearchEntry | UnisonFeedEntry, options: L
   formatBadge.textContent = t(`unison_format_${entry.format}`);
   badges.appendChild(formatBadge);
 
-  const syncBadge = document.createElement("span");
-  syncBadge.className = "unison-badge unison-badge--sync";
-  syncBadge.textContent = t(`unison_sync${entry.syncType[0].toUpperCase()}${entry.syncType.slice(1)}`);
-  badges.appendChild(syncBadge);
+  badges.appendChild(createSyncTag(syncTypeForLyric(entry.syncType, entry.format)));
 
   badges.appendChild(createConfidenceBadge(entry.confidence));
 
@@ -912,12 +970,22 @@ function createLyricsCard(entry: UnisonSearchEntry | UnisonFeedEntry, options: L
   scoreGroup.appendChild(votes);
   footer.appendChild(scoreGroup);
 
+  const meta = document.createElement("span");
+  meta.className = "unison-card-meta";
+  if (entry.submitter) meta.appendChild(createSubmitterByline(entry.submitter));
   if ("createdAt" in entry) {
+    if (meta.childElementCount) {
+      const dot = document.createElement("span");
+      dot.className = "unison-card-sep";
+      dot.textContent = "\u00B7";
+      meta.appendChild(dot);
+    }
     const time = document.createElement("span");
     time.className = "unison-card-time";
     time.textContent = formatTimeAgo(entry.createdAt * 1000, "narrow");
-    footer.appendChild(time);
+    meta.appendChild(time);
   }
+  if (meta.childElementCount) footer.appendChild(meta);
 
   card.appendChild(header);
   card.appendChild(badges);
@@ -1010,9 +1078,9 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   metaTable.className = "unison-detail-table";
 
   appendMetaRow(metaTable, t("unison_format"), t(`unison_format_${entry.format}`));
-  appendMetaRow(metaTable, t("unison_sync"), entry.syncType);
+  appendMetaRow(metaTable, t("unison_sync"), createSyncTag(syncTypeForLyric(entry.syncType, entry.format)));
   if (entry.album) appendMetaRow(metaTable, t("unison_album"), entry.album);
-  if (entry.language) appendMetaRow(metaTable, t("unison_language"), entry.language);
+  if (entry.language) appendMetaRow(metaTable, t("unison_language"), getLanguageDisplayName(entry.language));
   if (entry.isrc) appendMetaRow(metaTable, "ISRC", entry.isrc);
   if (entry.submitter) appendMetaRow(metaTable, t("unison_uploadedBy"), createUploaderCell(entry.submitter));
 
@@ -1041,13 +1109,7 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   ytLink.appendChild(svgIcon("externalLink"));
   ytLink.append(t("unison_openInYTMusic"));
 
-  const backBtn = document.createElement("button");
-  backBtn.className = "unison-back-btn";
-  backBtn.appendChild(svgIcon("back"));
-  backBtn.append(t("unison_back"));
-  backBtn.addEventListener("click", () => {
-    window.history.back();
-  });
+  const backBtn = createBackButton(t("unison_back"), () => window.history.back());
 
   detailMeta.appendChild(backBtn);
   detailMeta.appendChild(title);
@@ -1068,10 +1130,15 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   renderPreviewInto(detailPreview, entry.lyrics, false, detailPreviewHead);
 
   // -- Raw lyrics column
+  const frame = document.createElement("div");
+  frame.className = "ui-frame";
   const pre = document.createElement("pre");
   pre.className = "unison-detail-pre";
-  pre.textContent = entry.lyrics;
-  detailLyrics.appendChild(pre);
+  highlightInto(pre, readableTtml(entry.lyrics).text);
+  frame.appendChild(pre);
+  detailLyrics.appendChild(frame);
+  const fade = attachScrollFade(pre, pre, { pane: true });
+  view.addEventListener("abort", fade.destroy, { once: true });
   fitToViewport(detailFrame, view);
 }
 
@@ -1140,15 +1207,8 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   const row = document.createElement("div");
   row.className = "unison-detail-voting";
 
-  const upBtn = document.createElement("button");
-  upBtn.className = "unison-vote-btn";
-  upBtn.appendChild(svgIcon("upvote"));
-  upBtn.append(t("unison_upvote"));
-
-  const downBtn = document.createElement("button");
-  downBtn.className = "unison-vote-btn";
-  downBtn.appendChild(svgIcon("downvote"));
-  downBtn.append(t("unison_downvote"));
+  const upBtn = createButton({ label: t("unison_upvote"), icon: "upvote" });
+  const downBtn = createButton({ label: t("unison_downvote"), icon: "downvote" });
 
   let currentVote: "up" | "down" | null = userVote === 1 ? "up" : userVote === -1 ? "down" : null;
   upBtn.classList.toggle("unison-vote-btn--active", currentVote === "up");
@@ -1181,10 +1241,8 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   row.appendChild(downBtn);
 
   if (!isOwn) {
-    const reportBtn = document.createElement("button");
-    reportBtn.className = "unison-vote-btn unison-vote-btn--report";
-    reportBtn.appendChild(svgIcon("report"));
-    reportBtn.append(t("unison_report"));
+    const reportBtn = createButton({ label: t("unison_report"), icon: "report" });
+    reportBtn.classList.add("unison-vote-btn--report");
     reportBtn.addEventListener("click", () => showReportMenu(unisonId, reportBtn));
     row.appendChild(reportBtn);
   }
@@ -1193,9 +1251,8 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
 }
 
 function createDetailDeleteButton(unisonId: number): HTMLButtonElement {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "unison-vote-btn unison-vote-btn--delete";
+  const btn = createButton({ label: t("unison_delete"), icon: "trash" });
+  btn.classList.add("unison-vote-btn--delete");
 
   const setIdle = () => {
     btn.replaceChildren(svgIcon("trash"), document.createTextNode(t("unison_delete")));
@@ -1853,11 +1910,26 @@ function setupSubmitForm(): void {
     document.getElementById(id)?.addEventListener("change", () => void refreshSubmitSuggestions());
   }
 
-  const languageDefault = document.createElement("option");
-  languageDefault.value = "";
-  languageDefault.textContent = t("unison_languageUnspecified");
-  submitLanguageSelect.appendChild(languageDefault);
-  appendLanguageOptions(submitLanguageSelect);
+  submitLanguageDropdown = createLanguageDropdown({
+    label: t("unison_language"),
+    leading: { value: "", label: t("unison_languageUnspecified") },
+    value: "",
+    variant: "stretch",
+    onChange: ignoreChange,
+  });
+  document.getElementById("unison-field-language-mount")?.appendChild(submitLanguageDropdown.root);
+
+  submitFormatDropdown = createDropdown({ label: t("unison_format"), onChange: ignoreChange, variant: "stretch" });
+  submitFormatDropdown.setOptions(
+    [
+      { value: "auto", label: t("unison_autoDetect") },
+      { value: "lrc", label: t("unison_format_lrc") },
+      { value: "ttml", label: t("unison_format_ttml") },
+      { value: "plain", label: t("unison_format_plain") },
+    ],
+    "auto"
+  );
+  document.getElementById("unison-field-format-mount")?.appendChild(submitFormatDropdown.root);
 
   const durationField = document.getElementById("unison-field-duration") as HTMLInputElement | null;
   durationField?.addEventListener("blur", () => {
@@ -1889,24 +1961,53 @@ function setupSubmitForm(): void {
     isrcHint.append(`${t("unison_isrcHintPrefix")} `, finderLink);
   }
 
+  const lyricsFrame = document.createElement("div");
+  lyricsFrame.className = "ui-frame ui-frame--field unison-submit-lyrics-frame";
+  lyricsTextarea.before(lyricsFrame);
+  lyricsFrame.appendChild(lyricsTextarea);
+  const lyricsEditor = attachEditor(lyricsTextarea);
+  attachScrollFade(lyricsEditor.wrap, lyricsTextarea);
+  lyricsField = bindReadableLyricsField(lyricsTextarea, lyricsEditor);
+
   updatePreview();
 
-  lyricsTextarea.addEventListener("input", () => {
-    updatePreview();
-    autoDetectFormat();
-    autoDetectLanguage();
-    autoDetectIsrc();
-  });
+  lyricsTextarea.addEventListener("input", scheduleLyricsChecks);
 
   lyricsTextarea.addEventListener(LYRICS_FILE_READING_EVENT, syncSubmitButton);
   bindLyricsFileDrop(lyricsTextarea, text => {
-    lyricsTextarea.value = text;
-    updatePreview();
-    autoDetectFormat();
-    autoDetectLanguage();
-    autoDetectIsrc();
+    lyricsField.replace(text);
+    runLyricsChecks();
   });
 }
+
+let lyricsChecksTimer: ReturnType<typeof setTimeout> | undefined;
+let lastCheckedLyrics = "";
+
+function runLyricsChecks(): void {
+  cancelLyricsChecks();
+  lastCheckedLyrics = lyricsTextarea.value;
+  updatePreview();
+  autoDetectFormat();
+  autoDetectLanguage();
+  autoDetectIsrc();
+}
+
+function cancelLyricsChecks(): void {
+  clearTimeout(lyricsChecksTimer);
+  lyricsChecksTimer = undefined;
+}
+
+function flushLyricsChecks(): void {
+  if (lyricsTextarea.value !== lastCheckedLyrics) runLyricsChecks();
+  else cancelLyricsChecks();
+}
+
+function scheduleLyricsChecks(): void {
+  clearTimeout(lyricsChecksTimer);
+  lyricsChecksTimer = setTimeout(runLyricsChecks, UNISON_LYRICS_PREVIEW_DEBOUNCE_MS);
+}
+
+function ignoreChange(): void {}
 
 function setupNavButtons(): void {
   const navBtn = document.getElementById("unison-submit-nav-btn");
@@ -2068,12 +2169,10 @@ function parseDurationInput(value: string): number {
 }
 
 function autoDetectFormat(): void {
-  if (formatSelect.value !== "auto") return;
+  if (submitFormatDropdown.getValue() !== "auto") return;
   const text = lyricsTextarea.value;
   if (!text.trim()) return;
-
-  const detected = detectFormat(text);
-  formatSelect.value = detected;
+  submitFormatDropdown.setValue(detectFormat(text));
 }
 
 function updatePreview(): void {
@@ -2253,15 +2352,16 @@ function syncSubmitButton(): void {
 }
 
 async function handleSubmit(): Promise<void> {
+  flushLyricsChecks();
   const song = (document.getElementById("unison-field-song") as HTMLInputElement).value.trim();
   const artist = (document.getElementById("unison-field-artist") as HTMLInputElement).value.trim();
   const album = (document.getElementById("unison-field-album") as HTMLInputElement).value.trim();
   const duration = parseDurationInput((document.getElementById("unison-field-duration") as HTMLInputElement).value);
   const videoId = (document.getElementById("unison-field-videoId") as HTMLInputElement).value.trim();
   const isrc = (document.getElementById("unison-field-isrc") as HTMLInputElement).value.trim();
-  const language = submitLanguageSelect.value;
-  const lyrics = lyricsTextarea.value.trim();
-  let format = formatSelect.value as UnisonFormat | "auto";
+  const language = submitLanguageDropdown.getValue();
+  const lyrics = lyricsField.text();
+  const chosenFormat = submitFormatDropdown.getValue();
 
   if (!song || !artist || !videoId || !lyrics) {
     showFeedback(submitFeedback, { title: t("unison_validationRequired"), isError: true });
@@ -2274,9 +2374,7 @@ async function handleSubmit(): Promise<void> {
     return;
   }
 
-  if (format === "auto") {
-    format = detectFormat(lyrics);
-  }
+  const format = isUnisonFormat(chosenFormat) ? chosenFormat : detectFormat(lyrics);
 
   submitting = true;
   syncSubmitButton();
@@ -2287,7 +2385,7 @@ async function handleSubmit(): Promise<void> {
     artist,
     duration,
     lyrics,
-    format: format as UnisonFormat,
+    format,
     album: album || undefined,
     isrc: isrc || undefined,
     language: language || undefined,
@@ -2325,6 +2423,10 @@ async function handleSubmit(): Promise<void> {
   if (newId != null) {
     setTimeout(() => navigateTo({ id: String(newId) }), 1500);
   }
+}
+
+function isUnisonFormat(value: string): value is UnisonFormat {
+  return value === "lrc" || value === "ttml" || value === "plain";
 }
 
 interface FeedbackOptions {

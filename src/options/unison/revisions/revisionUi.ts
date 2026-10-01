@@ -52,9 +52,18 @@ interface ButtonOptions {
 export function createButton({ label, icon, primary = false, active = false }: ButtonOptions): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
-  button.className = primary ? "unison-submit-btn" : "unison-vote-btn";
+  button.className = primary ? "unison-submit-btn" : "ui-button ui-button--header unison-vote-btn";
   button.classList.toggle("unison-vote-btn--active", active);
   setButtonContent(button, label, icon);
+  return button;
+}
+
+export function createBackButton(label: string, onClick: () => void): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "unison-back-btn";
+  button.append(svgIcon("back"), label);
+  button.addEventListener("click", onClick);
   return button;
 }
 
