@@ -1,4 +1,11 @@
-import { ABOUT_MAKERS, DISCORD_INVITE_URL, GITHUB_REPO_URL, SHADERS_SITE_URL } from "@constants";
+import {
+  ABOUT_MAKERS,
+  BUY_ME_A_COFFEE_URL,
+  DISCORD_INVITE_URL,
+  GITHUB_REPO_URL,
+  GITHUB_SPONSORS_URL,
+  SHADERS_SITE_URL,
+} from "@constants";
 import { t } from "@core/i18n";
 
 const LINK_MARKER = "\u2063";
@@ -55,6 +62,13 @@ export function renderAboutLinks(root: ParentNode): void {
     const el = root.querySelector<HTMLElement>(`[data-linked="${name}"]`);
     if (el) fillLinked(el, key, links);
   }
-  const shaders = root.querySelector<HTMLElement>('[data-linked="shaders"]');
-  if (shaders) fillExternalLink(shaders, { href: SHADERS_SITE_URL, text: t("lyrics_getShaders") });
+  const externalLinks: Record<string, Link> = {
+    shaders: { href: SHADERS_SITE_URL, text: t("lyrics_getShaders") },
+    coffee: { href: BUY_ME_A_COFFEE_URL, text: t("options_about_supportCoffee") },
+    sponsors: { href: GITHUB_SPONSORS_URL, text: t("options_about_supportSponsors") },
+  };
+  for (const [name, link] of Object.entries(externalLinks)) {
+    const el = root.querySelector<HTMLElement>(`[data-linked="${name}"]`);
+    if (el) fillExternalLink(el, link);
+  }
 }
