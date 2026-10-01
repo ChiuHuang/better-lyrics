@@ -138,6 +138,12 @@ const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countRawWhit
     "#FFF",
     "#ffffff",
     "#ffffff13",
+    "#ffff",
+    "#fffe",
+    "white",
+    "WHITE",
+    "hsl(0 0% 100%)",
+    "hsla(0, 0%, 100%, 0.4)",
   ];
   for (const colour of spellings) {
     assert.equal(countRawWhiteAlphas(`.a { color: ${colour}; }`), 1, `color: ${colour} counts`);
@@ -164,6 +170,20 @@ const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countRawWhit
   assert.equal(countRawWhiteAlphas(`.a { color: #ffff00; }`), 0, "six-digit lookalikes are fine");
   assert.equal(countRawWhiteAlphas(`.a { color: rgba(255, 255, 0, 0.5); }`), 0, "other rgb colours are fine");
   assert.equal(countRawWhiteAlphas(`#fff-panel { color: var(--text); }`), 0, "selectors are not declarations");
+  assert.equal(countRawWhiteAlphas(`.a { white-space: nowrap; }`), 0, "white-space is not a colour");
+  assert.equal(
+    countRawWhiteAlphas(`.a { background-image: url("data:image/svg+xml,%3Cpath fill='white'/%3E"); }`),
+    0,
+    "colours inside a url cannot use a token"
+  );
+  assert.equal(
+    countRawWhiteAlphas(`.a { background: url(a.svg), #fff; }`),
+    1,
+    "a literal next to a url still counts"
+  );
+  assert.equal(countRawWhiteAlphas(`.a { color: var(--white-ish); }`), 0, "a token named white is fine");
+  assert.equal(countRawWhiteAlphas(`.a { font-family: "Whitney"; }`), 0, "words containing white are fine");
+  assert.equal(countRawWhiteAlphas(`.a { color: hsl(0, 100%, 50%); }`), 0, "full saturation is not white");
   assert.equal(countRawWhiteAlphas(""), 0, "empty source has none");
 }
 

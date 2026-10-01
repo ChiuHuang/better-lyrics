@@ -39,12 +39,23 @@ export function countRawFontSizes(source: string): number {
   return countMatches(stripCssComments(source), RAW_FONT_SIZE);
 }
 
-const WHITE_LITERAL = /rgba?\(\s*255[\s,]+255[\s,]+255\b|#fff(?:fff(?:[\da-f]{2})?)?(?![\da-f])/i;
+const WHITE_LITERAL = new RegExp(
+  [
+    String.raw`rgba?\(\s*255[\s,]+255[\s,]+255\b`,
+    String.raw`hsla?\(\s*[\d.]+(?:deg)?[\s,]+[\d.]+%[\s,]+100%`,
+    String.raw`#ffffff(?:[\da-f]{2})?(?![\da-f])`,
+    String.raw`#fff[\da-f]?(?![\da-f])`,
+    String.raw`(?<![\w-])white(?![\w-])`,
+  ].join("|"),
+  "i"
+);
+const CSS_URL = /url\(\s*(?:"[^"]*"|'[^']*'|[^)]*)\s*\)/gi;
 const DECLARATION = /(?<![\w-])(-{0,2}[a-z][\w-]*)\s*:\s*([^;{}]+)(?=[;}])/gi;
 
 export function countRawWhiteAlphas(css: string): number {
   let count = 0;
-  for (const [, property, value] of stripCssComments(css).matchAll(DECLARATION)) {
+  const withoutUrls = stripCssComments(css).replace(CSS_URL, "url()");
+  for (const [, property, value] of withoutUrls.matchAll(DECLARATION)) {
     if (!property.startsWith("--") && WHITE_LITERAL.test(value)) count++;
   }
   return count;

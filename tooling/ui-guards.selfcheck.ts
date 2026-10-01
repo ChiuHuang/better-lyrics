@@ -51,7 +51,7 @@ const KNOWN: Record<string, Record<string, number>> = {
     "src/options/auth/auth.css": 1,
     "src/options/editor/editor.css": 10,
     "src/options/popup.css": 36,
-    "src/options/store/marketplace.css": 22,
+    "src/options/store/marketplace.css": 21,
     "src/options/unison/unison.css": 32,
   },
 };
