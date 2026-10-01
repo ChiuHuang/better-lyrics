@@ -56,15 +56,8 @@
 		<main id="options" class="pop__body">
 			<section class="page tab-content active" id="general-content">
 				<div class="ui-card">
-					<div class="ui-card__head">
-						<div class="ui-card__tabs">
-							<button class="ui-card__tab" data-tab="behavior" type="button" aria-selected="true">__MSG_options_general_behavior__</button>
-							<button class="ui-card__tab" data-tab="cache" type="button" aria-selected="false">__MSG_options_general_cache__</button>
-							<span class="ui-card__bar"></span>
-						</div>
-					</div>
 					<div class="ui-card__body">
-						<div class="ui-panel" data-panel="behavior">
+						<div class="ui-panel is-active">
 							<div class="ui-row">
 								<span class="ui-row__label">__MSG_options_general_showLogs__</span>
 								<label><input type="checkbox" id="logs"><span class="checkmark"></span></label>
@@ -73,8 +66,6 @@
 								<span class="ui-row__label">__MSG_options_general_autoSwitch__</span>
 								<label><input type="checkbox" id="autoSwitch"><span class="checkmark"></span></label>
 							</div>
-						</div>
-						<div class="ui-panel" data-panel="cache">
 							<div class="ui-row">
 								<span class="ui-row__label">__MSG_options_general_totalLyrics__</span>
 								<span class="ui-row__value" id="lyrics-count">0</span>

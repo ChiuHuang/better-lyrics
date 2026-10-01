@@ -41,14 +41,6 @@
     "message": "Auto switch to lyrics tab",
     "description": "Auto switch to lyrics tab setting label"
   },
-  "options_general_cache": {
-    "message": "Cache",
-    "description": "Cache section label"
-  },
-  "options_general_behavior": {
-    "message": "Behavior",
-    "description": "Header tab in General for behaviour toggles"
-  },
   "options_general_clearCachedLyrics": {
     "message": "Clear cached lyrics",
     "description": "Label for the clear cache action row"
