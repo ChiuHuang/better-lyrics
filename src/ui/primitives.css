@@ -137,6 +137,54 @@
 .ui-switch--tri[data-state="on"] { background: var(--switch-on); }
 .ui-switch--tri[data-state="on"]::before { transform: translateX(var(--switch-travel)); }
 
+/* -- Keyboard key -- */
+.ui-kbd {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.25rem;
+  padding: 0 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 2px 0 1px rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: inherit;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  user-select: none;
+}
+.ui-kbd--icon { padding: 0 0.25rem; }
+.ui-kbd--icon svg { width: 0.75rem; height: 0.75rem; }
+
+/* -- Search field (a ui-field with a leading icon and an optional key hint) -- */
+.ui-search { position: relative; display: inline-flex; align-items: center; }
+.ui-search--block { display: flex; width: 100%; }
+.ui-search__icon {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+.ui-search__input { flex: 1 1 auto; min-width: 0; padding-left: 32px; }
+.ui-search__input:has(~ .ui-search__hint) { padding-right: 36px; }
+.ui-search--header .ui-search__input { height: 34px; font-size: 0.8125rem; }
+.ui-search__hint {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  pointer-events: none;
+  opacity: 0.6;
+  transition: opacity var(--duration-quick) ease-out;
+}
+.ui-search__input:focus ~ .ui-search__hint,
+.ui-search__input:not(:placeholder-shown) ~ .ui-search__hint { opacity: 0; }
+
 /* -- Card with header tabs -- */
 .ui-card {
   display: flex;
@@ -623,5 +671,5 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   .ui-spinner { animation-duration: 2s; }
   .ui-toast.is-entering, .ui-toast.is-leaving { animation-duration: 1ms; }
   .ui-modal__backdrop, .ui-modal__surface { transition: none; }
-  .ui-switch__track, .ui-switch__track::before, .ui-switch--tri, .ui-switch--tri::before { transition: none; }
+  .ui-switch__track, .ui-switch__track::before, .ui-switch--tri, .ui-switch--tri::before, .ui-search__hint { transition: none; }
 }
