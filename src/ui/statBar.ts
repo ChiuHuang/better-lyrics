@@ -1,4 +1,4 @@
-export interface StatSegment {
+interface StatSegment {
   value: number;
   color: string;
   label: string;
