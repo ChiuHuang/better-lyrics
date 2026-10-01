@@ -193,6 +193,8 @@ kbd {
 #unison-submit-nav-btn[aria-current="page"] {
   background: var(--raised-bg-hover);
   color: #fff;
+  --button-icon: currentColor;
+  --button-icon-hover: currentColor;
 }
 
 /* -- Identity Badge --------------------------  */
@@ -791,6 +793,8 @@ kbd {
   background: rgba(129, 140, 248, 0.15);
   box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.4);
   color: rgb(165, 180, 252);
+  --button-icon: currentColor;
+  --button-icon-hover: currentColor;
 }
 
 .unison-vote-btn--report {
@@ -800,11 +804,14 @@ kbd {
 .unison-vote-btn--report:hover {
   color: rgb(239, 68, 68);
   box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.3);
+  --button-icon-hover: currentColor;
 }
 
 .unison-vote-btn--delete {
   align-self: flex-start;
   color: rgba(239, 68, 68, 0.85);
+  --button-icon: currentColor;
+  --button-icon-hover: currentColor;
 }
 
 .unison-vote-btn--delete:hover {
