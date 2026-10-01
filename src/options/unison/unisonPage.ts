@@ -1,5 +1,4 @@
 import { UNISON_API_BASE_URL, UNISON_LYRICS_PREVIEW_DEBOUNCE_MS, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
-import { createModal } from "@/ui/modal";
 import { getLanguageDisplayName, t } from "@core/i18n";
 import { formatTimeAgo } from "@core/relativeTime";
 import {
@@ -58,6 +57,7 @@ import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revis
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createBackButton, createButton } from "@/options/unison/revisions/revisionUi";
 import { createDropdown, type Dropdown } from "@/ui/dropdown";
+import { createModal, isAnyModalOpen } from "@/ui/modal";
 import { attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
 import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
@@ -856,7 +856,7 @@ function setupSearch(): void {
   });
 
   document.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.key === "/" && !isInputFocused()) {
+    if (e.key === "/" && !isInputFocused() && !isAnyModalOpen()) {
       e.preventDefault();
       searchInput.focus();
       searchInput.select();

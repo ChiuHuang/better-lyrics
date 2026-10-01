@@ -45,18 +45,13 @@ import { errorStore, warnStore } from "@core/logger";
 import { menuPlacement } from "@/ui/menuPlacement";
 import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
-import { createModal, isAnyModalOpen, type Modal } from "@/ui/modal";
+import { type CreateModalOptions, createModal, isAnyModalOpen, type Modal } from "@/ui/modal";
 import { toast } from "@/ui/toast";
 
 let detailModal: Modal | null = null;
 let urlModal: Modal | null = null;
 let urlPermissionModal: Modal | null = null;
 let shortcutsModal: Modal | null = null;
-
-function bindModal(id: string, options?: Parameters<typeof createModal>[1]): Modal | null {
-  const overlay = document.getElementById(id);
-  return overlay ? createModal(overlay, options) : null;
-}
 let currentDetailTheme: StoreTheme | null = null;
 let currentSlideIndex = 0;
 let storeThemesCache: StoreTheme[] = [];
@@ -65,6 +60,11 @@ let userRatingsCache: Record<string, number> = {};
 let userInstallsCache: Record<string, boolean> = {};
 let urlOnlyThemeCards: Map<string, HTMLElement> = new Map();
 let installOperationInProgress = false;
+
+function bindModal(id: string, options?: CreateModalOptions): Modal | null {
+  const overlay = document.getElementById(id);
+  return overlay ? createModal(overlay, options) : null;
+}
 
 function getUrlOnlyThemes(installedThemes: InstalledStoreTheme[], marketplaceIds: Set<string>): InstalledStoreTheme[] {
   return installedThemes.filter(t => t.source === "url" && !marketplaceIds.has(t.id));
@@ -841,7 +841,7 @@ function toggleCheckboxFilter(id: string, filterKey: "hasShaders" | "versionComp
 function setupMarketplaceKeyboardListeners(): void {
   document.addEventListener("keydown", e => {
     if (e.key === "/") {
-      if (isInputFocused()) return;
+      if (isInputFocused() || isAnyModalOpen()) return;
       e.preventDefault();
       const searchInput = document.getElementById("store-search-input") as HTMLInputElement;
       searchInput?.focus();
@@ -855,7 +855,7 @@ function setupMarketplaceKeyboardListeners(): void {
       return;
     }
 
-    if (detailModal?.isOpen()) {
+    if (detailModal?.isTopmost()) {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         navigateSlide(-1);
@@ -1074,7 +1074,7 @@ function setupKeyboardListeners(): void {
       return;
     }
 
-    if (detailModal?.isOpen()) {
+    if (detailModal?.isTopmost()) {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         navigateSlide(-1);
