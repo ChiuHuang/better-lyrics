@@ -177,11 +177,6 @@ h1 img {
     cursor: pointer;
 }
 
-.options-page :where(label input) {
-    position: absolute;
-    opacity: 0;
-}
-
 .options-page :where(button) {
     font-size: 1.125rem;
 }
@@ -750,68 +745,6 @@ body {
 
 .tab-content.active {
     display: block;
-}
-
-.options-page :where(label) {
-    position: relative;
-    display: inline-block;
-    width: 36px;
-    height: 20px;
-}
-
-.options-page :where(label input) {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.checkmark {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: hsla(0, 0%, 100%, 0.1);
-    transition: 0.15s;
-    border-radius: 0.375rem;
-}
-
-.checkmark:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 0px;
-    bottom: 0px;
-    background-color: white;
-    transition:
-        transform var(--duration-fast) var(--ease-smooth-out),
-        width var(--duration-fast) var(--ease-smooth-out);
-    border-radius: 0.375rem;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
-}
-
-input:checked + .checkmark {
-    background-color: hsla(128, 0%, 100%, 0.5);
-}
-
-input:checked + .checkmark:before {
-    transform: translateX(16px);
-}
-
-label:not(.checkbox-container):active > .checkmark:before {
-    width: 24px;
-}
-
-label:not(.checkbox-container):active > input:checked + .checkmark:before {
-    transform: translateX(12px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .checkmark, .checkmark:before {
-        transition: none;
-    }
 }
 
 /* -- Letter wave tri-state switch -------------------------- */
