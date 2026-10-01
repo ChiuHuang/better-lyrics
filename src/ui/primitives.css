@@ -886,7 +886,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 }
 
 /* -- Stat tile (value, label, corner icon, optional breakdown bar) -- */
-.ui-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--card-pad); padding: var(--card-pad) 0 var(--row-pad); }
+.ui-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--card-pad); padding: var(--row-pad) 0; }
 .ui-stat {
   position: relative;
   display: flex;
@@ -901,12 +901,12 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-stat__label { font-size: var(--font-size-sm); color: var(--text-label); }
 .ui-stat__icon { position: absolute; top: 12px; right: var(--row-pad); width: 18px; height: 18px; color: var(--text-muted); }
 /* Segments are 22px-tall hit targets, min 10px wide; only the 6px stripe in their middle is painted */
-.ui-stat__bar { display: flex; gap: 2px; height: 22px; margin-block: -2px -8px; }
-.ui-stat__bar > span { position: relative; min-width: 10px; cursor: default; }
+.ui-stat__bar { display: flex; gap: 2px; height: 22px; margin-block: 2px -8px; }
+.ui-stat__bar > span { --tooltip-inset-block: 8px; position: relative; min-width: 10px; cursor: default; }
 .ui-stat__bar > span::after {
   content: "";
   position: absolute;
-  inset: 8px 0;
+  inset: var(--tooltip-inset-block) 0;
   border-radius: 2px;
   background: var(--segment-color);
   transition: opacity var(--duration-quick) ease-out;
