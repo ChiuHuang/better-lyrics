@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 
 (globalThis as { chrome?: unknown }).chrome = { storage: { sync: { remove: async () => {} } } };
 
-const { editorStateManager } = await import("./state");
+const { editorStateManager } = await import("@/options/editor/core/state");
 
 function fakeView(initial: string) {
   let doc = initial;
