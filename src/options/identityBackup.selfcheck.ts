@@ -29,9 +29,17 @@ const {
   readBackedUpKeyId,
   rememberPendingBackup,
   settlePendingBackup,
-} = await import("./identityBackup");
+} = await import("@/options/identityBackup");
 
 const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0));
+
+const FRESH_KEY = "f".repeat(64);
+const OTHER_KEY = "0".repeat(64);
+const TWIN_KEY = "7".repeat(64);
+const point = { kty: "EC", crv: "P-256", x: "x", y: "y" };
+const useIdentity = (keyId: string): void => {
+  local.data.userIdentity = { keyId, createdAt: 1, publicKey: point, privateKey: { ...point, d: "d" } };
+};
 
 {
   assert.equal(isIdentityBackedUp("abc", "abc"), true, "matching key id counts as backed up");
@@ -44,7 +52,7 @@ const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0)
 
 {
   const pending = { downloadId: 7, keyId: "abc" };
-  const settle = (delta: Delta) => settlePendingBackup(pending, delta);
+  const settle = (delta: Delta) => settlePendingBackup(pending, delta, "abc");
   assert.deepEqual(
     settle({ id: 7, state: { current: "complete" } }),
     { backedUpKeyId: "abc", clearPending: true },
@@ -67,17 +75,27 @@ const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0)
   );
   assert.deepEqual(settle({ id: 7 }), { backedUpKeyId: null, clearPending: false }, "a delta without state waits");
   assert.deepEqual(
-    settlePendingBackup(undefined, { id: 7, state: { current: "complete" } }),
+    settlePendingBackup(pending, { id: 7, state: { current: "complete" } }, "def"),
+    { backedUpKeyId: null, clearPending: true },
+    "regression: an export of a replaced identity settles without marking the current one"
+  );
+  assert.deepEqual(
+    settlePendingBackup(pending, { id: 7, state: { current: "complete" } }, null),
+    { backedUpKeyId: null, clearPending: true },
+    "no stored identity marks nothing"
+  );
+  assert.deepEqual(
+    settlePendingBackup(undefined, { id: 7, state: { current: "complete" } }, "abc"),
     { backedUpKeyId: null, clearPending: false },
     "no pending backup: nothing to settle"
   );
   assert.deepEqual(
-    settlePendingBackup({ downloadId: "7", keyId: "abc" }, { id: 7, state: { current: "complete" } }),
+    settlePendingBackup({ downloadId: "7", keyId: "abc" }, { id: 7, state: { current: "complete" } }, "abc"),
     { backedUpKeyId: null, clearPending: false },
     "malformed pending value is ignored"
   );
   assert.deepEqual(
-    settlePendingBackup({ downloadId: 7, keyId: "" }, { id: 7, state: { current: "complete" } }),
+    settlePendingBackup({ downloadId: 7, keyId: "" }, { id: 7, state: { current: "complete" } }, ""),
     { backedUpKeyId: null, clearPending: false },
     "a pending value without a key id is ignored"
   );
@@ -106,10 +124,11 @@ const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0)
   permissionListeners[0]();
   assert.equal(downloadListeners.length, 1, "granting the permission starts one download listener, never two");
 
-  await rememberPendingBackup(42, "fresh-key");
+  useIdentity(FRESH_KEY);
+  await rememberPendingBackup(42, FRESH_KEY);
   assert.deepEqual(
     session.data["identityBackupPending:42"],
-    { downloadId: 42, keyId: "fresh-key" },
+    { downloadId: 42, keyId: FRESH_KEY },
     "the pending backup lives in session storage"
   );
   downloadListeners[0]({ id: 41, state: { current: "complete" } });
@@ -117,26 +136,38 @@ const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0)
   assert.equal(await readBackedUpKeyId(), "abc", "an unrelated download leaves the flag alone");
   downloadListeners[0]({ id: 42, state: { current: "complete" } });
   await flush();
-  assert.equal(await readBackedUpKeyId(), "fresh-key", "the background marks the key once its file lands");
+  assert.equal(await readBackedUpKeyId(), FRESH_KEY, "the background marks the key once its file lands");
   assert.equal(session.data["identityBackupPending:42"], undefined, "the pending backup is cleared after it settles");
 
-  await rememberPendingBackup(43, "other-key");
+  await rememberPendingBackup(43, OTHER_KEY);
   downloadListeners[0]({ id: 43, state: { current: "interrupted" } });
   await flush();
-  assert.equal(await readBackedUpKeyId(), "fresh-key", "a cancelled save does not mark the new key");
+  assert.equal(await readBackedUpKeyId(), FRESH_KEY, "a cancelled save does not mark the new key");
   assert.equal(session.data["identityBackupPending:43"], undefined, "a cancelled save clears the pending backup");
 
-  await rememberPendingBackup(44, "twin-key");
-  await rememberPendingBackup(45, "twin-key");
+  useIdentity(TWIN_KEY);
+  await rememberPendingBackup(44, TWIN_KEY);
+  await rememberPendingBackup(45, TWIN_KEY);
   downloadListeners[0]({ id: 45, state: { current: "interrupted" } });
   await flush();
-  assert.equal(await readBackedUpKeyId(), "fresh-key", "cancelling the second of two exports marks nothing");
+  assert.equal(await readBackedUpKeyId(), FRESH_KEY, "cancelling the second of two exports marks nothing");
   downloadListeners[0]({ id: 44, state: { current: "complete" } });
   await flush();
   assert.equal(
     await readBackedUpKeyId(),
-    "twin-key",
+    TWIN_KEY,
     "regression: the first export still counts after a second export was started and cancelled"
+  );
+
+  await rememberPendingBackup(46, TWIN_KEY);
+  useIdentity(OTHER_KEY);
+  await markIdentityBackedUp(OTHER_KEY);
+  downloadListeners[0]({ id: 46, state: { current: "complete" } });
+  await flush();
+  assert.equal(
+    await readBackedUpKeyId(),
+    OTHER_KEY,
+    "regression: an export finishing after another identity was imported keeps the imported flag"
   );
   assert.deepEqual(
     Object.keys(session.data).filter(key => key.startsWith("identityBackupPending")),

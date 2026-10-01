@@ -1,3 +1,5 @@
+import { getStoredKeyId } from "@core/keyIdentity";
+
 // -- Rules --------------------------
 
 const IDENTITY_BACKUP_KEY = "identityBackedUpKeyId";
@@ -23,10 +25,16 @@ function isPendingBackup(value: unknown): value is { downloadId: number; keyId: 
   return typeof downloadId === "number" && typeof keyId === "string" && keyId.length > 0;
 }
 
-export function settlePendingBackup(pending: unknown, delta: DownloadDelta): PendingBackupSettlement {
+export function settlePendingBackup(
+  pending: unknown,
+  delta: DownloadDelta,
+  currentKeyId: string | null
+): PendingBackupSettlement {
   const untouched = { backedUpKeyId: null, clearPending: false };
   if (!isPendingBackup(pending) || pending.downloadId !== delta.id) return untouched;
-  if (delta.state?.current === "complete") return { backedUpKeyId: pending.keyId, clearPending: true };
+  if (delta.state?.current === "complete") {
+    return { backedUpKeyId: pending.keyId === currentKeyId ? pending.keyId : null, clearPending: true };
+  }
   if (delta.state?.current === "interrupted") return { backedUpKeyId: null, clearPending: true };
   return untouched;
 }
@@ -65,8 +73,8 @@ export function onBackupFlagChanged(callback: () => void): void {
 async function settleDownload(delta: DownloadDelta): Promise<void> {
   const area = pendingArea();
   const key = pendingBackupKey(delta.id);
-  const items = await area.get(key);
-  const { backedUpKeyId, clearPending } = settlePendingBackup(items[key], delta);
+  const [items, currentKeyId] = await Promise.all([area.get(key), getStoredKeyId()]);
+  const { backedUpKeyId, clearPending } = settlePendingBackup(items[key], delta, currentKeyId);
   if (backedUpKeyId) await markIdentityBackedUp(backedUpKeyId);
   if (clearPending) await area.remove(key);
 }
