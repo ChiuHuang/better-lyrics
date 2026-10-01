@@ -477,7 +477,7 @@
   },
   "options_nickname_status_checking": {
     "message": "Checking...",
-    "description": "Status while checking nickname availability"
+    "description": "Status while checking nickname availability; shared with the install from URL button while it checks the repository"
   },
   "options_nickname_status_available": {
     "message": "Available",
@@ -501,7 +501,7 @@
   },
   "options_nickname_status_saved": {
     "message": "Saved",
-    "description": "Status when nickname is saved"
+    "description": "Status when a setting or nickname is saved; shared by the popup save status and the editor save toast"
   },
   "options_nickname_status_submitting": {
     "message": "Saving...",
