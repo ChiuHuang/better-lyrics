@@ -1549,7 +1549,7 @@
     "description": "About page heading for the donation links"
   },
   "options_about_supportBody": {
-    "message": "Better Lyrics is a labor of love, and we fuss over it more than we'd like to admit! It's free, with no ads or tracking, and it always will be. If it's made your listening experience a little better, you can help keep it going.",
+    "message": "Better Lyrics is a labor of love, and we fuss over it more than we'd like to admit... It's free, with no ads or tracking, and it always will be. If it's made your listening experience a little better, you can help keep it going!",
     "description": "About page note above the donation links, written in the makers' own voice"
   },
   "options_about_supportCoffee": {
