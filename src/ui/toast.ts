@@ -130,7 +130,14 @@ function newestActionToast(): HTMLElement | undefined {
 document.addEventListener("keydown", event => {
   if (event.key !== "Enter" || event.defaultPrevented || event.isComposing) return;
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-  if (isTextEntry(document.activeElement)) return;
+  const active = document.activeElement;
+  if (isTextEntry(active)) return;
+  const keyboardOnOtherControl =
+    active instanceof HTMLElement &&
+    active !== document.body &&
+    !layer?.contains(active) &&
+    active.matches(":focus-visible");
+  if (keyboardOnOtherControl) return;
   const target = newestActionToast();
   if (!target) return;
   event.preventDefault();

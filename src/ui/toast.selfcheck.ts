@@ -385,9 +385,23 @@ const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector
   doc.body.appendChild(checkbox);
   checkbox.focus();
   pressEnter();
-  assert.equal(applied, 1, "Enter on a non-text control still runs the action");
+  assert.equal(applied, 0, "Enter on a keyboard-focused checkbox stays with the checkbox");
   input.remove();
   checkbox.remove();
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  const button = doc.createElement("button");
+  doc.body.appendChild(button);
+  button.focus();
+  const event = pressEnter();
+  assert.equal(applied, 0, "Enter on a keyboard-focused button stays with the button");
+  assert.equal(event.defaultPrevented, false, "the button keeps its own Enter activation");
+  button.remove();
+  pressEnter();
+  assert.equal(applied, 1, "once focus leaves the control, Enter runs the action");
   reset();
 }
 {
