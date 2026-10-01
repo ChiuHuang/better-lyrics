@@ -2,7 +2,7 @@ import { LYRIC_SOURCE_KEYS, OFFSET_STORAGE_PREFIX, STORAGE_TRANSIENT_SET_LOG } f
 import { truncateSource } from "@utils";
 import { compileWithDetails } from "rics";
 import { compressString, decompressString, isCompressed } from "./compression";
-import { logCore, logError } from "@core/logger";
+import { errorCore, logCore, logError } from "@core/logger";
 
 /**
  * Keys that should NEVER be deleted by clearCache or any bulk delete operation.
@@ -265,7 +265,7 @@ export async function clearCache(): Promise<void> {
       key.startsWith("blyrics_") && !PROTECTED_STORAGE_KEYS.includes(key as (typeof PROTECTED_STORAGE_KEYS)[number])
   );
   await chrome.storage.local.remove(lyricsKeys);
-  await saveCacheInfo();
+  await saveCacheInfo().catch(error => errorCore("Failed to refresh cache info after clearing:", error));
 }
 
 export async function clearSongCache(videoId: string): Promise<void> {
