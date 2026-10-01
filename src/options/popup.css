@@ -79,7 +79,35 @@ body.options-page {
 
 /* -- Tab strip ------------------------------------------------------------- */
 
-.tabs-wrap { margin-bottom: 16px; }
+.tabs-wrap, .bl-update-callout { margin-bottom: 16px; }
+
+/* -- Update notice --------------------------------------------------------- */
+#bl-update-notice {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-inline: var(--page-pad);
+  transition: grid-template-rows var(--duration-fast) var(--ease-smooth-out);
+}
+#bl-update-notice.bl-show { grid-template-rows: 1fr; }
+.bl-update-inner { min-height: 0; overflow: hidden; }
+.bl-update-callout.ui-callout { align-items: center; gap: 14px; padding: 10px 6px 10px 16px; }
+.bl-update-callout .ui-callout__title { font-size: var(--font-size-sm); font-weight: 400; color: var(--text-strong); }
+.bl-update-callout .ui-callout__title b { font-weight: 600; color: var(--callout-title); }
+.bl-update-callout .ui-callout__text { font-size: var(--font-size-xs); }
+.bl-update-notes {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: color-mix(in srgb, var(--callout-tone) 50%, rgba(255, 255, 255, 0.75));
+  font-weight: 500;
+  text-decoration: none;
+}
+.bl-update-notes svg { width: 12px; height: 12px; translate: 0 1px; transition: translate var(--duration-quick) ease-out; }
+.bl-update-notes:hover svg { translate: 1px 0; }
+.bl-update-notes:focus-visible { outline: var(--focus-ring); outline-offset: 2px; border-radius: 4px; }
+.bl-update-actions { display: flex; flex: none; align-items: center; gap: 4px; }
+.bl-update-actions .ui-button--icon { width: 30px; }
+.bl-update-actions .ui-button--icon svg { width: 14px; height: 14px; }
 .tabs[data-scrollable] { overflow-x: auto; scroll-padding-inline: var(--fade-inline-size); }
 
 .head-slot, .tabs-slot {
@@ -111,7 +139,7 @@ body.is-editing #editor { height: 100%; overflow: hidden; }
 body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
 
 @media (prefers-reduced-motion: reduce) {
-  .head-slot, .tabs-slot { transition: none; }
+  .head-slot, .tabs-slot, #bl-update-notice, .bl-update-notes svg { transition: none; }
 }
 
 /* -- Card in the popup ------------------------------------------------------ */
