@@ -1549,8 +1549,12 @@
     "description": "About page heading for the donation links"
   },
   "options_about_supportBody": {
-    "message": "Better Lyrics is a labor of love, and we fuss over it more than we'd like to admit... It's free, with no ads or tracking, and it always will be. If it's made your listening experience a little better, you can help keep it going!",
+    "message": "Better Lyrics is a labor of love, and we fuss over it more than we'd like to admit... It's free, with no ads or tracking, and it always will be. If it's made your listening experience a little better, you can help keep it going! A star on GitHub helps too, and it's free :)",
     "description": "About page note above the donation links, written in the makers' own voice"
+  },
+  "options_about_supportStar": {
+    "message": "Star us on GitHub",
+    "description": "About page link to star the Better Lyrics repository on GitHub"
   },
   "options_about_supportCoffee": {
     "message": "Buy us a coffee",
@@ -1565,7 +1569,7 @@
     "description": "About page section heading"
   },
   "options_about_madeByBody": {
-    "message": "$BOIDU$ and $ADALIE$, with thanks to everyone in the Better Lyrics community who has tested it and reported bugs.",
+    "message": "$BOIDU$ and $ADALIE$, with thanks to the translators and everyone in the Better Lyrics community who has tested it, reported bugs and submitted lyrics!",
     "description": "About page credits; the names become links",
     "placeholders": {
       "boidu": {
@@ -1575,6 +1579,16 @@
       "adalie": {
         "content": "$2",
         "example": "Adalie"
+      }
+    }
+  },
+  "options_about_badgesBody": {
+    "message": "Special thanks to $KIYOSHI$ for the time and care behind every badge across Better Lyrics and Unison <3",
+    "description": "About page credit for the Unison badge artist; the name becomes a link",
+    "placeholders": {
+      "kiyoshi": {
+        "content": "$1",
+        "example": "Kiyoshi"
       }
     }
   },

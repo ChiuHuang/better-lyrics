@@ -1,4 +1,5 @@
 import {
+  ABOUT_BADGE_ARTIST,
   ABOUT_MAKERS,
   BUY_ME_A_COFFEE_URL,
   DISCORD_INVITE_URL,
@@ -13,6 +14,8 @@ const LINK_MARKER = "\u2063";
 interface Link {
   href: string;
   text: string;
+  avatar?: string;
+  avatarRound?: boolean;
 }
 
 export function linkPlaceholders(count: number): string[] {
@@ -23,12 +26,19 @@ export function splitLinked(message: string): (string | number)[] {
   return message.split(LINK_MARKER).map((part, i) => (i % 2 === 0 ? part : Number(part)));
 }
 
-function createLink({ href, text }: Link): HTMLAnchorElement {
+function createLink({ href, text, avatar, avatarRound }: Link): HTMLAnchorElement {
   const anchor = document.createElement("a");
   anchor.href = href;
   anchor.target = "_blank";
   anchor.rel = "noopener noreferrer";
-  anchor.textContent = text;
+  if (avatar) {
+    const img = document.createElement("img");
+    img.className = avatarRound ? "about__avatar about__avatar--round" : "about__avatar";
+    img.src = avatar;
+    img.alt = "";
+    anchor.append(img);
+  }
+  anchor.append(text);
   return anchor;
 }
 
@@ -56,7 +66,8 @@ export function renderAboutLinks(root: ParentNode): void {
       "options_about_communityIssue",
       [{ href: `${GITHUB_REPO_URL}/issues/new/choose`, text: t("options_about_fileIssue") }],
     ],
-    madeBy: ["options_about_madeByBody", ABOUT_MAKERS.map(({ name, href }) => ({ href, text: name }))],
+    madeBy: ["options_about_madeByBody", ABOUT_MAKERS.map(({ name, ...credit }) => ({ ...credit, text: name }))],
+    badges: ["options_about_badgesBody", [{ ...ABOUT_BADGE_ARTIST, text: ABOUT_BADGE_ARTIST.name }]],
   };
   for (const [name, [key, links]] of Object.entries(slots)) {
     const el = root.querySelector<HTMLElement>(`[data-linked="${name}"]`);
@@ -64,6 +75,7 @@ export function renderAboutLinks(root: ParentNode): void {
   }
   const externalLinks: Record<string, Link> = {
     shaders: { href: SHADERS_SITE_URL, text: t("lyrics_getShaders") },
+    star: { href: GITHUB_REPO_URL, text: t("options_about_supportStar") },
     coffee: { href: BUY_ME_A_COFFEE_URL, text: t("options_about_supportCoffee") },
     sponsors: { href: GITHUB_SPONSORS_URL, text: t("options_about_supportSponsors") },
   };
