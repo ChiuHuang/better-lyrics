@@ -24,20 +24,44 @@ export function menuPlacement({ triggerTop, triggerBottom, menuHeight, viewportH
   return { placement, top: Math.max(VIEWPORT_MARGIN_PX, bottom - Math.min(menuHeight, maxHeight)), maxHeight };
 }
 
+interface MenuLeftInput {
+  triggerLeft: number;
+  triggerRight: number;
+  menuWidth: number;
+  viewportWidth: number;
+}
+
+export function menuSide({
+  triggerLeft,
+  triggerRight,
+  viewportWidth,
+}: Omit<MenuLeftInput, "menuWidth">): "start" | "end" {
+  return (triggerLeft + triggerRight) / 2 > viewportWidth / 2 ? "end" : "start";
+}
+
+export function menuLeft(input: MenuLeftInput): number {
+  const { triggerLeft, triggerRight, menuWidth, viewportWidth } = input;
+  const left = menuSide(input) === "end" ? triggerRight - menuWidth : triggerLeft;
+  const maxLeft = viewportWidth - VIEWPORT_MARGIN_PX - menuWidth;
+  return Math.max(VIEWPORT_MARGIN_PX, Math.min(left, maxLeft));
+}
+
 export function positionMenu(menu: HTMLElement, trigger: HTMLElement): void {
   const rect = trigger.getBoundingClientRect();
-  const side = rect.left + rect.width / 2 > window.innerWidth / 2 ? "end" : "start";
+  const horizontal = {
+    triggerLeft: rect.left,
+    triggerRight: rect.right,
+    menuWidth: menu.offsetWidth,
+    viewportWidth: window.innerWidth,
+  };
   const { placement, top } = menuPlacement({
     triggerTop: rect.top,
     triggerBottom: rect.bottom,
     menuHeight: menu.offsetHeight,
     viewportHeight: window.innerHeight,
   });
-  menu.dataset.side = side;
+  menu.dataset.side = menuSide(horizontal);
   menu.dataset.placement = placement;
-  const left = side === "end" ? rect.right - menu.offsetWidth : rect.left;
-  const maxLeft = window.innerWidth - VIEWPORT_MARGIN_PX - menu.offsetWidth;
-  // Anchor with left/top only: a right/bottom inset resolves against the fixed containing block, which excludes scrollbar gutters.
-  menu.style.left = `${Math.max(VIEWPORT_MARGIN_PX, Math.min(left, maxLeft))}px`;
+  menu.style.left = `${menuLeft(horizontal)}px`;
   menu.style.top = `${top}px`;
 }

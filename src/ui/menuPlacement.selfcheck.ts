@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { menuPlacement } = await import("@/ui/menuPlacement");
+const { menuLeft, menuPlacement, menuSide } = await import("./menuPlacement");
 
 const viewportHeight = 800;
 
@@ -71,6 +71,46 @@ const viewportHeight = 800;
   assert.deepEqual(below, { placement: "below", top: 76, maxHeight: 216 }, "regression: tall menu is capped below");
   const above = menuPlacement({ triggerTop: 240, triggerBottom: 272, menuHeight: 600, viewportHeight: shortWindow });
   assert.deepEqual(above, { placement: "above", top: 8, maxHeight: 228 }, "regression: tall menu is capped above");
+}
+
+// -- Horizontal placement --------------------------
+{
+  const viewportWidth = 1000;
+  assert.equal(
+    menuSide({ triggerLeft: 100, triggerRight: 200, viewportWidth }),
+    "start",
+    "a trigger on the left opens toward the right"
+  );
+  assert.equal(
+    menuSide({ triggerLeft: 800, triggerRight: 900, viewportWidth }),
+    "end",
+    "a trigger on the right opens toward the left"
+  );
+  assert.equal(
+    menuLeft({ triggerLeft: 100, triggerRight: 200, menuWidth: 240, viewportWidth }),
+    100,
+    "start side aligns to the trigger's left edge"
+  );
+  assert.equal(
+    menuLeft({ triggerLeft: 800, triggerRight: 900, menuWidth: 240, viewportWidth }),
+    660,
+    "end side aligns to the trigger's right edge"
+  );
+  assert.equal(
+    menuLeft({ triggerLeft: 480, triggerRight: 499, menuWidth: 600, viewportWidth }),
+    392,
+    "a start-side menu that would overflow the right edge clamps inside the viewport"
+  );
+  assert.equal(
+    menuLeft({ triggerLeft: 20, triggerRight: 60, menuWidth: 1200, viewportWidth }),
+    8,
+    "a menu wider than the viewport clamps to the margin"
+  );
+  assert.equal(
+    menuLeft({ triggerLeft: 940, triggerRight: 999, menuWidth: 995, viewportWidth }),
+    8,
+    "an end-side menu never goes past the left margin"
+  );
 }
 
 console.log("menuPlacement self-check passed");
