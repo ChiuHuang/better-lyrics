@@ -372,18 +372,15 @@ body {
             color-mix(in srgb, var(--card-surface) 75%, transparent),
             transparent
         ),
-        var(--theme-img-url),
+        var(--theme-img-url) right / cover no-repeat,
         var(--card-surface);
-    background-color: rgba(255, 255, 255, 0.05);
-    background-size: cover;
-    background-position: right;
     box-sizing: border-box;
     overflow: hidden;
     min-height: 3.5rem;
     outline: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.theme-preview-card::before {
+.theme-preview-card[data-image]::before {
     content: "";
     position: absolute;
     inset: 0;

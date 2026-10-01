@@ -595,8 +595,10 @@ export async function updateThemeSelectorButton(): Promise<void> {
   // -- Apply all at once (no async gap) --------------------------
   if (themePreviewName) themePreviewName.textContent = displayName;
   if (themePreviewAuthor) themePreviewAuthor.textContent = authorText;
-  if (themePreviewCard)
-    themePreviewCard.style.setProperty("--theme-img-url", bgUrl ? `url("${bgUrl}")` : "transparent");
+  if (themePreviewCard) {
+    themePreviewCard.style.setProperty("--theme-img-url", bgUrl ? `url("${bgUrl}")` : "none");
+    themePreviewCard.toggleAttribute("data-image", Boolean(bgUrl));
+  }
 
   if (themePreviewBadge) {
     themePreviewBadge.replaceChildren();
