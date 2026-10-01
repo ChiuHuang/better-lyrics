@@ -28,8 +28,9 @@ const QUOTE = String.raw`["'\`]`;
 const RAW_FONT_SIZE = new RegExp(
   [
     String.raw`(?<![-\w])font-size\s*:(?!${ALLOWED_FONT_SIZE})`,
-    String.raw`\bfontSize\s*[:=]\s*${QUOTE}(?!${ALLOWED_FONT_SIZE})`,
-    String.raw`setProperty\(\s*${QUOTE}font-size${QUOTE}\s*,\s*${QUOTE}(?!${ALLOWED_FONT_SIZE})`,
+    String.raw`\.fontSize\s*=(?!=)(?!\s*${QUOTE}${ALLOWED_FONT_SIZE}${QUOTE})`,
+    String.raw`\bfontSize\s*:\s*${QUOTE}(?!${ALLOWED_FONT_SIZE})`,
+    String.raw`setProperty\(\s*${QUOTE}font-size${QUOTE}\s*,(?!\s*${QUOTE}${ALLOWED_FONT_SIZE}${QUOTE})`,
   ].join("|"),
   "gi"
 );
