@@ -69,6 +69,8 @@ export const HOMEPAGE_ICON_URL = "https://betterlyrics.org/icon-512.png" as cons
 export const UNISON_API_URL = "https://unison.betterlyrics.org/lyrics" as const;
 export const DISCORD_INVITE_URL = "https://discord.gg/UsHE3d5fWF" as const;
 export const GITHUB_REPO_URL = "https://github.com/better-lyrics/better-lyrics" as const;
+export const BUY_ME_A_COFFEE_URL = "https://buymeacoffee.com/boidu" as const;
+export const GITHUB_SPONSORS_URL = "https://github.com/sponsors/boidushya" as const;
 export const ABOUT_MAKERS: readonly { name: string; href: string }[] = [
   { name: "Boidu", href: "https://boidu.dev" },
   { name: "Adalie", href: "https://adalie.me/" },
