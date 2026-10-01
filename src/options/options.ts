@@ -1510,8 +1510,13 @@ function setUnisonPositionInForm(position: string): void {
   });
 }
 
-const POSITION_KEYS_FORWARD = new Set(["ArrowRight", "ArrowDown"]);
-const POSITION_KEYS_BACK = new Set(["ArrowLeft", "ArrowUp"]);
+const POSITION_GRID_COLUMNS = 3;
+const POSITION_KEY_STEPS: Record<string, number> = {
+  ArrowLeft: -1,
+  ArrowRight: 1,
+  ArrowUp: -POSITION_GRID_COLUMNS,
+  ArrowDown: POSITION_GRID_COLUMNS,
+};
 
 function choosePosition(cell: HTMLElement, focus: boolean): void {
   if (!cell.dataset.pos) return;
@@ -1524,6 +1529,9 @@ function syncUnisonModalDependentState(enabled: boolean): void {
   const body = document.getElementById("unison-actions-modal-body");
   if (!body) return;
   body.dataset.pinnedDisabled = enabled ? "false" : "true";
+  for (const row of body.querySelectorAll<HTMLElement>(".unison-modal-row--dependent")) {
+    row.inert = !enabled;
+  }
 }
 
 function resetDockSettings(): void {
@@ -1558,6 +1566,7 @@ function setupUnisonActionsModal(): void {
     if (cell) choosePosition(cell, false);
   });
   frame.addEventListener("keydown", e => {
+    if (frame.closest<HTMLElement>("[inert]")) return;
     const cells = Array.from(frame.querySelectorAll<HTMLElement>(".position-cell"));
     const current = cells.indexOf(document.activeElement as HTMLElement);
     if (current < 0) return;
@@ -1566,7 +1575,7 @@ function setupUnisonActionsModal(): void {
       choosePosition(cells[current], true);
       return;
     }
-    const step = POSITION_KEYS_FORWARD.has(e.key) ? 1 : POSITION_KEYS_BACK.has(e.key) ? -1 : 0;
+    const step = POSITION_KEY_STEPS[e.key];
     if (!step) return;
     e.preventDefault();
     choosePosition(cells[(current + step + cells.length) % cells.length], true);
