@@ -931,7 +931,7 @@ async function loadMarketplace(): Promise<void> {
     if (storeThemesCache.length === 0) {
       const emptyMsg = document.createElement("p");
       emptyMsg.className = "store-empty";
-      emptyMsg.textContent = "No themes available yet. Check back later!";
+      emptyMsg.textContent = t("marketplace_emptyStore");
       grid.appendChild(emptyMsg);
       return;
     }
@@ -960,7 +960,7 @@ async function loadMarketplace(): Promise<void> {
     if (error) {
       error.style.display = "flex";
       const errorMsg = error.querySelector(".store-error-message");
-      if (errorMsg) errorMsg.textContent = `Failed to load themes: ${err}`;
+      if (errorMsg) errorMsg.textContent = t("marketplace_loadFailed");
     }
   }
 }
@@ -1309,7 +1309,7 @@ function createStoreThemeCard(
 
   const author = document.createElement("div");
   author.className = "store-card-author";
-  author.textContent = `By ${formatCreators(theme.creators)}`;
+  author.textContent = t("theme_author_prefix", formatCreators(theme.creators));
 
   const actionBtn = document.createElement("button");
   setInstallButtonState(actionBtn, isInstalled);
@@ -1602,7 +1602,8 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
       titleEl.appendChild(createGitHubBadge("ui-badge", title));
     }
   }
-  if (authorEl) authorEl.textContent = `By ${formatCreators(theme.creators)} · v${theme.version}`;
+  if (authorEl)
+    authorEl.textContent = `${t("theme_author_prefix", formatCreators(theme.creators))} · v${theme.version}`;
   if (descEl) renderDescription(descEl, theme);
 
   const statsEl = document.getElementById("detail-stats");
@@ -1760,7 +1761,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
     };
 
     if (existingUserRating) {
-      ratingStatusEl.textContent = `You rated ${existingUserRating} star${existingUserRating > 1 ? "s" : ""} as ${displayName}`;
+      ratingStatusEl.textContent = t("marketplace_ratedAs", [String(existingUserRating), displayName]);
       ratingStatusEl.className = "detail-rating-status";
     } else {
       ratingStatusEl.textContent = "";
@@ -1783,32 +1784,32 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         updateStarDisplay(rating, false);
         currentRating = rating;
 
-        ratingStatusEl.textContent = "Submitting...";
+        ratingStatusEl.textContent = t("marketplace_ratingSubmitting");
         ratingStatusEl.className = "detail-rating-status";
 
         let turnstileToken: string | undefined;
         try {
           const isCertified = await hasCertificate();
           if (!isCertified) {
-            ratingStatusEl.textContent = "Verifying...";
+            ratingStatusEl.textContent = t("marketplace_ratingVerifying");
             turnstileToken = await getTurnstileToken();
           }
         } catch (turnstileError) {
           errorStore("Turnstile verification failed:", turnstileError);
           currentRating = previousRating;
           updateStarDisplay(previousRating, false);
-          ratingStatusEl.textContent = "Verification failed. Please try again.";
+          ratingStatusEl.textContent = t("marketplace_ratingVerifyFailed");
           ratingStatusEl.className = "detail-rating-status error";
           cleanupTurnstile();
           return;
         }
 
-        ratingStatusEl.textContent = "Submitting...";
+        ratingStatusEl.textContent = t("marketplace_ratingSubmitting");
 
         const { success, data: ratingData, error } = await submitRating(theme.id, rating, turnstileToken);
         if (success && ratingData) {
           await saveUserRating(theme.id, rating);
-          ratingStatusEl.textContent = `You rated ${rating} star${rating > 1 ? "s" : ""} as ${displayName}`;
+          ratingStatusEl.textContent = t("marketplace_ratedAs", [String(rating), displayName]);
           ratingStatusEl.className = "detail-rating-status success";
 
           if (storeStatsCache[theme.id]) {
@@ -2102,7 +2103,7 @@ async function handleUrlInstall(): Promise<void> {
   const parsed = parseGitHubRepoUrl(url);
   if (!parsed) {
     if (error) {
-      error.textContent = "Invalid GitHub URL. Use format: github.com/user/repo or github.com/user/repo/tree/branch";
+      error.textContent = t("marketplace_urlInvalid");
       error.style.display = "block";
     }
     return;
@@ -2111,7 +2112,7 @@ async function handleUrlInstall(): Promise<void> {
   const { repo, branch } = parsed;
 
   installBtn.disabled = true;
-  installBtn.textContent = "Checking permissions...";
+  installBtn.textContent = t("options_nickname_status_checking");
   if (error) error.style.display = "none";
 
   try {
@@ -2193,7 +2194,7 @@ function createYourThemesRow(theme: InstalledStoreTheme, isActive: boolean): HTM
 
   const meta = document.createElement("span");
   meta.className = "your-themes-item-meta";
-  meta.textContent = `By ${formatCreators(theme.creators)} · v${theme.version}`;
+  meta.textContent = `${t("theme_author_prefix", formatCreators(theme.creators))} · v${theme.version}`;
   info.append(titleRow, meta);
   row.appendChild(info);
 

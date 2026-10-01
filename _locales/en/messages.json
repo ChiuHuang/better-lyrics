@@ -1292,6 +1292,35 @@
     "description": "Accessible label of the selected sort chip when sorting in ascending order",
     "placeholders": { "label": { "content": "$1", "example": "Lowest rated" } }
   },
+  "marketplace_emptyStore": {
+    "message": "No themes available yet. Check back later",
+    "description": "Shown when the Marketplace registry has no themes"
+  },
+  "marketplace_loadFailed": {
+    "message": "Could not load themes. Check your connection and try again",
+    "description": "Shown when the Marketplace theme list fails to load"
+  },
+  "marketplace_ratedAs": {
+    "message": "You rated this $RATING$/5 as $NAME$",
+    "description": "Status under the rating stars after the user rated a theme",
+    "placeholders": { "rating": { "content": "$1", "example": "4" }, "name": { "content": "$2", "example": "GoldenCymbalCoast" } }
+  },
+  "marketplace_ratingSubmitting": {
+    "message": "Submitting...",
+    "description": "Status while a theme rating is being sent"
+  },
+  "marketplace_ratingVerifying": {
+    "message": "Verifying...",
+    "description": "Status while the rating anti-abuse check runs"
+  },
+  "marketplace_ratingVerifyFailed": {
+    "message": "Verification failed. Try again",
+    "description": "Status when the rating anti-abuse check fails"
+  },
+  "marketplace_urlInvalid": {
+    "message": "Invalid GitHub URL. Use github.com/user/repo or github.com/user/repo/tree/branch",
+    "description": "Error in the install from URL dialog when the URL is not a GitHub repository"
+  },
   "marketplace_requiresVersion": {
     "message": "Requires v$version$+",
     "description": "Footer chip in the theme detail modal showing the minimum Better Lyrics version a theme needs",
