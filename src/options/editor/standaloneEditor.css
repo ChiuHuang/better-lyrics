@@ -35,9 +35,11 @@ body.standalone-editor {
 }
 
 .standalone-editor .ie-utils {
-  margin: 1em 0 0 1em;
+  margin-top: 1em;
+  margin-left: 1em;
 }
 
 .standalone-editor .note {
-  margin: 0 0 0.5em 1em;
+  margin-left: 1em;
+  margin-bottom: 0.5em;
 }
