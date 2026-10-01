@@ -63,6 +63,18 @@ const key = (target: Element, k: string): void => {
   list.remove();
 }
 
+// -- Reselect --------------------------
+{
+  const list = build(["Feed", "Mine"]);
+  const reselected: string[] = [];
+  const strip = initTabStrip(list, { onReselect: tab => reselected.push(tab.textContent ?? "") });
+  strip.tabs[0].click();
+  assert.deepEqual(reselected, ["Feed"], "clicking the selected tab reports a reselect");
+  strip.tabs[1].click();
+  assert.deepEqual(reselected, ["Feed"], "clicking another tab is a change, not a reselect");
+  list.remove();
+}
+
 // -- Underline variant --------------------------
 {
   const list = doc.createElement("div");
@@ -102,7 +114,7 @@ const key = (target: Element, k: string): void => {
     "the pill follows"
   );
   c.click();
-  assert.equal(changes.length, 1, "clicking the selected tab is a no-op");
+  assert.equal(changes.length, 1, "clicking the selected tab does not report a change");
   c.focus();
   key(c, "ArrowRight");
   assert.equal(doc.activeElement, a, "ArrowRight wraps to the first tab");

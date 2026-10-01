@@ -4,6 +4,7 @@ import { barTransform, rovingIndex, travelDirection } from "@/ui/cardTabs";
 interface TabStripOptions {
   variant?: "segmented" | "underline";
   onChange?: (tab: HTMLButtonElement, direction: "next" | "prev" | "") => void;
+  onReselect?: (tab: HTMLButtonElement) => void;
 }
 
 export interface TabStrip {
@@ -18,7 +19,10 @@ const PARTS = {
   underline: { tab: ".ui-tabs__tab", indicator: ".ui-tabs__bar" },
 } as const;
 
-export function initTabStrip(list: HTMLElement, { variant = "segmented", onChange }: TabStripOptions = {}): TabStrip {
+export function initTabStrip(
+  list: HTMLElement,
+  { variant = "segmented", onChange, onReselect }: TabStripOptions = {}
+): TabStrip {
   const parts = PARTS[variant];
   const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>(parts.tab));
   const pill = list.querySelector<HTMLElement>(parts.indicator);
@@ -62,7 +66,9 @@ export function initTabStrip(list: HTMLElement, { variant = "segmented", onChang
 
   list.addEventListener("click", event => {
     const tab = (event.target as Element).closest<HTMLButtonElement>(parts.tab);
-    if (tab && tabs.includes(tab) && tab !== selected()) select(tab);
+    if (!tab || !tabs.includes(tab)) return;
+    if (tab === selected()) onReselect?.(tab);
+    else select(tab);
   });
   list.addEventListener("keydown", event => {
     const focused = tabs.indexOf(document.activeElement as HTMLButtonElement);

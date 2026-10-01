@@ -671,6 +671,7 @@ function setupFeedTabs(): void {
   feedTabs = initTabStrip(strip, {
     variant: "underline",
     onChange: tab => onTabClick(tab.dataset.tab === "mine" ? "mine" : "recent"),
+    onReselect: tab => onTabClick(tab.dataset.tab === "mine" ? "mine" : "recent"),
   });
 }
 
