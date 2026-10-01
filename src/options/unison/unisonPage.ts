@@ -1,4 +1,4 @@
-import { UNISON_API_BASE_URL, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
+import { UNISON_API_BASE_URL, UNISON_LYRICS_PREVIEW_DEBOUNCE_MS, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
 import { getLanguageDisplayName, t } from "@core/i18n";
 import { formatTimeAgo } from "@core/relativeTime";
 import {
@@ -1968,21 +1968,29 @@ function setupSubmitForm(): void {
 
   updatePreview();
 
-  lyricsTextarea.addEventListener("input", () => {
-    updatePreview();
-    autoDetectFormat();
-    autoDetectLanguage();
-    autoDetectIsrc();
-  });
+  lyricsTextarea.addEventListener("input", scheduleLyricsChecks);
 
   lyricsTextarea.addEventListener(LYRICS_FILE_READING_EVENT, syncSubmitButton);
   bindLyricsFileDrop(lyricsTextarea, text => {
     lyricsField.replace(text);
-    updatePreview();
-    autoDetectFormat();
-    autoDetectLanguage();
-    autoDetectIsrc();
+    runLyricsChecks();
   });
+}
+
+let lyricsChecksTimer: ReturnType<typeof setTimeout> | undefined;
+
+function runLyricsChecks(): void {
+  clearTimeout(lyricsChecksTimer);
+  lyricsChecksTimer = undefined;
+  updatePreview();
+  autoDetectFormat();
+  autoDetectLanguage();
+  autoDetectIsrc();
+}
+
+function scheduleLyricsChecks(): void {
+  clearTimeout(lyricsChecksTimer);
+  lyricsChecksTimer = setTimeout(runLyricsChecks, UNISON_LYRICS_PREVIEW_DEBOUNCE_MS);
 }
 
 function ignoreChange(): void {}
@@ -2330,6 +2338,7 @@ function syncSubmitButton(): void {
 }
 
 async function handleSubmit(): Promise<void> {
+  if (lyricsChecksTimer !== undefined) runLyricsChecks();
   const song = (document.getElementById("unison-field-song") as HTMLInputElement).value.trim();
   const artist = (document.getElementById("unison-field-artist") as HTMLInputElement).value.trim();
   const album = (document.getElementById("unison-field-album") as HTMLInputElement).value.trim();

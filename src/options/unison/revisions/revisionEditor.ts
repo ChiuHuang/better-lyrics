@@ -1,4 +1,4 @@
-import { UNISON_REVISION_PREVIEW_DEBOUNCE_MS } from "@constants";
+import { UNISON_LYRICS_PREVIEW_DEBOUNCE_MS, UNISON_REVISION_PREVIEW_DEBOUNCE_MS } from "@constants";
 import { t } from "@core/i18n";
 import {
   type RevisionFailure,
@@ -248,9 +248,15 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     void runPreview(token);
   };
 
-  textarea.addEventListener("input", () => {
+  let renderTimer: ReturnType<typeof setTimeout> | undefined;
+  const renderLyricsPreview = (): void => {
     formatCell.textContent = t(`unison_format_${detectFormat(textarea.value)}`);
     renderPreviewInto(surface.preview, textarea.value, false, surface.previewHead);
+  };
+  host.onLeave(() => clearTimeout(renderTimer));
+  textarea.addEventListener("input", () => {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(renderLyricsPreview, UNISON_LYRICS_PREVIEW_DEBOUNCE_MS);
     schedulePreview();
   });
   controls.isrcInput.addEventListener("input", schedulePreview);
