@@ -46,6 +46,7 @@ import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
 import { type ActionMenu, type ActionMenuItem, createActionMenu } from "@/ui/actionMenu";
 import { type CreateModalOptions, createModal, isAnyModalOpen, type Modal } from "@/ui/modal";
+import { createSortIcon } from "@/ui/sortIcon";
 import { toast } from "@/ui/toast";
 
 let detailModal: Modal | null = null;
@@ -637,40 +638,13 @@ function setupMarketplaceListeners(): void {
   setupMarketplaceFilters();
 }
 
-function createSortIcon(direction: "desc" | "asc"): SVGSVGElement {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("width", "16");
-  svg.setAttribute("height", "16");
-  svg.setAttribute("viewBox", "0 0 640 640");
-  svg.setAttribute("aria-hidden", "true");
-  svg.classList.add("sort-direction-icon");
-
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("fill", "currentColor");
-
-  if (direction === "desc") {
-    path.setAttribute(
-      "d",
-      "m278.6 438.6l-96 96c-12.5 12.5-32.8 12.5-45.3 0l-96-96c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l41.4 41.4V128c0-17.7 14.3-32 32-32s32 14.3 32 32v306.7l41.4-41.4c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3zM352 544c-17.7 0-32-14.3-32-32s14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32zm0-128c-17.7 0-32-14.3-32-32s14.3-32 32-32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32zm0-128c-17.7 0-32-14.3-32-32s14.3-32 32-32h160c17.7 0 32 14.3 32 32s-14.3 32-32 32zm0-128c-17.7 0-32-14.3-32-32s14.3-32 32-32h224c17.7 0 32 14.3 32 32s-14.3 32-32 32z"
-    );
-  } else {
-    path.setAttribute(
-      "d",
-      "M352 96c-17.7 0-32 14.3-32 32s14.3 32 32 32h32c17.7 0 32-14.3 32-32s-14.3-32-32-32zm0 128c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32zm0 128c-17.7 0-32 14.3-32 32s14.3 32 32 32h160c17.7 0 32-14.3 32-32s-14.3-32-32-32zm0 128c-17.7 0-32 14.3-32 32s14.3 32 32 32h224c17.7 0 32-14.3 32-32s-14.3-32-32-32zM182.6 105.4c-12.5-12.5-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l41.4-41.4V512c0 17.7 14.3 32 32 32s32-14.3 32-32V205.3l41.4 41.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-96-96z"
-    );
-  }
-
-  svg.appendChild(path);
-  return svg;
-}
-
 function updateSortChipsUI(animate = true): void {
   const sortChips = document.querySelectorAll(".marketplace-filter-chip--sort");
 
   sortChips.forEach(chip => {
     const label = chip as HTMLLabelElement;
     const input = label.querySelector("input") as HTMLInputElement;
-    const iconContainer = label.querySelector(".marketplace-filter-chip__icon");
+    const iconContainer = label.querySelector(".ui-chip__sort");
     const labelSpan = label.querySelector(".marketplace-filter-chip__label");
 
     if (!iconContainer || !labelSpan) return;
@@ -682,11 +656,7 @@ function updateSortChipsUI(animate = true): void {
     iconContainer.replaceChildren();
 
     if (isSelected) {
-      const icon = createSortIcon(currentFilters.sortDirection);
-      if (animate) {
-        icon.classList.add("sort-direction-icon--animate");
-      }
-      iconContainer.appendChild(icon);
+      iconContainer.appendChild(createSortIcon(currentFilters.sortDirection, { animate }));
       labelSpan.textContent = currentFilters.sortDirection === "desc" ? labelDesc : labelAsc;
       label.setAttribute("aria-pressed", "true");
       label.setAttribute(

@@ -1339,16 +1339,6 @@
 /* -- Filter Bar --------------------------  */
 
 .unison-filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: 32px;
-  row-gap: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  border: none;
-  border-radius: var(--radius-card);
-  padding: 14px var(--text-inset);
   margin-bottom: 1.5rem;
 }
 
@@ -1377,46 +1367,6 @@
 
 .unison-filter-chip kbd {
   display: none;
-}
-
-.unison-filter-chip__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 0;
-  margin-right: -0.375rem;
-  overflow: hidden;
-  transition: width var(--duration-quick) ease, margin-right var(--duration-quick) ease;
-}
-
-.unison-filter-chip--sort:has(input:checked) .unison-filter-chip__icon {
-  width: 0.875rem;
-  margin-right: 0;
-}
-
-.unison-filter-chip__icon .sort-direction-icon {
-  flex-shrink: 0;
-  width: 0.75rem;
-  height: 0.75rem;
-}
-
-.unison-filter-chip__icon .sort-direction-icon--animate {
-  animation: sort-icon-flip 0.25s ease-out;
-}
-
-@keyframes sort-icon-flip {
-  0% {
-    transform: scaleY(-1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scaleY(1.1);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scaleY(1);
-    opacity: 1;
-  }
 }
 
 .unison-filter-chip__sync-icon {
@@ -2225,7 +2175,6 @@
 /* Feature-gated: browsers without corner-shape keep the original radii above. */
 
 @supports (corner-shape: superellipse(1.6)) {
-  .unison-filters,
   .unison-card {
     border-radius: var(--radius-card);
   }
@@ -2234,7 +2183,6 @@
     border-radius: 1rem;
   }
 
-  .unison-filters,
   .unison-card,
   .unison-preview-content,
   .unison-input,
@@ -2277,15 +2225,13 @@
   .unison-card,
   .unison-input,
   .unison-token-input,
-  .unison-filter-chip__icon,
   .unison-rev-link,
   .unison-rev-chev,
   .unison-rev-table__item {
     transition: none;
   }
 
-  .unison-token--flash,
-  .unison-filter-chip__icon .sort-direction-icon--animate {
+  .unison-token--flash {
     animation: none;
   }
 }
