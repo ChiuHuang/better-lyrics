@@ -176,11 +176,7 @@ const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countRawWhit
     0,
     "colours inside a url cannot use a token"
   );
-  assert.equal(
-    countRawWhiteAlphas(`.a { background: url(a.svg), #fff; }`),
-    1,
-    "a literal next to a url still counts"
-  );
+  assert.equal(countRawWhiteAlphas(`.a { background: url(a.svg), #fff; }`), 1, "a literal next to a url still counts");
   assert.equal(countRawWhiteAlphas(`.a { color: var(--white-ish); }`), 0, "a token named white is fine");
   assert.equal(countRawWhiteAlphas(`.a { font-family: "Whitney"; }`), 0, "words containing white are fine");
   assert.equal(countRawWhiteAlphas(`.a { color: hsl(0, 100%, 50%); }`), 0, "full saturation is not white");
