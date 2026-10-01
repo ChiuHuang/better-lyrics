@@ -117,13 +117,8 @@ export function showModal(options: ModalOptions): Promise<string | null> {
     modalConfirmBtn.textContent = options.confirmText || "Confirm";
     modalCancelBtn.textContent = options.cancelText || "Cancel";
 
-    if (options.confirmDanger) {
-      modalConfirmBtn.classList.add("modal-btn-danger");
-      modalConfirmBtn.classList.remove("modal-btn-primary");
-    } else {
-      modalConfirmBtn.classList.add("modal-btn-primary");
-      modalConfirmBtn.classList.remove("modal-btn-danger");
-    }
+    modalConfirmBtn.classList.toggle("ui-button--danger", Boolean(options.confirmDanger));
+    modalConfirmBtn.classList.toggle("ui-button--primary", !options.confirmDanger);
 
     if (options.showInput) {
       modalInput.style.display = "block";

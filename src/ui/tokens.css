@@ -32,6 +32,8 @@
   --raised-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset rgba(255, 255, 255, 0.06) 0 1px 0 0;
   --button-bg: rgba(255, 255, 255, 0.06);
   --button-bg-hover: rgba(255, 255, 255, 0.1);
+  --button-primary-bg: rgba(255, 255, 255, 0.15);
+  --button-primary-bg-hover: rgba(255, 255, 255, 0.2);
   --menu-bg: #333437;
   --menu-edge: 1px solid rgba(255, 255, 255, 0.1);
   --menu-shadow: rgba(0, 0, 0, 0.45) 0 18px 40px -12px, inset rgba(255, 255, 255, 0.06) 0 1px 0 0;

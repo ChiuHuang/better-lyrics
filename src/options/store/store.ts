@@ -42,7 +42,7 @@ import {
 import { cleanupTurnstile, getTurnstileToken } from "./turnstile";
 import { errorStore, warnStore } from "@core/logger";
 import { menuPlacement } from "@/ui/menuPlacement";
-import { attachScrollFade } from "@/ui/scrollFade";
+import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 
 let detailModalOverlay: HTMLElement | null = null;
 let urlModalOverlay: HTMLElement | null = null;
@@ -594,6 +594,7 @@ export async function initMarketplaceUI(): Promise<void> {
   urlModalOverlay = document.getElementById("url-modal-overlay");
   urlPermissionModalOverlay = document.getElementById("url-permission-modal-overlay");
   shortcutsModalOverlay = document.getElementById("shortcuts-modal-overlay");
+  attachDeclaredScrollFades();
 
   setupMarketplaceListeners();
   setupDetailModalListeners();

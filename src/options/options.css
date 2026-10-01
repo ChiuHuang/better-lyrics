@@ -1648,23 +1648,9 @@ input.cm-textfield:focus-visible {
 	color: #d08b52;
 }
 
-.theme-modal-body::-webkit-scrollbar {
-	width: 8px;
-}
 
-.theme-modal-body::-webkit-scrollbar-track {
-	background: rgba(0, 0, 0, 0.2);
-	border-radius: 0 0 0.75rem 0;
-}
 
-.theme-modal-body::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.2);
-	border-radius: 4px;
-}
 
-.theme-modal-body::-webkit-scrollbar-thumb:hover {
-	background: rgba(255, 255, 255, 0.3);
-}
 
 .theme-name-display {
   color: rgba(255, 255, 255, .75);
@@ -1849,6 +1835,9 @@ input.cm-textfield:focus-visible {
 	box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 25px -5px, rgba(0, 0, 0, 0.05) 0px 10px 10px -5px;
 	width: 90%;
 	max-width: 450px;
+	max-height: 85vh;
+	display: flex;
+	flex-direction: column;
 	overflow: hidden;
 	animation: slideUp 0.2s ease;
 }
@@ -1900,7 +1889,9 @@ input.cm-textfield:focus-visible {
 }
 
 .modal-body {
+	min-height: 0;
 	padding: 1.5rem;
+	overflow-y: auto;
 }
 
 .modal-message {
@@ -1945,53 +1936,13 @@ input.cm-textfield:focus-visible {
 }
 
 .modal-footer {
-	padding: 1rem 1.5rem;
+	flex: none;
+	padding: var(--row-pad);
 	border-top: 1px solid rgba(255, 255, 255, 0.1);
 	display: flex;
-	gap: 0.75rem;
+	gap: 0.5rem;
 	justify-content: flex-end;
 	background: rgba(255, 255, 255, 0.02);
-}
-
-.modal-btn {
-	padding: 0.625rem 1.25rem;
-	border-radius: 0.75rem;
-	font-size: 0.875rem;
-	font-weight: 600;
-	cursor: pointer;
-	border: none;
-	transition: all 0.2s;
-	width: auto;
-	margin: 0;
-}
-
-.modal-btn-secondary {
-	background: rgba(255, 255, 255, 0.1);
-	color: rgba(255, 255, 255, 0.8);
-}
-
-.modal-btn-secondary:hover {
-	background: rgba(255, 255, 255, 0.15);
-	color: #fff;
-}
-
-.modal-btn-primary {
-	background: rgba(255, 255, 255, 0.15);
-	color: #fff;
-	box-shadow: inset 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.modal-btn-primary:hover {
-	background: rgba(255, 255, 255, 0.2);
-}
-
-.modal-btn-danger {
-	background: rgba(239, 68, 68, 0.9);
-	color: #fff;
-}
-
-.modal-btn-danger:hover {
-	background: rgb(220, 38, 38);
 }
 
 /* -- Import Identity Modal --------------------------*/
@@ -2000,7 +1951,7 @@ input.cm-textfield:focus-visible {
 	max-width: 480px;
 }
 
-.import-identity-file-btn {
+.import-identity-modal .import-identity-file-btn {
 	width: 100%;
 	display: inline-flex;
 	align-items: center;
@@ -2064,18 +2015,6 @@ input.cm-textfield:focus-visible {
 }
 
 /* -- Unison Actions Modal --------------------------*/
-
-.unison-actions-modal {
-	max-height: 85vh;
-	display: flex;
-	flex-direction: column;
-}
-
-.unison-actions-modal .modal-body {
-	flex: 1;
-	min-height: 0;
-	overflow-y: auto;
-}
 
 .unison-modal-row {
 	align-items: center;
@@ -2422,22 +2361,9 @@ input.cm-textfield:focus-visible {
 	display: block;
 }
 
-.lang-exclusions-tab-content::-webkit-scrollbar {
-	width: 6px;
-}
 
-.lang-exclusions-tab-content::-webkit-scrollbar-track {
-	background: rgba(0, 0, 0, 0.2);
-}
 
-.lang-exclusions-tab-content::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.2);
-	border-radius: 3px;
-}
 
-.lang-exclusions-tab-content::-webkit-scrollbar-thumb:hover {
-	background: rgba(255, 255, 255, 0.3);
-}
 
 /* -- Squircle corners ---------------------------- */
 /* Feature-gated: browsers without corner-shape keep the original radii below. */

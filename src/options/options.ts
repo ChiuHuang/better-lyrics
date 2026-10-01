@@ -57,7 +57,7 @@ import {
   readBackedUpKeyId,
   rememberPendingBackup,
 } from "@/options/identityBackup";
-import { attachScrollFade } from "@/ui/scrollFade";
+import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 import { initTooltips } from "@/ui/tooltip";
 
@@ -588,7 +588,7 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
 function initPopupScrollFades(): void {
   const body = document.getElementById("options");
   if (body) attachScrollFade(body);
-  for (const el of document.querySelectorAll<HTMLElement>("[data-scroll-fade]")) attachScrollFade(el);
+  attachDeclaredScrollFades();
 }
 
 // -- Fullscreen dependents --------------------------
