@@ -1,4 +1,5 @@
 import { type IconKey, svgIcon } from "@/options/unison/icons";
+import { prefersReducedMotion, quickDurationMs } from "@/ui/motion";
 
 export type ToastKind = "success" | "error" | "info" | "loading";
 
@@ -12,7 +13,6 @@ export interface ToastHandle {
 }
 
 const TOAST_MAX_VISIBLE = 3;
-const TOAST_EXIT_MS = 150;
 const DISMISS_AFTER_MS: Record<ToastKind, number | null> = {
   success: 2500,
   info: 2500,
@@ -109,7 +109,6 @@ function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): Toas
     existing.update(kind, message);
     return existing;
   }
-  const host = ensureLayer();
   const el = document.createElement("div");
   render(el, kind, message);
   el.classList.add("is-entering");
@@ -147,7 +146,7 @@ function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): Toas
     if (liveToasts.get(key) === handle) liveToasts.delete(key);
     el.classList.remove("is-entering");
     el.classList.add("is-leaving");
-    setTimeout(() => el.remove(), TOAST_EXIT_MS);
+    setTimeout(() => el.remove(), prefersReducedMotion() ? 0 : quickDurationMs());
   }
 
   el.addEventListener("pointerenter", pause);
@@ -165,9 +164,13 @@ function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): Toas
   };
   liveToasts.set(key, handle);
   dismissers.set(el, dismiss);
-  host.prepend(el);
-  const live = host.querySelectorAll<HTMLElement>(".ui-toast:not(.is-leaving)");
-  for (const stale of Array.from(live).slice(TOAST_MAX_VISIBLE)) dismissers.get(stale)?.();
+  whenDomReady(() => {
+    if (closed) return;
+    const host = ensureLayer();
+    host.prepend(el);
+    const live = host.querySelectorAll<HTMLElement>(".ui-toast:not(.is-leaving)");
+    for (const stale of Array.from(live).slice(TOAST_MAX_VISIBLE)) dismissers.get(stale)?.();
+  });
   run();
   return handle;
 }

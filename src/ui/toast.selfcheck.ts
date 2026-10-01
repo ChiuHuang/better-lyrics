@@ -3,6 +3,8 @@ import { JSDOM } from "jsdom";
 
 const { window } = new JSDOM("<!doctype html><html><body></body></html>");
 
+let reducedMotion = false;
+
 // -- Fake clock --------------------------
 let now = 0;
 let nextId = 1;
@@ -23,6 +25,8 @@ Object.assign(globalThis, {
   window,
   document: window.document,
   DOMParser: window.DOMParser,
+  getComputedStyle: window.getComputedStyle.bind(window),
+  matchMedia: (query: string) => ({ matches: query.includes("reduce") && reducedMotion }),
   setTimeout: (fn: () => void, ms = 0) => {
     const id = nextId++;
     pending.set(id, { at: now + ms, fn });
@@ -219,6 +223,17 @@ const reset = (): void => {
   assert.equal(politeRegion()?.textContent, "", "a repeat clears the region first");
   advance(50);
   assert.equal(politeRegion()?.textContent, "Nothing new", "a repeat is announced again");
+  reset();
+}
+
+// -- Reduced motion --------------------------
+{
+  reducedMotion = true;
+  toast.success("calm");
+  toasts()[0].dispatchEvent(new window.Event("click"));
+  advance(0);
+  assert.equal(toasts().length, 0, "reduced motion removes the toast without waiting for the exit");
+  reducedMotion = false;
   reset();
 }
 
