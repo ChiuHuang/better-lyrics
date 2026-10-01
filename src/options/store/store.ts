@@ -45,12 +45,18 @@ import { errorStore, warnStore } from "@core/logger";
 import { menuPlacement } from "@/ui/menuPlacement";
 import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
+import { createModal, isAnyModalOpen, type Modal } from "@/ui/modal";
 import { toast } from "@/ui/toast";
 
-let detailModalOverlay: HTMLElement | null = null;
-let urlModalOverlay: HTMLElement | null = null;
-let urlPermissionModalOverlay: HTMLElement | null = null;
-let shortcutsModalOverlay: HTMLElement | null = null;
+let detailModal: Modal | null = null;
+let urlModal: Modal | null = null;
+let urlPermissionModal: Modal | null = null;
+let shortcutsModal: Modal | null = null;
+
+function bindModal(id: string, options?: Parameters<typeof createModal>[1]): Modal | null {
+  const overlay = document.getElementById(id);
+  return overlay ? createModal(overlay, options) : null;
+}
 let currentDetailTheme: StoreTheme | null = null;
 let currentSlideIndex = 0;
 let storeThemesCache: StoreTheme[] = [];
@@ -580,8 +586,8 @@ function formatNumber(num: number): string {
 }
 
 export async function initStoreUI(): Promise<void> {
-  detailModalOverlay = document.getElementById("detail-modal-overlay");
-  urlModalOverlay = document.getElementById("url-modal-overlay");
+  detailModal = bindModal("detail-modal-overlay");
+  urlModal = bindModal("url-modal-overlay");
 
   setupDetailModalListeners();
   setupUrlModalListeners();
@@ -593,17 +599,16 @@ export async function initStoreUI(): Promise<void> {
 }
 
 export async function initMarketplaceUI(): Promise<void> {
-  detailModalOverlay = document.getElementById("detail-modal-overlay");
-  urlModalOverlay = document.getElementById("url-modal-overlay");
-  urlPermissionModalOverlay = document.getElementById("url-permission-modal-overlay");
-  shortcutsModalOverlay = document.getElementById("shortcuts-modal-overlay");
+  detailModal = bindModal("detail-modal-overlay");
+  urlModal = bindModal("url-modal-overlay");
+  urlPermissionModal = bindModal("url-permission-modal-overlay", { onClose: () => settleUrlPermission(false) });
+  shortcutsModal = bindModal("shortcuts-modal-overlay");
   attachDeclaredScrollFades();
 
   setupMarketplaceListeners();
   setupDetailModalListeners();
   setupUrlModalListeners();
   setupUrlPermissionModalListeners();
-  setupShortcutsModalListeners();
   setupMarketplaceKeyboardListeners();
 
   await loadUserRatings();
@@ -788,51 +793,8 @@ function setSentinelVisible(visible: boolean): void {
   sentinel.style.display = visible ? "" : "none";
 }
 
-function setupShortcutsModalListeners(): void {
-  const closeBtn = document.getElementById("shortcuts-modal-close");
-  closeBtn?.addEventListener("click", closeShortcutsModal);
-
-  shortcutsModalOverlay?.addEventListener("click", e => {
-    if (e.target === shortcutsModalOverlay) closeShortcutsModal();
-  });
-}
-
 function openShortcutsModal(): void {
-  if (shortcutsModalOverlay) {
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    shortcutsModalOverlay.style.display = "flex";
-    requestAnimationFrame(() => {
-      shortcutsModalOverlay?.classList.add("active");
-    });
-  }
-}
-
-function closeShortcutsModal(): void {
-  if (shortcutsModalOverlay) {
-    const modal = shortcutsModalOverlay.querySelector(".modal");
-    modal?.classList.add("closing");
-    shortcutsModalOverlay.classList.remove("active");
-
-    setTimeout(() => {
-      if (shortcutsModalOverlay) {
-        shortcutsModalOverlay.style.display = "none";
-        modal?.classList.remove("closing");
-      }
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-    }, 200);
-  }
-}
-
-function isAnyModalOpen(): boolean {
-  return (
-    detailModalOverlay?.classList.contains("active") ||
-    urlModalOverlay?.classList.contains("active") ||
-    urlPermissionModalOverlay?.classList.contains("active") ||
-    shortcutsModalOverlay?.classList.contains("active") ||
-    false
-  );
+  shortcutsModal?.open();
 }
 
 function isInputFocused(): boolean {
@@ -888,25 +850,12 @@ function setupMarketplaceKeyboardListeners(): void {
     }
 
     if (e.key === "Escape") {
-      if (shortcutsModalOverlay?.classList.contains("active")) {
-        e.preventDefault();
-        closeShortcutsModal();
-      } else if (urlPermissionModalOverlay?.classList.contains("active")) {
-        e.preventDefault();
-        closeUrlPermissionModal(false);
-      } else if (detailModalOverlay?.classList.contains("active")) {
-        e.preventDefault();
-        closeDetailModal();
-      } else if (urlModalOverlay?.classList.contains("active")) {
-        e.preventDefault();
-        closeUrlModal();
-      } else if (isInputFocused()) {
-        (document.activeElement as HTMLElement)?.blur();
-      }
+      if (e.defaultPrevented || isAnyModalOpen()) return;
+      if (isInputFocused()) (document.activeElement as HTMLElement)?.blur();
       return;
     }
 
-    if (detailModalOverlay?.classList.contains("active")) {
+    if (detailModal?.isOpen()) {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         navigateSlide(-1);
@@ -1122,19 +1071,10 @@ function setupKeyboardListeners(): void {
         return;
       }
 
-      if (detailModalOverlay?.classList.contains("active")) {
-        e.preventDefault();
-        e.stopPropagation();
-        closeDetailModal();
-      } else if (urlModalOverlay?.classList.contains("active")) {
-        e.preventDefault();
-        e.stopPropagation();
-        closeUrlModal();
-      }
       return;
     }
 
-    if (detailModalOverlay?.classList.contains("active")) {
+    if (detailModal?.isOpen()) {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         navigateSlide(-1);
@@ -1315,13 +1255,6 @@ function matchesInstallFilter(themeId: string, installedIds: Set<string>, filter
 }
 
 function setupDetailModalListeners(): void {
-  const closeBtn = document.getElementById("detail-modal-close");
-  closeBtn?.addEventListener("click", closeDetailModal);
-
-  detailModalOverlay?.addEventListener("click", e => {
-    if (e.target === detailModalOverlay) closeDetailModal();
-  });
-
   const prevBtn = document.getElementById("detail-prev-btn");
   const nextBtn = document.getElementById("detail-next-btn");
   prevBtn?.addEventListener("click", () => navigateSlide(-1));
@@ -1329,16 +1262,6 @@ function setupDetailModalListeners(): void {
 }
 
 function setupUrlModalListeners(): void {
-  const closeBtn = document.getElementById("url-modal-close");
-  closeBtn?.addEventListener("click", closeUrlModal);
-
-  urlModalOverlay?.addEventListener("click", e => {
-    if (e.target === urlModalOverlay) closeUrlModal();
-  });
-
-  const cancelBtn = document.getElementById("url-modal-cancel");
-  cancelBtn?.addEventListener("click", closeUrlModal);
-
   const installBtn = document.getElementById("url-modal-install");
   installBtn?.addEventListener("click", handleUrlInstall);
 
@@ -1350,17 +1273,13 @@ function setupUrlModalListeners(): void {
 
 let urlPermissionResolve: ((granted: boolean) => void) | null = null;
 
+function settleUrlPermission(granted: boolean): void {
+  const resolve = urlPermissionResolve;
+  urlPermissionResolve = null;
+  resolve?.(granted);
+}
+
 function setupUrlPermissionModalListeners(): void {
-  const closeBtn = document.getElementById("url-permission-modal-close");
-  closeBtn?.addEventListener("click", () => closeUrlPermissionModal(false));
-
-  urlPermissionModalOverlay?.addEventListener("click", e => {
-    if (e.target === urlPermissionModalOverlay) closeUrlPermissionModal(false);
-  });
-
-  const cancelBtn = document.getElementById("url-permission-modal-cancel");
-  cancelBtn?.addEventListener("click", () => closeUrlPermissionModal(false));
-
   const grantBtn = document.getElementById("url-permission-modal-grant");
   grantBtn?.addEventListener("click", async () => {
     const granted = await requestUrlInstallPermissions();
@@ -1369,40 +1288,18 @@ function setupUrlPermissionModalListeners(): void {
 }
 
 function openUrlPermissionModal(): Promise<boolean> {
+  if (!urlPermissionModal) return Promise.resolve(false);
+  settleUrlPermission(false);
+  const modal = urlPermissionModal;
   return new Promise(resolve => {
     urlPermissionResolve = resolve;
-
-    if (urlPermissionModalOverlay) {
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
-      urlPermissionModalOverlay.style.display = "flex";
-      requestAnimationFrame(() => {
-        urlPermissionModalOverlay?.classList.add("active");
-      });
-    }
+    modal.open();
   });
 }
 
 function closeUrlPermissionModal(granted: boolean): void {
-  if (urlPermissionModalOverlay) {
-    const modal = urlPermissionModalOverlay.querySelector(".modal");
-    modal?.classList.add("closing");
-    urlPermissionModalOverlay.classList.remove("active");
-
-    setTimeout(() => {
-      if (urlPermissionModalOverlay) {
-        urlPermissionModalOverlay.style.display = "none";
-        modal?.classList.remove("closing");
-      }
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-    }, 200);
-  }
-
-  if (urlPermissionResolve) {
-    urlPermissionResolve(granted);
-    urlPermissionResolve = null;
-  }
+  settleUrlPermission(granted);
+  urlPermissionModal?.close();
 }
 
 interface UrlThemeInfo {
@@ -1721,7 +1618,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
   currentDetailTheme = theme;
   currentSlideIndex = 0;
 
-  if (!detailModalOverlay) return;
+  if (!detailModal) return;
 
   const titleEl = document.getElementById("detail-title");
   const authorEl = document.getElementById("detail-author");
@@ -2126,29 +2023,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
 
   initSlideshow();
 
-  document.documentElement.style.overflow = "hidden";
-  document.body.style.overflow = "hidden";
-  detailModalOverlay.style.display = "flex";
-  requestAnimationFrame(() => {
-    detailModalOverlay?.classList.add("active");
-  });
-}
-
-function closeDetailModal(): void {
-  if (detailModalOverlay) {
-    const modal = detailModalOverlay.querySelector(".detail-modal");
-    modal?.classList.add("closing");
-    detailModalOverlay.classList.remove("active");
-
-    setTimeout(() => {
-      if (detailModalOverlay) {
-        detailModalOverlay.style.display = "none";
-        modal?.classList.remove("closing");
-      }
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-    }, 200);
-  }
+  detailModal.open();
 }
 
 let slideshowImages: HTMLImageElement[] = [];
@@ -2229,38 +2104,18 @@ function goToSlide(index: number): void {
 }
 
 function openUrlModal(): void {
-  if (urlModalOverlay) {
-    const input = document.getElementById("url-modal-input") as HTMLInputElement;
-    if (input) input.value = "";
+  if (!urlModal) return;
+  const input = document.getElementById("url-modal-input") as HTMLInputElement;
+  if (input) input.value = "";
 
-    const error = document.getElementById("url-modal-error");
-    if (error) error.style.display = "none";
+  const error = document.getElementById("url-modal-error");
+  if (error) error.style.display = "none";
 
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    urlModalOverlay.style.display = "flex";
-    requestAnimationFrame(() => {
-      urlModalOverlay?.classList.add("active");
-      input?.focus();
-    });
-  }
+  urlModal.open();
 }
 
 function closeUrlModal(): void {
-  if (urlModalOverlay) {
-    const modal = urlModalOverlay.querySelector(".modal");
-    modal?.classList.add("closing");
-    urlModalOverlay.classList.remove("active");
-
-    setTimeout(() => {
-      if (urlModalOverlay) {
-        urlModalOverlay.style.display = "none";
-        modal?.classList.remove("closing");
-      }
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-    }, 200);
-  }
+  urlModal?.close();
 }
 
 async function handleUrlInstall(): Promise<void> {

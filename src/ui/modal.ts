@@ -37,6 +37,10 @@ function focusables(root: HTMLElement): HTMLElement[] {
   return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(isShown);
 }
 
+export function isAnyModalOpen(): boolean {
+  return openModals.length > 0;
+}
+
 function syncScrollLock(): void {
   document.documentElement.classList.toggle("ui-modal-open", openModals.length > 0);
 }

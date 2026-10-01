@@ -49,7 +49,7 @@ Object.assign(globalThis, {
   },
 });
 
-const { createModal } = await import("./modal");
+const { createModal, isAnyModalOpen } = await import("./modal");
 
 const doc = window.document;
 
@@ -283,12 +283,14 @@ const settle = (): void => advance(1000);
   upperModal.open();
   lowerModal.open();
   assert.equal(doc.body.lastElementChild, lower, "the most recently opened modal moves to the top of the stack");
+  assert.ok(isAnyModalOpen(), "isAnyModalOpen sees open modals");
   lowerModal.close();
   assert.ok(doc.documentElement.classList.contains("ui-modal-open"), "the lock holds while another modal is open");
   const upperField = upper.querySelector(".ui-modal__surface") as HTMLElement;
   key(upperField, { key: "Escape" });
   assert.ok(!upperModal.isOpen(), "Escape closes the modal that holds focus");
   assert.ok(!doc.documentElement.classList.contains("ui-modal-open"), "the lock lifts with the last modal");
+  assert.equal(isAnyModalOpen(), false, "isAnyModalOpen clears once a closing modal starts its exit");
   settle();
   lower.remove();
   upper.remove();

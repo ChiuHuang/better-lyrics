@@ -256,7 +256,7 @@
 
 /* URL Permission Modal */
 .url-permission-modal {
-  max-width: 28rem;
+  width: min(28rem, 100%);
 }
 
 .url-permission-header-left {
@@ -618,17 +618,10 @@
 
 /* Detail Modal */
 .detail-modal {
-  max-width: 600px;
-  width: 100%;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
+  width: min(600px, 100%);
 }
 
-.detail-modal .modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.detail-modal .ui-modal__head {
   gap: 1rem;
 }
 
@@ -713,8 +706,6 @@
 
 .detail-modal-body {
   padding: 0;
-  overflow-y: auto;
-  flex: 1;
 }
 
 .detail-slideshow {
@@ -1222,8 +1213,8 @@
 }
 
 /* URL Install Modal */
-#url-modal-overlay .modal {
-  max-width: 576px;
+#url-modal-overlay .ui-modal__surface {
+  width: min(576px, 100%);
 }
 
 #url-modal-error {
@@ -1284,11 +1275,10 @@ kbd.kbd-icon svg {
 
 /* Keyboard Shortcuts Modal */
 .shortcuts-modal {
-  max-width: 560px;
-  width: 90%;
+  width: min(560px, 100%);
 }
 
-.shortcuts-modal .modal-body {
+.shortcuts-modal .ui-modal__body {
   padding: 0;
 }
 
