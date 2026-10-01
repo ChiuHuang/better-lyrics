@@ -304,14 +304,21 @@ const renderCacheStats = async (): Promise<StorageBreakdown> => {
   return breakdown;
 };
 
+let cacheStatsRefreshQueued = false;
+
 const refreshCacheStats = (): void => {
-  renderCacheStats().catch(error => errorCore("Failed to read cache stats:", error));
+  if (cacheStatsRefreshQueued) return;
+  cacheStatsRefreshQueued = true;
+  setTimeout(() => {
+    cacheStatsRefreshQueued = false;
+    renderCacheStats().catch(error => errorCore("Failed to read cache stats:", error));
+  }, 0);
 };
 
 const subscribeToCacheStats = (): void => {
   refreshCacheStats();
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes.cacheInfo) refreshCacheStats();
+  chrome.storage.onChanged.addListener((_changes, area) => {
+    if (area === "local") refreshCacheStats();
   });
 };
 
