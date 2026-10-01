@@ -8,6 +8,11 @@ Object.assign(globalThis, {
     storage: {
       local: {
         get: async () => ({ ...local }),
+        getBytesInUse: async (keys?: string[] | null) =>
+          (keys ?? Object.keys(local)).reduce(
+            (sum, key) => (key in local ? sum + key.length + JSON.stringify(local[key]).length : sum),
+            0
+          ),
         remove: async (keys: string[]) => {
           if (failures.localRemove) throw new Error("local remove failed");
           for (const key of keys) delete local[key];
@@ -23,8 +28,14 @@ Object.assign(globalThis, {
   },
 });
 
-const { clearLyricCache, getUpdatedCacheInfo, refreshCacheInfo, storageCategoryForKey, summarizeLyricCache } =
-  await import("@core/storage");
+const {
+  clearLyricCache,
+  getStorageBreakdown,
+  getUpdatedCacheInfo,
+  refreshCacheInfo,
+  storageCategoryForKey,
+  summarizeLyricCache,
+} = await import("@core/storage");
 const { compressString } = await import("@core/compression");
 
 const entry = { type: "transient", value: "x", expiry: 0 };
@@ -183,6 +194,44 @@ const seed = (items: Record<string, unknown>): void => {
     0,
     "uncompressed misses are misses too"
   );
+}
+
+// -- Storage breakdown --------------------------
+{
+  seed({
+    "blyrics_aaaaaaaaaaa_lrclib-synced": entry,
+    "storeTheme:abc": { css: "a{}" },
+    "blyricsOffset_aaaaaaaaaaa_lrclib-synced": entry,
+    jwtToken: "t",
+  });
+  const breakdown = await getStorageBreakdown();
+  const bytes = (key: string) => key.length + JSON.stringify(local[key]).length;
+  assert.equal(breakdown.lyrics.songs, 1);
+  assert.deepEqual(breakdown.bytes, {
+    lyrics: bytes("blyrics_aaaaaaaaaaa_lrclib-synced"),
+    themes: bytes("storeTheme:abc"),
+    offsets: bytes("blyricsOffset_aaaaaaaaaaa_lrclib-synced"),
+    other: bytes("jwtToken"),
+  });
+  assert.equal(
+    breakdown.totalBytes,
+    Object.values(breakdown.bytes).reduce((a, b) => a + b, 0),
+    "total is the sum of the categories"
+  );
+
+  const storageLocal = (globalThis as unknown as { chrome: { storage: { local: Record<string, unknown> } } }).chrome
+    .storage.local;
+  const getBytesInUse = storageLocal.getBytesInUse;
+  delete storageLocal.getBytesInUse;
+  const estimated = await getStorageBreakdown();
+  storageLocal.getBytesInUse = getBytesInUse;
+  assert.deepEqual(estimated.bytes, breakdown.bytes, "without getBytesInUse (Firefox before 144) bytes are estimated");
+}
+{
+  seed({});
+  const empty = await getStorageBreakdown();
+  assert.equal(empty.totalBytes, 0);
+  assert.equal(empty.lyrics.songs, 0);
 }
 
 console.log("storage self-check passed");

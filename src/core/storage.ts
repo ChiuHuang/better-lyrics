@@ -282,6 +282,45 @@ export function summarizeLyricCache(items: Record<string, unknown>): LyricCacheS
   return { songs: best.size, bySyncType };
 }
 
+export interface StorageBreakdown {
+  lyrics: LyricCacheSummary;
+  bytes: Record<StorageCategory, number>;
+  totalBytes: number;
+}
+
+const STORAGE_CATEGORIES: StorageCategory[] = ["lyrics", "themes", "offsets", "other"];
+
+function estimateBytes(items: Record<string, unknown>, keys: string[]): number {
+  return keys.reduce((sum, key) => sum + key.length + JSON.stringify(items[key]).length, 0);
+}
+
+export async function getStorageBreakdown(): Promise<StorageBreakdown> {
+  const items = await chrome.storage.local.get(null);
+  const keysByCategory = Object.fromEntries(STORAGE_CATEGORIES.map(category => [category, [] as string[]])) as Record<
+    StorageCategory,
+    string[]
+  >;
+  for (const key of Object.keys(items)) keysByCategory[storageCategoryForKey(key)].push(key);
+  // storage.local.getBytesInUse only exists from Firefox 144
+  const canMeasure = typeof chrome.storage.local.getBytesInUse === "function";
+  const sizes = await Promise.all(
+    STORAGE_CATEGORIES.map(category => {
+      const keys = keysByCategory[category];
+      if (!keys.length) return 0;
+      return canMeasure ? chrome.storage.local.getBytesInUse(keys) : estimateBytes(items, keys);
+    })
+  );
+  const bytes = Object.fromEntries(STORAGE_CATEGORIES.map((category, i) => [category, sizes[i]])) as Record<
+    StorageCategory,
+    number
+  >;
+  return {
+    lyrics: summarizeLyricCache(items),
+    bytes,
+    totalBytes: sizes.reduce((sum, size) => sum + size, 0),
+  };
+}
+
 /**
  * Calculates current cache information including count and size of stored lyrics.
  * Count represents unique songs (by video ID), not individual cache entries.
