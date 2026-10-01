@@ -222,7 +222,6 @@ const saveOptionsToStorage = (options: Options): void => {
 const clearTransientLyrics = (callback?: () => void): void => {
   chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
     if (tabs.length === 0) {
-      updateCacheInfo(null);
       toast.success(t("options_alert_cacheCleared"));
       if (callback && typeof callback === "function") callback();
       return;
@@ -234,7 +233,6 @@ const clearTransientLyrics = (callback?: () => void): void => {
         completedTabs++;
         if (completedTabs === tabs.length) {
           if (response?.success) {
-            updateCacheInfo(null);
             toast.success(t("options_alert_cacheCleared"));
           } else {
             toast.error(t("options_alert_cacheClearFailed"));
@@ -278,8 +276,7 @@ const subscribeToCacheInfo = (): void => {
 };
 
 // Function to update cache info
-const updateCacheInfo = (items: { cacheInfo: { count: number; size: number } } | null): void => {
-  if (!items) return;
+const updateCacheInfo = (items: { cacheInfo: { count: number; size: number } }): void => {
   const cacheInfo = items.cacheInfo || { count: 0, size: 0 };
   const cacheCount = document.getElementById("lyrics-count")!;
   const cacheSize = document.getElementById("cache-size")!;
