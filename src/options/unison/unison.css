@@ -1464,69 +1464,6 @@
 
 /* -- Feedback --------------------------  */
 
-.unison-feedback {
-  padding: 0.625rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.8125rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.625rem;
-}
-
-.unison-feedback-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  flex-shrink: 0;
-}
-
-.unison-feedback-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-  flex: 1;
-}
-
-.unison-feedback-title {
-  font-weight: 500;
-  line-height: 1.4;
-}
-
-.unison-feedback-hint {
-  font-size: 0.75rem;
-  opacity: 0.8;
-}
-
-.unison-feedback--success {
-  background: color-mix(in srgb, var(--success) 10%, transparent);
-  color: var(--success);
-  border: 1px solid color-mix(in srgb, var(--success) 15%, transparent);
-}
-
-.unison-feedback--error {
-  background: rgba(239, 68, 68, 0.1);
-  color: rgb(239, 68, 68);
-  border: 1px solid rgba(239, 68, 68, 0.15);
-}
-
-.unison-feedback--pending {
-  background: rgba(254, 240, 138, 0.08);
-  color: rgb(254, 240, 138);
-  border: 1px solid rgba(254, 240, 138, 0.18);
-}
-
-.unison-feedback--info {
-  background: rgba(129, 140, 248, 0.1);
-  color: rgb(165, 180, 252);
-  border: 1px solid rgba(129, 140, 248, 0.2);
-}
-
-.unison-feedback--neutral {
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 .unison-feedback-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1536,7 +1473,6 @@
 
 .unison-feedback--row {
   align-items: center;
-  border-radius: var(--radius-card);
 }
 
 .unison-feedback--row .unison-feedback-actions {
@@ -1544,9 +1480,8 @@
   flex-shrink: 0;
 }
 
-.unison-feedback--row .unison-feedback-icon {
+.unison-feedback--row .ui-callout__icon {
   align-self: flex-start;
-  margin-top: 0.0625rem;
 }
 
 /* -- Preview Panel --------------------------  */
@@ -1822,27 +1757,6 @@
 
 /* -- Revisions: editor --------------------------  */
 
-.unison-rev-locked {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.625rem 0.75rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
-}
-
-.unison-rev-locked > .unison-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.unison-rev-locked__sub {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
-}
-
 .unison-rev-input--error,
 .unison-rev-input--error:focus {
   box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.5);
@@ -1985,48 +1899,11 @@
 }
 
 .unison-rev-outcome {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
   min-width: 0;
-  font-size: 0.8125rem;
 }
 
-.unison-rev-outcome > .unison-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  flex-shrink: 0;
-}
-
-.unison-rev-outcome__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
-.unison-rev-outcome__title {
-  font-weight: 500;
-}
-
-.unison-rev-outcome__hint {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.unison-rev-outcome--live {
-  color: var(--success);
-}
-
-.unison-rev-outcome--review {
-  color: rgb(254, 240, 138);
-}
-
-.unison-rev-outcome--error {
-  color: rgb(239, 68, 68);
-}
-
-.unison-rev-outcome--neutral {
-  color: rgba(255, 255, 255, 0.6);
+.unison-rev-outcome:empty {
+  display: none;
 }
 
 .unison-rev-inline-textarea {
@@ -2617,7 +2494,6 @@
 
 @supports (corner-shape: superellipse(1.6)) {
   .unison-filters,
-  .unison-feedback,
   .unison-card {
     border-radius: var(--radius-card);
   }
@@ -2628,7 +2504,6 @@
   }
 
   .unison-filters,
-  .unison-feedback,
   .unison-card,
   .unison-report-dropdown,
   .unison-preview-content,
@@ -2639,8 +2514,7 @@
   }
 
   .unison-rev-diff,
-  .unison-rev-diff-empty,
-  .unison-rev-locked {
+  .unison-rev-diff-empty {
     border-radius: 1rem;
     corner-shape: superellipse(1.6);
   }
