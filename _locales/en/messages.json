@@ -1157,6 +1157,10 @@
       }
     }
   },
+  "marketplace_alert_storageFull": {
+    "message": "Storage is full. Remove some installed themes and try again.",
+    "description": "Toast when a theme cannot be installed because extension storage is full"
+  },
   "marketplace_alert_installFailed": {
     "message": "Could not install $NAME$",
     "description": "Toast when installing a Marketplace theme fails",

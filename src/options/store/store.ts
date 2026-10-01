@@ -28,6 +28,7 @@ import {
   performSilentUpdates,
   refreshUrlThemesMetadata,
   removeTheme,
+  ThemeStorageFullError,
 } from "./themeStoreManager";
 import {
   checkUrlInstallPermissions,
@@ -1625,6 +1626,11 @@ async function confirmIncompatibleInstall(theme: StoreTheme): Promise<boolean> {
   );
 }
 
+function themeActionFailedMessage(err: unknown, removing: boolean, title: string): string {
+  if (err instanceof ThemeStorageFullError) return t("marketplace_alert_storageFull");
+  return t(removing ? "marketplace_alert_removeFailed" : "marketplace_alert_installFailed", title);
+}
+
 async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): Promise<void> {
   button.disabled = true;
   const isRemoveButton = button.classList.contains("store-card-btn-remove");
@@ -1681,7 +1687,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
   } catch (err) {
     errorStore("Action failed:", err);
     setInstallButtonState(button, isRemoveButton);
-    toast.error(t(isRemoveButton ? "marketplace_alert_removeFailed" : "marketplace_alert_installFailed", theme.title));
+    toast.error(themeActionFailedMessage(err, isRemoveButton, theme.title));
   } finally {
     button.disabled = false;
   }
@@ -2067,9 +2073,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
       } catch (err) {
         errorStore("Action failed:", err);
         setInstallButtonState(actionBtn, isRemoveButton, "I");
-        toast.error(
-          t(isRemoveButton ? "marketplace_alert_removeFailed" : "marketplace_alert_installFailed", theme.title)
-        );
+        toast.error(themeActionFailedMessage(err, isRemoveButton, theme.title));
       } finally {
         installOperationInProgress = false;
         actionBtn.disabled = false;
