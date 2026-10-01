@@ -1338,14 +1338,6 @@
 
 /* -- Filter Bar --------------------------  */
 
-.unison-filters {
-  margin-bottom: 1.5rem;
-}
-
-.unison-filters[hidden] {
-  display: none;
-}
-
 .unison-filter-group {
   display: flex;
   flex-direction: column;
