@@ -18,7 +18,7 @@ import {
   invalidateDisplayName,
   signPayload,
 } from "@core/keyIdentity";
-import { clearAllOffsets, clearCache, getOffsetInfo } from "@core/storage";
+import { clearAllOffsets, clearCache, getOffsetInfo, getUpdatedCacheInfo } from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
@@ -219,21 +219,24 @@ const saveOptionsToStorage = (options: Options): void => {
 };
 
 // Function to clear transient lyrics
-const clearTransientLyrics = (callback?: () => void): void => {
-  chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
+const clearTransientLyrics = async (callback?: () => void): Promise<void> => {
+  const { count } = await getUpdatedCacheInfo();
+  if (count === 0) {
+    toast.info(t("options_alert_nothingToClear"));
+    if (callback && typeof callback === "function") callback();
+    return;
+  }
+
+  chrome.tabs.query({ url: "https://music.youtube.com/*" }, async tabs => {
     if (tabs.length === 0) {
-      clearCache()
-        .then(
-          cacheInfo => {
-            updateCacheInfo({ cacheInfo });
-            toast.success(t("options_alert_cacheCleared"));
-          },
-          error => {
-            errorCore("Failed to clear cached lyrics:", error);
-            toast.error(t("options_alert_cacheClearFailed"));
-          }
-        )
-        .finally(() => callback?.());
+      try {
+        updateCacheInfo({ cacheInfo: await clearCache() });
+        toast.success(t("options_alert_cacheCleared"));
+      } catch (error) {
+        errorCore("Failed to clear cached lyrics:", error);
+        toast.error(t("options_alert_cacheClearFailed"));
+      }
+      if (callback && typeof callback === "function") callback();
       return;
     }
 

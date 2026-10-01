@@ -546,7 +546,7 @@
     "description": "Cache clear failed message"
   },
   "options_alert_nothingToClear": {
-    "message": "Nothing to clear!",
+    "message": "Nothing to clear :/",
     "description": "Nothing to clear message"
   },
   "options_alert_exportFailed": {
