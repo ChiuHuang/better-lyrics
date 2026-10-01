@@ -27,7 +27,6 @@ export interface Dropdown {
 const MENU_MIN_WIDTH_PX = 200;
 const CLOSE_FALLBACK_MS = 150;
 
-// The minifier rewrites 150ms as .15s, so honour both units.
 function cssTimeMs(value: string): number {
   const amount = Number.parseFloat(value);
   if (Number.isNaN(amount)) return CLOSE_FALLBACK_MS;
@@ -173,7 +172,6 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     });
     menu.dataset.side = side;
     menu.dataset.placement = placement;
-    // Anchor with left/top only: a right/bottom inset resolves against the fixed containing block, which excludes scrollbar gutters.
     menu.style.left = `${side === "end" ? rect.right - menu.offsetWidth : rect.left}px`;
     menu.style.top = `${top}px`;
   }

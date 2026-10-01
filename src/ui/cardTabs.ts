@@ -55,7 +55,6 @@ export function initCardTabs(card: HTMLElement, { animateHeight = true, onChange
     panels.find(panel => panel.dataset.panel === tab.dataset.tab);
   const initial = tabs.find(tab => tab.getAttribute("aria-selected") === "true") ?? tabs[0];
 
-  // A tablist may only own tabs, so the role goes on the parent only when it holds nothing else.
   if (
     tablist &&
     Array.from(tablist.children).every(child => child === bar || tabs.includes(child as HTMLButtonElement))
