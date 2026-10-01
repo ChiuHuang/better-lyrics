@@ -1078,7 +1078,17 @@
 @media (prefers-reduced-motion: reduce) {
   .detail-nav-btn,
   .detail-dot,
-  .detail-dot.active {
+  .detail-dot.active,
+  .detail-slideshow-img,
+  .detail-star,
+  .detail-star::before,
+  .store-card,
+  .marketplace-filter-chip__icon {
     transition: none;
+  }
+
+  .store-card.card-initial,
+  .marketplace-filter-chip__icon .sort-direction-icon--animate {
+    animation: none;
   }
 }

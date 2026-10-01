@@ -2276,7 +2276,16 @@
 
   .unison-card,
   .unison-input,
-  .unison-token-input {
+  .unison-token-input,
+  .unison-filter-chip__icon,
+  .unison-rev-link,
+  .unison-rev-chev,
+  .unison-rev-table__item {
     transition: none;
+  }
+
+  .unison-token--flash,
+  .unison-filter-chip__icon .sort-direction-icon--animate {
+    animation: none;
   }
 }

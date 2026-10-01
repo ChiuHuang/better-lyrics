@@ -1689,6 +1689,17 @@ input.cm-textfield:focus-visible {
 
 
 
+/* -- Reduced motion -------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.theme-card,
+	.position-cell,
+	.section-browse-link,
+	.cm-panel.cm-search label {
+		transition: none;
+	}
+}
+
 /* -- Squircle corners ---------------------------- */
 /* Feature-gated: browsers without corner-shape keep the original radii below. */
 
