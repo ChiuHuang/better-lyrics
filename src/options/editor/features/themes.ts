@@ -711,7 +711,8 @@ function createModalSection(
 
   if (withBrowseLink) {
     const browse = document.createElement("button");
-    browse.className = "section-browse-link";
+    browse.type = "button";
+    browse.className = "ui-button ui-button--ghost ui-button--compact";
     browse.appendChild(createMarketplaceIcon());
     browse.appendChild(document.createTextNode(t("theme_modal_browse")));
     browse.addEventListener("click", () => {
@@ -737,7 +738,7 @@ function createMarketplaceCard(
   rank?: number
 ): HTMLElement {
   const card = document.createElement("div");
-  card.className = "theme-card";
+  card.className = "ui-tile theme-card";
   card.setAttribute("data-type", "store");
 
   if (storedThemeName === `${STORE_THEME_PREFIX}${storeId}`) {
@@ -865,7 +866,7 @@ async function populateThemeModal(): Promise<void> {
 
 function createThemeCard(options: ThemeCardOptions, storedThemeName?: string): HTMLElement {
   const card = document.createElement("div");
-  card.className = "theme-card";
+  card.className = "ui-tile theme-card";
 
   const isStoreThemeActive = editorStateManager.getIsStoreTheme();
   const isSymlinkedActive = options.storeId && storedThemeName === `${STORE_THEME_PREFIX}${options.storeId}`;

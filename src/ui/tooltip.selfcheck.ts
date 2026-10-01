@@ -4,7 +4,7 @@ import { JSDOM } from "jsdom";
 const { window } = new JSDOM("<!doctype html><html><body></body></html>", { pretendToBeVisual: true });
 Object.assign(globalThis, { window, document: window.document, HTMLElement: window.HTMLElement });
 
-const { initTooltips } = await import("@/ui/tooltip");
+const { initTooltips, setTooltipIcon } = await import("@/ui/tooltip");
 
 const doc = window.document;
 const makeRoot = (text: string): { root: HTMLElement; anchor: HTMLElement } => {
@@ -109,6 +109,36 @@ const second = makeRoot("Second");
   enter(b);
   assert.equal(isInstant(), false, "a tooltip that never appeared does not warm the next one");
   leave(b);
+}
+
+// -- Tone and icon --------------------------
+{
+  const { root, anchor } = makeRoot("Syllable: 3");
+  const plain = doc.createElement("button");
+  plain.dataset.tooltip = "Plain";
+  root.appendChild(plain);
+  initTooltips(root);
+  anchor.dataset.tooltipTone = "var(--sync-syllable)";
+  const icon = doc.createElementNS("http://www.w3.org/2000/svg", "svg");
+  setTooltipIcon(anchor, icon);
+  enter(anchor);
+  assert.equal(tip()!.classList.contains("ui-tooltip--toned"), true, "a toned anchor tints the tooltip");
+  assert.equal(tip()!.style.getPropertyValue("--tooltip-tone"), "var(--sync-syllable)");
+  const shown = tip()!.firstElementChild;
+  assert.equal(shown?.tagName.toLowerCase(), "svg", "the icon leads the text");
+  assert.notEqual(shown, icon, "the tooltip shows a copy, so the anchor keeps its icon");
+  assert.equal(shown?.classList.contains("ui-tooltip__icon"), true);
+  assert.equal(tip()!.textContent, "Syllable: 3");
+  leave(anchor);
+  enter(plain);
+  assert.equal(
+    tip()!.classList.contains("ui-tooltip--toned"),
+    false,
+    "regression: tone does not leak to the next tooltip"
+  );
+  assert.equal(tip()!.querySelector("svg"), null, "nor does the icon");
+  assert.equal(tip()!.style.getPropertyValue("--tooltip-tone"), "");
+  leave(plain);
 }
 
 console.log("tooltip self-check passed");

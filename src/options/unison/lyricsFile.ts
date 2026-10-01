@@ -36,7 +36,7 @@ function readLyricsFile(file: File, textarea: HTMLTextAreaElement, onLoad: (text
 
 export function bindLyricsFileDrop(textarea: HTMLTextAreaElement, onLoad: (text: string) => void): void {
   const setDragover = (active: boolean): void => {
-    textarea.closest(".ui-frame")?.classList.toggle("unison-frame--dragover", active);
+    textarea.closest(".ui-frame")?.classList.toggle("is-dragover", active);
   };
   textarea.addEventListener("dragover", event => {
     event.preventDefault();
