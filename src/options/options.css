@@ -1,12 +1,3 @@
-html {
-    width: 600px;
-    min-width: 600px;
-    max-width: 600px;
-    overflow: auto;
-    scrollbar-width: thin;
-    scrollbar-gutter: stable;
-}
-
 nav {
     display: flex;
     align-items: center;
