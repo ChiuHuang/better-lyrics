@@ -42,9 +42,9 @@ import {
 } from "./themeStoreService";
 import { cleanupTurnstile, getTurnstileToken } from "./turnstile";
 import { errorStore, warnStore } from "@core/logger";
-import { menuPlacement } from "@/ui/menuPlacement";
 import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
+import { type ActionMenu, type ActionMenuItem, createActionMenu } from "@/ui/actionMenu";
 import { type CreateModalOptions, createModal, isAnyModalOpen, type Modal } from "@/ui/modal";
 import { toast } from "@/ui/toast";
 
@@ -1054,7 +1054,7 @@ async function checkForThemeUpdates(): Promise<void> {
     const updatedIds = await performSilentUpdates(storeThemes);
 
     if (updatedIds.length > 0) {
-      updateYourThemesDropdown();
+      refreshYourThemesMenu();
     }
   } catch (err) {
     warnStore("Update check failed:", err);
@@ -1063,18 +1063,6 @@ async function checkForThemeUpdates(): Promise<void> {
 
 function setupKeyboardListeners(): void {
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") {
-      const dropdown = document.getElementById("your-themes-dropdown");
-      if (dropdown?.classList.contains("active")) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleYourThemesDropdown(false);
-        return;
-      }
-
-      return;
-    }
-
     if (detailModal?.isTopmost()) {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
@@ -1092,9 +1080,9 @@ function setupThemeChangeListener(): void {
     if (area === "sync" && changes.themeName) {
       const newThemeName = changes.themeName.newValue as string | undefined;
       if (!newThemeName || !newThemeName.startsWith("store:")) {
-        clearActiveStoreTheme().then(() => updateYourThemesDropdown());
+        clearActiveStoreTheme().then(refreshYourThemesMenu);
       } else {
-        updateYourThemesDropdown();
+        refreshYourThemesMenu();
       }
     }
   });
@@ -1581,7 +1569,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
       }
     }
 
-    updateYourThemesDropdown();
+    refreshYourThemesMenu();
   } catch (err) {
     errorStore("Action failed:", err);
     setInstallButtonState(button, isRemoveButton);
@@ -1966,7 +1954,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
             }
           }
         }
-        updateYourThemesDropdown();
+        refreshYourThemesMenu();
         await refreshStoreCards();
       } catch (err) {
         errorStore("Action failed:", err);
@@ -2188,7 +2176,7 @@ async function handleUrlInstall(): Promise<void> {
     const branchInfo = branch ? ` (${branch})` : "";
     showInstalledToast(t("marketplace_alert_installedFrom", [theme.title, `${repo}${branchInfo}`]), installedTheme);
     closeUrlModal();
-    updateYourThemesDropdown();
+    refreshYourThemesMenu();
     urlOnlyThemeCards.clear();
     await applyFiltersToGrid();
     await refreshStoreCards();
@@ -2204,76 +2192,63 @@ async function handleUrlInstall(): Promise<void> {
   }
 }
 
-async function updateYourThemesDropdown(): Promise<void> {
-  const dropdown = document.getElementById("your-themes-list");
-  if (!dropdown) return;
+let yourThemesMenu: ActionMenu | null = null;
 
+function refreshYourThemesMenu(): void {
+  if (yourThemesMenu?.isOpen()) void yourThemesMenu.open();
+}
+
+function createYourThemesRow(theme: InstalledStoreTheme, isActive: boolean): HTMLElement {
+  const row = document.createElement("span");
+  row.className = "your-themes-item";
+
+  const info = document.createElement("span");
+  info.className = "your-themes-item-info";
+
+  const titleRow = document.createElement("span");
+  titleRow.className = "your-themes-item-title-row";
+  const title = document.createElement("span");
+  title.className = "your-themes-item-title";
+  title.textContent = theme.title;
+  titleRow.appendChild(title);
+  if (theme.source === "url") {
+    titleRow.appendChild(createGitHubBadge("ui-badge", theme.sourceUrl || `Installed from ${theme.repo}`));
+  }
+
+  const meta = document.createElement("span");
+  meta.className = "your-themes-item-meta";
+  meta.textContent = `By ${formatCreators(theme.creators)} · v${theme.version}`;
+  info.append(titleRow, meta);
+  row.appendChild(info);
+
+  if (isActive) {
+    const active = document.createElement("span");
+    active.className = "ui-badge ui-badge--success";
+    active.textContent = t("marketplace_active");
+    row.appendChild(active);
+  }
+  return row;
+}
+
+async function yourThemesItems(): Promise<ActionMenuItem[]> {
   const installed = await getInstalledStoreThemes();
   const storedActiveThemeId = await getActiveStoreTheme();
-
   const syncData = await getSyncStorage<{ themeName?: string }>(["themeName"]);
   const currentThemeName = syncData.themeName;
-  const isStoreThemeActive = currentThemeName?.startsWith("store:");
-  const activeThemeId = isStoreThemeActive ? currentThemeName?.slice(6) : null;
+  const activeThemeId = currentThemeName?.startsWith("store:") ? currentThemeName.slice(6) : null;
 
   if (storedActiveThemeId && storedActiveThemeId !== activeThemeId) {
     await clearActiveStoreTheme();
   }
 
-  dropdown.replaceChildren();
-
-  if (installed.length === 0) {
-    const empty = document.createElement("div");
-    empty.className = "your-themes-empty";
-    empty.textContent = t("marketplace_noThemesInstalled");
-    dropdown.appendChild(empty);
-    return;
-  }
-
-  for (const theme of installed) {
-    const item = document.createElement("div");
-    item.className = `your-themes-item ${theme.id === activeThemeId ? "active" : ""}`;
-
-    const info = document.createElement("div");
-    info.className = "your-themes-item-info";
-
-    const titleRow = document.createElement("div");
-    titleRow.className = "your-themes-item-title-row";
-
-    const title = document.createElement("span");
-    title.className = "your-themes-item-title";
-    title.textContent = theme.title;
-
-    titleRow.appendChild(title);
-
-    if (theme.source === "url") {
-      const badgeTitle = theme.sourceUrl || `Installed from ${theme.repo}`;
-      const badge = createGitHubBadge("ui-badge", badgeTitle);
-      titleRow.appendChild(badge);
-    }
-
-    const meta = document.createElement("span");
-    meta.className = "your-themes-item-meta";
-    meta.textContent = `By ${formatCreators(theme.creators)} · v${theme.version}`;
-
-    info.appendChild(titleRow);
-    info.appendChild(meta);
-
-    const applyBtn = document.createElement("button");
-    applyBtn.className = "your-themes-item-apply";
-    applyBtn.textContent = theme.id === activeThemeId ? t("marketplace_active") : t("marketplace_apply");
-    applyBtn.disabled = theme.id === activeThemeId;
-    applyBtn.addEventListener("click", async e => {
-      e.stopPropagation();
-      await handleApplyTheme(theme);
-    });
-
-    item.appendChild(info);
-    item.appendChild(applyBtn);
-    item.addEventListener("click", () => handleApplyTheme(theme));
-
-    dropdown.appendChild(item);
-  }
+  return installed.map(theme => {
+    const isActive = theme.id === activeThemeId;
+    return {
+      label: isActive ? `${theme.title}, ${t("marketplace_active")}` : theme.title,
+      content: createYourThemesRow(theme, isActive),
+      onSelect: () => void handleApplyTheme(theme),
+    };
+  });
 }
 
 const installToastId = (themeId: string): string => `install:${themeId}`;
@@ -2307,8 +2282,7 @@ async function handleApplyTheme(theme: InstalledStoreTheme): Promise<boolean> {
     }
 
     toast.success(t("builtin_applied", theme.title));
-    updateYourThemesDropdown();
-    toggleYourThemesDropdown(false);
+    yourThemesMenu?.close();
     await refreshStoreCards();
 
     const detailApplyBtn = document.getElementById("detail-apply-btn") as HTMLButtonElement | null;
@@ -2327,46 +2301,6 @@ async function handleApplyTheme(theme: InstalledStoreTheme): Promise<boolean> {
     errorStore("Failed to apply theme:", err);
     toast.error(t("marketplace_applyFailed"));
     return false;
-  }
-}
-
-const YOUR_THEMES_MAX_HEIGHT_PX = 300;
-const YOUR_THEMES_EDGE_PX = 12;
-
-function placeYourThemesDropdown(dropdown: HTMLElement, btn: HTMLElement): void {
-  const list = document.getElementById("your-themes-list");
-  const rect = btn.getBoundingClientRect();
-  const room = Math.max(rect.top, window.innerHeight - rect.bottom) - YOUR_THEMES_EDGE_PX;
-  const frame = dropdown.offsetHeight - (list?.offsetHeight ?? 0);
-  if (list) list.style.maxHeight = `${Math.min(YOUR_THEMES_MAX_HEIGHT_PX, room - frame)}px`;
-  const { placement, top } = menuPlacement({
-    triggerTop: rect.top,
-    triggerBottom: rect.bottom,
-    menuHeight: dropdown.offsetHeight,
-    viewportHeight: window.innerHeight,
-  });
-  dropdown.dataset.placement = placement;
-  dropdown.style.top = `${top}px`;
-  dropdown.style.left = `${rect.right - dropdown.offsetWidth}px`;
-}
-
-function toggleYourThemesDropdown(show?: boolean): void {
-  const dropdown = document.getElementById("your-themes-dropdown");
-  const btn = document.getElementById("your-themes-btn");
-
-  if (!dropdown || !btn) return;
-
-  const isVisible = dropdown.classList.contains("active");
-  const shouldShow = show !== undefined ? show : !isVisible;
-
-  if (shouldShow) {
-    dropdown.classList.add("active");
-    btn.classList.add("active");
-    void updateYourThemesDropdown().then(() => placeYourThemesDropdown(dropdown, btn));
-    placeYourThemesDropdown(dropdown, btn);
-  } else {
-    dropdown.classList.remove("active");
-    btn.classList.remove("active");
   }
 }
 
@@ -2430,28 +2364,11 @@ async function refreshStoreCards(): Promise<void> {
 
 export function setupYourThemesButton(): void {
   const btn = document.getElementById("your-themes-btn");
-  const dropdown = document.getElementById("your-themes-dropdown");
-  const list = document.getElementById("your-themes-list");
-  if (dropdown) document.body.appendChild(dropdown);
-  if (list) attachScrollFade(list);
-  window.addEventListener(
-    "scroll",
-    event => {
-      if (!(event.target instanceof Node && dropdown?.contains(event.target))) toggleYourThemesDropdown(false);
-    },
-    { capture: true, passive: true }
-  );
-  window.addEventListener("resize", () => toggleYourThemesDropdown(false));
-  btn?.addEventListener("click", e => {
-    e.stopPropagation();
-    toggleYourThemesDropdown();
-  });
-
-  document.addEventListener("click", e => {
-    const dropdown = document.getElementById("your-themes-dropdown");
-    const btn = document.getElementById("your-themes-btn");
-    if (dropdown && btn && !dropdown.contains(e.target as Node) && !btn.contains(e.target as Node)) {
-      toggleYourThemesDropdown(false);
-    }
+  if (!btn) return;
+  yourThemesMenu = createActionMenu(btn, {
+    label: t("options_themes_installedThemes"),
+    className: "your-themes-menu",
+    emptyLabel: t("marketplace_noThemesInstalled"),
+    items: yourThemesItems,
   });
 }
