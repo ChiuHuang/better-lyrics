@@ -18,7 +18,7 @@ import {
   invalidateDisplayName,
   signPayload,
 } from "@core/keyIdentity";
-import { clearAllOffsets, getOffsetInfo } from "@core/storage";
+import { clearAllOffsets, clearCache, getOffsetInfo } from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
@@ -37,7 +37,9 @@ import { syncVideoQualityControls, videoQualityOptions } from "@/options/videoQu
 import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFields";
 import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
 import { renderAboutLinks } from "@/options/aboutPage";
+import { toast } from "@/ui/toast";
 import {
+  fitPopupToWindow,
   flashSaved,
   initAboutToggle,
   initPopupCards,
@@ -216,27 +218,22 @@ const saveOptionsToStorage = (options: Options): void => {
   });
 };
 
-// Function to show alert message
-const showAlert = (message: string): void => {
-  const status = document.getElementById("status")!;
-  status.innerText = message;
-  status.classList.add("active");
-
-  setTimeout(() => {
-    status.classList.remove("active");
-    setTimeout(() => {
-      status.innerText = "";
-    }, 200);
-  }, 2000);
-};
-
 // Function to clear transient lyrics
 const clearTransientLyrics = (callback?: () => void): void => {
   chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
     if (tabs.length === 0) {
-      updateCacheInfo(null);
-      showAlert(t("options_alert_cacheCleared"));
-      if (callback && typeof callback === "function") callback();
+      clearCache()
+        .then(
+          cacheInfo => {
+            updateCacheInfo({ cacheInfo });
+            toast.success(t("options_alert_cacheCleared"));
+          },
+          error => {
+            errorCore("Failed to clear cached lyrics:", error);
+            toast.error(t("options_alert_cacheClearFailed"));
+          }
+        )
+        .finally(() => callback?.());
       return;
     }
 
@@ -246,10 +243,10 @@ const clearTransientLyrics = (callback?: () => void): void => {
         completedTabs++;
         if (completedTabs === tabs.length) {
           if (response?.success) {
-            updateCacheInfo(null);
-            showAlert(t("options_alert_cacheCleared"));
+            if (response.cacheInfo) updateCacheInfo({ cacheInfo: response.cacheInfo });
+            toast.success(t("options_alert_cacheCleared"));
           } else {
-            showAlert(t("options_alert_cacheClearFailed"));
+            toast.error(t("options_alert_cacheClearFailed"));
           }
           if (callback && typeof callback === "function") callback();
         }
@@ -290,11 +287,7 @@ const subscribeToCacheInfo = (): void => {
 };
 
 // Function to update cache info
-const updateCacheInfo = (items: { cacheInfo: { count: number; size: number } } | null): void => {
-  if (!items) {
-    showAlert(t("options_alert_nothingToClear"));
-    return;
-  }
+const updateCacheInfo = (items: { cacheInfo: { count: number; size: number } }): void => {
   const cacheInfo = items.cacheInfo || { count: 0, size: 0 };
   const cacheCount = document.getElementById("lyrics-count")!;
   const cacheSize = document.getElementById("cache-size")!;
@@ -696,8 +689,10 @@ const localeReady = new Promise<void>(resolve => {
 document.addEventListener("DOMContentLoaded", async () => {
   await localeReady;
   renderAppVersion(document.getElementById("app-version"));
+  fitPopupToWindow();
+  renderAboutLinks(document);
   mountIcons(document);
-  initRefreshLyricsButton(() => showAlert(t("options_alert_refreshFailed")));
+  initRefreshLyricsButton(() => toast.error(t("options_alert_refreshFailed")));
   mountDropdownFields();
   initTooltips(document.body);
   initLetterWaveSwitch();
@@ -707,7 +702,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initPopupScrollFades();
   initPopupTabs(page => pageCard(page)?.place(true));
   initAboutToggle(page => pageCard(page)?.place(true));
-  renderAboutLinks(document);
   checkForStableRelease();
 });
 
@@ -751,7 +745,7 @@ function setupLazyCodeEditor(initialContentReady: Promise<void>): void {
       isRequested = false;
       errorCore("Failed to load the CSS editor:", err);
       openOptions();
-      showAlert(t("unison_rev_error"));
+      toast.error(t("unison_rev_error"));
     } finally {
       button.removeAttribute("aria-busy");
     }
@@ -1109,11 +1103,11 @@ async function handleExportIdentity(): Promise<void> {
   try {
     const [displayName, exportData, { keyId }] = await Promise.all([getDisplayName(), exportIdentity(), getIdentity()]);
     const outcome = await downloadIdentityFile(exportData, `better-lyrics-identity-${displayName}.json`);
-    showAlert(downloadOutcomeMessage(outcome));
+    notifyDownloadOutcome(outcome);
     if (outcome.kind === "downloads") await rememberPendingBackup(outcome.downloadId, keyId);
   } catch (error) {
     errorCore("Failed to export identity:", error);
-    showAlert(t("options_alert_exportFailed"));
+    toast.error(t("options_alert_exportFailed"));
   }
 }
 
@@ -1144,10 +1138,10 @@ async function downloadIdentityFile(content: string, filename: string): Promise<
   return { kind: "anchor" };
 }
 
-function downloadOutcomeMessage(outcome: DownloadOutcome): string {
-  if (outcome.kind === "downloads") return t("options_alert_fileSaveDialogOpened");
-  if (outcome.kind === "anchor") return t("options_alert_downloadInitiated");
-  return t("options_alert_fileSaveFailed");
+function notifyDownloadOutcome(outcome: DownloadOutcome): void {
+  if (outcome.kind === "downloads") toast.info(t("options_alert_fileSaveDialogOpened"));
+  else if (outcome.kind === "anchor") toast.success(t("options_alert_downloadInitiated"));
+  else toast.error(t("options_alert_fileSaveFailed"));
 }
 
 async function syncBackupWarning(): Promise<void> {
@@ -1193,11 +1187,11 @@ async function importIdentityFromJson(json: string): Promise<void> {
     const imported = await importIdentity(json);
     await markIdentityBackedUp(imported.keyId);
     await Promise.all([updateIdentityDisplay(), syncBackupWarning()]);
-    showAlert(t("options_alert_importSuccess"));
+    toast.success(t("options_alert_importSuccess"));
     closeImportIdentityModal();
   } catch (err) {
     const message = err instanceof Error ? err.message : "Invalid identity file";
-    showAlert(message);
+    toast.error(message);
   }
 }
 
@@ -1250,7 +1244,7 @@ function initImportIdentityModal(): void {
   confirmBtn.addEventListener("click", async () => {
     const json = textarea.value.trim();
     if (!json) {
-      showAlert(t("options_alert_importEmpty"));
+      toast.error(t("options_alert_importEmpty"));
       return;
     }
     await importIdentityFromJson(json);
@@ -1276,7 +1270,7 @@ function initImportIdentityModal(): void {
       textarea.value = await file.text();
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to read file";
-      showAlert(message);
+      toast.error(message);
     }
   });
 }
@@ -1418,7 +1412,7 @@ function initLangExclusionsModal(): void {
     }
     saveOptions();
     closeLangExclusionsModal();
-    showAlert(t("options_romanization_resetSuccess", tabName));
+    toast.success(t("options_romanization_resetSuccess", tabName));
   });
 }
 

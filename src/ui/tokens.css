@@ -24,6 +24,7 @@
   /* -- Surfaces -- */
   --card-bg: rgba(255, 255, 255, 0.05);
   --card-edge: 1px solid rgba(255, 255, 255, 0.1);
+  --card-surface: #333437;
   --pane-bg: rgba(255, 255, 255, 0.03);
   --pane-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   --raised-bg: rgba(255, 255, 255, 0.05);
@@ -34,6 +35,9 @@
   --menu-bg: #333437;
   --menu-edge: 1px solid rgba(255, 255, 255, 0.1);
   --menu-shadow: rgba(0, 0, 0, 0.45) 0 18px 40px -12px, inset rgba(255, 255, 255, 0.06) 0 1px 0 0;
+  --toast-bg: #36373b;
+  --toast-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
   --divider: rgba(255, 255, 255, 0.06);
   --divider-strong: rgba(255, 255, 255, 0.08);
 
@@ -57,6 +61,7 @@
   --duration-spin: 600ms;
   --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
   --distance-base: 8px;
+  --distance-toast: 14px;
   --blur-small: 2px;
   --scale-press: 0.96;
   --scale-menu-open: 0.97;
@@ -82,12 +87,16 @@
 
   /* -- Layers: portalled menus sit above page modals (max 100000), tooltips above menus.
      Keep these at 6 digits or fewer: the CSS minifier rounds longer custom property numbers, which made both equal. -- */
+  --z-toast: 999997;
   --z-menu: 999998;
   --z-tooltip: 999999;
 
   /* -- Danger -- */
   --danger: rgb(239, 68, 68);
   --danger-hover: rgb(220, 38, 38);
+
+  /* -- Success -- */
+  --success: rgb(34, 197, 94);
 }
 
 .ui-card,

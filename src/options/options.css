@@ -177,14 +177,12 @@ h1 img {
     cursor: pointer;
 }
 
-#status,
 #status-css,
 .options-page :where(label input) {
     position: absolute;
     opacity: 0;
 }
 
-#status,
 #status-css,
 .options-page :where(button) {
     font-size: 1.125rem;
@@ -367,7 +365,15 @@ body {
     margin-bottom: 1.25rem;
     padding: 1rem 1.25rem;
     border-radius: 0.75rem;
-    background: linear-gradient(45deg, rgb(51 52 55 / 100%), rgb(51 52 55 / 75%), rgb(51 52 55 / 0%)), var(--theme-img-url), rgb(51 52 55 / 100%);
+    background:
+        linear-gradient(
+            45deg,
+            var(--card-surface),
+            color-mix(in srgb, var(--card-surface) 75%, transparent),
+            transparent
+        ),
+        var(--theme-img-url),
+        var(--card-surface);
     background-color: rgba(255, 255, 255, 0.05);
     background-size: cover;
     background-position: right;
@@ -469,7 +475,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background-color: hsla(0, 0%, 100%, 0.1);
+    background-color: var(--raised-bg);
     color: #fff;
     padding: 8px 12px;
     padding-right: 16px;
@@ -484,7 +490,7 @@ body {
 }
 
 .theme-preview-change-btn:hover {
-    background-color: hsla(0, 0%, 100%, 0.2);
+    background-color: var(--raised-bg-hover);
 }
 
 .theme-preview-change-btn svg {
@@ -492,7 +498,6 @@ body {
     height: 0.875rem;
 }
 
-#status,
 #status-css {
     top: 0;
     left: 50%;
@@ -510,7 +515,6 @@ body {
     opacity 0.2s;
 }
 
-#status.active,
 #status-css.active {
     transform: translateX(-50%) translateY(0);
     opacity: 1;

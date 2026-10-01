@@ -2,7 +2,7 @@ import { LYRIC_SOURCE_KEYS, OFFSET_STORAGE_PREFIX, STORAGE_TRANSIENT_SET_LOG } f
 import { truncateSource } from "@utils";
 import { compileWithDetails } from "rics";
 import { compressString, decompressString, isCompressed } from "./compression";
-import { logCore, logError } from "@core/logger";
+import { errorCore, logCore, logError } from "@core/logger";
 
 /**
  * Keys that should NEVER be deleted by clearCache or any bulk delete operation.
@@ -258,18 +258,18 @@ export async function saveCacheInfo(): Promise<void> {
  * Clears all cached lyrics data from local storage.
  * Only removes keys with "blyrics_" prefix and explicitly excludes PROTECTED_STORAGE_KEYS.
  */
-export async function clearCache(): Promise<void> {
-  try {
-    const result = await chrome.storage.local.get(null);
-    const lyricsKeys = Object.keys(result).filter(
-      key =>
-        key.startsWith("blyrics_") && !PROTECTED_STORAGE_KEYS.includes(key as (typeof PROTECTED_STORAGE_KEYS)[number])
-    );
-    await chrome.storage.local.remove(lyricsKeys);
-    await saveCacheInfo();
-  } catch (error) {
-    logError(error);
-  }
+export async function clearCache(): Promise<{ count: number; size: number }> {
+  const result = await chrome.storage.local.get(null);
+  const lyricsKeys = Object.keys(result).filter(
+    key =>
+      key.startsWith("blyrics_") && !PROTECTED_STORAGE_KEYS.includes(key as (typeof PROTECTED_STORAGE_KEYS)[number])
+  );
+  await chrome.storage.local.remove(lyricsKeys);
+  const cacheInfo = await getUpdatedCacheInfo();
+  await chrome.storage.sync
+    .set({ cacheInfo })
+    .catch(error => errorCore("Failed to save cache info after clearing:", error));
+  return cacheInfo;
 }
 
 export async function clearSongCache(videoId: string): Promise<void> {

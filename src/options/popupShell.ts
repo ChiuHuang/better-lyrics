@@ -13,6 +13,33 @@ export function renderAppVersion(target: HTMLElement | null): void {
   target.textContent = manifest.version_name ?? manifest.version;
 }
 
+// -- Width --------------------------
+
+const POPUP_MIN_FIT_WIDTH_PX = 320;
+const POPUP_RESIZE_SETTLE_MS = 100;
+
+export function fitPopupToWindow(): void {
+  if (!chrome.extension.getViews({ type: "popup" }).includes(window)) return;
+  const root = document.documentElement;
+  const fit = (): void => {
+    const pinned = parseFloat(getComputedStyle(root).getPropertyValue("--popup-width"));
+    const available = window.innerWidth;
+    if (!pinned || available < POPUP_MIN_FIT_WIDTH_PX) return;
+    if (available >= pinned) root.style.removeProperty("--popup-fit-width");
+    else root.style.setProperty("--popup-fit-width", `${available}px`);
+  };
+  let settle: ReturnType<typeof setTimeout> | undefined;
+  window.addEventListener("resize", () => {
+    clearTimeout(settle);
+    settle = setTimeout(fit, POPUP_RESIZE_SETTLE_MS);
+  });
+  const fitNextFrame = (): void => {
+    requestAnimationFrame(fit);
+  };
+  if (document.readyState === "complete") fitNextFrame();
+  else window.addEventListener("load", fitNextFrame, { once: true });
+}
+
 // -- Tab pill --------------------------
 
 function movePill(tabs: HTMLElement, animate: boolean): void {

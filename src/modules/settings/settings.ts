@@ -276,14 +276,17 @@ export function listenForPopupMessages(): void {
       getAndApplyCustomStyles();
       reloadLyrics();
     } else if (request.action === "clearCache") {
-      try {
-        clearCache();
-        reloadLyrics();
-
-        sendResponse({ success: true });
-      } catch {
-        sendResponse({ success: false });
-      }
+      clearCache().then(
+        cacheInfo => {
+          reloadLyrics();
+          sendResponse({ success: true, cacheInfo });
+        },
+        error => {
+          logContent("clearCache failed:", error);
+          sendResponse({ success: false });
+        }
+      );
+      return true;
     } else if (request.action === "refreshLyrics") {
       refreshCurrentSong().then(
         () => sendResponse({ success: true }),

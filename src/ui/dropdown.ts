@@ -2,6 +2,7 @@ import { t } from "@core/i18n";
 import { svgIcon } from "@/options/unison/icons";
 import { type DropdownOption, filterOptions, shouldShowSearch } from "@/ui/dropdownFilter";
 import { menuPlacement } from "@/ui/menuPlacement";
+import { quickDurationMs } from "@/ui/motion";
 import { attachScrollFade } from "@/ui/scrollFade";
 
 export type { DropdownOption } from "@/ui/dropdownFilter";
@@ -25,13 +26,6 @@ export interface Dropdown {
 }
 
 const MENU_MIN_WIDTH_PX = 200;
-const CLOSE_FALLBACK_MS = 150;
-
-function cssTimeMs(value: string): number {
-  const amount = Number.parseFloat(value);
-  if (Number.isNaN(amount)) return CLOSE_FALLBACK_MS;
-  return value.trim().endsWith("ms") ? amount : amount * 1000;
-}
 let dropdownCount = 0;
 
 export function createDropdown(config: DropdownConfig): Dropdown {
@@ -219,7 +213,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     document.removeEventListener("pointerdown", onOutsidePointer, true);
     window.removeEventListener("resize", onViewportChange);
     window.removeEventListener("scroll", onViewportChange, { capture: true });
-    const duration = cssTimeMs(getComputedStyle(document.documentElement).getPropertyValue("--duration-quick"));
+    const duration = quickDurationMs();
     closeTimer = window.setTimeout(() => {
       menu.classList.remove("is-open", "is-closing");
       menu.remove();
