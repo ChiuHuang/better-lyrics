@@ -112,25 +112,6 @@ const reset = (): void => {
   reset();
 }
 
-{
-  const loading = toast.loading("Exporting key");
-  for (const label of ["a", "b", "c"]) toast.success(label);
-  assert.deepEqual(live().map(text), ["c", "b", "a"], "the oldest toast is evicted at the cap");
-  assert.ok(
-    toasts().some(el => text(el) === "Exporting key" && el.classList.contains("is-leaving")),
-    "eviction plays the exit"
-  );
-  loading.update("success", "Identity key exported");
-  assert.equal(
-    toasts().filter(el => text(el) === "Identity key exported").length,
-    0,
-    "an evicted toast does not come back on update"
-  );
-  advance(60_000);
-  assert.equal(pending.size, 0, "no timer is left pending after eviction");
-  reset();
-}
-
 // -- Dedupe --------------------------
 {
   const first = toast.success("Cache cleared");
@@ -223,6 +204,57 @@ const reset = (): void => {
   assert.equal(politeRegion()?.textContent, "", "a repeat clears the region first");
   advance(50);
   assert.equal(politeRegion()?.textContent, "Nothing new", "a repeat is announced again");
+  reset();
+}
+
+// -- Regressions --------------------------
+{
+  const loading = toast.loading("Exporting key");
+  for (const label of ["a", "b", "c"]) toast.success(label);
+  assert.deepEqual(live().map(text), ["c", "b", "a"], "regression: the oldest toast is evicted at the cap");
+  assert.ok(
+    toasts().some(el => text(el) === "Exporting key" && el.classList.contains("is-leaving")),
+    "regression: eviction plays the exit"
+  );
+  loading.update("success", "Identity key exported");
+  assert.equal(
+    toasts().filter(el => text(el) === "Identity key exported").length,
+    0,
+    "regression: an evicted loading toast does not come back on update"
+  );
+  advance(60_000);
+  assert.equal(pending.size, 0, "regression: no timer is left pending after eviction");
+  reset();
+}
+
+{
+  for (let i = 0; i < 4; i++) toast.success("Cache cleared successfully!");
+  assert.equal(live().length, 1, "regression: four quick clear-cache clicks give one toast");
+  reset();
+}
+{
+  const handle = toast.loading("Exporting key");
+  toasts()[0].dispatchEvent(new window.Event("pointerenter"));
+  handle.update("success", "Identity key exported");
+  advance(10_000);
+  assert.equal(live().length, 1, "regression: update while hovered does not start the timer");
+  toasts()[0].dispatchEvent(new window.Event("pointerleave"));
+  advance(2499);
+  assert.equal(live().length, 1, "regression: leaving after an update runs the full new duration");
+  advance(1);
+  assert.equal(live().length, 0, "regression: the updated toast then dismisses");
+  reset();
+}
+{
+  const first = toast.success("Saved");
+  toasts()[0].dispatchEvent(new window.Event("pointerenter"));
+  toast.success("Saved");
+  advance(10_000);
+  assert.equal(live().length, 1, "regression: a repeat while hovered keeps the pause");
+  toasts()[0].dispatchEvent(new window.Event("pointerleave"));
+  advance(2500);
+  assert.equal(live().length, 0, "regression: a repeat while hovered restarts the full duration on leave");
+  first.dismiss();
   reset();
 }
 
