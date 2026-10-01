@@ -11,6 +11,8 @@ import {
   formatTimingDelta,
   splitDiffRows,
   statusLabel,
+  type SyllableLineChange,
+  syllableChange,
   unchangedLines,
 } from "@modules/unison/revisions";
 import type { DiffRow, RevisionStatus } from "@modules/unison/types";
@@ -226,7 +228,7 @@ function createDiffSection(title: string, rows: DiffRow[]): HTMLElement {
   return section;
 }
 
-function createDiffRow(row: DiffRow): HTMLElement {
+function createDiffRow(row: DiffRow): Node {
   if (row.kind === "gap") {
     const gap = document.createElement("div");
     gap.className = "unison-rev-diff-gap";
@@ -240,8 +242,23 @@ function createDiffRow(row: DiffRow): HTMLElement {
 
   let lead = row.startMs === null ? "" : formatDiffTime(row.startMs);
   if ("head" in row && row.head) lead = diffHeadLabel(row.head).map(messageText).join(" · ");
+  if (row.kind === "timing" && row.syllables) {
+    return createSyllableLines({ ...row.syllables, text: row.text }, lead, formatTimingDelta(row.deltaMs));
+  }
   if (row.kind === "timing") return createDiffLine(row.kind, lead, row.text, formatTimingDelta(row.deltaMs));
+  if (row.kind === "syllable") return createSyllableLines(row, lead);
   return createDiffLine(row.kind, lead, row.kind === "word" ? row.parts : row.text);
+}
+
+function createSyllableLines(change: SyllableLineChange, lead: string, delta?: string): Node {
+  const lines = document.createDocumentFragment();
+  const changed = syllableChange(change);
+  changed.forEach((line, index) => {
+    const isLast = index === changed.length - 1;
+    const tag = [isLast ? delta : undefined, line.note ? messageText(line.note) : undefined].filter(Boolean).join(", ");
+    lines.appendChild(createDiffLine(line.kind, lead, line.content, tag || undefined));
+  });
+  return lines;
 }
 
 function createDiffLine(kind: DiffLineKind, lead: string, content: string | DiffParts, timing?: string): HTMLElement {
