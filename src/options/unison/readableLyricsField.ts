@@ -1,9 +1,9 @@
 import type { EditorHandle } from "@braccato/highlight";
-import { compactTtml, readableTtml } from "@/options/unison/ttmlLayout";
+import { lyricsForSave, readableTtml } from "@/options/unison/ttmlLayout";
 
 export interface ReadableLyricsField {
   replace(text: string): void;
-  text(): string;
+  text(original?: string): string;
 }
 
 const PASTE_INPUT_TYPES = new Set(["insertFromPaste", "insertFromDrop"]);
@@ -32,6 +32,6 @@ export function bindReadableLyricsField(textarea: HTMLTextAreaElement, editor: E
 
   return {
     replace: apply,
-    text: () => (readable ? compactTtml(textarea.value) : textarea.value).trim(),
+    text: original => lyricsForSave(textarea.value, { readable, original }),
   };
 }

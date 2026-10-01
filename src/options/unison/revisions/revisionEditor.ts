@@ -137,7 +137,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   });
 
   const draft = (): RevisionDraft => {
-    const lyrics = field.text();
+    const lyrics = field.text(entry.lyrics);
     const body: RevisionDraft = { lyrics, format: detectFormat(lyrics) };
     const language = draftField(controls.language.getValue(), entry.language);
     const isrc = draftField(controls.isrcInput.value, entry.isrc);

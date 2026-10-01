@@ -16,3 +16,9 @@ export function readableTtml(src: string): { text: string; readable: boolean } {
   if (pretty === src || compactTtml(pretty) !== src) return { text: src, readable: false };
   return { text: pretty, readable: true };
 }
+
+/** Text to save: undoes the readable layout, and keeps the stored bytes exactly when nothing changed (the server hashes them). */
+export function lyricsForSave(text: string, { readable, original }: { readable: boolean; original?: string }): string {
+  const source = readable ? compactTtml(text) : text;
+  return source === original ? source : source.trim();
+}

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { prettyTtml } from "@braccato/highlight";
-import { compactTtml, readableTtml } from "@/options/unison/ttmlLayout";
+import { compactTtml, lyricsForSave, readableTtml } from "@/options/unison/ttmlLayout";
 
 // -- Fixtures --------------------------
 
@@ -116,6 +116,32 @@ for (const src of [MINIFIED_388, MINIFIED_BG]) {
     false,
     "the readable text is not minified, so it is never laid out again"
   );
+}
+
+// -- Saving --------------------------
+
+{
+  const stored = `${MINIFIED_388}\n`;
+  const shown = readableTtml(stored);
+  assert.equal(shown.readable, true, "a trailing newline does not stop the readable layout");
+  assert.equal(
+    lyricsForSave(shown.text, { readable: true, original: stored }),
+    stored,
+    "regression: unchanged lyrics keep their trailing newline"
+  );
+  assert.equal(
+    lyricsForSave(`${FORMATTED}\n`, { readable: false, original: `${FORMATTED}\n` }),
+    `${FORMATTED}\n`,
+    "unchanged formatted lyrics keep their edge whitespace"
+  );
+  const edited = shown.text.replace(">smoke<", ">smog<");
+  assert.equal(
+    lyricsForSave(edited, { readable: true, original: stored }),
+    MINIFIED_388.replace(">smoke<", ">smog<"),
+    "edited lyrics are compacted and trimmed"
+  );
+  assert.equal(lyricsForSave("  [00:01.00]hi\n", { readable: false }), "[00:01.00]hi", "new lyrics are trimmed");
+  assert.equal(lyricsForSave("", { readable: false, original: "" }), "", "empty stays empty");
 }
 
 console.log("ttml layout self-check passed");
