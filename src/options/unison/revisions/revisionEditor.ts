@@ -25,7 +25,7 @@ import { renderPreviewInto } from "@/options/unison/lyricsPreview";
 import { detectFormat } from "@/options/unison/lyricsPreviewLines";
 import { appendMetaRow } from "@/options/unison/metaTable";
 import { mountChangesTabs } from "@/options/unison/revisions/revisionChanges";
-import { compactTtml, readableTtml } from "@/options/unison/ttmlLayout";
+import { bindReadableLyricsField } from "@/options/unison/readableLyricsField";
 import {
   type RevisionHost,
   createBackButton,
@@ -80,11 +80,21 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   const id = String(entry.id);
   const liveRevNo = entry.revision?.revNo ?? 1;
 
-  let layout = readableTtml(entry.lyrics);
-  const textarea = createLyricsTextarea(layout.text);
+  const textarea = createLyricsTextarea(entry.lyrics);
+  const frame = document.createElement("div");
+  frame.className = "ui-frame ui-frame--field unison-rev-lyrics-frame";
+  surface.lyrics.replaceChildren(frame);
+  frame.appendChild(textarea);
+  const editor = attachEditor(textarea);
+  const field = bindReadableLyricsField(textarea, editor);
+  field.replace(entry.lyrics);
+  const fade = attachScrollFade(editor.wrap, textarea, { pane: true });
+  host.onLeave(() => {
+    fade.destroy();
+    editor.destroy();
+  });
   const replaceLyrics = (text: string): void => {
-    layout = readableTtml(text);
-    textarea.value = layout.text;
+    field.replace(text);
     textarea.dispatchEvent(new Event("input"));
   };
   bindLyricsFileDrop(textarea, replaceLyrics);
@@ -105,17 +115,6 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
     rate: createRateLine(),
   };
   const formatCell = renderSidebar(entry, surface.meta, host, controls);
-
-  const frame = document.createElement("div");
-  frame.className = "ui-frame ui-frame--field unison-rev-lyrics-frame";
-  surface.lyrics.replaceChildren(frame);
-  frame.appendChild(textarea);
-  const editor = attachEditor(textarea);
-  const fade = attachScrollFade(editor.wrap, textarea, { pane: true });
-  host.onLeave(() => {
-    fade.destroy();
-    editor.destroy();
-  });
 
   const bar = createSaveBar();
   surface.savebar.replaceChildren(bar.root);
@@ -138,7 +137,7 @@ export function renderRevisionEditor(entry: UnisonLyricsEntry, surface: EditorSu
   });
 
   const draft = (): RevisionDraft => {
-    const lyrics = (layout.readable ? compactTtml(textarea.value) : textarea.value).trim();
+    const lyrics = field.text();
     const body: RevisionDraft = { lyrics, format: detectFormat(lyrics) };
     const language = draftField(controls.language.getValue(), entry.language);
     const isrc = draftField(controls.isrcInput.value, entry.isrc);

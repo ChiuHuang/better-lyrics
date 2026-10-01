@@ -26,7 +26,8 @@ export function bindReadableLyricsField(textarea: HTMLTextAreaElement, editor: E
   });
   textarea.addEventListener("input", event => {
     const inputType = event instanceof InputEvent ? event.inputType : "";
-    if (replacesAll && PASTE_INPUT_TYPES.has(inputType)) apply(textarea.value);
+    if (textarea.value === "") readable = false;
+    else if (replacesAll && PASTE_INPUT_TYPES.has(inputType)) apply(textarea.value);
   });
 
   return {
