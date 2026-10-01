@@ -164,7 +164,8 @@
 
 .ui-card,
 .ui-menu,
-.ui-tile {
+.ui-tile,
+.ui-modal__surface {
   --field-bg: rgba(0, 0, 0, 0.05);
   --field-bg-focus: rgba(0, 0, 0, 0.1);
 }

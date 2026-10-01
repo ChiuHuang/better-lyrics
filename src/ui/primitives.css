@@ -15,6 +15,7 @@ body {
   color: var(--text-strong);
 }
 * { font-family: var(--font-sans); font-weight: 400; }
+:where(:focus-visible) { outline: var(--focus-ring); outline-offset: 2px; }
 h1 { display: flex; align-items: center; gap: 0.875rem; margin: 0; }
 hr { border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 
@@ -812,7 +813,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   pointer-events: auto;
   cursor: pointer;
 }
-.ui-toast:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
+.ui-toast:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
 .ui-toast > .ui-toast__icon { width: 20px; height: 20px; flex: none; color: var(--text-muted); }
 .ui-toast__spinner { box-sizing: border-box; margin: 2px; flex: none; }
 .ui-toast__action { margin: -5px -10px -5px 4px; }
