@@ -2002,8 +2002,6 @@
 }
 
 .unison-rev-tabs {
-  display: flex;
-  gap: 0.25rem;
   margin-bottom: -1px;
 }
 
