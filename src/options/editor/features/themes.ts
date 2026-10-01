@@ -914,7 +914,7 @@ export function openThemeModal() {
   themeModal.open();
 }
 
-export function closeThemeModal() {
+function closeThemeModal() {
   themeModal?.close();
 }
 
