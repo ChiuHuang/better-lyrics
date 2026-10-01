@@ -223,7 +223,13 @@ const clearTransientLyrics = (callback?: () => void): void => {
   chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
     if (tabs.length === 0) {
       clearCache()
-        .then(() => toast.success(t("options_alert_cacheCleared")))
+        .then(
+          () => toast.success(t("options_alert_cacheCleared")),
+          error => {
+            errorCore("Failed to clear cached lyrics:", error);
+            toast.error(t("options_alert_cacheClearFailed"));
+          }
+        )
         .finally(() => callback?.());
       return;
     }

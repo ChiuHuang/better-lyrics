@@ -259,17 +259,13 @@ export async function saveCacheInfo(): Promise<void> {
  * Only removes keys with "blyrics_" prefix and explicitly excludes PROTECTED_STORAGE_KEYS.
  */
 export async function clearCache(): Promise<void> {
-  try {
-    const result = await chrome.storage.local.get(null);
-    const lyricsKeys = Object.keys(result).filter(
-      key =>
-        key.startsWith("blyrics_") && !PROTECTED_STORAGE_KEYS.includes(key as (typeof PROTECTED_STORAGE_KEYS)[number])
-    );
-    await chrome.storage.local.remove(lyricsKeys);
-    await saveCacheInfo();
-  } catch (error) {
-    logError(error);
-  }
+  const result = await chrome.storage.local.get(null);
+  const lyricsKeys = Object.keys(result).filter(
+    key =>
+      key.startsWith("blyrics_") && !PROTECTED_STORAGE_KEYS.includes(key as (typeof PROTECTED_STORAGE_KEYS)[number])
+  );
+  await chrome.storage.local.remove(lyricsKeys);
+  await saveCacheInfo();
 }
 
 export async function clearSongCache(videoId: string): Promise<void> {
