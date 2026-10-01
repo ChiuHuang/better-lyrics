@@ -916,7 +916,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-stat__bar:hover > span:not(:hover)::after { opacity: 0.4; }
 
 /* -- Jump tile (icon, label, one-line description, corner arrow) -- */
-.ui-jump-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--card-pad); }
+.ui-jump-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--card-pad); }
+@media (max-width: 479px) { .ui-jump-grid { grid-template-columns: 1fr; } }
 .ui-jump {
   position: relative;
   display: flex;
@@ -937,7 +938,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-jump:active { scale: var(--scale-press); }
 .ui-jump:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
 .ui-jump__icon { width: 16px; height: 16px; margin-bottom: 8px; color: var(--text-muted); }
-.ui-jump__label { font-size: var(--font-size-sm); font-weight: 500; white-space: nowrap; }
+.ui-jump__label { font-size: var(--font-size-sm); font-weight: 500; text-wrap: balance; }
 .ui-jump__sub { font-size: var(--font-size-xs); color: var(--text-label); }
 .ui-jump__arrow {
   position: absolute;
