@@ -106,8 +106,8 @@
 .ui-panel.is-active { display: block; animation: var(--ui-enter, none) var(--duration-fast) var(--ease-smooth-out); }
 [data-ui-dir="next"] { --ui-enter: ui-enter-from-end; }
 [data-ui-dir="prev"] { --ui-enter: ui-enter-from-start; }
-@keyframes ui-enter-from-end { from { opacity: 0; transform: translateX(var(--distance-base)); filter: blur(var(--blur-small)); } }
-@keyframes ui-enter-from-start { from { opacity: 0; transform: translateX(calc(var(--distance-base) * -1)); filter: blur(var(--blur-small)); } }
+@keyframes ui-enter-from-end { from { opacity: 0; transform: translateX(var(--distance-base)); } }
+@keyframes ui-enter-from-start { from { opacity: 0; transform: translateX(calc(var(--distance-base) * -1)); } }
 
 /* -- Rows -- */
 .ui-row {
