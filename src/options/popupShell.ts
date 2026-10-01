@@ -3,6 +3,7 @@ import { controlIcons, parseSvgString } from "@modules/ui/lyricsDock/icons";
 import { svgIcon } from "@/options/unison/icons";
 import { type CardTabs, initCardTabs } from "@/ui/cardTabs";
 import { attachScrollFade, inlineWheelStep } from "@/ui/scrollFade";
+import { createSyncIcon } from "@/ui/syncTag";
 import { initTabStrip } from "@/ui/tabStrip";
 
 // -- Version --------------------------
@@ -143,6 +144,12 @@ const SLOT_ICONS: Record<string, { svg: () => SVGElement | null; className?: str
   refresh: { svg: () => parseSvgString(controlIcons.refresh), className: "refresh-icon" },
   info: { svg: () => svgIcon("infoOutline") },
   externalLink: { svg: () => svgIcon("externalLink") },
+  database: { svg: () => svgIcon("database"), className: "ui-stat__icon" },
+  lyricLines: { svg: () => createSyncIcon("line"), className: "ui-stat__icon" },
+  store: { svg: () => svgIcon("store"), className: "ui-jump__icon" },
+  unisonNote: { svg: () => svgIcon("unisonNote"), className: "ui-jump__icon" },
+  sparkles: { svg: () => svgIcon("sparkles"), className: "ui-jump__icon" },
+  arrowUpRight: { svg: () => svgIcon("arrowUpRight"), className: "ui-jump__arrow" },
 };
 
 export function mountIcons(root: ParentNode): void {

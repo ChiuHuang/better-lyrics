@@ -60,4 +60,55 @@ const second = makeRoot("Second");
   assert.equal(isVisible(), false, "Escape hides the tooltip");
 }
 
+// -- Block inset: tall hit areas anchor the tooltip to their painted part --------------------------
+{
+  const { root, anchor } = makeRoot("Inset");
+  initTooltips(root);
+  const rect = { top: 100, bottom: 122, left: 0, right: 40, width: 40, height: 22, x: 0, y: 100 };
+  anchor.getBoundingClientRect = () => ({ ...rect, toJSON: () => rect });
+  enter(anchor);
+  const plainTop = tip()!.style.top;
+  leave(anchor);
+  anchor.style.setProperty("--tooltip-inset-block", "8px");
+  enter(anchor);
+  assert.equal(
+    parseFloat(tip()!.style.top) - parseFloat(plainTop),
+    8,
+    "the tooltip sits against the painted stripe, not the transparent hit area"
+  );
+  leave(anchor);
+}
+
+// -- Skip delay: continuous tooltips show instantly --------------------------
+{
+  let clock = 10_000;
+  globalThis.performance.now = () => clock;
+  const { root, anchor: a } = makeRoot("A");
+  const b = doc.createElement("button");
+  b.dataset.tooltip = "B";
+  root.appendChild(b);
+  initTooltips(root);
+  const isInstant = (): boolean => tip()?.classList.contains("ui-tooltip--instant") ?? false;
+
+  enter(a);
+  assert.equal(isInstant(), false, "a cold tooltip waits for the delay");
+  clock += 250;
+  leave(a);
+  clock += 50;
+  enter(b);
+  assert.equal(isInstant(), true, "moving to the next anchor right after one was shown skips the delay");
+  assert.equal(tip()?.textContent, "B");
+
+  leave(b);
+  clock += 400;
+  enter(a);
+  assert.equal(isInstant(), false, "after the skip window the delay applies again");
+
+  clock += 50;
+  leave(a);
+  enter(b);
+  assert.equal(isInstant(), false, "a tooltip that never appeared does not warm the next one");
+  leave(b);
+}
+
 console.log("tooltip self-check passed");

@@ -3,7 +3,9 @@
 import {
   DOCK_CONTROL_ORDER_DEFAULT,
   DOCK_DEFAULT_POSITION,
+  GITHUB_REPO_URL,
   ROMANIZATION_LANGUAGES,
+  type SyncType,
   UNISON_API_BASE_URL,
   UNISON_PICTURE_URL,
 } from "@constants";
@@ -20,7 +22,14 @@ import {
   invalidateDisplayName,
   signPayload,
 } from "@core/keyIdentity";
-import { clearAllOffsets, clearLyricCache, getOffsetInfo, refreshCacheInfo } from "@core/storage";
+import {
+  clearAllOffsets,
+  clearLyricCache,
+  getOffsetInfo,
+  getStorageBreakdown,
+  type StorageBreakdown,
+  type StorageCategory,
+} from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
@@ -41,6 +50,7 @@ import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
 import { renderAboutLinks } from "@/options/aboutPage";
 import { createModal, type Modal } from "@/ui/modal";
 import { initTabStrip, type TabStrip } from "@/ui/tabStrip";
+import { renderStatBar } from "@/ui/statBar";
 import { toast } from "@/ui/toast";
 import {
   fitPopupToWindow,
@@ -234,13 +244,13 @@ const reloadYouTubeMusicLyrics = async (): Promise<void> => {
 
 const clearTransientLyrics = async (): Promise<void> => {
   try {
-    const current = await refreshCacheInfo();
-    updateCacheInfo({ cacheInfo: current });
-    if (current.count === 0 && current.size === 0) {
+    const before = await renderCacheStats();
+    if (before.lyrics.songs === 0 && before.bytes.lyrics === 0) {
       toast.info(t("options_alert_nothingToClear"));
       return;
     }
-    updateCacheInfo({ cacheInfo: await clearLyricCache() });
+    await clearLyricCache();
+    await renderCacheStats();
     await reloadYouTubeMusicLyrics();
     toast.success(t("options_alert_cacheCleared"));
   } catch (error) {
@@ -261,38 +271,60 @@ const _formatBytes = (bytes: number, decimals = 2): string => {
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 };
 
-// Function to subscribe to cache info updates
-const subscribeToCacheInfo = (): void => {
-  chrome.storage.sync.get("cacheInfo", items => {
-    //@ts-ignore -- I'm lazy someone fix this
-    updateCacheInfo(items);
-  });
+// -- Cache stats --------------------------
 
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes.cacheInfo) {
-      updateCacheInfo({
-        cacheInfo: changes.cacheInfo.newValue as {
-          count: number;
-          size: number;
-        },
-      });
-    }
-  });
+const STORAGE_SEGMENTS: { category: StorageCategory; key: string; color: string }[] = [
+  { category: "lyrics", key: "unison_lyrics", color: "var(--stat-step-1)" },
+  { category: "themes", key: "options_tab_themes", color: "var(--stat-step-2)" },
+  { category: "offsets", key: "options_offsetModal_perSongCount", color: "var(--stat-step-3)" },
+  { category: "other", key: "unison_report_other", color: "var(--stat-step-4)" },
+];
+const SYNC_TYPES: SyncType[] = ["syllable", "word", "line", "unsynced"];
+
+const renderCacheStats = async (): Promise<StorageBreakdown> => {
+  const breakdown = await getStorageBreakdown();
+  document.getElementById("lyrics-count")!.textContent = breakdown.lyrics.songs.toLocaleString();
+  document.getElementById("storage-size")!.textContent = _formatBytes(breakdown.totalBytes);
+  renderStatBar(
+    document.getElementById("lyrics-bar")!,
+    SYNC_TYPES.map(type => ({
+      value: breakdown.lyrics.bySyncType[type],
+      color: `var(--sync-${type})`,
+      label: t("options_general_segment", [syncTypeLabel(type), breakdown.lyrics.bySyncType[type].toLocaleString()]),
+    }))
+  );
+  renderStatBar(
+    document.getElementById("storage-bar")!,
+    STORAGE_SEGMENTS.map(({ category, key, color }) => ({
+      value: breakdown.bytes[category],
+      color,
+      label: t("options_general_segment", [t(key), _formatBytes(breakdown.bytes[category])]),
+    }))
+  );
+  return breakdown;
 };
 
-// Function to update cache info
-const updateCacheInfo = (items: { cacheInfo: { count: number; size: number } }): void => {
-  const cacheInfo = items.cacheInfo || { count: 0, size: 0 };
-  const cacheCount = document.getElementById("lyrics-count")!;
-  const cacheSize = document.getElementById("cache-size")!;
+let cacheStatsRefreshQueued = false;
 
-  cacheCount.textContent = cacheInfo.count.toString();
-  cacheSize.textContent = _formatBytes(cacheInfo.size);
+const refreshCacheStats = (): void => {
+  if (cacheStatsRefreshQueued) return;
+  cacheStatsRefreshQueued = true;
+  setTimeout(() => {
+    cacheStatsRefreshQueued = false;
+    renderCacheStats().catch(error => errorCore("Failed to read cache stats:", error));
+  }, 0);
+};
+
+const subscribeToCacheStats = (): void => {
+  refreshCacheStats();
+  chrome.storage.onChanged.addListener((_changes, area) => {
+    if (area === "local") refreshCacheStats();
+  });
 };
 
 // Function to restore user options
 const restoreOptions = (): void => {
-  subscribeToCacheInfo();
+  subscribeToCacheStats();
 
   const defaultOptions: Options = {
     isHighResolutionVideoEnabled: true,
@@ -471,7 +503,6 @@ const setOptionsInForm = (items: Options): void => {
     providersListElem.appendChild(providerElem);
   }
 };
-type SyncType = "syllable" | "word" | "line" | "unsynced";
 
 interface ProviderInfo {
   name: string;
@@ -691,6 +722,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderAppVersion(document.getElementById("app-version"));
   fitPopupToWindow();
   renderAboutLinks(document);
+  document.getElementById("jump-whats-new")?.setAttribute("href", `${GITHUB_REPO_URL}/releases/latest`);
   mountIcons(document);
   initRefreshLyricsButton(() => toast.error(t("options_alert_refreshFailed")));
   mountDropdownFields();

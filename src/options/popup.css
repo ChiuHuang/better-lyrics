@@ -32,6 +32,7 @@ body.options-page {
 .page { display: none; flex: 1; min-height: 0; flex-direction: column; }
 .page.active { display: flex; }
 .page--flow { flex: none; }
+#general-content { gap: 12px; }
 
 .options-page :where(.ui-button:not(.ui-button--icon), .ui-card__tab, .ui-dropdown__trigger) { width: auto; }
 

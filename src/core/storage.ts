@@ -1,4 +1,10 @@
-import { LYRIC_SOURCE_KEYS, OFFSET_STORAGE_PREFIX, STORAGE_TRANSIENT_SET_LOG } from "@constants";
+import {
+  LYRIC_SOURCE_KEYS,
+  OFFSET_STORAGE_PREFIX,
+  PROVIDER_CONFIGS,
+  STORAGE_TRANSIENT_SET_LOG,
+  type SyncType,
+} from "@constants";
 import { truncateSource } from "@utils";
 import { compileWithDetails } from "rics";
 import { compressString, decompressString, isCompressed } from "./compression";
@@ -42,6 +48,10 @@ interface TransientStorageItem {
   type: "transient";
   value: any;
   expiry: number;
+}
+
+function isExpired(expiry: number | undefined, now = Date.now()): boolean {
+  return Boolean(expiry && now >= expiry);
 }
 
 const COMPILE_TIMEOUT = 3000;
@@ -132,7 +142,7 @@ export async function peekTransientStorage(key: string): Promise<{ value: any; e
     const { value, expiry } = item;
     const decoded = typeof value === "string" && isCompressed(value) ? decompressString(value) : value;
 
-    return { value: decoded, expired: Boolean(expiry && Date.now() > expiry) };
+    return { value: decoded, expired: isExpired(expiry) };
   } catch (error) {
     logError(error);
     return null;
@@ -204,19 +214,117 @@ export async function setPersistentStorage(key: string, value: any): Promise<voi
 const LYRIC_CACHE_PREFIX = "blyrics_";
 const LYRIC_CACHE_SUFFIXES = [...LYRIC_SOURCE_KEYS, "metadata"].map(sourceKey => `_${sourceKey}`);
 
-function extractVideoIdFromCacheKey(key: string): string | null {
+function parseLyricCacheKey(key: string): { videoId: string; source: string } | null {
   if (!key.startsWith(LYRIC_CACHE_PREFIX)) return null;
   const withoutPrefix = key.slice(LYRIC_CACHE_PREFIX.length);
   for (const suffix of LYRIC_CACHE_SUFFIXES) {
     if (withoutPrefix.length > suffix.length && withoutPrefix.endsWith(suffix)) {
-      return withoutPrefix.slice(0, -suffix.length);
+      return { videoId: withoutPrefix.slice(0, -suffix.length), source: suffix.slice(1) };
     }
   }
   return null;
 }
 
 export function isLyricCacheKey(key: string): boolean {
-  return extractVideoIdFromCacheKey(key) !== null;
+  return parseLyricCacheKey(key) !== null;
+}
+
+// -- Storage breakdown --------------------------
+
+export type StorageCategory = "lyrics" | "themes" | "offsets" | "other";
+
+const THEME_STORAGE_KEYS = new Set([
+  "storeThemeIndex",
+  "customThemes",
+  "customCSS",
+  "customCSS_chunked",
+  "customCSS_chunkCount",
+  "cssCompressed",
+  "userThemeRatings",
+  "userThemeInstalls",
+  "blyrics_featured_themes",
+]);
+const THEME_STORAGE_PREFIXES = ["storeTheme:", "customCSS_chunk_"];
+
+export function storageCategoryForKey(key: string): StorageCategory {
+  if (isLyricCacheKey(key)) return "lyrics";
+  if (THEME_STORAGE_KEYS.has(key) || THEME_STORAGE_PREFIXES.some(prefix => key.startsWith(prefix))) return "themes";
+  if (key.startsWith(OFFSET_STORAGE_PREFIX)) return "offsets";
+  return "other";
+}
+
+const PROVIDER_BY_KEY = new Map<string, (typeof PROVIDER_CONFIGS)[number]>(
+  PROVIDER_CONFIGS.map(config => [config.key, config])
+);
+const MISS_PAYLOAD_MAX_CHARS = 512;
+
+function isMissEntry(item: unknown): boolean {
+  const value = (item as { value?: unknown } | null)?.value;
+  if (typeof value !== "string" || value.length > MISS_PAYLOAD_MAX_CHARS) return false;
+  try {
+    return JSON.parse(decompressString(value))?.missing === true;
+  } catch {
+    return false;
+  }
+}
+
+export interface LyricCacheSummary {
+  songs: number;
+  bySyncType: Record<SyncType, number>;
+}
+
+export function summarizeLyricCache(items: Record<string, unknown>): LyricCacheSummary {
+  const best = new Map<string, { priority: number; syncType: SyncType }>();
+  for (const [key, item] of Object.entries(items)) {
+    const parsed = parseLyricCacheKey(key);
+    const provider = parsed && PROVIDER_BY_KEY.get(parsed.source);
+    if (!parsed || !provider || isExpired((item as { expiry?: number } | null)?.expiry) || isMissEntry(item)) continue;
+    const current = best.get(parsed.videoId);
+    if (!current || provider.priority < current.priority) {
+      best.set(parsed.videoId, { priority: provider.priority, syncType: provider.syncType });
+    }
+  }
+  const bySyncType: Record<SyncType, number> = { syllable: 0, word: 0, line: 0, unsynced: 0 };
+  for (const { syncType } of best.values()) bySyncType[syncType]++;
+  return { songs: best.size, bySyncType };
+}
+
+export interface StorageBreakdown {
+  lyrics: LyricCacheSummary;
+  bytes: Record<StorageCategory, number>;
+  totalBytes: number;
+}
+
+const STORAGE_CATEGORIES: StorageCategory[] = ["lyrics", "themes", "offsets", "other"];
+
+function estimateBytes(items: Record<string, unknown>, keys: string[]): number {
+  return keys.reduce((sum, key) => sum + key.length + JSON.stringify(items[key]).length, 0);
+}
+
+export async function getStorageBreakdown(): Promise<StorageBreakdown> {
+  const items = await chrome.storage.local.get(null);
+  const keysByCategory = Object.fromEntries(STORAGE_CATEGORIES.map(category => [category, [] as string[]])) as Record<
+    StorageCategory,
+    string[]
+  >;
+  for (const key of Object.keys(items)) keysByCategory[storageCategoryForKey(key)].push(key);
+  const canMeasure = typeof chrome.storage.local.getBytesInUse === "function";
+  const sizes = await Promise.all(
+    STORAGE_CATEGORIES.map(category => {
+      const keys = keysByCategory[category];
+      if (!keys.length) return 0;
+      return canMeasure ? chrome.storage.local.getBytesInUse(keys) : estimateBytes(items, keys);
+    })
+  );
+  const bytes = Object.fromEntries(STORAGE_CATEGORIES.map((category, i) => [category, sizes[i]])) as Record<
+    StorageCategory,
+    number
+  >;
+  return {
+    lyrics: summarizeLyricCache(items),
+    bytes,
+    totalBytes: sizes.reduce((sum, size) => sum + size, 0),
+  };
 }
 
 /**
@@ -231,7 +339,7 @@ export async function getUpdatedCacheInfo(): Promise<{ count: number; size: numb
 
   const uniqueVideoIds = new Set<string>();
   for (const key of lyricsKeys) {
-    const videoId = extractVideoIdFromCacheKey(key);
+    const videoId = parseLyricCacheKey(key)?.videoId;
     if (videoId) {
       uniqueVideoIds.add(videoId);
     }
@@ -296,7 +404,7 @@ export async function purgeExpiredKeys(): Promise<void> {
     Object.keys(result).forEach(key => {
       if (key.startsWith("blyrics_")) {
         const item = result[key] as TransientStorageItem;
-        if (item.expiry && now >= item.expiry) {
+        if (isExpired(item.expiry, now)) {
           keysToRemove.push(key);
         }
       }
