@@ -1248,6 +1248,10 @@
     "message": "File an issue",
     "description": "Link text in the About page that opens the issue tracker"
   },
+  "options_about_discordLink": {
+    "message": "Discord",
+    "description": "Link text in the About page that opens the Discord server"
+  },
   "options_about_madeByHeading": {
     "message": "Made by",
     "description": "About page section heading"

@@ -1,4 +1,4 @@
-import { DISCORD_INVITE_URL, GITHUB_REPO_URL } from "@constants";
+import { ABOUT_MAKERS, DISCORD_INVITE_URL, GITHUB_REPO_URL } from "@constants";
 import { t } from "@core/i18n";
 
 const LINK_MARKER = "\u2063";
@@ -33,19 +33,13 @@ function fillLinked(el: HTMLElement, key: string, links: Link[]): void {
 
 export function renderAboutLinks(root: ParentNode): void {
   const slots: Record<string, [string, Link[]]> = {
-    openSource: ["options_about_openSourceBody", [{ href: GITHUB_REPO_URL, text: "GitHub" }]],
-    discord: ["options_about_communityDiscord", [{ href: DISCORD_INVITE_URL, text: "Discord" }]],
+    openSource: ["options_about_openSourceBody", [{ href: GITHUB_REPO_URL, text: t("marketplace_githubBadge") }]],
+    discord: ["options_about_communityDiscord", [{ href: DISCORD_INVITE_URL, text: t("options_about_discordLink") }]],
     issue: [
       "options_about_communityIssue",
       [{ href: `${GITHUB_REPO_URL}/issues/new/choose`, text: t("options_about_fileIssue") }],
     ],
-    madeBy: [
-      "options_about_madeByBody",
-      [
-        { href: "https://boidu.dev", text: "Boidu" },
-        { href: "https://adalie.me/", text: "Adalie" },
-      ],
-    ],
+    madeBy: ["options_about_madeByBody", ABOUT_MAKERS.map(({ name, href }) => ({ href, text: name }))],
   };
   for (const [name, [key, links]] of Object.entries(slots)) {
     const el = root.querySelector<HTMLElement>(`[data-linked="${name}"]`);
