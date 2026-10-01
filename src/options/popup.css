@@ -1,9 +1,9 @@
 /* -- Popup shell ----------------------------------------------------------- */
 
 html {
-  width: var(--popup-width);
-  min-width: var(--popup-width);
-  max-width: var(--popup-width);
+  width: var(--popup-fit-width, var(--popup-width));
+  min-width: var(--popup-fit-width, var(--popup-width));
+  max-width: var(--popup-fit-width, var(--popup-width));
   overflow: hidden;
   scrollbar-width: none;
   scrollbar-gutter: auto;
