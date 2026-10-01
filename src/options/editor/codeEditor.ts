@@ -1,13 +1,14 @@
 import { openSearchPanel } from "@codemirror/search";
 import { GITHUB_REPO_URL } from "@constants";
+import { createEditorState, createEditorView } from "./core/editor";
+import { editorStateManager } from "./core/state";
+import { generateDefaultFilename, importManager, saveCSSToFile } from "./features/import";
+import { saveToStorage } from "./features/themes";
+import { isEditingCSS } from "./ui/dom";
+import { showModal } from "./ui/feedback";
 import { t } from "@core/i18n";
-import { createEditorState, createEditorView } from "@/options/editor/core/editor";
-import { editorStateManager } from "@/options/editor/core/state";
-import { generateDefaultFilename, importManager, saveCSSToFile } from "@/options/editor/features/import";
-import { saveToStorage } from "@/options/editor/features/themes";
-import { isEditingCSS } from "@/options/editor/ui/dom";
-import { showAlert, showModal } from "@/options/editor/ui/feedback";
 import { errorEditor, logEditor } from "@core/logger";
+import { toast } from "@/ui/toast";
 
 let mounted = false;
 
@@ -79,11 +80,11 @@ function initializeFileOperations() {
   document.getElementById("file-export-btn")?.addEventListener("click", async () => {
     const css = editorStateManager.getContent();
     if (css === null) {
-      showAlert(t("options_editor_notReady"));
+      toast.error(t("editor_alert_notReady"));
       return;
     }
     if (!css) {
-      showAlert(t("options_editor_nothingToExport"));
+      toast.info(t("editor_alert_nothingToExport"));
       return;
     }
 

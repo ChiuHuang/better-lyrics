@@ -566,6 +566,87 @@
     "description": "Identity load error message"
   },
 
+  "editor_alert_notReady": {
+    "message": "The editor is not ready yet",
+    "description": "Toast when an editor action runs before the code editor has loaded"
+  },
+  "editor_alert_nothingToExport": {
+    "message": "No styles to export",
+    "description": "Toast when the user exports an empty editor"
+  },
+  "editor_alert_nothingToSave": {
+    "message": "No styles to save as a theme",
+    "description": "Toast when the user saves an empty editor as a custom theme"
+  },
+  "editor_alert_saveDialogOpened": {
+    "message": "Theme file save dialog opened. Choose where to save your file.",
+    "description": "Toast after the browser save dialog opens for an exported theme file"
+  },
+  "editor_alert_downloadStarted": {
+    "message": "Theme file download started. Check your downloads folder.",
+    "description": "Toast after an exported theme file starts downloading without a save dialog"
+  },
+  "editor_alert_importFailed": {
+    "message": "Could not import the theme file. Try again.",
+    "description": "Toast when importing a theme file fails"
+  },
+  "editor_alert_imported": {
+    "message": "Imported $NAME$",
+    "description": "Toast after a theme file is imported into the editor",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "my-theme.rics"
+      }
+    }
+  },
+  "editor_alert_themeSaved": {
+    "message": "Saved theme: $NAME$",
+    "description": "Toast after the editor styles are saved as a custom theme",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Night drive"
+      }
+    }
+  },
+  "editor_alert_themeSaveFailed": {
+    "message": "Could not save the theme",
+    "description": "Toast when saving a custom theme fails"
+  },
+  "editor_alert_themeRenamed": {
+    "message": "Renamed theme to $NAME$",
+    "description": "Toast after a custom theme is renamed",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Night drive"
+      }
+    }
+  },
+  "editor_alert_themeNameTaken": {
+    "message": "A theme named $NAME$ already exists",
+    "description": "Toast when a custom theme is renamed to a name another custom theme already uses",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Night drive"
+      }
+    }
+  },
+  "editor_alert_themeRenameFailed": {
+    "message": "Could not rename the theme",
+    "description": "Toast when renaming a custom theme fails"
+  },
+  "editor_alert_themeDeleted": {
+    "message": "Custom theme deleted",
+    "description": "Toast after a custom theme is deleted"
+  },
+  "editor_alert_themeDeleteFailed": {
+    "message": "Could not delete the theme",
+    "description": "Toast when deleting a custom theme fails"
+  },
+
   "options_editor_saving": {
     "message": "Saving...",
     "description": "Saving indicator text"
@@ -1042,6 +1123,60 @@
     "message": "Failed to apply theme",
     "description": "Theme apply error"
   },
+  "marketplace_alert_installed": {
+    "message": "Installed $NAME$",
+    "description": "Toast after a Marketplace theme is installed; it has an Apply action",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Minimal"
+      }
+    }
+  },
+  "marketplace_alert_installedFrom": {
+    "message": "Installed $NAME$ from $SOURCE$",
+    "description": "Toast after a theme is installed from a GitHub repository URL; SOURCE is the repository, with the branch in parentheses when one was given",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Minimal"
+      },
+      "source": {
+        "content": "$2",
+        "example": "owner/minimal-theme (dev)"
+      }
+    }
+  },
+  "marketplace_alert_removed": {
+    "message": "Removed $NAME$",
+    "description": "Toast after an installed Marketplace theme is removed",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Minimal"
+      }
+    }
+  },
+  "marketplace_alert_installFailed": {
+    "message": "Could not install $NAME$",
+    "description": "Toast when installing a Marketplace theme fails",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Minimal"
+      }
+    }
+  },
+  "marketplace_alert_removeFailed": {
+    "message": "Could not remove $NAME$",
+    "description": "Toast when removing an installed Marketplace theme fails",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "Minimal"
+      }
+    }
+  },
   "marketplace_noThemesInstalled": {
     "message": "No themes installed yet",
     "description": "Empty installed themes message"
@@ -1377,7 +1512,7 @@
   },
   "builtin_applied": {
     "message": "Applied theme: $NAME$",
-    "description": "Alert after successfully applying a bundled built-in theme",
+    "description": "Toast after applying a built-in, custom or installed theme",
     "placeholders": {
       "name": {
         "content": "$1",

@@ -10,7 +10,7 @@ let gridAnimationController: AnimationController | null = null;
 let gridAnimationGeneration = 0;
 
 import { getDisplayName, hasCertificate } from "@core/keyIdentity";
-import { type AlertAction, showAlert, showConfirm } from "../editor/ui/feedback";
+import { showConfirm } from "../editor/ui/feedback";
 import { fetchAllStats, fetchUserRatings, submitRating, trackInstall } from "./themeStoreApi";
 import {
   applyStoreTheme,
@@ -44,6 +44,7 @@ import { errorStore, warnStore } from "@core/logger";
 import { menuPlacement } from "@/ui/menuPlacement";
 import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
+import { toast } from "@/ui/toast";
 
 let detailModalOverlay: HTMLElement | null = null;
 let urlModalOverlay: HTMLElement | null = null;
@@ -1643,7 +1644,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
         const cardApplyBtn = card?.querySelector(".store-card-btn-apply") as HTMLButtonElement | null;
         if (cardApplyBtn) cardApplyBtn.style.display = "none";
       }
-      showAlert(`Removed ${theme.title}`);
+      toast.success(t("marketplace_alert_removed", theme.title));
     } else {
       if (!(await confirmIncompatibleInstall(theme))) {
         return;
@@ -1658,11 +1659,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
         cardApplyBtn.textContent = t("marketplace_apply");
       }
 
-      const applyAction: AlertAction = {
-        label: t("marketplace_apply"),
-        callback: () => handleApplyTheme(installedTheme),
-      };
-      showAlert(`Installed ${theme.title}`, applyAction);
+      showInstalledToast(t("marketplace_alert_installed", theme.title), installedTheme);
 
       if (!isUrlTheme && !userInstallsCache[theme.id]) {
         trackInstall(theme.id)
@@ -1684,7 +1681,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
   } catch (err) {
     errorStore("Action failed:", err);
     setInstallButtonState(button, isRemoveButton);
-    showAlert(`Failed: ${err}`);
+    toast.error(t(isRemoveButton ? "marketplace_alert_removeFailed" : "marketplace_alert_installFailed", theme.title));
   } finally {
     button.disabled = false;
   }
@@ -2018,7 +2015,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
       } catch (err) {
         errorStore("Failed to apply theme:", err);
         detailApplyBtn.disabled = false;
-        showAlert(`${t("marketplace_applyFailed")}: ${err}`);
+        toast.error(t("marketplace_applyFailed"));
       }
     };
   }
@@ -2034,7 +2031,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         if (isRemoveButton) {
           await removeTheme(theme.id);
           setInstallButtonState(actionBtn, false, "I");
-          showAlert(`Removed ${theme.title}`);
+          toast.success(t("marketplace_alert_removed", theme.title));
           updateRatingEnabled?.(false);
           updateDetailApplyBtn(false, false);
         } else {
@@ -2045,11 +2042,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
           setInstallButtonState(actionBtn, true, "I");
           updateDetailApplyBtn(true, false);
 
-          const applyAction: AlertAction = {
-            label: t("marketplace_apply"),
-            callback: () => handleApplyTheme(installedTheme),
-          };
-          showAlert(`Installed ${theme.title}`, applyAction);
+          showInstalledToast(t("marketplace_alert_installed", theme.title), installedTheme);
 
           if (!isUrlTheme) {
             updateRatingEnabled?.(true);
@@ -2072,8 +2065,11 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         updateYourThemesDropdown();
         await refreshStoreCards();
       } catch (err) {
+        errorStore("Action failed:", err);
         setInstallButtonState(actionBtn, isRemoveButton, "I");
-        showAlert(`Failed: ${err}`);
+        toast.error(
+          t(isRemoveButton ? "marketplace_alert_removeFailed" : "marketplace_alert_installFailed", theme.title)
+        );
       } finally {
         installOperationInProgress = false;
         actionBtn.disabled = false;
@@ -2095,7 +2091,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
           ? await fetchRegistryShaderConfig(theme.registryPath ?? `themes/${theme.id}`)
           : await fetchThemeShaderConfig(theme.repo);
         if (!shaderConfig) {
-          showAlert(t("marketplace_shaderFetchFailed"));
+          toast.error(t("marketplace_shaderFetchFailed"));
           return;
         }
         const blob = new Blob([JSON.stringify(shaderConfig, null, 2)], { type: "application/json" });
@@ -2108,7 +2104,8 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } catch (err) {
-        showAlert(`Failed to download: ${err}`);
+        errorStore("Shader config download failed:", err);
+        toast.error(t("options_alert_fileSaveFailed"));
       }
     };
   }
@@ -2329,11 +2326,7 @@ async function handleUrlInstall(): Promise<void> {
     const installedTheme = await installTheme(theme, installOptions);
 
     const branchInfo = branch ? ` (${branch})` : "";
-    const applyAction: AlertAction = {
-      label: t("marketplace_apply"),
-      callback: () => handleApplyTheme(installedTheme),
-    };
-    showAlert(`Installed ${theme.title} from ${repo}${branchInfo}`, applyAction);
+    showInstalledToast(t("marketplace_alert_installedFrom", [theme.title, `${repo}${branchInfo}`]), installedTheme);
     closeUrlModal();
     updateYourThemesDropdown();
     urlOnlyThemeCards.clear();
@@ -2423,6 +2416,12 @@ async function updateYourThemesDropdown(): Promise<void> {
   }
 }
 
+function showInstalledToast(message: string, installedTheme: InstalledStoreTheme): void {
+  toast.success(message, {
+    action: { label: t("marketplace_apply"), onClick: () => void handleApplyTheme(installedTheme) },
+  });
+}
+
 async function handleApplyTheme(theme: InstalledStoreTheme): Promise<boolean> {
   try {
     const css = await applyStoreTheme(theme.id);
@@ -2439,7 +2438,7 @@ async function handleApplyTheme(theme: InstalledStoreTheme): Promise<boolean> {
       throw new Error("Failed to apply theme");
     }
 
-    showAlert(`Applied ${theme.title}`);
+    toast.success(t("builtin_applied", theme.title));
     updateYourThemesDropdown();
     toggleYourThemesDropdown(false);
     await refreshStoreCards();
@@ -2458,7 +2457,7 @@ async function handleApplyTheme(theme: InstalledStoreTheme): Promise<boolean> {
     return true;
   } catch (err) {
     errorStore("Failed to apply theme:", err);
-    showAlert(`${t("marketplace_applyFailed")}: ${err}`);
+    toast.error(t("marketplace_applyFailed"));
     return false;
   }
 }

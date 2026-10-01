@@ -177,13 +177,11 @@ h1 img {
     cursor: pointer;
 }
 
-#status-css,
 .options-page :where(label input) {
     position: absolute;
     opacity: 0;
 }
 
-#status-css,
 .options-page :where(button) {
     font-size: 1.125rem;
 }
@@ -492,28 +490,6 @@ body {
 .theme-preview-change-btn svg {
     width: 0.875rem;
     height: 0.875rem;
-}
-
-#status-css {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%) translateY(-100%);
-    background: #3e3e41;
-    border: 1px solid hsla(0, 0%, 100%, 0.1);
-    padding: 0.5rem 1.25rem;
-    height: 3rem;
-    display: grid;
-    place-items: center;
-    box-shadow: 0 0 100px 0 rgba(0, 0, 0, 0.5);
-    width: 100%;
-    text-align: center;
-    transition: transform 0.2s,
-    opacity 0.2s;
-}
-
-#status-css.active {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
 }
 
 .discord-btn {

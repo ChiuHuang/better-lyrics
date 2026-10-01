@@ -11,8 +11,14 @@ import { fetchAllStats } from "../../store/themeStoreApi";
 import { fetchStoreThemesByIds } from "../../store/themeStoreService";
 import type { AllThemeStats, ThemeSource, ThemeStats } from "../../store/types";
 import type { Theme } from "../../themes";
-import THEMES, { deleteCustomTheme, getCustomThemes, renameCustomTheme, saveCustomTheme } from "../../themes";
-import { SAVE_CUSTOM_THEME_DEBOUNCE, SAVE_DEBOUNCE_DELAY } from "@/options/editor/constants";
+import THEMES, {
+  deleteCustomTheme,
+  getCustomThemes,
+  renameCustomTheme,
+  saveCustomTheme,
+  ThemeNameTakenError,
+} from "../../themes";
+import { SAVE_CUSTOM_THEME_DEBOUNCE, SAVE_DEBOUNCE_DELAY } from "../constants";
 import { editorStateManager } from "../core/state";
 import type { ThemeCardOptions } from "../types";
 import {
@@ -30,9 +36,10 @@ import {
   themeSelectorBtn,
   themeSourceBadge,
 } from "../ui/dom";
-import { showAlert, showConfirm, showPrompt } from "../ui/feedback";
+import { showConfirm, showPrompt } from "../ui/feedback";
 import { applyStoreThemeComplete, broadcastRICSToTabs, showSyncError, showSyncSuccess } from "./storage";
 import { errorEditor, logEditor, warnEditor } from "@core/logger";
+import { toast } from "@/ui/toast";
 
 const preloadedImages = new Set<string>();
 
@@ -223,7 +230,7 @@ class ThemeManager {
       }
     } catch (error) {
       errorEditor("Failed to apply theme:", error);
-      showAlert("Error applying theme! Please try again.");
+      toast.error(t("marketplace_applyFailed"));
       throw error;
     }
   }
@@ -252,7 +259,7 @@ class ThemeManager {
 
       await this.saveTheme(themeContent);
 
-      showAlert(`Applied custom theme: ${selectedTheme.name}`);
+      toast.success(t("builtin_applied", selectedTheme.name));
     });
   }
 
@@ -289,13 +296,13 @@ class ThemeManager {
       });
 
       if (success) {
-        showAlert(t("symlink_applied", theme.name));
+        toast.success(t("symlink_applied", theme.name));
         return;
       }
     }
 
     warnEditor(`Marketplace install failed for ${theme.storeId}`);
-    showAlert(t("symlink_installFailed"));
+    toast.error(t("symlink_installFailed"));
   }
 
   private async applyBundledFallback(selectedTheme: Theme): Promise<void> {
@@ -320,7 +327,7 @@ class ThemeManager {
 
       await this.saveTheme(themeContent);
 
-      showAlert(t("builtin_applied", selectedTheme.name));
+      toast.success(t("builtin_applied", selectedTheme.name));
     });
   }
 
@@ -369,7 +376,7 @@ async function applyStoreThemeToEditor(
     });
   } catch (error) {
     errorEditor("Failed to apply marketplace theme:", error);
-    showAlert("Error applying marketplace theme! Please try again.");
+    toast.error(t("marketplace_applyFailed"));
   }
 }
 
@@ -780,16 +787,16 @@ async function selectMarketplaceTheme(storeId: string, fallbackTitle: string): P
         source: installed.source ?? "marketplace",
       });
       if (applied) {
-        showAlert(t("symlink_applied", installed.title || fallbackTitle));
+        toast.success(t("symlink_applied", installed.title || fallbackTitle));
         return;
       }
     }
 
     warnEditor(`Marketplace apply failed for ${storeId}`);
-    showAlert(t("symlink_installFailed"));
+    toast.error(t("symlink_installFailed"));
   } catch (error) {
     errorEditor("Failed to apply marketplace theme:", error);
-    showAlert(t("symlink_installFailed"));
+    toast.error(t("symlink_installFailed"));
   }
 }
 
@@ -980,11 +987,11 @@ export async function setThemeName() {
 export async function handleSaveTheme() {
   const css = editorStateManager.getContent();
   if (css === null) {
-    showAlert(t("options_editor_notReady"));
+    toast.error(t("editor_alert_notReady"));
     return;
   }
   if (!css || css.trim() === "") {
-    showAlert("No CSS to save as theme!");
+    toast.info(t("editor_alert_nothingToSave"));
     return;
   }
 
@@ -1004,10 +1011,10 @@ export async function handleSaveTheme() {
 
     showThemeName(themeName.trim(), "custom");
     updateThemeSelectorButton();
-    showAlert(`Saved custom theme: ${themeName.trim()}`);
+    toast.success(t("editor_alert_themeSaved", themeName.trim()));
   } catch (error) {
-    console.error("Error saving theme:", error);
-    showAlert("Failed to save theme!");
+    errorEditor("Error saving theme:", error);
+    toast.error(t("editor_alert_themeSaveFailed"));
   }
 }
 
@@ -1030,11 +1037,14 @@ export async function handleRenameTheme() {
 
     showThemeName(newName.trim(), "custom");
     updateThemeSelectorButton();
-    showAlert(`Theme renamed to: ${newName.trim()}`);
-  } catch (error: any) {
-    console.error("Error renaming theme:", error);
-    const errorMsg = error.message || "Failed to rename theme!";
-    showAlert(errorMsg);
+    toast.success(t("editor_alert_themeRenamed", newName.trim()));
+  } catch (error) {
+    errorEditor("Error renaming theme:", error);
+    toast.error(
+      error instanceof ThemeNameTakenError
+        ? t("editor_alert_themeNameTaken", newName.trim())
+        : t("editor_alert_themeRenameFailed")
+    );
   }
 }
 
@@ -1062,9 +1072,9 @@ export async function handleDeleteTheme() {
 
     hideThemeName();
     updateThemeSelectorButton();
-    showAlert("Custom theme deleted!");
+    toast.success(t("editor_alert_themeDeleted"));
   } catch (error) {
-    console.error("Error deleting theme:", error);
-    showAlert("Failed to delete theme!");
+    errorEditor("Error deleting theme:", error);
+    toast.error(t("editor_alert_themeDeleteFailed"));
   }
 }
