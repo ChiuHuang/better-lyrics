@@ -576,6 +576,7 @@ With the "Karaoke subtitles" option on (the default) and a music video in fullsc
 | `--blyrics-font-size` | Sets the karaoke lyric size, as elsewhere |
 | `--blyrics-scale` / `--blyrics-active-scale` | Forced to `1` on `#blyrics-karaoke .blyrics-container`; no line scaling in karaoke |
 | `--blyrics-stage-opacity` | Set by the engine; stage line `opacity` reads it with `!important` |
+| `ytmusic-player-page[video-mode][blyrics-karaoke] :is(#player, .html5-video-player)` | Background is `transparent !important`, so bars around a non-matching video show the theme or album art backdrop; set `#000 !important` to restore black |
 
 Never set `opacity` on stage lines. It is overridden, so a theme cannot show a hidden line or hold a leaving one.
 

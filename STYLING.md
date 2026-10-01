@@ -75,6 +75,7 @@
 	- [24. Karaoke Subtitles](#24-karaoke-subtitles)
 		- [Karaoke Structure](#karaoke-structure)
 		- [Styling the Plate](#styling-the-plate)
+		- [Bars Around the Video](#bars-around-the-video)
 		- [Stage Lines](#stage-lines)
 
 ## 1. Introduction to CSS and Better Lyrics
@@ -1871,6 +1872,16 @@ Each backdrop can also be styled on its own: the intro card is `.blyrics-karaoke
 ```
 
 The lyric size comes from `--blyrics-font-size`, the same as everywhere else. Line scaling is turned off inside karaoke: `--blyrics-scale` and `--blyrics-active-scale` are forced to `1` on `#blyrics-karaoke .blyrics-container`, so sung and waiting lines keep the same size.
+
+### Bars Around the Video
+
+When a video's shape doesn't match the screen, YouTube Music fills the leftover space with black bars. In karaoke those bars are transparent, so they show whatever is behind the player: your theme's background, or the album art backdrop if that option is on. The video keeps its full frame. To bring the black back:
+
+```css
+ytmusic-player-page[video-mode][blyrics-karaoke] :is(#player, .html5-video-player) {
+  background: #000 !important;
+}
+```
 
 ### Stage Lines
 
