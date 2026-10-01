@@ -72,7 +72,7 @@
   gap: 8px;
 }
 
-.marketplace-header-right .store-search-input {
+.store-search .ui-search__input {
   width: 240px;
 }
 
@@ -193,29 +193,6 @@
   height: 1px;
   pointer-events: none;
   margin-top: 1rem;
-}
-
-/* Search Container */
-.store-search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.store-search-icon {
-  position: absolute;
-  left: 0.625rem;
-  width: 1rem;
-  height: 1rem;
-  color: rgba(255, 255, 255, 0.4);
-  pointer-events: none;
-}
-
-.store-search-input {
-  width: 180px;
-  height: 34px;
-  padding: 0 0.625rem 0 2rem;
-  font-size: 0.8125rem;
 }
 
 .store-refresh-btn svg {
@@ -1222,27 +1199,6 @@
   color: rgb(239, 68, 68);
   font-size: 0.8125rem;
   margin-top: 0.5rem;
-}
-
-.search-shortcut-hint {
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  pointer-events: none;
-  opacity: 0.6;
-  transition: opacity 0.15s;
-}
-
-.store-search-input:focus ~ .search-shortcut-hint {
-  opacity: 0;
-}
-
-.store-search-input:not(:placeholder-shown) ~ .search-shortcut-hint {
-  opacity: 0;
 }
 
 /* Keyboard Shortcuts Modal */
