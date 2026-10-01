@@ -117,6 +117,8 @@ const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countUpperca
   assert.equal(countRawFontSizes("el.style.fontSize = `${n}px`;"), 1, "template sizes count");
   assert.equal(countRawFontSizes("el.style.setProperty('font-size', size);"), 1, "setProperty from a variable counts");
   assert.equal(countRawFontSizes(`const style = { fontSize };`), 0, "shorthand keys are not literal sizes");
+  assert.equal(countRawFontSizes(`settings.fontSize = nextSize;`), 0, "a non-style object is not a style");
+  assert.equal(countRawFontSizes(`el.style?.fontSize = size;`), 1, "optional style access still counts");
   assert.equal(
     countRawFontSizes(`el.style.setProperty("font-size", "var(--font-size-md)");`),
     0,
