@@ -541,7 +541,7 @@ export function saveToStorage(isTheme = false) {
     })
     .catch(err => {
       console.error("Error saving to storage:", err);
-      showSyncError(err);
+      showSyncError(err, save);
     })
     .finally(() => {
       editorStateManager.setIsSaving(false);

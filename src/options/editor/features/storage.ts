@@ -92,7 +92,8 @@ export function cancelSyncSaving(save: number): void {
   toast.dismiss(SAVE_TOAST_ID);
 }
 
-export function showSyncError(error: unknown): void {
+export function showSyncError(error: unknown, save: number): void {
+  if (save !== latestSave) return;
   saveToastOpen = false;
   const message = error instanceof Error ? error.message : "";
   const storageFull = message.includes("quota") || message.includes("QUOTA_BYTES");
