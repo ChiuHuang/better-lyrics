@@ -15,6 +15,23 @@ export function fadeEdges({ scrollTop, clientHeight, scrollHeight }: ScrollMetri
   };
 }
 
+interface InlineScrollMetrics {
+  scrollLeft: number;
+  clientWidth: number;
+  scrollWidth: number;
+}
+
+export function fadeInlineEdges(
+  { scrollLeft, clientWidth, scrollWidth }: InlineScrollMetrics,
+  rtl = false
+): { start: boolean; end: boolean } {
+  const scrolled = rtl ? -scrollLeft : scrollLeft;
+  return {
+    start: scrolled > EDGE_TOLERANCE_PX,
+    end: scrolled + clientWidth < scrollWidth - EDGE_TOLERANCE_PX,
+  };
+}
+
 export interface ScrollFade {
   update(): void;
   destroy(): void;
@@ -23,11 +40,18 @@ export interface ScrollFade {
 export function attachScrollFade(
   maskEl: HTMLElement,
   scroller: HTMLElement = maskEl,
-  { pane = false } = {}
+  { pane = false, axis = "y" }: { pane?: boolean; axis?: "x" | "y" } = {}
 ): ScrollFade {
   maskEl.classList.add("ui-scroll-fade");
   if (pane) maskEl.classList.add("ui-scroll-fade--pane");
+  if (axis === "x") maskEl.classList.add("ui-scroll-fade--x");
   const update = (): void => {
+    if (axis === "x") {
+      const { start, end } = fadeInlineEdges(scroller, getComputedStyle(scroller).direction === "rtl");
+      maskEl.toggleAttribute("data-fade-start", start);
+      maskEl.toggleAttribute("data-fade-end", end);
+      return;
+    }
     const { top, bottom } = fadeEdges(scroller);
     maskEl.toggleAttribute("data-fade-top", top);
     maskEl.toggleAttribute("data-fade-bottom", bottom);

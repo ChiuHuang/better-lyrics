@@ -65,6 +65,10 @@ let cachedIdentity: KeyIdentity | null = null;
 
 // -- Public API -------------------------------
 
+export async function getStoredKeyId(): Promise<string | null> {
+  return (await loadFromStorage())?.keyId ?? null;
+}
+
 export async function getIdentity(): Promise<KeyIdentity> {
   if (cachedIdentity) return cachedIdentity;
 

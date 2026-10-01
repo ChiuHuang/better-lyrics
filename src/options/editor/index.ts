@@ -1,5 +1,6 @@
 import { openSearchPanel } from "@codemirror/search";
 
+import { GITHUB_REPO_URL } from "@constants";
 import { initI18n, loadLocaleOverride } from "@core/i18n";
 import { createEditorState, createEditorView } from "./core/editor";
 import { editorStateManager } from "./core/state";
@@ -147,7 +148,7 @@ function initializeFileOperations() {
   });
 
   document.getElementById("styling-guide-btn")?.addEventListener("click", () => {
-    window.open("https://github.com/better-lyrics/better-lyrics/blob/master/STYLING.md", "_blank");
+    window.open(`${GITHUB_REPO_URL}/blob/master/STYLING.md`, "_blank");
   });
 }
 

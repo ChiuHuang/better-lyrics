@@ -27,12 +27,11 @@ const RULES: Rule[] = [
 
 const KNOWN: Record<string, Record<string, number>> = {
   "native select": {
-    "src/options/options.html": 6,
     "pages/unison.html": 3,
     "src/options/unison/revisions/revisionEditor.ts": 1,
   },
   "uppercase text": {
-    "src/options/options.css": 6,
+    "src/options/options.css": 4,
     "src/options/store/store.css": 6,
     "src/options/unison/unison.css": 10,
   },

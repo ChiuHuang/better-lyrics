@@ -15,6 +15,7 @@
   --radius-tab-strip: 1rem;
   --radius-tab: 0.75rem;
   --radius-card: 1.5rem;
+  --radius-card-fallback: 0.75rem;
   --radius-row: 1rem;
   --radius-control: 0.75rem;
   --radius-menu: 1rem;
@@ -34,6 +35,7 @@
   --menu-edge: 1px solid rgba(255, 255, 255, 0.1);
   --menu-shadow: rgba(0, 0, 0, 0.45) 0 18px 40px -12px, inset rgba(255, 255, 255, 0.06) 0 1px 0 0;
   --divider: rgba(255, 255, 255, 0.06);
+  --divider-strong: rgba(255, 255, 255, 0.08);
 
   /* -- Fields: lift off the page (today's submit page values); surfaces that are lighter re-scope these -- */
   --field-bg: rgba(255, 255, 255, 0.025);
@@ -52,6 +54,7 @@
   --duration-quick: 150ms;
   --duration-fast: 250ms;
   --duration-slow: 400ms;
+  --duration-spin: 600ms;
   --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
   --distance-base: 8px;
   --blur-small: 2px;
@@ -63,6 +66,7 @@
   /* -- Scroll fades (mask on the inner scroller, never the surface) -- */
   --fade-top-size: 40px;
   --fade-bottom-size: 56px;
+  --fade-inline-size: 24px;
   --pane-fade-top-size: 72px;
   --pane-fade-bottom-size: 96px;
 

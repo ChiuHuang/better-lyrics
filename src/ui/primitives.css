@@ -59,28 +59,32 @@
   flex-direction: column;
   min-height: 0;
   border: var(--card-edge);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-card-fallback);
   background: var(--card-bg);
+  box-shadow: rgba(0, 0, 0, 0.05) 0 4px 6px -1px, rgba(0, 0, 0, 0.03) 0 2px 4px -1px;
 }
 .ui-card__head {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
   min-height: var(--card-head-height);
   padding: 0 var(--text-inset);
-  border-bottom: 1px solid var(--divider);
+  border-bottom: 1px solid var(--divider-strong);
 }
-.ui-card__title { font-size: 0.9375rem; font-weight: 600; color: var(--text-strong); }
+.ui-card__tabs { display: flex; align-items: center; align-self: stretch; gap: 24px; }
+.ui-card__title { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.875rem; font-weight: 600; color: var(--text-strong); }
 .ui-card__tab {
   height: var(--card-head-height);
+  margin: 0;
   padding: 0;
   border: none;
   background: none;
   color: var(--text-label);
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
   transition: color var(--duration-quick) ease-out;
 }
@@ -101,7 +105,7 @@
 .ui-card__body { box-sizing: border-box; min-height: 0; padding: var(--card-pad); transition: height var(--duration-fast) var(--ease-smooth-out); }
 .ui-card__body.is-resizing { overflow: hidden; }
 
-.ui-panel { display: none; }
+.ui-panel { display: none; --ui-enter: none; }
 .ui-panel.is-active { display: block; animation: var(--ui-enter, none) var(--duration-fast) var(--ease-smooth-out); }
 [data-ui-dir="next"] { --ui-enter: ui-enter-from-end; }
 [data-ui-dir="prev"] { --ui-enter: ui-enter-from-start; }
@@ -117,15 +121,16 @@
   min-height: var(--row-height);
   padding: 0 var(--row-pad);
   border-radius: var(--radius-row);
-  color: var(--text);
+  color: var(--text-strong);
   font-size: 0.9375rem;
   transition: background var(--duration-quick) ease-out;
 }
+.ui-row:is(button, :has(label, button, .ui-dropdown)):hover { background: rgba(255, 255, 255, 0.035); }
 .ui-row__label { display: inline-flex; align-items: center; gap: 0.4rem; min-width: 0; }
 .ui-row__sub { display: block; margin-top: 1px; font-size: 0.8125rem; color: var(--text-label); }
 .ui-row__value { color: var(--text-muted); font-variant-numeric: tabular-nums; }
 button.ui-row { width: 100%; margin: 0; border: none; background: none; font: inherit; font-size: 0.9375rem; text-align: start; cursor: pointer; }
-button.ui-row:hover { background: rgba(255, 255, 255, 0.035); }
+button.ui-row:active { background: rgba(255, 255, 255, 0.06); }
 .ui-row__chevron { width: 16px; height: 16px; flex: none; color: rgba(255, 255, 255, 0.35); transition: color var(--duration-quick) ease-out, transform var(--duration-fast) var(--ease-smooth-out); }
 button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transform: translateX(2px); }
 
@@ -137,6 +142,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   gap: 16px;
   margin: 0 calc(-1 * var(--card-pad)) calc(-1 * var(--card-pad));
   padding: 14px var(--text-inset);
+  color: var(--text-strong);
+  font-size: 0.9375rem;
 }
 .ui-action-strip::before { content: ""; position: absolute; inset: 0 0 auto; height: 1px; background: var(--divider); }
 
@@ -324,6 +331,19 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-scroll-fade[data-fade-bottom] { --ui-fade-bottom: var(--fade-bottom-size); }
 .ui-scroll-fade--pane[data-fade-top] { --ui-fade-top: var(--pane-fade-top-size); }
 .ui-scroll-fade--pane[data-fade-bottom] { --ui-fade-bottom: var(--pane-fade-bottom-size); }
+@property --ui-fade-start { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --ui-fade-end { syntax: "<length>"; inherits: false; initial-value: 0px; }
+.ui-scroll-fade--x {
+  mask-image: linear-gradient(to right, transparent, #000 var(--ui-fade-start), #000 calc(100% - var(--ui-fade-end)), transparent);
+  transition:
+    --ui-fade-start var(--duration-fast) var(--ease-smooth-out),
+    --ui-fade-end var(--duration-fast) var(--ease-smooth-out);
+}
+.ui-scroll-fade--x:dir(rtl) {
+  mask-image: linear-gradient(to left, transparent, #000 var(--ui-fade-start), #000 calc(100% - var(--ui-fade-end)), transparent);
+}
+.ui-scroll-fade--x[data-fade-start] { --ui-fade-start: var(--fade-inline-size); }
+.ui-scroll-fade--x[data-fade-end] { --ui-fade-end: var(--fade-inline-size); }
 
 /* -- Frame: paints the pane surface; its child scrolls and carries the fade -- */
 .ui-frame {
@@ -346,7 +366,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 
 /* -- Hidden: the display rules above would otherwise beat the UA [hidden] rule -- */
 :is(
-  .ui-button, .ui-card, .ui-card__head, .ui-panel, .ui-row, .ui-row__label, .ui-row__sub, .ui-action-strip,
+  .ui-button, .ui-card, .ui-card__head, .ui-card__tabs, .ui-panel, .ui-row, .ui-row__label, .ui-row__sub, .ui-action-strip,
   .ui-chip, .ui-sync-tag, .ui-dropdown, .ui-dropdown__trigger, .ui-menu, .ui-menu__options, .ui-menu__option, .ui-frame
 )[hidden] {
   display: none;
@@ -354,6 +374,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 
 /* -- Superellipse corners -- */
 @supports (corner-shape: superellipse(1.6)) {
+  .ui-card { border-radius: var(--radius-card); }
   .ui-button, .ui-field, .ui-card, .ui-row, .ui-sync-tag, .ui-dropdown__trigger,
   .ui-menu, .ui-menu__search, .ui-menu__option, .ui-frame {
     corner-shape: superellipse(1.6);

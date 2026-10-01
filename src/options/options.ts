@@ -12,6 +12,7 @@ import { getLanguageDisplayName, initI18n, loadLocaleOverride, SUPPORTED_LOCALES
 import {
   exportIdentity,
   getDisplayName,
+  getIdentity,
   getResolvedProfile,
   importIdentity,
   invalidateDisplayName,
@@ -30,8 +31,30 @@ import { checkForStableRelease } from "./updateNotice";
 import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
-import { syncVideoQualityControls } from "@/options/videoQualityControls";
+import { syncVideoQualityControls, videoQualityOptions } from "@/options/videoQualityControls";
+import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFields";
+import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
+import { renderAboutLinks } from "@/options/aboutPage";
+import {
+  flashSaved,
+  initAboutToggle,
+  initPopupCards,
+  initPopupTabs,
+  initRefreshLyricsButton,
+  mountIcons,
+  pageCard,
+  renderAppVersion,
+} from "@/options/popupShell";
+import {
+  isIdentityBackedUp,
+  markIdentityBackedUp,
+  onBackupFlagChanged,
+  readBackedUpKeyId,
+  rememberPendingBackup,
+} from "@/options/identityBackup";
+import { attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
+import { initTooltips } from "@/ui/tooltip";
 
 interface Options extends VideoQualitySettings {
   isLogsEnabled: boolean;
@@ -103,7 +126,7 @@ const getOptionsFromForm = (): Options => {
     ...normalizeVideoQualitySettings({
       isHighResolutionVideoEnabled: (document.getElementById("isHighResolutionVideoEnabled") as HTMLInputElement)
         .checked,
-      preferredVideoQuality: (document.getElementById("preferredVideoQuality") as HTMLSelectElement).value,
+      preferredVideoQuality: (document.getElementById("preferredVideoQuality") as HTMLInputElement).value,
     }),
     isLogsEnabled: (document.getElementById("logs") as HTMLInputElement).checked,
     isAutoSwitchEnabled: (document.getElementById("autoSwitch") as HTMLInputElement).checked,
@@ -118,9 +141,9 @@ const getOptionsFromForm = (): Options => {
     isPictureInPictureAutoRestoreEnabled: (
       document.getElementById("isPictureInPictureAutoRestoreEnabled") as HTMLInputElement
     ).checked,
-    pipWindowLayout: (document.getElementById("pipWindowLayout") as HTMLSelectElement).value,
-    pipArtworkTransition: (document.getElementById("pipArtworkTransition") as HTMLSelectElement).value,
-    pipTextTransition: (document.getElementById("pipTextTransition") as HTMLSelectElement).value,
+    pipWindowLayout: (document.getElementById("pipWindowLayout") as HTMLInputElement).value,
+    pipArtworkTransition: (document.getElementById("pipArtworkTransition") as HTMLInputElement).value,
+    pipTextTransition: (document.getElementById("pipTextTransition") as HTMLInputElement).value,
     pipMarqueeEnabled: (document.getElementById("pipMarqueeEnabled") as HTMLInputElement).checked,
     pipProgressBarEnabled: (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked,
     isKaraokeEnabled: (document.getElementById("isKaraokeEnabled") as HTMLInputElement).checked,
@@ -131,7 +154,7 @@ const getOptionsFromForm = (): Options => {
     preferredProviderList: preferredProviderList,
     romanizationDisabledLanguages: romanizationDisabledLanguages,
     translationDisabledLanguages: translationDisabledLanguages,
-    uiLanguage: (document.getElementById("uiLanguage") as HTMLSelectElement).value,
+    uiLanguage: (document.getElementById("uiLanguage") as HTMLInputElement).value,
     isControlsDockEnabled: (document.getElementById("isUnisonPinnedDockEnabled") as HTMLInputElement).checked,
     controlsDockPosition: getSelectedUnisonPosition(),
     isControlsDockAutoHideInFullscreenEnabled: (
@@ -179,6 +202,7 @@ function setDockControlsOrderInForm(order: string[]): void {
 // Function to save options to Chrome storage
 const saveOptionsToStorage = (options: Options): void => {
   chrome.storage.sync.set(options, () => {
+    if (!chrome.runtime.lastError) flashSaved();
     chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
       tabs.forEach(tab => {
         chrome.tabs.sendMessage(tab.id!, {
@@ -188,23 +212,6 @@ const saveOptionsToStorage = (options: Options): void => {
       });
     });
   });
-};
-
-// Function to show save confirmation message
-const _showSaveConfirmation = (): void => {
-  const status = document.getElementById("status")!;
-  status.textContent = "Options saved. Refresh tab to apply changes.";
-  status.classList.add("active");
-  setTimeout(hideSaveConfirmation, 4000);
-};
-
-// Function to hide save confirmation message
-const hideSaveConfirmation = (): void => {
-  const status = document.getElementById("status")!;
-  status.classList.remove("active");
-  setTimeout(() => {
-    status.textContent = "";
-  }, 200);
 };
 
 // Function to show alert message
@@ -393,7 +400,7 @@ const setOptionsInForm = (items: Options): void => {
   const videoSettings = normalizeVideoQualitySettings(items);
   (document.getElementById("isHighResolutionVideoEnabled") as HTMLInputElement).checked =
     videoSettings.isHighResolutionVideoEnabled;
-  (document.getElementById("preferredVideoQuality") as HTMLSelectElement).value = videoSettings.preferredVideoQuality;
+  setDropdownFieldValue("preferredVideoQuality", videoSettings.preferredVideoQuality);
   syncVideoQualityControls(document);
   (document.getElementById("logs") as HTMLInputElement).checked = items.isLogsEnabled;
   (document.getElementById("albumArt") as HTMLInputElement).checked = items.isAlbumArtEnabled;
@@ -405,21 +412,22 @@ const setOptionsInForm = (items: Options): void => {
     items.isFullscreenControlsEnabled;
   (document.getElementById("isStylizedAnimationsEnabled") as HTMLInputElement).checked =
     items.isStylizedAnimationsEnabled;
+  syncFullscreenDependents();
   setLetterWaveSwitchState(items.letterWavePref);
   (document.getElementById("isPassiveScrollEnabled") as HTMLInputElement).checked = items.isPassiveScrollEnabled;
   (document.getElementById("isPictureInPictureEnabled") as HTMLInputElement).checked = items.isPictureInPictureEnabled;
   (document.getElementById("isPictureInPictureAutoRestoreEnabled") as HTMLInputElement).checked =
     items.isPictureInPictureAutoRestoreEnabled;
-  (document.getElementById("pipWindowLayout") as HTMLSelectElement).value = items.pipWindowLayout;
-  (document.getElementById("pipArtworkTransition") as HTMLSelectElement).value = items.pipArtworkTransition;
-  (document.getElementById("pipTextTransition") as HTMLSelectElement).value = items.pipTextTransition;
+  setDropdownFieldValue("pipWindowLayout", items.pipWindowLayout);
+  setDropdownFieldValue("pipArtworkTransition", items.pipArtworkTransition);
+  setDropdownFieldValue("pipTextTransition", items.pipTextTransition);
   (document.getElementById("pipMarqueeEnabled") as HTMLInputElement).checked = items.pipMarqueeEnabled;
   (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked = items.pipProgressBarEnabled;
   (document.getElementById("isKaraokeEnabled") as HTMLInputElement).checked = items.isKaraokeEnabled;
   (document.getElementById("translate") as HTMLInputElement).checked = items.isTranslateEnabled;
-  (document.getElementById("translationLanguage") as HTMLInputElement).value = items.translationLanguage;
+  setDropdownFieldValue("translationLanguage", items.translationLanguage);
   (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked = items.isRomanizationEnabled;
-  (document.getElementById("uiLanguage") as HTMLSelectElement).value = items.uiLanguage;
+  setDropdownFieldValue("uiLanguage", items.uiLanguage);
   (document.getElementById("isUnisonPinnedDockEnabled") as HTMLInputElement).checked = items.isControlsDockEnabled;
   (document.getElementById("isUnisonAutoHideInFullscreenEnabled") as HTMLInputElement).checked =
     items.isControlsDockAutoHideInFullscreenEnabled;
@@ -556,9 +564,7 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
 
   liElem.appendChild(labelElem);
 
-  const tagElem = createSyncTag(providerInfo.syncType);
-  tagElem.classList.add("sync-tag", `sync-tag--${providerInfo.syncType}`);
-  liElem.appendChild(tagElem);
+  liElem.appendChild(createSyncTag(providerInfo.syncType));
 
   const styleFromCheckState = () => {
     if (checkboxElem.checked) {
@@ -576,6 +582,24 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
   styleFromCheckState();
 
   return liElem;
+}
+
+// -- Scroll fades --------------------------
+
+function initPopupScrollFades(): void {
+  const body = document.getElementById("options");
+  if (body) attachScrollFade(body);
+  for (const el of document.querySelectorAll<HTMLElement>("[data-scroll-fade]")) attachScrollFade(el);
+}
+
+// -- Fullscreen dependents --------------------------
+
+function syncFullscreenDependents(): void {
+  const master = document.getElementById("isFullScreenDisabled") as HTMLInputElement | null;
+  const dependents = document.querySelector("[data-fs-deps]");
+  const muted = master?.checked ?? false;
+  dependents?.toggleAttribute("data-muted", muted);
+  dependents?.toggleAttribute("inert", muted);
 }
 
 // -- Letter wave switch --------------------------
@@ -628,150 +652,63 @@ function initLetterWaveSwitch(): void {
   });
 }
 
-// -- Display Language Dropdown --------------------------
+// -- Dropdown fields --------------------------
 
-function populateLanguageDropdown(): void {
-  const select = document.getElementById("uiLanguage") as HTMLSelectElement | undefined;
-  if (!select) return;
-
-  const browserLang = chrome.i18n.getUILanguage();
-  const autoOption = document.createElement("option");
-  autoOption.value = "auto";
-  autoOption.textContent = `${t("options_language_displayLanguageAuto")} (${browserLang})`;
-  select.appendChild(autoOption);
-
-  for (const locale of SUPPORTED_LOCALES) {
-    const option = document.createElement("option");
-    option.value = locale.code;
-    option.textContent = locale.nativeName;
-    select.appendChild(option);
-  }
-
-  select.addEventListener("change", () => {
+function mountDropdownFields(): void {
+  mountDropdownField("preferredVideoQuality", t("options_display_preferredVideoQuality"), videoQualityOptions());
+  mountDropdownField("translationLanguage", t("options_language_translationLanguage"), [...TRANSLATION_LANGUAGES]);
+  mountDropdownField("uiLanguage", t("options_language_displayLanguage"), [
+    { value: "auto", label: `${t("options_language_displayLanguageAuto")} (${chrome.i18n.getUILanguage()})` },
+    ...SUPPORTED_LOCALES.map(locale => ({ value: locale.code, label: locale.nativeName })),
+  ]);
+  document.getElementById("uiLanguage")?.addEventListener("change", () => {
     saveOptions();
-    location.hash = "language-content";
+    location.hash = "language-content/display-language";
     location.reload();
   });
-}
-
-function restoreActiveTab(): void {
-  if (!location.hash) return;
-
-  const target = `#${location.hash.slice(1)}`;
-  const targetBtn = document.querySelector(`.tab[data-target="${target}"]`);
-  const targetContent = document.querySelector(target);
-  if (!targetBtn || !targetContent) return;
-
-  document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
-  document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
-  targetBtn.classList.add("active");
-  targetContent.classList.add("active");
+  mountDropdownField("pipWindowLayout", t("options_display_pipWindowLayout"), [
+    { value: "horizontal", label: t("options_pipWindowLayout_horizontal") },
+    { value: "vertical", label: t("options_pipWindowLayout_vertical") },
+  ]);
+  mountDropdownField("pipArtworkTransition", t("options_display_pipArtworkTransition"), [
+    { value: "shuffle", label: t("options_pipTransition_shuffle") },
+    { value: "flip", label: t("options_pipTransition_flip") },
+    { value: "push", label: t("options_pipTransition_push") },
+    { value: "crossfade", label: t("options_pipTransition_crossfade") },
+  ]);
+  mountDropdownField("pipTextTransition", t("options_display_pipTextTransition"), [
+    { value: "spring", label: t("options_pipTransition_spring") },
+    { value: "push", label: t("options_pipTransition_push") },
+    { value: "crossfade", label: t("options_pipTransition_crossfade") },
+  ]);
 }
 
 // Event listeners
 document.addEventListener("DOMContentLoaded", async () => {
   await loadLocaleOverride();
   initI18n();
-  populateLanguageDropdown();
-  initTabScrollIndicators();
-  initSettingHelpTooltips();
+  renderAppVersion(document.getElementById("app-version"));
+  mountIcons(document);
+  initRefreshLyricsButton(() => showAlert(t("options_alert_refreshFailed")));
+  mountDropdownFields();
+  initTooltips(document.body);
   initLetterWaveSwitch();
+  document.getElementById("isFullScreenDisabled")?.addEventListener("change", syncFullscreenDependents);
   restoreOptions();
-  restoreActiveTab();
+  initPopupCards();
+  initPopupScrollFades();
+  initPopupTabs(page => pageCard(page)?.place(true));
+  initAboutToggle(page => pageCard(page)?.place(true));
+  renderAboutLinks(document);
   checkForStableRelease();
 });
-document.querySelectorAll("#options input, #options select").forEach(element => {
-  element.addEventListener("change", () => {
-    syncVideoQualityControls(document);
-    saveOptions();
-  });
+
+document.getElementById("options")?.addEventListener("change", event => {
+  const target = event.target as HTMLElement;
+  if (!target.matches("input, select") || target.closest("[data-no-autosave]")) return;
+  syncVideoQualityControls(document);
+  saveOptions();
 });
-
-// Tab switcher
-const tabButtons = document.querySelectorAll(".tab");
-const tabContents = document.querySelectorAll(".tab-content");
-
-tabButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    tabButtons.forEach(btn => btn.classList.remove("active"));
-    tabContents.forEach(content => content.classList.remove("active"));
-
-    button.classList.add("active");
-    const target = button.getAttribute("data-target")!;
-    document.querySelector(target)!.classList.add("active");
-    history.replaceState(null, "", target);
-  });
-});
-
-// -- Tab scroll fade indicators --------------------------
-
-function initTabScrollIndicators(): void {
-  const container = document.querySelector(".tab-container") as HTMLElement;
-  if (!container) return;
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "tab-scroll-wrapper";
-  container.parentNode!.insertBefore(wrapper, container);
-  wrapper.appendChild(container);
-
-  function update(): void {
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-    const overflow = scrollWidth - clientWidth;
-
-    if (overflow <= 2) {
-      delete container.dataset.scrollLeft;
-      delete container.dataset.scrollRight;
-      return;
-    }
-
-    if (scrollLeft > 2) {
-      container.dataset.scrollLeft = "";
-    } else {
-      delete container.dataset.scrollLeft;
-    }
-
-    if (scrollLeft < overflow - 2) {
-      container.dataset.scrollRight = "";
-    } else {
-      delete container.dataset.scrollRight;
-    }
-  }
-
-  container.addEventListener("scroll", update);
-  update();
-}
-
-// -- Setting help tooltips --------------------------
-
-const TOOLTIP_GAP = 8;
-
-// A modal body counts as a boundary even though it does not clip: a tooltip that runs past its top
-// covers the modal title, which is the thing the tooltip is explaining.
-function getBoundaryTop(element: HTMLElement): number {
-  for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) {
-    const clips = !getComputedStyle(ancestor)
-      .overflow.split(" ")
-      .every(axis => axis === "visible");
-
-    if (clips || ancestor.classList.contains("modal-body")) {
-      return ancestor.getBoundingClientRect().top;
-    }
-  }
-  return 0;
-}
-
-function initSettingHelpTooltips(): void {
-  for (const help of document.querySelectorAll<HTMLElement>(".setting-help")) {
-    const place = (): void => {
-      const height = parseFloat(getComputedStyle(help, "::after").height) || 0;
-      const spaceAbove = help.getBoundingClientRect().top - getBoundaryTop(help);
-      help.dataset.tooltipPlacement = spaceAbove >= height + TOOLTIP_GAP ? "top" : "bottom";
-    };
-
-    help.addEventListener("pointerenter", place);
-    help.addEventListener("focus", place);
-  }
-}
 
 document.addEventListener("DOMContentLoaded", () => {
   new Sortable(document.getElementById("providers-list")!, {
@@ -806,6 +743,12 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initIdentityUI(): Promise<void> {
   const displayNameEl = document.getElementById("identity-display-name");
   if (!displayNameEl) return;
+
+  const warnSlot = document.getElementById("identity-warn-slot");
+  if (warnSlot) warnSlot.style.transition = "none";
+  await syncBackupWarning();
+  requestAnimationFrame(() => warnSlot?.style.removeProperty("transition"));
+  onBackupFlagChanged(() => void syncBackupWarning());
 
   try {
     displayNameEl.textContent = await getDisplayName();
@@ -1114,68 +1057,56 @@ function initNicknameModal(): void {
 
 async function handleExportIdentity(): Promise<void> {
   try {
-    const displayName = await getDisplayName();
-    const exportData = await exportIdentity();
-    const filename = `better-lyrics-identity-${displayName}.json`;
-
-    chrome.permissions.contains({ permissions: ["downloads"] }, hasPermission => {
-      if (hasPermission) {
-        downloadIdentityFile(exportData, filename);
-      } else {
-        chrome.permissions.request({ permissions: ["downloads"] }, granted => {
-          if (granted) {
-            downloadIdentityFile(exportData, filename);
-          } else {
-            fallbackDownloadIdentity(exportData, filename);
-          }
-        });
-      }
-    });
+    const [displayName, exportData, { keyId }] = await Promise.all([getDisplayName(), exportIdentity(), getIdentity()]);
+    const outcome = await downloadIdentityFile(exportData, `better-lyrics-identity-${displayName}.json`);
+    showAlert(downloadOutcomeMessage(outcome));
+    if (outcome.kind === "downloads") await rememberPendingBackup(outcome.downloadId, keyId);
   } catch (error) {
     errorCore("Failed to export identity:", error);
     showAlert(t("options_alert_exportFailed"));
   }
 }
 
-function downloadIdentityFile(content: string, filename: string): void {
-  const blob = new Blob([content], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+type DownloadOutcome = { kind: "downloads"; downloadId: number } | { kind: "anchor" } | { kind: "failed" };
 
-  if (chrome.downloads) {
-    chrome.downloads
-      .download({
-        url: url,
-        filename: filename,
-        saveAs: true,
-      })
-      .then(() => {
-        showAlert(t("options_alert_fileSaveDialogOpened"));
-        URL.revokeObjectURL(url);
-      })
-      .catch(() => {
-        showAlert(t("options_alert_fileSaveFailed"));
-        URL.revokeObjectURL(url);
-      });
-  } else {
-    fallbackDownloadIdentity(content, filename);
+async function downloadIdentityFile(content: string, filename: string): Promise<DownloadOutcome> {
+  const hasPermission = await chrome.permissions.contains({ permissions: ["downloads"] });
+  const granted = hasPermission || (await chrome.permissions.request({ permissions: ["downloads"] }));
+  const url = URL.createObjectURL(new Blob([content], { type: "application/json" }));
+  if (granted && chrome.downloads) {
+    try {
+      const downloadId = await chrome.downloads.download({ url, filename, saveAs: true });
+      return { kind: "downloads", downloadId };
+    } catch (error) {
+      errorCore("Identity download failed:", error);
+      return { kind: "failed" };
+    } finally {
+      URL.revokeObjectURL(url);
+    }
   }
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+  return { kind: "anchor" };
 }
 
-function fallbackDownloadIdentity(content: string, filename: string): void {
-  const blob = new Blob([content], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+function downloadOutcomeMessage(outcome: DownloadOutcome): string {
+  if (outcome.kind === "downloads") return t("options_alert_fileSaveDialogOpened");
+  if (outcome.kind === "anchor") return t("options_alert_downloadInitiated");
+  return t("options_alert_fileSaveFailed");
+}
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  setTimeout(() => URL.revokeObjectURL(url), 100);
-
-  showAlert(t("options_alert_downloadInitiated"));
+async function syncBackupWarning(): Promise<void> {
+  const slot = document.getElementById("identity-warn-slot");
+  if (!slot) return;
+  const [{ keyId }, stored] = await Promise.all([getIdentity(), readBackedUpKeyId()]);
+  const backedUp = isIdentityBackedUp(stored, keyId);
+  slot.toggleAttribute("data-backed-up", backedUp);
+  slot.toggleAttribute("inert", backedUp);
 }
 
 async function handleImportIdentity(): Promise<void> {
@@ -1209,8 +1140,9 @@ function closeImportIdentityModal(): void {
 
 async function importIdentityFromJson(json: string): Promise<void> {
   try {
-    await importIdentity(json);
-    await updateIdentityDisplay();
+    const imported = await importIdentity(json);
+    await markIdentityBackedUp(imported.keyId);
+    await Promise.all([updateIdentityDisplay(), syncBackupWarning()]);
     showAlert(t("options_alert_importSuccess"));
     closeImportIdentityModal();
   } catch (err) {
@@ -1320,6 +1252,17 @@ async function renderOwnIdentityStats(): Promise<void> {
   if (render !== identityStatsRender) return;
   statsEl.replaceChildren(...next.childNodes);
   statsWrap.hidden = !user;
+  syncIdentityStatsTab(Boolean(user));
+}
+
+function syncIdentityStatsTab(hasStats: boolean): void {
+  const tab = document.getElementById("identity-stats-tab");
+  const page = document.getElementById("identity-content");
+  if (!tab || !page) return;
+  tab.hidden = !hasStats;
+  const card = pageCard(page);
+  if (!hasStats && tab.getAttribute("aria-selected") === "true") card?.select("identity", { instant: true });
+  card?.place(true);
 }
 
 function watchPictureChanges(): void {
@@ -1342,19 +1285,17 @@ let translationDisabledLanguages: string[] = [];
 let activeExclusionTab: "romanization" | "translation" = "romanization";
 
 function updateExclusionsConfigVisibility(): void {
-  const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
-  const translateToggle = document.getElementById("translate") as HTMLInputElement;
-  const configContainer = document.getElementById("romanization-config-container");
-  if (!configContainer) return;
-
-  const shouldShow = romanizationToggle?.checked || translateToggle?.checked;
-  configContainer.style.display = shouldShow ? "flex" : "none";
+  const romanization = (document.getElementById("isRomanizationEnabled") as HTMLInputElement | null)?.checked;
+  const translate = (document.getElementById("translate") as HTMLInputElement | null)?.checked;
+  const romanizationRow = document.getElementById("romanization-exclusions-btn");
+  const translationRow = document.getElementById("translation-exclusions-btn");
+  if (romanizationRow) romanizationRow.hidden = !romanization;
+  if (translationRow) translationRow.hidden = !translate;
 }
 
 function initLangExclusionsModal(): void {
   const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
   const translateToggle = document.getElementById("translate") as HTMLInputElement;
-  const configBtn = document.getElementById("romanization-config-btn");
   const modalOverlay = document.getElementById("lang-exclusions-modal-overlay");
   const modalClose = document.getElementById("lang-exclusions-modal-close");
   const romanizationSearchInput = document.getElementById("romanization-search") as HTMLInputElement;
@@ -1362,21 +1303,20 @@ function initLangExclusionsModal(): void {
   const resetBtn = document.getElementById("lang-exclusions-reset-btn");
   const tabButtons = modalOverlay?.querySelectorAll(".modal-tab");
 
-  if (!configBtn || !modalOverlay) return;
+  if (!modalOverlay) return;
 
   romanizationToggle?.addEventListener("change", updateExclusionsConfigVisibility);
   translateToggle?.addEventListener("change", updateExclusionsConfigVisibility);
 
-  configBtn.addEventListener("click", () => {
+  const openExclusions = (tab: "romanization" | "translation"): void => {
+    switchExclusionTab(tab);
     modalOverlay.classList.add("active");
-    const tabName = t(activeExclusionTab === "romanization" ? "options_romanization_tab" : "options_translation_tab");
-    if (resetBtn) resetBtn.textContent = t("options_resetToDefault", tabName);
-    if (activeExclusionTab === "romanization") {
-      romanizationSearchInput?.focus();
-    } else {
-      translationSearchInput?.focus();
-    }
-  });
+    (tab === "romanization" ? romanizationSearchInput : translationSearchInput)?.focus();
+  };
+  document
+    .getElementById("romanization-exclusions-btn")
+    ?.addEventListener("click", () => openExclusions("romanization"));
+  document.getElementById("translation-exclusions-btn")?.addEventListener("click", () => openExclusions("translation"));
 
   modalClose?.addEventListener("click", closeLangExclusionsModal);
 
@@ -1508,14 +1448,6 @@ function renderRomanizationLanguagePills(): void {
   }
 }
 
-function getTranslationLanguagesFromSelect(): string[] {
-  const select = document.getElementById("translationLanguage") as HTMLSelectElement;
-  if (!select) return [];
-  return Array.from(select.options)
-    .map(opt => opt.value)
-    .filter(Boolean);
-}
-
 let translationPillsDelegated = false;
 
 function renderTranslationLanguagePills(): void {
@@ -1534,7 +1466,7 @@ function renderTranslationLanguagePills(): void {
 
   container.replaceChildren();
 
-  for (const langCode of getTranslationLanguagesFromSelect()) {
+  for (const { value: langCode } of TRANSLATION_LANGUAGES) {
     const langName = getLanguageDisplayName(langCode);
     const isDisabled = translationDisabledLanguages.includes(langCode);
 
