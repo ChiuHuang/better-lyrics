@@ -282,7 +282,15 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
     visibility 0s linear;
 }
 .warn-slot > div { min-height: 0; overflow: hidden; }
-.warn-slot /* Unison stats on the text inset; the divider runs edge to edge like the card header's */
+.warn-slot .ui-callout { margin-top: 12px; }
+.warn-slot[data-backed-up] {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition-delay: 0s, 0s, var(--duration-slow);
+}
+
+/* Unison stats on the text inset; the divider runs edge to edge like the card header's */
 .gam-panel { margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); }
 .gam-panel .blyrics-gam__stats-row { padding: var(--row-pad) var(--text-inset) var(--text-inset); }
 .gam-panel .blyrics-gam__stats-foot { margin-top: 0; padding: 12px var(--text-inset); border-top-color: var(--divider-strong); }
