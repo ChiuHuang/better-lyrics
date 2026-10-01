@@ -965,6 +965,8 @@ body.options-page {
 .head-slot { flex: none; }
 .head-slot > div, .tabs-slot > div { min-height: 0; overflow: hidden; }
 body.is-about .head-slot { grid-template-rows: 0fr; opacity: 0; }
+.bl-update-callout { transition: margin-top var(--duration-fast) var(--ease-smooth-out); }
+body.is-about .bl-update-callout { margin-top: 16px; }
 
 /* -- Theme editor view ------------------------------------------------------ */
 
@@ -984,7 +986,7 @@ body.is-editing #editor { height: 100%; overflow: hidden; }
 body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
 
 @media (prefers-reduced-motion: reduce) {
-  .head-slot, .tabs-slot, #bl-update-notice, .bl-update-notes svg { transition: none; }
+  .head-slot, .tabs-slot, #bl-update-notice, .bl-update-callout, .bl-update-notes svg { transition: none; }
 }
 
 /* -- Card in the popup ------------------------------------------------------ */

@@ -151,7 +151,7 @@ function renderBar(tag: string): void {
   callout.append(icon, body, actions);
   inner.appendChild(callout);
   notice.appendChild(inner);
-  const head = document.querySelector(".pop__head");
+  const head = document.querySelector(".head-slot");
   if (head) head.after(notice);
   else document.body.prepend(notice);
 
