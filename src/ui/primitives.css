@@ -414,7 +414,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-toast.is-entering { animation: ui-toast-in var(--duration-slow) var(--ease-smooth-out) both; }
 .ui-toast.is-leaving { animation: ui-toast-out var(--duration-quick) ease-in both; pointer-events: none; }
 @keyframes ui-toast-in {
-  from { opacity: 0; transform: translateY(calc(var(--distance-toast) * -1)) scale(var(--scale-press)); filter: blur(var(--blur-small)); }
+  from { opacity: 0; transform: translateY(calc(var(--distance-toast) * -1)) scale(var(--scale-press)); }
 }
 @keyframes ui-toast-out { to { opacity: 0; transform: translateY(calc(var(--distance-toast) / -2)) scale(var(--scale-menu-close)); } }
 
