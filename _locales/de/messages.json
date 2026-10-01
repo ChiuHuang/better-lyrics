@@ -2241,6 +2241,24 @@
     "message": "Nur Timing",
     "description": "Diff legend: lines whose timing changed but text did not"
   },
+  "unison_rev_syllablesRetimed": {
+    "message": "Syllables retimed: $count$",
+    "description": "Diff note: how many syllables of a line moved while the line start stayed",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "unison_rev_syllableTimingAdded": {
+    "message": "Syllable timing added",
+    "description": "Diff note: a line that had only line timing now has syllable timing"
+  },
+  "unison_rev_syllableTimingRemoved": {
+    "message": "Syllable timing removed",
+    "description": "Diff note: a line that had syllable timing now has only line timing"
+  },
   "unison_rev_unchangedLines": {
     "message": "Unveränderte Zeilen: $count$",
     "description": "Collapsed part of a diff",
