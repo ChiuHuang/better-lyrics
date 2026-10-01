@@ -103,6 +103,21 @@ console.log("scrollFade self-check passed");
     "line-mode deltas convert to pixels"
   );
   assert.equal(
+    inlineWheelStep({ deltaX: 0, deltaY: 1, deltaMode: 2 }, { ...metrics, scrollLeft: 0 }),
+    100,
+    "page-mode deltas scale by the strip width"
+  );
+  assert.equal(
+    inlineWheelStep({ deltaX: 0, deltaY: -1, deltaMode: 2 }, { ...metrics, scrollLeft: 0 }, true),
+    null,
+    "rtl page-mode wheel up at start leaves the page"
+  );
+  assert.equal(
+    inlineWheelStep({ deltaX: 0, deltaY: 1, deltaMode: 2 }, { ...metrics, scrollLeft: 0 }, true),
+    -100,
+    "rtl page-mode wheel down scrolls toward the end by one strip width"
+  );
+  assert.equal(
     inlineWheelStep({ ...down, ctrlKey: true }, { ...metrics, scrollLeft: 0 }),
     null,
     "ctrl+wheel is left to the browser for zoom"
