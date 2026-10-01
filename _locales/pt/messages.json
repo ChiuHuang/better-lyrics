@@ -55,9 +55,35 @@
     "message": "Total de letras em cache",
     "description": "Total lyrics in cache label"
   },
-  "options_general_cacheSize": {
-    "message": "Tamanho do cache",
-    "description": "Cache size label"
+  "options_general_storageUsed": {
+    "message": "Storage used",
+    "description": "Popup General tab: label under the total local storage size"
+  },
+  "options_general_segment": {
+    "message": "$LABEL$: $VALUE$",
+    "description": "Popup General tab: tooltip on one segment of a breakdown bar, e.g. 'Syllable: 120' or 'Themes: 0.4 MB'",
+    "placeholders": {
+      "label": {
+        "content": "$1",
+        "example": "Syllable"
+      },
+      "value": {
+        "content": "$2",
+        "example": "120"
+      }
+    }
+  },
+  "options_general_browseThemes": {
+    "message": "Browse themes",
+    "description": "Popup General tab: one-line description on the Theme Marketplace shortcut"
+  },
+  "options_general_whatsNew": {
+    "message": "What's new",
+    "description": "Popup General tab: shortcut to the latest release notes"
+  },
+  "options_general_whatsNewHint": {
+    "message": "Latest release notes",
+    "description": "Popup General tab: one-line description on the What's new shortcut"
   },
   "options_display_fullscreenTab": {
     "message": "Fullscreen",
@@ -1402,7 +1428,7 @@
     }
   },
   "blUpdate_storeDelay": {
-    "message": "store may lag briefly",
+    "message": "The store may lag briefly",
     "description": "Trailing note on the update banner for Chrome and Edge, whose store approval can lag the release"
   },
   "blUpdate_action": {
@@ -1528,15 +1554,15 @@
     "description": "About page section heading"
   },
   "options_about_does1": {
-    "message": "Time-synced lyrics on YouTube Music, seek by clicking any line.",
+    "message": "Lyrics that follow the song. Click any line to jump to it.",
     "description": "About page feature list item"
   },
   "options_about_does2": {
-    "message": "Translations and romanization for foreign-language tracks.",
+    "message": "Translation and romanization for songs in other languages.",
     "description": "About page feature list item"
   },
   "options_about_does3": {
-    "message": "Full-screen mode, with the UI available in multiple languages.",
+    "message": "A full-screen view and a floating lyrics window.",
     "description": "About page feature list item"
   },
   "options_about_does4": {
@@ -1544,7 +1570,11 @@
     "description": "About page feature list item"
   },
   "options_about_does5": {
-    "message": "Customizable lyrics providers from multiple sources.",
+    "message": "Themes from the Marketplace, or your own in the built-in editor.",
+    "description": "About page feature list item"
+  },
+  "options_about_does6": {
+    "message": "Lyrics from many sources, in an order you choose.",
     "description": "About page feature list item"
   },
   "options_about_openSourceHeading": {
@@ -1593,12 +1623,32 @@
     "message": "Discord",
     "description": "Link text in the About page that opens the Discord server"
   },
+  "options_about_supportHeading": {
+    "message": "Support the project",
+    "description": "About page heading for the donation links"
+  },
+  "options_about_supportBody": {
+    "message": "Better Lyrics is a labor of love, and we fuss over it more than we'd like to admit... It's free, with no ads or tracking, and it always will be. If it's made your listening experience a little better, you can help keep it going! A star on GitHub helps too, and it's free :)",
+    "description": "About page note above the donation links, written in the makers' own voice"
+  },
+  "options_about_supportStar": {
+    "message": "Star us on GitHub",
+    "description": "About page link to star the Better Lyrics repository on GitHub"
+  },
+  "options_about_supportCoffee": {
+    "message": "Buy us a coffee",
+    "description": "About page link to the Buy Me a Coffee page"
+  },
+  "options_about_supportSponsors": {
+    "message": "Sponsor on GitHub",
+    "description": "About page link to GitHub Sponsors"
+  },
   "options_about_madeByHeading": {
     "message": "Made by",
     "description": "About page section heading"
   },
   "options_about_madeByBody": {
-    "message": "$BOIDU$ and $ADALIE$, with thanks to everyone in the Better Lyrics community who has tested it and reported bugs.",
+    "message": "$BOIDU$ and $ADALIE$, with thanks to the translators and everyone in the Better Lyrics community who has tested it, reported bugs and submitted lyrics!",
     "description": "About page credits; the names become links",
     "placeholders": {
       "boidu": {
@@ -1608,6 +1658,16 @@
       "adalie": {
         "content": "$2",
         "example": "Adalie"
+      }
+    }
+  },
+  "options_about_badgesBody": {
+    "message": "Special thanks to $KIYOSHI$ for the time and care behind every badge across Better Lyrics and Unison <3",
+    "description": "About page credit for the Unison badge artist; the name becomes a link",
+    "placeholders": {
+      "kiyoshi": {
+        "content": "$1",
+        "example": "Kiyoshi"
       }
     }
   },
