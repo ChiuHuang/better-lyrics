@@ -117,9 +117,8 @@ function actionButton(action: ToastAction, trigger: () => void): HTMLButtonEleme
   button.type = "button";
   button.className = "ui-button ui-button--compact ui-toast__action";
   button.setAttribute("aria-keyshortcuts", "Enter");
-  const hint = document.createElement("kbd");
-  hint.textContent = "\u21b5";
-  hint.setAttribute("aria-hidden", "true");
+  const hint = svgIcon("returnKey");
+  hint.classList.add("ui-toast__enter");
   button.append(action.label, hint);
   button.addEventListener("click", event => {
     const viaKeyboard = event.detail === 0;

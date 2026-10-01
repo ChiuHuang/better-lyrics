@@ -153,7 +153,6 @@
   /* -- Danger -- */
   --danger: rgb(239, 68, 68);
   --danger-hover: rgb(220, 38, 38);
-  --danger-soft: color-mix(in srgb, var(--danger) 60%, var(--text-muted));
 
   /* -- Success -- */
   --success: rgb(34, 197, 94);
