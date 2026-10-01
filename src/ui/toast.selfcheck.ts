@@ -25,6 +25,7 @@ Object.assign(globalThis, {
   window,
   document: window.document,
   DOMParser: window.DOMParser,
+  Node: window.Node,
   HTMLElement: window.HTMLElement,
   HTMLInputElement: window.HTMLInputElement,
   HTMLTextAreaElement: window.HTMLTextAreaElement,
@@ -468,6 +469,80 @@ const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector
   toast.dismiss("install:missing");
   toast.dismiss("install:minimal");
   assert.equal(live().length, 1, "dismissing an unknown or closed id is a no-op");
+  reset();
+}
+
+// -- Focus restore --------------------------
+const activate = (button: HTMLButtonElement | null, detail: number): void => {
+  button?.dispatchEvent(new window.MouseEvent("click", { bubbles: true, detail }));
+};
+{
+  const origin = doc.createElement("button");
+  doc.body.appendChild(origin);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  assert.equal(doc.activeElement, action, "keyboard focus can reach the action");
+  activate(action, 0);
+  assert.equal(doc.activeElement, origin, "keyboard activation returns focus to where it came from");
+  origin.remove();
+  reset();
+}
+{
+  const origin = doc.createElement("button");
+  doc.body.appendChild(origin);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  activate(action, 1);
+  assert.notEqual(doc.activeElement, origin, "a mouse click does not move focus back");
+  origin.remove();
+  reset();
+}
+{
+  const origin = doc.createElement("button");
+  doc.body.appendChild(origin);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  origin.remove();
+  activate(action, 0);
+  assert.notEqual(doc.activeElement, origin, "a removed origin is not refocused");
+  reset();
+}
+{
+  const origin = doc.createElement("button");
+  const elsewhere = doc.createElement("button");
+  doc.body.append(origin, elsewhere);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  elsewhere.focus();
+  toast.success("Installed again", { action: { label: "Apply", onClick: () => {} } });
+  const next = actionOf(toasts()[0]);
+  next?.focus();
+  activate(next, 0);
+  assert.equal(doc.activeElement, elsewhere, "the origin is the last element outside the toasts, not a stale one");
+  origin.remove();
+  elsewhere.remove();
+  reset();
+}
+{
+  const origin = doc.createElement("button");
+  doc.body.appendChild(origin);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  action?.blur();
+  action?.focus();
+  activate(action, 0);
+  assert.notEqual(doc.activeElement, origin, "regression: entering from nowhere forgets an older origin");
+  origin.remove();
   reset();
 }
 

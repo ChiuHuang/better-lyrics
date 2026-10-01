@@ -39,6 +39,7 @@ const DISMISS_KEYS = new Set(["Escape", "Enter", " "]);
 type Politeness = "polite" | "assertive";
 
 let layer: HTMLElement | undefined;
+let focusOrigin: HTMLElement | null = null;
 const dismissers = new WeakMap<HTMLElement, () => void>();
 const actionTriggers = new WeakMap<HTMLElement, () => void>();
 const liveToasts = new Map<string, ToastHandle>();
@@ -86,10 +87,16 @@ function announce(kind: ToastKind, message: string): void {
 
 function ensureLayer(): HTMLElement {
   if (layer?.isConnected) return layer;
-  layer = document.createElement("div");
-  layer.className = "ui-toast-layer";
-  document.body.appendChild(layer);
-  return layer;
+  const host = document.createElement("div");
+  host.className = "ui-toast-layer";
+  host.addEventListener("focusin", event => {
+    const from = event.relatedTarget;
+    if (from instanceof Node && host.contains(from)) return;
+    focusOrigin = from instanceof HTMLElement ? from : null;
+  });
+  document.body.appendChild(host);
+  layer = host;
+  return host;
 }
 
 function toastIcon(kind: ToastKind): Element {
@@ -113,8 +120,18 @@ function actionButton(action: ToastAction, trigger: () => void): HTMLButtonEleme
   hint.textContent = "\u21b5";
   hint.setAttribute("aria-hidden", "true");
   button.append(action.label, hint);
-  button.addEventListener("click", trigger);
+  button.addEventListener("click", event => {
+    const viaKeyboard = event.detail === 0;
+    trigger();
+    if (viaKeyboard) restoreFocus();
+  });
   return button;
+}
+
+function restoreFocus(): void {
+  const origin = focusOrigin;
+  focusOrigin = null;
+  if (origin?.isConnected) origin.focus();
 }
 
 function dismissAfter(kind: ToastKind, action: ToastAction | undefined): number | null {
