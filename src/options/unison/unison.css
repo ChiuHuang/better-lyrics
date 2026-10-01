@@ -3112,6 +3112,7 @@ kbd {
 
 @media (prefers-reduced-motion: reduce) {
   .unison-filter-chip,
+  .unison-card,
   .unison-feed-tab,
   .unison-input,
   .unison-token-input,
