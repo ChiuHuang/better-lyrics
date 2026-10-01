@@ -558,7 +558,7 @@ function renderFilterBarFromActiveTab(animateSort = false): void {
     if (!input) continue;
     const selected = filters.sort !== "default" && input.value === filters.sort;
     input.checked = selected;
-    renderSortChip(chip, { selected, direction: filters.sortDir, animate: animateSort });
+    renderSortChip(chip, { selected, direction: filters.sortDir, animate: animateSort, ascendingClears: true });
   }
 
   setFilterRadio("unison-filter-sync", activeSyncChip(filters));

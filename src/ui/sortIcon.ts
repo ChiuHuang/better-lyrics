@@ -20,7 +20,12 @@ function createSortIcon(direction: "desc" | "asc", { animate = false } = {}): SV
 
 export function renderSortChip(
   chip: HTMLElement,
-  { selected, direction, animate = false }: { selected: boolean; direction: "desc" | "asc"; animate?: boolean }
+  {
+    selected,
+    direction,
+    animate = false,
+    ascendingClears = false,
+  }: { selected: boolean; direction: "desc" | "asc"; animate?: boolean; ascendingClears?: boolean }
 ): void {
   const iconSlot = chip.querySelector(".ui-chip__sort");
   const label = chip.querySelector(".ui-chip__label");
@@ -38,6 +43,13 @@ export function renderSortChip(
   label.textContent = text;
   chip.setAttribute(
     "aria-label",
-    t(direction === "desc" ? "marketplace_sortDescendingLabel" : "marketplace_sortAscendingLabel", text)
+    t(
+      direction === "desc"
+        ? "marketplace_sortDescendingLabel"
+        : ascendingClears
+          ? "unison_sortAscendingClearLabel"
+          : "marketplace_sortAscendingLabel",
+      text
+    )
   );
 }

@@ -1306,6 +1306,11 @@
     "description": "Accessible label of the selected sort chip when sorting in ascending order",
     "placeholders": { "label": { "content": "$1", "example": "Lowest rated" } }
   },
+  "unison_sortAscendingClearLabel": {
+    "message": "$LABEL$, ascending. Activate to clear the sort.",
+    "description": "Accessible label of the selected Unison sort chip in ascending order, where activating it again removes the sort",
+    "placeholders": { "label": { "content": "$1", "example": "Most votes" } }
+  },
   "marketplace_emptyStore": {
     "message": "No themes available yet. Check back later",
     "description": "Shown when the Marketplace registry has no themes"
