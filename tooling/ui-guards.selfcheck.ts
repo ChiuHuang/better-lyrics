@@ -25,17 +25,13 @@ const RULES: Rule[] = [
   { name: "dark field well", count: countDarkFieldWells, appliesTo: p => p.endsWith(".css") },
 ];
 
-// Existing violations per file, removed by the plan named. Counts may only go down; never add entries.
 const KNOWN: Record<string, Record<string, number>> = {
   "native select": {
-    // plan 03
     "src/options/options.html": 6,
-    // plan 04
     "pages/unison.html": 3,
     "src/options/unison/revisions/revisionEditor.ts": 1,
   },
   "uppercase text": {
-    // plan 07
     "src/options/options.css": 6,
     "src/options/store/store.css": 6,
     "src/options/unison/unison.css": 10,

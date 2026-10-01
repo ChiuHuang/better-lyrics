@@ -8,9 +8,7 @@ export type { DropdownOption } from "@/ui/dropdownFilter";
 export interface DropdownConfig {
   label: string;
   onChange: (value: string) => void;
-  /** "inline" sizes to content, "stretch" fills its container (form fields), "chip" matches 26px filter chips. */
   variant?: "inline" | "stretch" | "chip";
-  /** Search box placeholder; the box appears when there are more than 12 options. */
   searchPlaceholder?: string;
   noResultsLabel?: string;
 }

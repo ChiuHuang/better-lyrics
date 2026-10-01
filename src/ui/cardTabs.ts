@@ -24,13 +24,11 @@ export function rovingIndex(current: number, key: string, count: number): number
 }
 
 export interface CardTabsOptions {
-  /** Tween the body height between panels. Off for cards whose body fills the page and scrolls. */
   animateHeight?: boolean;
   onChange?: (id: string) => void;
 }
 
 export interface CardTabs {
-  /** Re-place the bar; pass `true` when the card was just shown so the bar does not sweep in from x=0. */
   place(instant?: boolean): void;
   select(id: string, options?: { instant?: boolean }): void;
   destroy(): void;
@@ -39,7 +37,6 @@ export interface CardTabs {
 const RESIZE_FALLBACK_MS = 400;
 let cardTabsCount = 0;
 
-/** Wires `.ui-card__tab[data-tab]` buttons to `.ui-panel[data-panel]` siblings inside one `.ui-card`. */
 export function initCardTabs(card: HTMLElement, { animateHeight = true, onChange }: CardTabsOptions = {}): CardTabs {
   const tabs = Array.from(card.querySelectorAll<HTMLButtonElement>(".ui-card__tab[data-tab]"));
   const panels = Array.from(card.querySelectorAll<HTMLElement>(".ui-panel[data-panel]"));

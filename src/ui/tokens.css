@@ -86,7 +86,6 @@
   --danger-hover: rgb(220, 38, 38);
 }
 
-/* Fields inside a lighter surface sink instead of lifting. */
 .ui-card,
 .ui-menu {
   --field-bg: rgba(0, 0, 0, 0.05);

@@ -20,10 +20,6 @@ export interface ScrollFade {
   destroy(): void;
 }
 
-/**
- * Fades the edges `maskEl` can scroll toward. `maskEl` is the content (never the element painting the surface);
- * `scroller` is whatever actually scrolls, often the same element, or a textarea under a highlight layer.
- */
 export function attachScrollFade(
   maskEl: HTMLElement,
   scroller: HTMLElement = maskEl,

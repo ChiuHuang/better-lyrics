@@ -12,7 +12,7 @@ const messages: Record<string, string> = {
 };
 Object.assign(globalThis, { chrome: { i18n: { getMessage: (key: string) => messages[key] ?? "" } } });
 
-const { syncTypeForLyric, syncTypeLabel, syncTypeTooltip } = await import("./syncTag");
+const { syncTypeForLyric, syncTypeLabel, syncTypeTooltip } = await import("@/ui/syncTag");
 
 // -- Happy paths --------------------------
 {
@@ -33,7 +33,6 @@ const { syncTypeForLyric, syncTypeLabel, syncTypeTooltip } = await import("./syn
 
 // -- Regressions --------------------------
 {
-  // Owner rule 2026-10-01: TTML that declares word timing still reads Syllable; timing is never parsed.
   assert.equal(syncTypeForLyric("richsync", "ttml"), "syllable", "regression: TTML word timing is not Word");
 }
 

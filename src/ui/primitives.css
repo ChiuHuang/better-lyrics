@@ -101,7 +101,6 @@
 .ui-card__body { box-sizing: border-box; min-height: 0; padding: var(--card-pad); transition: height var(--duration-fast) var(--ease-smooth-out); }
 .ui-card__body.is-resizing { overflow: hidden; }
 
-/* Panels enter from the travel direction. Only card children animate; the card shell never blinks. */
 .ui-panel { display: none; }
 .ui-panel.is-active { display: block; animation: var(--ui-enter, none) var(--duration-fast) var(--ease-smooth-out); }
 [data-ui-dir="next"] { --ui-enter: ui-enter-from-end; }
@@ -130,7 +129,6 @@ button.ui-row:hover { background: rgba(255, 255, 255, 0.035); }
 .ui-row__chevron { width: 16px; height: 16px; flex: none; color: rgba(255, 255, 255, 0.35); transition: color var(--duration-quick) ease-out, transform var(--duration-fast) var(--ease-smooth-out); }
 button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transform: translateX(2px); }
 
-/* Action strip at the bottom of a card: bleeds to the card edges, straight divider (a box-shadow would follow the rounded corners). */
 .ui-action-strip {
   position: relative;
   display: flex;
@@ -157,7 +155,6 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   cursor: pointer;
   transition: background var(--duration-quick) ease-out, color var(--duration-quick) ease-out;
 }
-/* 26px chips keep a 40px hit area, extended vertically only so neighbours never overlap. */
 .ui-chip::after { content: ""; position: absolute; inset: -7px 0; }
 
 /* -- Sync tag -- */
@@ -244,7 +241,6 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-dropdown__chevron { width: 14px; height: 14px; flex: none; color: rgba(255, 255, 255, 0.5); transition: rotate var(--duration-fast) var(--ease-smooth-out); }
 .ui-dropdown__trigger[aria-expanded="true"] .ui-dropdown__chevron { rotate: 180deg; }
 
-/* The menu is portalled to <body> so no scrolling or clipping ancestor cuts it off. It is the frame; the options inside scroll and fade. */
 .ui-menu {
   position: fixed;
   z-index: var(--z-menu);
@@ -342,7 +338,6 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 }
 .ui-frame > * { flex: 1 1 auto; min-height: 0; }
 .ui-frame--field { background: var(--field-bg); box-shadow: var(--field-edge); transition: box-shadow var(--duration-quick) ease-out; }
-/* Large multi-line fields only brighten the hairline on focus; a 15% fill over a whole pane reads as a lifted surface. */
 .ui-frame--field:focus-within { box-shadow: var(--field-edge-focus); }
 
 /* -- Spinner -- */
@@ -373,7 +368,6 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
     transition: none;
     animation: none;
   }
-  /* The hover delay is not motion; keep it so tooltips do not flash on pass-over. */
   .ui-tooltip--visible { transition: visibility 0s linear var(--tooltip-delay); }
   .ui-spinner { animation-duration: 2s; }
 }

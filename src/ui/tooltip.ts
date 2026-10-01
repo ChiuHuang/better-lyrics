@@ -56,7 +56,6 @@ function ensureTooltip(): void {
   document.addEventListener("keydown", hideOnEscape);
 }
 
-// Handlers are module-level, so wiring the same root twice is a no-op for addEventListener.
 export function initTooltips(root: HTMLElement): void {
   ensureTooltip();
   root.addEventListener("pointerenter", showFor, true);
