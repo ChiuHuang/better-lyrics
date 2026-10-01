@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
 
+let reducedMotion = false;
 const { window } = new JSDOM("<!doctype html><html><body></body></html>");
 Object.assign(window, {
   ResizeObserver: class {
@@ -14,6 +15,7 @@ Object.assign(globalThis, {
   document: window.document,
   HTMLElement: window.HTMLElement,
   getComputedStyle: window.getComputedStyle.bind(window),
+  matchMedia: (query: string) => ({ matches: query.includes("reduce") && reducedMotion }),
 });
 
 const { initTabStrip } = await import("./tabStrip");
@@ -134,6 +136,19 @@ const key = (target: Element, k: string): void => {
   assert.equal(b.getAttribute("aria-selected"), "true", "select works programmatically");
   assert.equal(changes.at(-1)?.[0], "c", "notify: false stays silent");
   list.remove();
+}
+
+// -- Reduced motion --------------------------
+{
+  reducedMotion = true;
+  const list = build(["a", "b"]);
+  const segmented = initTabStrip(list);
+  const pill = list.querySelector<HTMLElement>(".ui-segmented__pill");
+  segmented.tabs[1].click();
+  assert.equal(pill?.style.transform, "translateX(100px)", "the pill snaps without a scale under reduced motion");
+  assert.equal(pill?.style.transition, "", "the pill transition is restored after the snap");
+  list.remove();
+  reducedMotion = false;
 }
 
 console.log("tabStrip self-check passed");
