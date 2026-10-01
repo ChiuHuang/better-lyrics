@@ -12,7 +12,6 @@ export function searchResultsMessage(count: number): { key: string; subs: string
     : { key: "unison_searchResults", subs: [QUERY_SLOT, count.toLocaleString()] };
 }
 
-/** Splits the translated message around the query so the view can style it; translators keep full control of order. */
 export function splitSearchResultsMessage(message: string, query: string): SearchResultsLabel {
   const at = message.indexOf(QUERY_SLOT);
   const trimmed = query.trim();

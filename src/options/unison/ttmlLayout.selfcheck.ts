@@ -4,15 +4,12 @@ import { compactTtml, isReadableLayout, lyricsForSave, readableTtml } from "@/op
 
 // -- Fixtures --------------------------
 
-// Shape of lyric 388 as Unison stores it: one line, composer metadata, word spans with inline spaces.
 const MINIFIED_388 =
   '<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xmlns:composer="https://composer.boidu.dev/ttml" ttp:timeBase="media" xml:lang="en" composer:timing="Word"><head><metadata><ttm:title>01 - Self Aware</ttm:title><ttm:agent xml:id="v1" type="person"><ttm:name>Lead</ttm:name></ttm:agent><composer:groups><composer:group id="g1" label="Group 1" color="#f472b6" templateVersion="1"/></composer:groups></metadata></head><body dur="3:00.740"><div><p begin="0:15.110" end="0:16.936" ttm:agent="v1"><span begin="0:15.110" end="0:15.415">No</span> <span begin="0:15.415" end="0:15.847">smoke</span> <span begin="0:15.847" end="0:16.106">with</span></p><p begin="2:49.971" end="2:52.246" ttm:agent="v1"><span begin="2:49.971" end="2:50.342">I\'m</span> <span begin="2:50.974" end="2:51.392">self-</span><span begin="2:51.392" end="2:51.659">a</span><span begin="2:51.659" end="2:52.246">ware</span></p></div></body></tt>';
 
-// Background vocals, an Apple metadata block with translations, and nested agents.
 const MINIFIED_BG =
   '<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xmlns:itunes="http://music.apple.com/lyric-ttml-internal" itunes:timing="Word" xml:lang="ja"><head><metadata><ttm:agent type="person" xml:id="v1"/><ttm:agent type="person" xml:id="v2"/><iTunesMetadata xmlns="http://music.apple.com/lyric-ttml-internal"><translations><translation type="subtitle" xml:lang="es"><text for="L1">bajo el cielo</text></translation></translations><songwriters><songwriter>Traditional</songwriter></songwriters></iTunesMetadata></metadata></head><body dur="0:48.000"><div begin="0:08.000" end="0:42.500"><p begin="0:08.000" end="0:12.500" itunes:key="L1" ttm:agent="v1"><span begin="0:08.000" end="0:09.000">さくら</span> <span begin="0:09.000" end="0:10.000">さくら</span><span ttm:role="x-bg"><span begin="0:10.000" end="0:11.000">(ooh</span> <span begin="0:11.000" end="0:12.000">yeah)</span></span></p><p begin="0:13.000" end="0:16.000" ttm:agent="v2">  spaced  line  </p></div><div><p begin="0:20.000" end="0:22.000">tail</p></div></body></tt>';
 
-// Already formatted, like the dev fixtures: prettyTtml would rewrite its whitespace, so it must stay as written.
 const FORMATTED = [
   '<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata" xml:lang="en">',
   '  <head><metadata><ttm:agent type="person" xml:id="v1"/></metadata></head>',

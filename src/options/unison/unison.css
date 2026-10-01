@@ -391,7 +391,6 @@ kbd {
   max-width: 110px;
 }
 
-/* People are circles, like the level ring; content gets the superellipse. */
 .unison-byline__avatar {
   display: grid;
   place-items: center;
@@ -1946,7 +1945,6 @@ kbd {
   user-select: none;
 }
 
-/* 26px chips keep a 40px hit area, extended vertically only so neighbours never overlap. */
 .unison-filter-chip::after {
   content: "";
   position: absolute;
