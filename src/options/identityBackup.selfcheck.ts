@@ -108,7 +108,7 @@ const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0)
 
   await rememberPendingBackup(42, "fresh-key");
   assert.deepEqual(
-    session.data.identityBackupPending,
+    session.data["identityBackupPending:42"],
     { downloadId: 42, keyId: "fresh-key" },
     "the pending backup lives in session storage"
   );
@@ -118,13 +118,31 @@ const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0)
   downloadListeners[0]({ id: 42, state: { current: "complete" } });
   await flush();
   assert.equal(await readBackedUpKeyId(), "fresh-key", "the background marks the key once its file lands");
-  assert.equal(session.data.identityBackupPending, undefined, "the pending backup is cleared after it settles");
+  assert.equal(session.data["identityBackupPending:42"], undefined, "the pending backup is cleared after it settles");
 
   await rememberPendingBackup(43, "other-key");
   downloadListeners[0]({ id: 43, state: { current: "interrupted" } });
   await flush();
   assert.equal(await readBackedUpKeyId(), "fresh-key", "a cancelled save does not mark the new key");
-  assert.equal(session.data.identityBackupPending, undefined, "a cancelled save clears the pending backup");
+  assert.equal(session.data["identityBackupPending:43"], undefined, "a cancelled save clears the pending backup");
+
+  await rememberPendingBackup(44, "twin-key");
+  await rememberPendingBackup(45, "twin-key");
+  downloadListeners[0]({ id: 45, state: { current: "interrupted" } });
+  await flush();
+  assert.equal(await readBackedUpKeyId(), "fresh-key", "cancelling the second of two exports marks nothing");
+  downloadListeners[0]({ id: 44, state: { current: "complete" } });
+  await flush();
+  assert.equal(
+    await readBackedUpKeyId(),
+    "twin-key",
+    "regression: the first export still counts after a second export was started and cancelled"
+  );
+  assert.deepEqual(
+    Object.keys(session.data).filter(key => key.startsWith("identityBackupPending")),
+    [],
+    "every settled export leaves no pending entry behind"
+  );
   assert.deepEqual(errors, [], "no watcher errors");
 }
 

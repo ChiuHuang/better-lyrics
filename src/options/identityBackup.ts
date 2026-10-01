@@ -37,6 +37,10 @@ function pendingArea(): chrome.storage.StorageArea {
   return chrome.storage.session ?? chrome.storage.local;
 }
 
+function pendingBackupKey(downloadId: number): string {
+  return `${PENDING_BACKUP_KEY}:${downloadId}`;
+}
+
 export async function readBackedUpKeyId(): Promise<unknown> {
   const items = await chrome.storage.local.get(IDENTITY_BACKUP_KEY);
   return items[IDENTITY_BACKUP_KEY];
@@ -47,7 +51,7 @@ export async function markIdentityBackedUp(keyId: string): Promise<void> {
 }
 
 export async function rememberPendingBackup(downloadId: number, keyId: string): Promise<void> {
-  await pendingArea().set({ [PENDING_BACKUP_KEY]: { downloadId, keyId } });
+  await pendingArea().set({ [pendingBackupKey(downloadId)]: { downloadId, keyId } });
 }
 
 export function onBackupFlagChanged(callback: () => void): void {
@@ -60,10 +64,11 @@ export function onBackupFlagChanged(callback: () => void): void {
 
 async function settleDownload(delta: DownloadDelta): Promise<void> {
   const area = pendingArea();
-  const items = await area.get(PENDING_BACKUP_KEY);
-  const { backedUpKeyId, clearPending } = settlePendingBackup(items[PENDING_BACKUP_KEY], delta);
+  const key = pendingBackupKey(delta.id);
+  const items = await area.get(key);
+  const { backedUpKeyId, clearPending } = settlePendingBackup(items[key], delta);
   if (backedUpKeyId) await markIdentityBackedUp(backedUpKeyId);
-  if (clearPending) await area.remove(PENDING_BACKUP_KEY);
+  if (clearPending) await area.remove(key);
 }
 
 let watchingDownloads = false;
