@@ -1,0 +1,93 @@
+/* -- Design tokens ------------------------------------------------------------
+   Values locked in docs/mockups (2026-09-30 / 2026-10-01). Components read these; never hardcode the literals. */
+
+:root {
+  /* -- Spacing -- */
+  --page-pad: 24px;
+  --card-pad: 8px;
+  --row-pad: 12px;
+  --text-inset: calc(var(--card-pad) + var(--row-pad));
+  --row-height: 44px;
+  --card-head-height: 48px;
+  --popup-width: 560px;
+
+  /* -- Radii -- */
+  --radius-tab-strip: 1rem;
+  --radius-tab: 0.75rem;
+  --radius-card: 1.5rem;
+  --radius-row: 1rem;
+  --radius-control: 0.75rem;
+  --radius-menu: 1rem;
+  --radius-option: 0.75rem;
+
+  /* -- Surfaces -- */
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-edge: 1px solid rgba(255, 255, 255, 0.1);
+  --pane-bg: rgba(255, 255, 255, 0.03);
+  --pane-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --raised-bg: rgba(255, 255, 255, 0.05);
+  --raised-bg-hover: rgba(255, 255, 255, 0.09);
+  --raised-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset rgba(255, 255, 255, 0.06) 0 1px 0 0;
+  --button-bg: rgba(255, 255, 255, 0.06);
+  --button-bg-hover: rgba(255, 255, 255, 0.1);
+  --menu-bg: #333437;
+  --menu-edge: 1px solid rgba(255, 255, 255, 0.1);
+  --menu-shadow: rgba(0, 0, 0, 0.45) 0 18px 40px -12px, inset rgba(255, 255, 255, 0.06) 0 1px 0 0;
+  --divider: rgba(255, 255, 255, 0.06);
+
+  /* -- Fields: lift off the page (today's submit page values); surfaces that are lighter re-scope these -- */
+  --field-bg: rgba(255, 255, 255, 0.025);
+  --field-bg-focus: rgba(255, 255, 255, 0.15);
+  --field-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  --field-edge-focus: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+
+  /* -- Text -- */
+  --text-strong: #fff;
+  --text: rgba(255, 255, 255, 0.85);
+  --text-muted: rgba(255, 255, 255, 0.55);
+  --text-label: rgba(255, 255, 255, 0.5);
+  --text-faint: rgba(255, 255, 255, 0.4);
+
+  /* -- Motion -- */
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-slow: 400ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --distance-base: 8px;
+  --blur-small: 2px;
+  --scale-press: 0.96;
+  --scale-menu-open: 0.97;
+  --scale-menu-close: 0.99;
+  --tooltip-delay: 300ms;
+
+  /* -- Scroll fades (mask on the inner scroller, never the surface) -- */
+  --fade-top-size: 40px;
+  --fade-bottom-size: 56px;
+  --pane-fade-top-size: 72px;
+  --pane-fade-bottom-size: 96px;
+
+  /* -- Sync type tints -- */
+  --sync-syllable: #fcd34d;
+  --sync-syllable-bg: rgba(252, 211, 77, 0.15);
+  --sync-word: #93c5fd;
+  --sync-word-bg: rgba(96, 165, 250, 0.15);
+  --sync-line: #86efac;
+  --sync-line-bg: rgba(74, 222, 128, 0.15);
+  --sync-unsynced: rgba(255, 255, 255, 0.5);
+  --sync-unsynced-bg: rgba(255, 255, 255, 0.05);
+
+  /* -- Layers: portalled menus sit above page modals (max 100000), tooltips above menus.
+     Keep these at 6 digits or fewer: the CSS minifier rounds longer custom property numbers, which made both equal. -- */
+  --z-menu: 999998;
+  --z-tooltip: 999999;
+
+  /* -- Danger -- */
+  --danger: rgb(239, 68, 68);
+  --danger-hover: rgb(220, 38, 38);
+}
+
+.ui-card,
+.ui-menu {
+  --field-bg: rgba(0, 0, 0, 0.05);
+  --field-bg-focus: rgba(0, 0, 0, 0.1);
+}

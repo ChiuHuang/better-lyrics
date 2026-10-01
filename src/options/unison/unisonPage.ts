@@ -50,7 +50,7 @@ import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
 import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revisions/revisionEditor";
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
-import { initTooltips } from "@/options/unison/tooltip";
+import { initTooltips } from "@/ui/tooltip";
 import { XMLParser } from "fast-xml-parser";
 
 // -- Icons --------------------------

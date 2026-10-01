@@ -19,7 +19,7 @@ import {
 } from "@core/keyIdentity";
 import { clearAllOffsets, getOffsetInfo } from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
-import { parseSvgString, syncTypeColors } from "@modules/ui/lyricsDock/icons";
+import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
 import { mergePreferredProviders } from "@modules/lyrics/providers/providerList";
 import { fetchOwnGamification, renderIdentityStats } from "@modules/unison/gamificationRender";
@@ -31,6 +31,7 @@ import { errorCore, warnCore } from "@core/logger";
 
 import { normalizeVideoQualitySettings, type VideoQualitySettings } from "@modules/settings/videoQuality";
 import { syncVideoQualityControls } from "@/options/videoQualityControls";
+import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 
 interface Options extends VideoQualitySettings {
   isLogsEnabled: boolean;
@@ -517,31 +518,6 @@ const getProviderIdToInfoMap = (): { [key: string]: ProviderInfo } => ({
   "lrclib-plain": { name: t("options_provider_lrclib"), syncType: "unsynced" },
 });
 
-const getSyncTypeConfig = (): {
-  [key in SyncType]: { label: string; icon: string; tooltip: string };
-} => ({
-  syllable: {
-    label: t("options_syncType_syllable"),
-    tooltip: t("options_syncType_syllable_tooltip"),
-    icon: `<svg width="16" height="16" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="636" y="239" width="389.981" height="233.271" rx="48" fill-opacity="0.5"/><path d="M0 335C0 289.745 0 267.118 14.0589 253.059C28.1177 239 50.7452 239 96 239H213C243.17 239 258.255 239 267.627 248.373C277 257.745 277 272.83 277 303V408C277 438.17 277 453.255 267.627 462.627C258.255 472 243.17 472 213 472H96C50.7452 472 28.1177 472 14.0589 457.941C0 443.882 0 421.255 0 376V335Z"/><path d="M337 304C337 273.83 337 258.745 346.373 249.373C355.745 240 370.83 240 401 240H460C505.255 240 527.882 240 541.941 254.059C556 268.118 556 290.745 556 336V377C556 422.255 556 444.882 541.941 458.941C527.882 473 505.255 473 460 473H401C370.83 473 355.745 473 346.373 463.627C337 454.255 337 439.17 337 409V304Z" fill-opacity="0.5"/><rect y="552.271" width="1024" height="233" rx="48" fill-opacity="0.5"/></svg>`,
-  },
-  word: {
-    label: t("options_syncType_word"),
-    tooltip: t("options_syncType_word_tooltip"),
-    icon: `<svg width="16" height="16" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="636" y="239" width="389.981" height="233.271" rx="48" fill-opacity="0.5"/><path d="M0 335C0 289.745 0 267.118 14.0589 253.059C28.1177 239 50.7452 239 96 239H213C243.17 239 258.255 239 267.627 248.373C277 257.745 277 272.83 277 303V408C277 438.17 277 453.255 267.627 462.627C258.255 472 243.17 472 213 472H96C50.7452 472 28.1177 472 14.0589 457.941C0 443.882 0 421.255 0 376V335Z"/><path d="M337 304C337 273.83 337 258.745 346.373 249.373C355.745 240 370.83 240 401 240H460C505.255 240 527.882 240 541.941 254.059C556 268.118 556 290.745 556 336V377C556 422.255 556 444.882 541.941 458.941C527.882 473 505.255 473 460 473H401C370.83 473 355.745 473 346.373 463.627C337 454.255 337 439.17 337 409V304Z"/><rect y="552.271" width="1024" height="233" rx="48" fill-opacity="0.5"/></svg>`,
-  },
-  line: {
-    label: t("options_syncType_line"),
-    tooltip: t("options_syncType_line_tooltip"),
-    icon: `<svg width="16" height="16" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="636" y="239" width="389.981" height="233.271" rx="48"/><path d="M0 335C0 289.745 0 267.118 14.0589 253.059C28.1177 239 50.7452 239 96 239H213C243.17 239 258.255 239 267.627 248.373C277 257.745 277 272.83 277 303V408C277 438.17 277 453.255 267.627 462.627C258.255 472 243.17 472 213 472H96C50.7452 472 28.1177 472 14.0589 457.941C0 443.882 0 421.255 0 376V335Z"/><path d="M337 304C337 273.83 337 258.745 346.373 249.373C355.745 240 370.83 240 401 240H460C505.255 240 527.882 240 541.941 254.059C556 268.118 556 290.745 556 336V377C556 422.255 556 444.882 541.941 458.941C527.882 473 505.255 473 460 473H401C370.83 473 355.745 473 346.373 463.627C337 454.255 337 439.17 337 409V304Z"/><rect y="552.271" width="1024" height="233" rx="48" fill-opacity="0.5"/></svg>`,
-  },
-  unsynced: {
-    label: t("options_syncType_unsynced"),
-    tooltip: t("options_syncType_unsynced_tooltip"),
-    icon: `<svg width="16" height="16" viewBox="0 0 1024 1024" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="636" y="239" width="389.981" height="233.271" rx="48" fill-opacity="0.5"/><path d="M0 335C0 289.745 0 267.118 14.0589 253.059C28.1177 239 50.7452 239 96 239H213C243.17 239 258.255 239 267.627 248.373C277 257.745 277 272.83 277 303V408C277 438.17 277 453.255 267.627 462.627C258.255 472 243.17 472 213 472H96C50.7452 472 28.1177 472 14.0589 457.941C0 443.882 0 421.255 0 376V335Z" fill-opacity="0.5"/><path d="M337 304C337 273.83 337 258.745 346.373 249.373C355.745 240 370.83 240 401 240H460C505.255 240 527.882 240 541.941 254.059C556 268.118 556 290.745 556 336V377C556 422.255 556 444.882 541.941 458.941C527.882 473 505.255 473 460 473H401C370.83 473 355.745 473 346.373 463.627C337 454.255 337 439.17 337 409V304Z" fill-opacity="0.5"/><rect y="552.271" width="1024" height="233" rx="48" fill-opacity="0.5"/></svg>`,
-  },
-});
-
 function createProviderElem(providerId: string, checked = true): HTMLLIElement | null {
   const providerIdToInfoMap = getProviderIdToInfoMap();
   if (!Object.hasOwn(providerIdToInfoMap, providerId)) {
@@ -550,7 +526,6 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
   }
 
   const providerInfo = providerIdToInfoMap[providerId];
-  const syncConfig = getSyncTypeConfig()[providerInfo.syncType];
 
   const liElem = document.createElement("li");
   liElem.classList.add("sortable-item");
@@ -581,14 +556,8 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
 
   liElem.appendChild(labelElem);
 
-  const tagElem = document.createElement("span");
+  const tagElem = createSyncTag(providerInfo.syncType);
   tagElem.classList.add("sync-tag", `sync-tag--${providerInfo.syncType}`);
-  tagElem.dataset.tooltip = syncConfig.tooltip;
-  const svgDoc = new DOMParser().parseFromString(syncConfig.icon, "image/svg+xml");
-  tagElem.appendChild(svgDoc.documentElement);
-  const tagLabel = document.createElement("span");
-  tagLabel.textContent = syncConfig.label;
-  tagElem.appendChild(tagLabel);
   liElem.appendChild(tagElem);
 
   const styleFromCheckState = () => {
@@ -1795,7 +1764,6 @@ function initOffsetModal(): void {
     richsyncOffsetTrim: ["syllable", "word"],
     lineOffsetTrim: ["line"],
   };
-  const syncConfig = getSyncTypeConfig();
   for (const applies of document.querySelectorAll<HTMLElement>("#offset-modal-overlay .offset-applies")) {
     const types = applies.dataset.offsetScope ? offsetApplies[applies.dataset.offsetScope] : undefined;
     if (!types) continue;
@@ -1803,10 +1771,10 @@ function initOffsetModal(): void {
       const chip = document.createElement("span");
       chip.className = "offset-applies__chip";
       chip.style.color = syncTypeColors[type];
-      const icon = parseSvgString(syncConfig[type].icon);
+      const icon = createSyncIcon(type);
       if (icon) chip.appendChild(icon);
       const name = document.createElement("span");
-      name.textContent = syncConfig[type].label;
+      name.textContent = syncTypeLabel(type);
       chip.appendChild(name);
       applies.appendChild(chip);
     }
