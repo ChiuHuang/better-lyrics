@@ -101,13 +101,6 @@
   width: 340px;
 }
 
-/* -- Nav Buttons --------------------------  */
-
-#unison-submit-nav-btn[aria-current="page"] {
-  background: var(--raised-bg-hover);
-  color: #fff;
-}
-
 /* -- Identity Badge --------------------------  */
 
 .unison-identity {
@@ -131,27 +124,14 @@
 /* -- Lyrics Card --------------------------  */
 
 .unison-card {
-  background: var(--card-bg);
-  border: var(--card-edge);
   border-radius: var(--radius-card);
   overflow: hidden;
-  cursor: pointer;
-  transition:
-    background var(--duration-quick) ease-out,
-    border-color var(--duration-quick) ease-out;
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
   text-decoration: none;
   color: inherit;
-  --field-bg: rgba(0, 0, 0, 0.05);
-  --field-bg-focus: rgba(0, 0, 0, 0.1);
-}
-
-.unison-card:hover {
-  background: var(--card-bg-hover);
-  border-color: var(--card-edge-color-hover);
 }
 
 .unison-card-header {
@@ -450,10 +430,6 @@
 }
 
 .unison-detail-col-title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--text-label);
   margin: 0 0 0.5rem 0;
 }
 
@@ -497,10 +473,6 @@
 }
 
 .unison-detail-table th {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--text-label);
   text-align: left;
   padding: 8px 0.75rem 8px 0;
   white-space: nowrap;
@@ -580,47 +552,14 @@
 
 /* -- Detail Fulfilled --------------------------  */
 
-.unison-fulfilled {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  background: rgba(134, 239, 172, 0.06);
-  border: 1px solid rgba(134, 239, 172, 0.16);
-}
-
-.unison-fulfilled-badge {
-  font-size: var(--font-size-2xs);
-  font-weight: 600;
-  letter-spacing: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  align-self: flex-start;
-  color: rgb(134, 239, 172);
-}
-
-.unison-fulfilled-badge .unison-icon {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-.unison-fulfilled-note {
-  margin: 0;
-  font-size: var(--font-size-xs);
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.65);
-}
-
 .unison-fulfilled-board-link {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
   align-self: flex-start;
-  font-size: var(--font-size-xs);
+  margin-top: 0.25rem;
   font-weight: 600;
-  color: rgb(134, 239, 172);
+  color: var(--callout-title);
   text-decoration: none;
 }
 
@@ -660,10 +599,6 @@
 }
 
 .unison-detail-videos-heading {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--text-label);
   margin: 0;
 }
 
@@ -1032,13 +967,6 @@
   gap: 6px;
 }
 
-.unison-field-label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--text-label);
-}
-
 .unison-field-label--required::after {
   content: " *";
   color: rgb(239, 68, 68);
@@ -1070,39 +998,16 @@
   gap: 0.375rem;
   min-height: 38px;
   padding: 0.3125rem 12px;
-  border: none;
   border-radius: var(--radius-control);
-  background: var(--field-bg);
-  box-shadow: var(--field-edge);
-  transition:
-    background var(--duration-quick) ease-out,
-    box-shadow var(--duration-quick) ease-out;
   box-sizing: border-box;
   cursor: text;
 }
 
-.unison-token-input:focus-within {
-  background: var(--field-bg-focus);
-  box-shadow: var(--field-edge-focus);
-}
-
 .unison-token {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.0625rem 0.1875rem 0.0625rem 0.4375rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.25rem;
+  padding: 0 0.1875rem 0 0.4375rem;
   font-family: monospace;
   font-size: var(--font-size-xs);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.unison-token--invalid {
-  background: rgba(248, 113, 113, 0.12);
-  border-color: rgba(248, 113, 113, 0.4);
-  color: rgb(252, 165, 165);
+  font-weight: 400;
 }
 
 .unison-token .unison-match-mark {
@@ -1218,10 +1123,6 @@
 }
 
 .unison-preview-title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--text-label);
   margin: 0 0 0.5rem 0;
 }
 
@@ -1320,13 +1221,6 @@
   gap: 0.5rem;
 }
 
-.unison-filter-label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--text-label);
-}
-
 .unison-filter-options {
   display: flex;
   flex-wrap: wrap;
@@ -1360,10 +1254,6 @@
 
 [data-sync-chip="unsynced"] .unison-filter-chip__sync-icon {
   color: var(--sync-unsynced);
-}
-
-.unison-filter-chip__label {
-  transition: color var(--duration-quick) ease;
 }
 
 /* -- Revisions --------------------------  */
@@ -1582,14 +1472,6 @@
   font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
   font-size: var(--font-size-xs);
   line-height: 1.7;
-}
-
-.ui-frame--field.unison-frame--error {
-  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.5);
-}
-
-.ui-frame--field.unison-frame--dragover {
-  box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.5);
 }
 
 .unison-rev-upload {
@@ -2032,10 +1914,6 @@
 }
 
 .unison-rev-table__head {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--text-label);
   padding-top: 0;
   padding-bottom: 0.25rem;
 }
@@ -2102,14 +1980,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.unison-rev-chev {
-  width: 1rem;
-  height: 1rem;
-  color: rgba(255, 255, 255, 0.35);
-  transition: transform var(--duration-quick) ease-out;
-}
-
-.unison-rev-table__item--open .unison-rev-chev {
+.unison-rev-table__item--open .ui-row__chevron {
   transform: rotate(90deg);
 }
 
@@ -2143,7 +2014,6 @@
     border-radius: var(--radius-card);
   }
 
-  .unison-card,
   .unison-preview-content,
   .unison-token-input,
   .unison-rev-diff,
@@ -2165,10 +2035,8 @@
     -webkit-text-fill-color: currentColor;
   }
 
-  .unison-card,
   .unison-token-input,
   .unison-rev-link,
-  .unison-rev-chev,
   .unison-rev-table__item {
     transition: none;
   }

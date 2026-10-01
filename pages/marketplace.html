@@ -31,7 +31,7 @@
 								<path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z"/>
 							</svg>
 							__MSG_marketplace_installFromUrl__
-							<kbd class="ui-kbd">U</kbd>
+							<kbd class="ui-kbd ui-kbd--small">U</kbd>
 						</button>
 						<a href="https://github.com/better-lyrics/themes/" target="_blank" rel="noopener noreferrer" class="ui-button ui-button--header marketplace-submit-link">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -66,50 +66,50 @@
 
 			<div class="ui-filter-bar marketplace-filters">
 				<div class="marketplace-filter-group">
-					<span class="marketplace-filter-label">__MSG_marketplace_sortBy__</span>
+					<span class="ui-section-label">__MSG_marketplace_sortBy__</span>
 					<div class="marketplace-filter-options" role="group" aria-label="Sort options">
-						<label class="ui-chip marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortRatingDesc__" data-label-asc="__MSG_marketplace_sortRatingAsc__">
+						<label class="ui-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortRatingDesc__" data-label-asc="__MSG_marketplace_sortRatingAsc__">
 							<input type="radio" name="store-filter-sort" value="rating" checked>
 							<span class="ui-chip__sort" aria-hidden="true"></span>
-							<span class="ui-chip__label marketplace-filter-chip__label">__MSG_marketplace_sortRatingDesc__</span>
+							<span class="ui-chip__label">__MSG_marketplace_sortRatingDesc__</span>
 						</label>
-						<label class="ui-chip marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortDownloadsDesc__" data-label-asc="__MSG_marketplace_sortDownloadsAsc__">
+						<label class="ui-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortDownloadsDesc__" data-label-asc="__MSG_marketplace_sortDownloadsAsc__">
 							<input type="radio" name="store-filter-sort" value="downloads">
 							<span class="ui-chip__sort" aria-hidden="true"></span>
-							<span class="ui-chip__label marketplace-filter-chip__label">__MSG_marketplace_sortDownloadsDesc__</span>
+							<span class="ui-chip__label">__MSG_marketplace_sortDownloadsDesc__</span>
 						</label>
-						<label class="ui-chip marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortNewest__" data-label-asc="__MSG_marketplace_sortOldest__">
+						<label class="ui-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortNewest__" data-label-asc="__MSG_marketplace_sortOldest__">
 							<input type="radio" name="store-filter-sort" value="newest">
 							<span class="ui-chip__sort" aria-hidden="true"></span>
-							<span class="ui-chip__label marketplace-filter-chip__label">__MSG_marketplace_sortNewest__</span>
+							<span class="ui-chip__label">__MSG_marketplace_sortNewest__</span>
 						</label>
 					</div>
 				</div>
 				<div class="marketplace-filter-group">
-					<span class="marketplace-filter-label">__MSG_marketplace_show__</span>
+					<span class="ui-section-label">__MSG_marketplace_show__</span>
 					<div class="marketplace-filter-options">
-						<label class="ui-chip marketplace-filter-chip">
+						<label class="ui-chip">
 							<input type="radio" name="store-filter-show" value="all" checked>
 							<span>__MSG_marketplace_showAll__</span>
 						</label>
-						<label class="ui-chip marketplace-filter-chip">
+						<label class="ui-chip">
 							<input type="radio" name="store-filter-show" value="installed">
 							<span>__MSG_marketplace_showInstalled__</span>
 						</label>
-						<label class="ui-chip marketplace-filter-chip">
+						<label class="ui-chip">
 							<input type="radio" name="store-filter-show" value="not-installed">
 							<span>__MSG_marketplace_showNotInstalled__</span>
 						</label>
 					</div>
 				</div>
 				<div class="marketplace-filter-group">
-					<span class="marketplace-filter-label">__MSG_marketplace_options__</span>
+					<span class="ui-section-label">__MSG_marketplace_options__</span>
 					<div class="marketplace-filter-options">
-						<label class="ui-chip marketplace-filter-chip">
+						<label class="ui-chip">
 							<input type="checkbox" id="store-filter-shaders">
 							<span>__MSG_marketplace_hasShaders__</span>
 						</label>
-						<label class="ui-chip marketplace-filter-chip">
+						<label class="ui-chip">
 							<input type="checkbox" id="store-filter-compatible" checked>
 							<span>__MSG_marketplace_compatibleOnly__</span>
 						</label>
@@ -124,7 +124,7 @@
 				</div>
 				<div id="store-error" class="store-error">
 					<span class="store-error-message"></span>
-					<button id="store-retry-btn" class="ui-button ui-button--success-tint store-card-btn store-card-btn-install">__MSG_marketplace_retry__</button>
+					<button id="store-retry-btn" class="ui-button ui-button--header ui-button--success-tint store-card-btn store-card-btn-install">__MSG_marketplace_retry__</button>
 				</div>
 				<div id="store-modal-grid" class="marketplace-grid"></div>
 				<div id="marketplace-scroll-sentinel" class="marketplace-scroll-sentinel" aria-hidden="true"></div>
@@ -141,8 +141,8 @@
 						<p id="detail-author"></p>
 					</div>
 					<div class="detail-header-actions">
-						<button id="detail-apply-btn" class="ui-button ui-button--accent-tint store-card-btn store-card-btn-apply" style="display: none;">__MSG_marketplace_apply__</button>
-						<button id="detail-action-btn" class="ui-button ui-button--success-tint store-card-btn store-card-btn-install">__MSG_marketplace_install__</button>
+						<button id="detail-apply-btn" class="ui-button ui-button--header ui-button--accent-tint store-card-btn store-card-btn-apply" style="display: none;">__MSG_marketplace_apply__</button>
+						<button id="detail-action-btn" class="ui-button ui-button--header ui-button--success-tint store-card-btn store-card-btn-install">__MSG_marketplace_install__</button>
 						<button id="detail-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 								<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
@@ -302,7 +302,7 @@
 				<div class="ui-modal__body" data-scroll-fade>
 					<div class="shortcuts-list">
 						<div class="shortcuts-group">
-							<div class="shortcuts-group-title">__MSG_marketplace_shortcutsNavigation__</div>
+							<div class="ui-section-label shortcuts-group-title">__MSG_marketplace_shortcutsNavigation__</div>
 							<div class="shortcut-item">
 								<span class="shortcut-label">__MSG_marketplace_shortcutsSearch__</span>
 								<div class="shortcut-keys">
@@ -323,7 +323,7 @@
 							</div>
 						</div>
 						<div class="shortcuts-group">
-							<div class="shortcuts-group-title">__MSG_marketplace_shortcutsSort__ <span class="shortcuts-group-hint">(__MSG_marketplace_shortcutsSortHint__)</span></div>
+							<div class="ui-section-label shortcuts-group-title">__MSG_marketplace_shortcutsSort__ <span class="shortcuts-group-hint">(__MSG_marketplace_shortcutsSortHint__)</span></div>
 							<div class="shortcut-item">
 								<span class="shortcut-label">__MSG_marketplace_shortcutsByRating__</span>
 								<div class="shortcut-keys">
@@ -344,7 +344,7 @@
 							</div>
 						</div>
 						<div class="shortcuts-group">
-							<div class="shortcuts-group-title">__MSG_marketplace_shortcutsFilters__</div>
+							<div class="ui-section-label shortcuts-group-title">__MSG_marketplace_shortcutsFilters__</div>
 							<div class="shortcut-item">
 								<span class="shortcut-label">__MSG_marketplace_shortcutsShowAll__</span>
 								<div class="shortcut-keys">
@@ -377,7 +377,7 @@
 							</div>
 						</div>
 						<div class="shortcuts-group">
-							<div class="shortcuts-group-title">__MSG_marketplace_shortcutsDetails__</div>
+							<div class="ui-section-label shortcuts-group-title">__MSG_marketplace_shortcutsDetails__</div>
 							<div class="shortcut-item">
 								<span class="shortcut-label">__MSG_marketplace_shortcutsInstallRemove__</span>
 								<div class="shortcut-keys">
@@ -412,7 +412,7 @@
 							</div>
 						</div>
 						<div class="shortcuts-group">
-							<div class="shortcuts-group-title">__MSG_marketplace_shortcutsGeneral__</div>
+							<div class="ui-section-label shortcuts-group-title">__MSG_marketplace_shortcutsGeneral__</div>
 							<div class="shortcut-item">
 								<span class="shortcut-label">__MSG_marketplace_shortcutsCloseModal__</span>
 								<div class="shortcut-keys">

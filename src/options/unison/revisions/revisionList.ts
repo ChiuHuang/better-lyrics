@@ -118,7 +118,7 @@ function createPageHead(entry: UnisonLyricsEntry, host: RevisionHost, isOwner: b
 
 function createTableHead(): HTMLElement {
   const row = document.createElement("div");
-  row.className = "unison-rev-table__row unison-rev-table__head";
+  row.className = "unison-rev-table__row ui-section-label unison-rev-table__head";
   for (const key of COLUMN_KEYS) {
     const cell = document.createElement("span");
     cell.textContent = t(key);
@@ -200,7 +200,7 @@ function createRevisionItem(rev: RevisionSummary, ctx: ListContext, open: boolea
   when.textContent = formatTimeAgo(rev.createdAt * 1000);
 
   const chevron = svgIcon("chevron");
-  chevron.classList.add("unison-rev-chev");
+  chevron.classList.add("ui-row__chevron");
 
   const row = document.createElement("button");
   row.type = "button";

@@ -123,14 +123,14 @@ function setActionButtonContent(button: HTMLElement, text: string, shortcut?: st
   button.appendChild(document.createTextNode(text));
   if (shortcut) {
     const kbd = document.createElement("kbd");
-    kbd.className = "ui-kbd";
+    kbd.className = "ui-kbd ui-kbd--small";
     kbd.textContent = shortcut;
     button.appendChild(kbd);
   }
 }
 
 function setInstallButtonState(button: HTMLElement, installed: boolean, shortcut?: string): void {
-  button.className = `ui-button store-card-btn ${installed ? "ui-button--danger-tint store-card-btn-remove" : "ui-button--success-tint store-card-btn-install"}`;
+  button.className = `ui-button ui-button--header store-card-btn ${installed ? "ui-button--danger-tint store-card-btn-remove" : "ui-button--success-tint store-card-btn-install"}`;
   setActionButtonContent(button, t(installed ? "marketplace_remove" : "marketplace_install"), shortcut);
 }
 
@@ -1252,7 +1252,7 @@ function createStoreThemeCard(
   activeThemeId?: string | null
 ): HTMLElement {
   const card = document.createElement("div");
-  card.className = "store-card";
+  card.className = "ui-tile store-card";
   card.dataset.themeId = theme.id;
   if (urlThemeInfo) {
     card.dataset.urlTheme = "true";
@@ -1304,7 +1304,7 @@ function createStoreThemeCard(
   });
 
   const applyBtn = document.createElement("button");
-  applyBtn.className = "ui-button ui-button--accent-tint store-card-btn store-card-btn-apply";
+  applyBtn.className = "ui-button ui-button--header ui-button--accent-tint store-card-btn store-card-btn-apply";
   const isActive = activeThemeId === theme.id;
   if (isActive) {
     applyBtn.textContent = t("marketplace_active");

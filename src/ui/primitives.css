@@ -72,6 +72,7 @@ html {
 }
 .ui-button--ghost { background: transparent; box-shadow: none; color: var(--text-muted); }
 .ui-button--ghost:hover { background: var(--button-bg); color: var(--text-strong); }
+.ui-button:is([aria-pressed="true"], [aria-current="page"]) { background: var(--button-bg-hover); color: var(--text-strong); }
 .ui-button--compact { height: 30px; padding: 0 12px 0 10px; gap: 6px; font-size: var(--font-size-sm); }
 .ui-button--header {
   height: 34px;
@@ -192,6 +193,7 @@ html {
   user-select: none;
 }
 .ui-kbd--icon { padding: 0 0.25rem; }
+.ui-kbd--small { height: 1rem; min-width: 1rem; padding: 0 0.25rem; box-shadow: none; font-size: var(--font-size-4xs); }
 .ui-kbd--icon svg { width: 0.75rem; height: 0.75rem; }
 
 /* -- Search field (a ui-field with a leading icon and an optional key hint) -- */
@@ -414,6 +416,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-chip:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15); color: #fff; }
 .ui-chip:has(input:checked) { background: rgba(129, 140, 248, 0.15); border-color: rgba(129, 140, 248, 0.4); color: rgb(165, 180, 252); }
 .ui-chip:has(input:focus-visible) { outline: var(--focus-ring); outline-offset: 2px; }
+.ui-chip__label { transition: color var(--duration-quick) ease; }
 
 /* -- Sort chip slot (a chip that reveals its direction icon while selected) -- */
 .ui-chip__sort {
@@ -764,6 +767,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-frame > * { flex: 1 1 auto; min-height: 0; }
 .ui-frame--field { background: var(--field-bg); box-shadow: var(--field-edge); transition: box-shadow var(--duration-quick) ease-out; }
 .ui-frame--field:focus-within { box-shadow: var(--field-edge-focus); }
+.ui-frame--field:has([aria-invalid="true"]) { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 50%, transparent); }
+.ui-frame--field.is-dragover { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent); }
 
 /* -- Spinner -- */
 .ui-spinner { width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.15); border-top-color: #fff; border-radius: 50%; animation: ui-spin var(--duration-spin) linear infinite; }
@@ -942,19 +947,9 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   flex-direction: column;
   gap: 2px;
   padding: 12px var(--row-pad);
-  border: var(--card-edge);
-  border-radius: var(--radius-row);
-  background: var(--card-bg);
   color: var(--text-strong);
   text-decoration: none;
-  transition:
-    background var(--duration-quick) ease-out,
-    border-color var(--duration-quick) ease-out,
-    scale var(--duration-quick) ease-out;
 }
-.ui-jump:hover { background: var(--card-bg-hover); border-color: var(--card-edge-color-hover); }
-.ui-jump:active { scale: var(--scale-press); }
-.ui-jump:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
 .ui-jump__icon { width: 16px; height: 16px; margin-bottom: 8px; color: var(--text-muted); }
 .ui-jump__label { font-size: var(--font-size-sm); font-weight: 500; text-wrap: balance; }
 .ui-jump__sub { font-size: var(--font-size-xs); color: var(--text-label); }
@@ -968,6 +963,24 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   transition: color var(--duration-quick) ease-out, translate var(--duration-quick) ease-out;
 }
 .ui-jump:hover .ui-jump__arrow { color: var(--text-muted); translate: 1px -1px; }
+
+/* -- Tile (clickable card surface) -- */
+.ui-tile {
+  border: var(--card-edge);
+  border-radius: var(--radius-row);
+  background: var(--card-bg);
+  cursor: pointer;
+  transition:
+    background var(--duration-quick) ease-out,
+    border-color var(--duration-quick) ease-out,
+    scale var(--duration-quick) ease-out;
+}
+.ui-tile:hover { background: var(--card-bg-hover); border-color: var(--card-edge-color-hover); }
+.ui-tile:active { scale: var(--scale-press); }
+.ui-tile:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+/* -- Section label -- */
+.ui-section-label { font-size: var(--font-size-sm); font-weight: 600; color: var(--text-label); }
 
 /* -- Visually hidden (screen readers only; chip inputs stay focusable) -- */
 .ui-visually-hidden, .ui-chip input {
@@ -998,7 +1011,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   .ui-segmented__tab, .ui-segmented__pill { border-radius: var(--radius-tab); }
   .ui-button, .ui-field, .ui-card, .ui-row, .ui-sync-tag, .ui-dropdown__trigger,
   .ui-menu, .ui-menu__option, .ui-frame, .ui-toast, .ui-modal__surface, .ui-callout,
-  .ui-segmented, .ui-segmented__tab, .ui-segmented__pill, .ui-filter-bar, .ui-stat, .ui-jump {
+  .ui-segmented, .ui-segmented__tab, .ui-segmented__pill, .ui-filter-bar, .ui-stat, .ui-tile {
     corner-shape: superellipse(1.6);
   }
 }
@@ -1013,7 +1026,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 @media (prefers-reduced-motion: reduce) {
   .ui-button, .ui-field, .ui-card__tab, .ui-card__bar, .ui-card__body, .ui-panel.is-active,
   .ui-row, .ui-row__chevron, .ui-chip, .ui-dropdown__trigger, .ui-dropdown__chevron, .ui-button .ui-dropdown__chevron,
-  .ui-menu, .ui-menu__option, .ui-scroll-fade, .ui-frame--field, .ui-tooltip--visible {
+  .ui-menu, .ui-menu__option, .ui-scroll-fade, .ui-frame--field, .ui-tile, .ui-tooltip--visible {
     transition: none;
     animation: none;
   }
@@ -1023,7 +1036,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   .ui-skeleton::after { animation: none; }
   .ui-modal__backdrop, .ui-modal__surface { transition: none; }
   .ui-switch__track, .ui-switch__track::before, .ui-switch--tri, .ui-switch--tri::before, .ui-search__hint,
-  .ui-segmented__tab, .ui-segmented__pill, .ui-tabs__tab, .ui-tabs__bar, .ui-chip__sort,
-  .ui-stat__bar > span::after, .ui-jump, .ui-jump__arrow { transition: none; }
+  .ui-segmented__tab, .ui-segmented__pill, .ui-tabs__tab, .ui-tabs__bar, .ui-chip__sort, .ui-chip__label,
+  .ui-stat__bar > span::after, .ui-jump__arrow { transition: none; }
   .ui-sort-icon--animate { animation: none; }
 }

@@ -162,7 +162,8 @@
 }
 
 .ui-card,
-.ui-menu {
+.ui-menu,
+.ui-tile {
   --field-bg: rgba(0, 0, 0, 0.05);
   --field-bg-focus: rgba(0, 0, 0, 0.1);
 }

@@ -87,11 +87,6 @@
 
 .marketplace-url-btn kbd {
   margin-left: 0.125rem;
-  height: 1rem;
-  min-width: 1rem;
-  padding: 0 0.25rem;
-  font-size: var(--font-size-4xs);
-  box-shadow: none;
 }
 
 .marketplace-filter-group {
@@ -100,28 +95,10 @@
   gap: 0.5rem;
 }
 
-.marketplace-filter-label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-label);
-}
-
 .marketplace-filter-options {
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
-}
-
-.marketplace-filter-chip {
-  font-size: var(--font-size-xs);
-}
-
-.marketplace-filter-chip--sort {
-  cursor: pointer;
-}
-
-.marketplace-filter-chip__label {
-  transition: color var(--duration-quick) ease;
 }
 
 .marketplace-content {
@@ -255,12 +232,8 @@
 
 /* Store Card */
 .store-card {
-  background: var(--card-bg);
-  border: var(--card-edge);
   border-radius: var(--radius-card);
   overflow: hidden;
-  cursor: pointer;
-  transition: background var(--duration-quick), border-color var(--duration-quick);
   position: relative;
 }
 
@@ -278,11 +251,6 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-.store-card:hover {
-  background: var(--card-bg-hover);
-  border-color: var(--card-edge-color-hover);
 }
 
 .store-card-cover {
@@ -356,14 +324,10 @@
   gap: 0.75rem;
   width: 100%;
   margin-top: 0.375rem;
-  font-size: var(--font-size-xs);
-  font-weight: 600;
   user-select: none;
 }
 
 .store-card .store-card-btn {
-  height: 34px;
-  padding: 0 0.75rem;
   border-radius: calc(var(--radius-card) - 11px);
 }
 
@@ -378,13 +342,6 @@
   margin-top: 0;
 }
 
-.store-card-btn .ui-kbd {
-  height: 1rem;
-  min-width: 1rem;
-  padding: 0 0.25rem;
-  font-size: var(--font-size-4xs);
-}
-
 .store-card-badge {
   position: absolute;
   top: 11px;
@@ -392,8 +349,6 @@
 }
 
 .store-card-badge-url {
-  --badge-bg: rgba(255, 255, 255, 0.15);
-  --badge-fg: rgba(255, 255, 255, 0.9);
   right: auto;
   left: 11px;
 }
@@ -455,8 +410,6 @@
 }
 
 .detail-header-actions .store-card-btn {
-  height: 32px;
-	padding: 0 1rem;
   width: auto;
   margin: 0;
 }
@@ -978,9 +931,6 @@
 }
 
 .shortcuts-group-title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-label);
   margin-bottom: 0.5rem;
 }
 
@@ -1016,7 +966,6 @@
 /* Feature-gated: browsers without corner-shape keep the original radii above. */
 
 @supports (corner-shape: superellipse(1.6)) {
-  .store-card,
   .store-card-stats {
     corner-shape: superellipse(1.6);
   }
@@ -1030,8 +979,7 @@
   .detail-dot.active,
   .detail-slideshow-img,
   .detail-star,
-  .detail-star::before,
-  .store-card {
+  .detail-star::before {
     transition: none;
   }
 

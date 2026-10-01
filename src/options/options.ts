@@ -558,7 +558,7 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
   const providerInfo = providerIdToInfoMap[providerId];
 
   const liElem = document.createElement("li");
-  liElem.classList.add("sortable-item");
+  liElem.classList.add("ui-row", "sortable-item");
   liElem.id = "p-" + providerId;
 
   const handleElem = document.createElement("span");
@@ -1424,7 +1424,7 @@ function switchExclusionTab(tab: "romanization" | "translation"): void {
   const button = exclusionTabs?.tabs.find(candidate => candidate.dataset.tab === tab);
   if (exclusionTabs && button && exclusionTabs.selected() !== button) exclusionTabs.select(button, { notify: false });
   for (const content of document.querySelectorAll(".lang-exclusions-tab-content")) {
-    content.classList.toggle("active", content.id === `${tab}-tab-content`);
+    content.classList.toggle("is-active", content.id === `${tab}-tab-content`);
   }
 
   const resetBtn = document.getElementById("lang-exclusions-reset-btn");

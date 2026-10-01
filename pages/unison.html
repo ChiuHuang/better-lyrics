@@ -46,30 +46,30 @@
 			<section id="unison-view-search" class="unison-view" hidden>
 				<div id="unison-filters" class="ui-filter-bar unison-filters" hidden>
 					<div class="unison-filter-group">
-						<span class="unison-filter-label">__MSG_marketplace_sortBy__</span>
+						<span class="ui-section-label">__MSG_marketplace_sortBy__</span>
 						<div class="unison-filter-options" role="group" aria-label="__MSG_marketplace_sortBy__">
 							<label class="ui-chip unison-filter-chip unison-filter-chip--sort" data-label-desc="__MSG_marketplace_sortNewest__" data-label-asc="__MSG_marketplace_sortOldest__">
 								<input type="radio" name="unison-filter-sort" value="newest">
 								<span class="ui-chip__sort" aria-hidden="true"></span>
-								<span class="ui-chip__label unison-filter-chip__label">__MSG_marketplace_sortNewest__</span>
+								<span class="ui-chip__label">__MSG_marketplace_sortNewest__</span>
 								<kbd class="ui-kbd">1</kbd>
 							</label>
 							<label class="ui-chip unison-filter-chip unison-filter-chip--sort" data-label-desc="__MSG_unison_sortTopRated__" data-label-asc="__MSG_unison_sortBottomRated__">
 								<input type="radio" name="unison-filter-sort" value="top-rated">
 								<span class="ui-chip__sort" aria-hidden="true"></span>
-								<span class="ui-chip__label unison-filter-chip__label">__MSG_unison_sortTopRated__</span>
+								<span class="ui-chip__label">__MSG_unison_sortTopRated__</span>
 								<kbd class="ui-kbd">2</kbd>
 							</label>
 							<label class="ui-chip unison-filter-chip unison-filter-chip--sort" data-label-desc="__MSG_unison_sortMostVoted__" data-label-asc="__MSG_unison_sortLeastVoted__">
 								<input type="radio" name="unison-filter-sort" value="most-voted">
 								<span class="ui-chip__sort" aria-hidden="true"></span>
-								<span class="ui-chip__label unison-filter-chip__label">__MSG_unison_sortMostVoted__</span>
+								<span class="ui-chip__label">__MSG_unison_sortMostVoted__</span>
 								<kbd class="ui-kbd">3</kbd>
 							</label>
 						</div>
 					</div>
 					<div class="unison-filter-group">
-						<span class="unison-filter-label">__MSG_unison_sync__</span>
+						<span class="ui-section-label">__MSG_unison_sync__</span>
 						<div class="unison-filter-options" role="group" aria-label="__MSG_unison_sync__">
 							<label class="ui-chip unison-filter-chip">
 								<input type="radio" name="unison-filter-sync" value="all" checked>
@@ -102,7 +102,7 @@
 						</div>
 					</div>
 					<div class="unison-filter-group">
-						<span class="unison-filter-label">__MSG_unison_tier__</span>
+						<span class="ui-section-label">__MSG_unison_tier__</span>
 						<div class="unison-filter-options" role="group" aria-label="__MSG_unison_tier__">
 							<label class="ui-chip unison-filter-chip">
 								<input type="radio" name="unison-filter-tier" value="all" checked>
@@ -121,7 +121,7 @@
 						</div>
 					</div>
 					<div class="unison-filter-group">
-						<span class="unison-filter-label">__MSG_unison_format__</span>
+						<span class="ui-section-label">__MSG_unison_format__</span>
 						<div class="unison-filter-options" role="group" aria-label="__MSG_unison_format__">
 							<label class="ui-chip unison-filter-chip">
 								<input type="radio" name="unison-filter-format" value="all" checked>
@@ -145,7 +145,7 @@
 						</div>
 					</div>
 					<div class="unison-filter-group">
-						<span class="unison-filter-label">__MSG_unison_language__</span>
+						<span class="ui-section-label">__MSG_unison_language__</span>
 						<div class="unison-filter-options" id="unison-filter-language-mount"></div>
 					</div>
 				</div>
@@ -166,13 +166,13 @@
 						<div class="unison-detail-columns">
 							<div class="unison-detail-col">
 								<div class="unison-detail-col-head" id="unison-detail-preview-head">
-									<h3 class="unison-detail-col-title">__MSG_unison_preview__</h3>
+									<h3 class="ui-section-label unison-detail-col-title">__MSG_unison_preview__</h3>
 								</div>
 								<div class="ui-frame"><div class="unison-detail-preview" id="unison-detail-preview"></div></div>
 							</div>
 							<div class="unison-detail-col">
 								<div class="unison-detail-col-head" id="unison-detail-lyrics-head">
-									<h3 class="unison-detail-col-title">__MSG_unison_rawLyrics__</h3>
+									<h3 class="ui-section-label unison-detail-col-title">__MSG_unison_rawLyrics__</h3>
 								</div>
 								<div class="unison-detail-lyrics" id="unison-detail-lyrics"></div>
 							</div>
@@ -197,51 +197,51 @@
 						<div class="unison-form-grid">
 							<div class="unison-form-row unison-form-row--2x2">
 								<label class="unison-field">
-									<span class="unison-field-label unison-field-label--required">__MSG_unison_song__</span>
+									<span class="ui-section-label unison-field-label--required">__MSG_unison_song__</span>
 									<input type="text" id="unison-field-song" class="ui-field" placeholder="__MSG_unison_placeholder_song__" />
 								</label>
 								<label class="unison-field">
-									<span class="unison-field-label unison-field-label--required">__MSG_unison_artist__</span>
+									<span class="ui-section-label unison-field-label--required">__MSG_unison_artist__</span>
 									<input type="text" id="unison-field-artist" class="ui-field" placeholder="__MSG_unison_placeholder_artist__" />
 								</label>
 							</div>
 							<div class="unison-form-row unison-form-row--2x2">
 								<label class="unison-field">
-									<span class="unison-field-label">__MSG_unison_album__</span>
+									<span class="ui-section-label">__MSG_unison_album__</span>
 									<input type="text" id="unison-field-album" class="ui-field" maxlength="500" placeholder="__MSG_unison_placeholder_album__" />
 								</label>
 								<div class="unison-field">
-									<span class="unison-field-label">__MSG_unison_language__</span>
+									<span class="ui-section-label">__MSG_unison_language__</span>
 									<div id="unison-field-language-mount"></div>
 								</div>
 							</div>
 							<div class="unison-form-row unison-form-row--2x2">
 								<label class="unison-field">
-									<span class="unison-field-label unison-field-label--required">__MSG_unison_videoId__</span>
+									<span class="ui-section-label unison-field-label--required">__MSG_unison_videoId__</span>
 									<input type="text" id="unison-field-videoId" class="ui-field unison-input--mono" placeholder="__MSG_unison_placeholder_videoId__" />
 									<span class="unison-field-hint">__MSG_unison_videoIdHint__</span>
 								</label>
 								<label class="unison-field">
-									<span class="unison-field-label">__MSG_unison_duration__</span>
+									<span class="ui-section-label">__MSG_unison_duration__</span>
 									<input type="number" id="unison-field-duration" class="ui-field" step="1" min="0" inputmode="numeric" placeholder="__MSG_unison_placeholder_duration__" />
 									<span class="unison-field-hint">__MSG_unison_durationHint__</span>
 								</label>
 							</div>
 							<div class="unison-form-row unison-form-row--2x2">
 								<label class="unison-field">
-									<span class="unison-field-label">__MSG_unison_isrc__</span>
+									<span class="ui-section-label">__MSG_unison_isrc__</span>
 									<input type="text" id="unison-field-isrc" class="ui-field unison-input--mono" placeholder="__MSG_unison_placeholder_isrc__" />
 									<span class="unison-field-hint" id="unison-isrc-hint"></span>
 								</label>
 								<div class="unison-field">
-									<span class="unison-field-label">__MSG_unison_format__</span>
+									<span class="ui-section-label">__MSG_unison_format__</span>
 									<div id="unison-field-format-mount"></div>
 									<span class="unison-field-hint">__MSG_unison_formatHint__</span>
 								</div>
 							</div>
 						</div>
 						<div class="unison-field">
-							<span class="unison-field-label">__MSG_unison_additionalVideos__</span>
+							<span class="ui-section-label">__MSG_unison_additionalVideos__</span>
 							<div id="unison-additional-videos-mount"></div>
 							<span class="unison-field-hint">__MSG_unison_additionalVideosHint__</span>
 							<div id="unison-submit-suggestions" class="unison-submit-suggestions" hidden>
@@ -250,7 +250,7 @@
 							</div>
 						</div>
 						<label class="unison-field">
-							<span class="unison-field-label unison-field-label--required">__MSG_unison_lyrics__</span>
+							<span class="ui-section-label unison-field-label--required">__MSG_unison_lyrics__</span>
 							<textarea id="unison-field-lyrics" class="unison-lyrics-input" rows="18" spellcheck="false" placeholder="__MSG_unison_placeholder_lyrics__"></textarea>
 						</label>
 						<div class="unison-submit-actions">
@@ -269,7 +269,7 @@
 					</div>
 					<div class="unison-submit-preview">
 						<div class="unison-detail-col-head" id="unison-preview-head">
-							<h3 class="unison-preview-title">__MSG_unison_preview__</h3>
+							<h3 class="ui-section-label unison-preview-title">__MSG_unison_preview__</h3>
 						</div>
 						<div id="unison-preview-content" class="unison-preview-content"></div>
 					</div>
