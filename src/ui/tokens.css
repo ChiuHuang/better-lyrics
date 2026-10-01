@@ -95,6 +95,9 @@
   --z-menu: 999998;
   --z-tooltip: 999999;
 
+  /* -- Accent -- */
+  --accent: rgb(99, 102, 241);
+
   /* -- Danger -- */
   --danger: rgb(239, 68, 68);
   --danger-hover: rgb(220, 38, 38);
