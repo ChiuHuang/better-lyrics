@@ -579,11 +579,11 @@
     "description": "Toast when the user saves an empty editor as a custom theme"
   },
   "editor_alert_saveDialogOpened": {
-    "message": "Theme file save dialog opened. Choose where to save your file.",
+    "message": "Theme file save dialog opened. Choose where to save your file",
     "description": "Toast after the browser save dialog opens for an exported theme file"
   },
   "editor_alert_downloadStarted": {
-    "message": "Theme file download started. Check your downloads folder.",
+    "message": "Theme file download started. Check your downloads folder",
     "description": "Toast after an exported theme file starts downloading without a save dialog"
   },
   "editor_alert_applyFailed": {
@@ -591,7 +591,7 @@
     "description": "Toast when applying a built-in or custom theme from the theme picker fails"
   },
   "editor_alert_importFailed": {
-    "message": "Could not import the theme file. Try again.",
+    "message": "Could not import the theme file. Try again",
     "description": "Toast when importing a theme file fails"
   },
   "editor_alert_imported": {
