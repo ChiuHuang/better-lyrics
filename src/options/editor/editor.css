@@ -27,7 +27,7 @@
 
 .note {
     font-size: var(--font-size-xs);
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-label);
     margin-top: 0.75rem;
 		display: flex;
     align-items: center;
@@ -36,7 +36,7 @@
 }
 
 .note a {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-label);
     text-decoration: underline;
     text-underline-offset: 0.2em;
 		transition: color var(--duration-quick) ease-out;
@@ -47,7 +47,7 @@
 }
 
 .note a:visited {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-label);
 }
 
 .rics-footer {
@@ -55,7 +55,7 @@
     align-items: center;
     justify-content: space-between;
     font-size: var(--font-size-2xs);
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-faint);
     margin: 0.25rem 1em 0.75rem;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .rics-footer a {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-label);
     text-decoration: none;
     transition: color var(--duration-quick) ease-out;
 }
@@ -142,7 +142,7 @@
 	position:absolute;
 	bottom:0;
 	background: #2d2d30;
-	border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+	border-top: var(--card-edge) !important;
 	border-radius: 0px !important;
 }
 
@@ -215,7 +215,7 @@
 
 .cm-panel.cm-search label:has(input:checked) {
 	background: rgba(255, 255, 255, 0.15);
-	color: #fff;
+	color: var(--text-strong);
 	border-color: rgba(255, 255, 255, 0.25);
 	box-shadow: inset 0 1px rgba(255, 255, 255, 0.1);
 }

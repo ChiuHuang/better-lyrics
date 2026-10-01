@@ -31,7 +31,7 @@ nav {
 .heading span {
     font-size: var(--font-size-xs);
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-label);
 }
 
 .options-page :where(button),
@@ -95,7 +95,7 @@ nav {
 .setting-help:hover,
 .setting-help:focus-visible {
     background: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    color: var(--text-strong);
 }
 
 #offset-modal-overlay .container:first-of-type {
@@ -114,7 +114,7 @@ nav {
     font-size: var(--font-size-md);
     font-weight: 500;
     font-variant-numeric: tabular-nums;
-    color: #fff;
+    color: var(--text-strong);
     cursor: default;
     user-select: none;
 }
@@ -165,7 +165,7 @@ nav {
     margin-top: 1rem;
     margin-bottom: 1.25rem;
     padding: 1rem 1.25rem;
-    border-radius: 0.75rem;
+    border-radius: var(--radius-card-fallback);
     background:
         linear-gradient(
             45deg,
@@ -208,7 +208,7 @@ nav {
 .theme-preview-name {
     font-size: var(--font-size-xl);
     font-weight: 500;
-    color: #fff;
+    color: var(--text-strong);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -216,7 +216,7 @@ nav {
 
 .theme-preview-author {
     font-size: var(--font-size-sm);
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-label);
 }
 
 .theme-preview-author:empty {
@@ -246,7 +246,7 @@ nav {
     gap: 0.25rem;
     flex-direction: column;
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--raised-bg);
     padding: 0.75rem;
     border-radius: 0.5rem;
     border: 1px dashed rgba(255, 255, 255, 0.1);
@@ -350,7 +350,7 @@ nav {
 }
 
 .sortable-item.disabled-item {
-	color: rgba(255, 255, 255, 0.5);
+	color: var(--text-label);
 }
 
 .checkbox-container {
@@ -371,7 +371,7 @@ nav {
 	min-height: 1.25rem;
 	margin: 0.5rem 0 0;
 	font-size: var(--font-size-sm);
-	color: rgba(255, 255, 255, 0.55);
+	color: var(--text-muted);
 	transition: color var(--duration-quick) ease;
 }
 
@@ -392,7 +392,7 @@ nav {
 #nickname-modal-status[data-state="invalid"],
 #nickname-modal-status[data-state="rateLimited"],
 #nickname-modal-status[data-state="profane"] {
-	color: #f5b942;
+	color: var(--warning);
 }
 
 .nickname-status-spinner {
@@ -475,7 +475,7 @@ nav {
 .theme-card-name {
 	font-weight: 600;
 	font-size: var(--font-size-sm);
-	color: #fff;
+	color: var(--text-strong);
 	margin-bottom: 0.125rem;
 	line-height: 1.2;
 	white-space: nowrap;
@@ -485,7 +485,7 @@ nav {
 
 .theme-card-author {
 	font-size: var(--font-size-2xs);
-	color: rgba(255, 255, 255, 0.5);
+	color: var(--text-label);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -547,7 +547,7 @@ nav {
 	align-items: center;
 	gap: 0.75rem;
 	margin: 1rem 0;
-	color: rgba(255, 255, 255, 0.5);
+	color: var(--text-label);
 	font-size: var(--font-size-sm);
 	font-weight: 600;
 }
@@ -838,11 +838,11 @@ nav {
 
 @supports (corner-shape: superellipse(1.6)) {
     .theme-preview-card {
-        border-radius: 1.5rem;
+        border-radius: var(--radius-card);
     }
 
     .text-group {
-        border-radius: 1rem;
+        border-radius: var(--radius-row);
     }
 
     .position-frame {
@@ -903,7 +903,7 @@ body.options-page {
 #navbar .ui-button svg { width: 17px; height: 17px; }
 #navbar .ui-button[href*="x.com"] svg { width: 15px; height: 15px; }
 #navbar .discord-btn {
-  color: #fff;
+  color: var(--text-strong);
   background: #5865f2;
   box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0 0, rgba(88, 101, 242, 0.35) 0 4px 12px -4px;
   --button-icon: currentColor;
@@ -1021,7 +1021,7 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
     translate var(--duration-fast) var(--ease-smooth-out),
     color var(--duration-quick) ease-out;
 }
-.head-link:hover svg { color: #fff; translate: 1px -1px; }
+.head-link:hover svg { color: var(--text-strong); translate: 1px -1px; }
 
 .providers { gap: 2px; }
 .providers > li {
@@ -1092,7 +1092,7 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 /* -- Themes ----------------------------------------------------------------- */
 
 #themes-content .theme-preview-card { margin: var(--row-pad) var(--row-pad) 8px; }
-#themes-content .store-buttons-row { margin: 8px var(--row-pad) var(--row-pad); padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+#themes-content .store-buttons-row { margin: 8px var(--row-pad) var(--row-pad); padding-top: 16px; border-top: var(--card-edge); }
 #themes-content .store-buttons-row .ui-button svg { width: 1rem; height: 1rem; }
 
 /* -- Footer ------------------------------------------------------------------ */
@@ -1153,14 +1153,14 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
   border-radius: 50%;
   box-shadow: 0 6px 18px -6px color-mix(in srgb, #f20c32 70%, transparent);
 }
-.about__name { position: relative; margin: 0; color: #fff; font-size: var(--font-size-2xl); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.about__name { position: relative; margin: 0; color: var(--text-strong); font-size: var(--font-size-2xl); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
 .about__tagline { position: relative; margin: 3px 0 0; font-size: var(--font-size-sm); color: rgba(255, 255, 255, 0.6); }
 .about__section { margin-bottom: 18px; }
 .about__section:last-child { margin-bottom: 0; }
 .about__heading { margin: 0 0 5px; font-size: var(--font-size-sm); font-weight: 600; }
 .about__body { margin: 0; font-size: var(--font-size-sm); line-height: 1.55; color: rgba(255, 255, 255, 0.6); text-wrap: pretty; }
 .about__body a {
-  color: #fff;
+  color: var(--text-strong);
   font-weight: 500;
   text-decoration: underline;
   text-decoration-color: rgba(255, 255, 255, 0.25);

@@ -517,7 +517,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-badge--success {
   --badge-bg: color-mix(in srgb, var(--success) 10%, transparent);
   --badge-edge: color-mix(in srgb, var(--success) 22%, transparent);
-  --badge-fg: color-mix(in srgb, var(--success) 50%, #fff);
+  --badge-fg: var(--success-text);
 }
 .ui-badge--warning {
   --badge-bg: color-mix(in srgb, var(--warning) 12%, transparent);
