@@ -1061,7 +1061,6 @@ async function handleExportIdentity(): Promise<void> {
     const outcome = await downloadIdentityFile(exportData, `better-lyrics-identity-${displayName}.json`);
     showAlert(downloadOutcomeMessage(outcome));
     if (outcome.kind === "downloads") await rememberPendingBackup(outcome.downloadId, keyId);
-    else if (outcome.kind === "anchor") await markIdentityBackedUp(keyId);
   } catch (error) {
     errorCore("Failed to export identity:", error);
     showAlert(t("options_alert_exportFailed"));
