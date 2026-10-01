@@ -146,7 +146,7 @@ export function pageCard(page: HTMLElement): CardTabs | undefined {
 const SLOT_ICONS: Record<string, { svg: () => SVGElement | null; className?: string }> = {
   chevron: { svg: () => svgIcon("chevron"), className: "ui-row__chevron" },
   refresh: { svg: () => parseSvgString(controlIcons.refresh), className: "refresh-icon" },
-  info: { svg: () => svgIcon("info") },
+  info: { svg: () => svgIcon("infoOutline") },
   externalLink: { svg: () => svgIcon("externalLink") },
 };
 

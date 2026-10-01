@@ -25,21 +25,38 @@
 					<p class="marketplace-subtitle">__MSG_marketplace_subtitle__</p>
 				</div>
 				<div class="marketplace-header-right">
+					<div class="marketplace-btn-group">
+						<button id="url-install-btn" class="ui-button ui-button--header marketplace-url-btn" title="__MSG_marketplace_installFromUrl__ (U)">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+								<path d="M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z"/>
+								<path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z"/>
+							</svg>
+							__MSG_marketplace_installFromUrl__
+							<kbd>U</kbd>
+						</button>
+						<a href="https://github.com/better-lyrics/themes/" target="_blank" rel="noopener noreferrer" class="ui-button ui-button--header marketplace-submit-link">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+								<path d="m12 2l.117.007a1 1 0 0 1 .876.876L13 3v4l.005.15a2 2 0 0 0 1.838 1.844L15 9h4l.117.007a1 1 0 0 1 .876.876L20 10v9a3 3 0 0 1-2.824 2.995L17 22H7a3 3 0 0 1-2.995-2.824L4 19V5a3 3 0 0 1 2.824-2.995L7 2zm0 9l-.09.004l-.058.007l-.118.025l-.105.035l-.113.054l-.111.071a1 1 0 0 0-.112.097l-2.5 2.5a1 1 0 0 0 0 1.414l.094.083a1 1 0 0 0 1.32-.083l.793-.793V18a1 1 0 0 0 2 0v-3.585l.793.792a1 1 0 0 0 1.414-1.414l-2.5-2.5l-.082-.073l-.104-.074l-.098-.052l-.11-.044l-.112-.03l-.126-.017z"/>
+								<path d="M19 7h-4l-.001-4.001z"/>
+							</svg>
+							__MSG_marketplace_submitTheme__
+						</a>
+					</div>
 					<div class="store-search-container">
 						<svg class="store-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
 						</svg>
-						<input type="text" id="store-search-input" class="store-search-input" placeholder="__MSG_marketplace_searchPlaceholder__" />
+						<input type="text" id="store-search-input" class="ui-field store-search-input" placeholder="__MSG_marketplace_searchPlaceholder__" />
 						<div class="search-shortcut-hint">
 							<kbd>/</kbd>
 						</div>
 					</div>
-					<button id="store-refresh-btn" class="store-refresh-btn" title="__MSG_marketplace_refresh__ (R)">
+					<button id="store-refresh-btn" class="ui-button ui-button--header ui-button--icon store-refresh-btn" title="__MSG_marketplace_refresh__ (R)">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 							<path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0v2.43l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd" />
 						</svg>
 					</button>
-					<button id="shortcuts-btn" class="store-refresh-btn" title="__MSG_marketplace_keyboardShortcuts__ (?)">
+					<button id="shortcuts-btn" class="ui-button ui-button--header ui-button--icon store-refresh-btn" title="__MSG_marketplace_keyboardShortcuts__ (?)">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
 							<path d="M232 128c0 12.5-17.8 22-22.7 33.7s1.4 30.6-7.8 39.8s-28.5 3.1-39.8 7.8S140.5 232 128 232s-22-17.8-33.7-22.7s-30.6 1.4-39.8-7.8s-3.1-28.5-7.8-39.8S24 140.5 24 128s17.8-22 22.7-33.7s-1.4-30.6 7.8-39.8s28.5-3.1 39.8-7.8S115.5 24 128 24s22 17.8 33.7 22.7s30.6-1.4 39.8 7.8s3.1 28.5 7.8 39.8S232 115.5 232 128Z" opacity=".1"/>
 							<path d="M225.9 102.8c-3.8-3.9-7.7-8-9.2-11.5s-1.4-8.7-1.5-14c-.1-9.7-.3-20.8-8-28.5s-18.8-7.9-28.5-8c-5.3-.1-10.7-.2-14-1.5s-7.6-5.4-11.5-9.2C146.3 23.5 138.4 16 128 16s-18.3 7.5-25.2 14.1c-3.9 3.8-8 7.7-11.5 9.2s-8.7 1.4-14 1.5c-9.7.1-20.8.3-28.5 8s-7.9 18.8-8 28.5c-.1 5.3-.2 10.7-1.5 14s-5.4 7.6-9.2 11.5C23.5 109.7 16 117.6 16 128s7.5 18.3 14.1 25.2c3.8 3.9 7.7 8 9.2 11.5s1.4 8.7 1.5 14c.1 9.7.3 20.8 8 28.5s18.8 7.9 28.5 8c5.3.1 10.7.2 14 1.5s7.6 5.4 11.5 9.2c6.9 6.6 14.8 14.1 25.2 14.1s18.3-7.5 25.2-14.1c3.9-3.8 8-7.7 11.5-9.2s8.7-1.4 14-1.5c9.7-.1 20.8-.3 28.5-8s7.9-18.8 8-28.5c.1-5.3.2-10.7 1.5-14s5.4-7.6 9.2-11.5c6.6-6.9 14.1-14.8 14.1-25.2s-7.5-18.3-14.1-25.2Zm-11.6 39.3c-4.8 5-9.7 10.2-12.4 16.5s-2.6 13.1-2.7 19.8s-.2 14.4-3.3 17.5s-10.4 3.2-17.5 3.3s-13.7.2-19.8 2.7s-11.5 7.6-16.5 12.4S132 224 128 224s-9.1-4.9-14.1-9.7s-10.2-9.7-16.5-12.4s-13.1-2.6-19.8-2.7s-14.4-.2-17.5-3.3s-3.2-10.4-3.3-17.5s-.2-13.7-2.7-19.8s-7.6-11.5-12.4-16.5S32 132 32 128s4.9-9.1 9.7-14.1s9.7-10.2 12.4-16.5s2.6-13.1 2.7-19.8s.2-14.4 3.3-17.5s10.4-3.2 17.5-3.3s13.7-.2 19.8-2.7s11.5-7.6 16.5-12.4S124 32 128 32s9.1 4.9 14.1 9.7s10.2 9.7 16.5 12.4s13.1 2.6 19.8 2.7s14.4.2 17.5 3.3s3.2 10.4 3.3 17.5s.2 13.7 2.7 19.8s7.6 11.5 12.4 16.5S224 124 224 128s-4.9 9.1-9.7 14.1ZM140 180a12 12 0 1 1-12-12a12 12 0 0 1 12 12Zm24-72a36 36 0 0 1-28 35.1v.9a8 8 0 0 1-16 0v-8a8 8 0 0 1 8-8a20 20 0 1 0-20-20a8 8 0 0 1-16 0a36 36 0 0 1 72 0Z"/>
@@ -56,19 +73,16 @@
 							<input type="radio" name="store-filter-sort" value="rating" checked>
 							<span class="marketplace-filter-chip__icon" aria-hidden="true"></span>
 							<span class="marketplace-filter-chip__label">__MSG_marketplace_sortRatingDesc__</span>
-							<kbd>1</kbd>
 						</label>
 						<label class="marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortDownloadsDesc__" data-label-asc="__MSG_marketplace_sortDownloadsAsc__">
 							<input type="radio" name="store-filter-sort" value="downloads">
 							<span class="marketplace-filter-chip__icon" aria-hidden="true"></span>
 							<span class="marketplace-filter-chip__label">__MSG_marketplace_sortDownloadsDesc__</span>
-							<kbd>2</kbd>
 						</label>
 						<label class="marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortNewest__" data-label-asc="__MSG_marketplace_sortOldest__">
 							<input type="radio" name="store-filter-sort" value="newest">
 							<span class="marketplace-filter-chip__icon" aria-hidden="true"></span>
 							<span class="marketplace-filter-chip__label">__MSG_marketplace_sortNewest__</span>
-							<kbd>3</kbd>
 						</label>
 					</div>
 				</div>
@@ -78,17 +92,14 @@
 						<label class="marketplace-filter-chip">
 							<input type="radio" name="store-filter-show" value="all" checked>
 							<span>__MSG_marketplace_showAll__</span>
-							<kbd>L</kbd>
 						</label>
 						<label class="marketplace-filter-chip">
 							<input type="radio" name="store-filter-show" value="installed">
 							<span>__MSG_marketplace_showInstalled__</span>
-							<kbd>I</kbd>
 						</label>
 						<label class="marketplace-filter-chip">
 							<input type="radio" name="store-filter-show" value="not-installed">
 							<span>__MSG_marketplace_showNotInstalled__</span>
-							<kbd>N</kbd>
 						</label>
 					</div>
 				</div>
@@ -98,31 +109,12 @@
 						<label class="marketplace-filter-chip">
 							<input type="checkbox" id="store-filter-shaders">
 							<span>__MSG_marketplace_hasShaders__</span>
-							<kbd>S</kbd>
 						</label>
 						<label class="marketplace-filter-chip">
 							<input type="checkbox" id="store-filter-compatible" checked>
 							<span>__MSG_marketplace_compatibleOnly__</span>
-							<kbd>C</kbd>
 						</label>
 					</div>
-				</div>
-				<div class="marketplace-btn-group">
-					<button id="url-install-btn" class="marketplace-url-btn" title="__MSG_marketplace_installFromUrl__ (U)">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-							<path d="M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z"/>
-							<path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z"/>
-						</svg>
-						__MSG_marketplace_installFromUrl__
-						<kbd>U</kbd>
-					</button>
-					<a href="https://github.com/better-lyrics/themes/" target="_blank" rel="noopener noreferrer" class="marketplace-submit-link">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-							<path d="m12 2l.117.007a1 1 0 0 1 .876.876L13 3v4l.005.15a2 2 0 0 0 1.838 1.844L15 9h4l.117.007a1 1 0 0 1 .876.876L20 10v9a3 3 0 0 1-2.824 2.995L17 22H7a3 3 0 0 1-2.995-2.824L4 19V5a3 3 0 0 1 2.824-2.995L7 2zm0 9l-.09.004l-.058.007l-.118.025l-.105.035l-.113.054l-.111.071a1 1 0 0 0-.112.097l-2.5 2.5a1 1 0 0 0 0 1.414l.094.083a1 1 0 0 0 1.32-.083l.793-.793V18a1 1 0 0 0 2 0v-3.585l.793.792a1 1 0 0 0 1.414-1.414l-2.5-2.5l-.082-.073l-.104-.074l-.098-.052l-.11-.044l-.112-.03l-.126-.017z"/>
-							<path d="M19 7h-4l-.001-4.001z"/>
-						</svg>
-						__MSG_marketplace_submitTheme__
-					</a>
 				</div>
 			</div>
 

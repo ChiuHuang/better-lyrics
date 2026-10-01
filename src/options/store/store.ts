@@ -118,6 +118,11 @@ function setActionButtonContent(button: HTMLElement, text: string, shortcut?: st
   }
 }
 
+function setInstallButtonState(button: HTMLElement, installed: boolean, shortcut?: string): void {
+  button.className = `store-card-btn ${installed ? "store-card-btn-remove" : "store-card-btn-install"}`;
+  setActionButtonContent(button, t(installed ? "marketplace_remove" : "marketplace_install"), shortcut);
+}
+
 interface FilterState {
   searchQuery: string;
   sortBy: "rating" | "downloads" | "newest";
@@ -1447,8 +1452,7 @@ function createStoreThemeCard(
   author.textContent = `By ${formatCreators(theme.creators)}`;
 
   const actionBtn = document.createElement("button");
-  actionBtn.className = `store-card-btn ${isInstalled ? "store-card-btn-remove" : "store-card-btn-install"}`;
-  actionBtn.textContent = isInstalled ? t("marketplace_remove") : t("marketplace_install");
+  setInstallButtonState(actionBtn, isInstalled);
 
   // Incompatible themes stay installable: the button is never disabled, but it carries a hint
   // and the install handler confirms with the user first.
@@ -1638,8 +1642,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
         card.remove();
         urlOnlyThemeCards.delete(theme.id);
       } else {
-        button.className = "store-card-btn store-card-btn-install";
-        button.textContent = t("marketplace_install");
+        setInstallButtonState(button, false);
         const cardApplyBtn = card?.querySelector(".store-card-btn-apply") as HTMLButtonElement | null;
         if (cardApplyBtn) cardApplyBtn.style.display = "none";
       }
@@ -1649,8 +1652,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
         return;
       }
       const installedTheme = await installTheme(theme, { source: "marketplace" });
-      button.className = "store-card-btn store-card-btn-remove";
-      button.textContent = t("marketplace_remove");
+      setInstallButtonState(button, true);
 
       const cardApplyBtn = card?.querySelector(".store-card-btn-apply") as HTMLButtonElement | null;
       if (cardApplyBtn) {
@@ -1684,8 +1686,7 @@ async function handleThemeAction(theme: StoreTheme, button: HTMLButtonElement): 
     updateYourThemesDropdown();
   } catch (err) {
     errorStore("Action failed:", err);
-    button.className = `store-card-btn ${isRemoveButton ? "store-card-btn-remove" : "store-card-btn-install"}`;
-    button.textContent = isRemoveButton ? t("marketplace_remove") : t("marketplace_install");
+    setInstallButtonState(button, isRemoveButton);
     showAlert(`Failed: ${err}`);
   } finally {
     button.disabled = false;
@@ -2026,8 +2027,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
   }
 
   if (actionBtn) {
-    actionBtn.className = `store-card-btn ${initialInstalled ? "store-card-btn-remove" : "store-card-btn-install"}`;
-    setActionButtonContent(actionBtn, initialInstalled ? t("marketplace_remove") : t("marketplace_install"), "I");
+    setInstallButtonState(actionBtn, initialInstalled, "I");
     actionBtn.onclick = async () => {
       if (installOperationInProgress) return;
       installOperationInProgress = true;
@@ -2036,8 +2036,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
       try {
         if (isRemoveButton) {
           await removeTheme(theme.id);
-          actionBtn.className = "store-card-btn store-card-btn-install";
-          setActionButtonContent(actionBtn, t("marketplace_install"), "I");
+          setInstallButtonState(actionBtn, false, "I");
           showAlert(`Removed ${theme.title}`);
           updateRatingEnabled?.(false);
           updateDetailApplyBtn(false, false);
@@ -2046,8 +2045,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
             return;
           }
           const installedTheme = await installTheme(theme, { source: "marketplace" });
-          actionBtn.className = "store-card-btn store-card-btn-remove";
-          setActionButtonContent(actionBtn, t("marketplace_remove"), "I");
+          setInstallButtonState(actionBtn, true, "I");
           updateDetailApplyBtn(true, false);
 
           const applyAction: AlertAction = {
@@ -2077,8 +2075,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         updateYourThemesDropdown();
         await refreshStoreCards();
       } catch (err) {
-        actionBtn.className = `store-card-btn ${isRemoveButton ? "store-card-btn-remove" : "store-card-btn-install"}`;
-        setActionButtonContent(actionBtn, isRemoveButton ? t("marketplace_remove") : t("marketplace_install"), "I");
+        setInstallButtonState(actionBtn, isRemoveButton, "I");
         showAlert(`Failed: ${err}`);
       } finally {
         installOperationInProgress = false;
@@ -2549,8 +2546,7 @@ async function refreshStoreCards(): Promise<void> {
     const btn = card.querySelector(".store-card-btn:not(.store-card-btn-apply)") as HTMLButtonElement;
     if (btn) {
       const isInstalled = installedIds.has(themeId);
-      btn.className = `store-card-btn ${isInstalled ? "store-card-btn-remove" : "store-card-btn-install"}`;
-      btn.textContent = isInstalled ? t("marketplace_remove") : t("marketplace_install");
+      setInstallButtonState(btn, isInstalled);
     }
 
     const applyBtn = card.querySelector(".store-card-btn-apply") as HTMLButtonElement;

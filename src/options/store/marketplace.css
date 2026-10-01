@@ -66,8 +66,10 @@
 
 .marketplace-header-right {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .marketplace-header-right .store-search-input {
@@ -78,46 +80,18 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.5rem;
+  column-gap: 32px;
+  row-gap: 1.5rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
-  padding: 1rem;
+  border-radius: var(--radius-card);
+  padding: 14px var(--text-inset);
   margin-bottom: 1.5rem;
 }
 
-.marketplace-btn-group{
-	display: flex;
-	gap: .5rem;
-	margin-left: auto;
-}
-
-.marketplace-url-btn {
+.marketplace-btn-group {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.15s;
-  margin: 0;
-  margin-left: auto;
-  align-self: center;
-}
-
-.marketplace-url-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-.marketplace-url-btn svg {
-  width: 0.875rem;
-  height: 0.875rem;
+  gap: 8px;
 }
 
 .marketplace-url-btn kbd {
@@ -129,32 +103,6 @@
   box-shadow: none;
 }
 
-.marketplace-submit-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.75rem;
-  text-decoration: none;
-  transition: all 0.15s;
-  align-self: center;
-}
-
-.marketplace-submit-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.marketplace-submit-link svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
 .marketplace-filter-group {
   display: flex;
   flex-direction: column;
@@ -162,11 +110,9 @@
 }
 
 .marketplace-filter-label {
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--text-label);
 }
 
 .marketplace-filter-options {
@@ -186,7 +132,10 @@
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    background var(--duration-quick) ease-out,
+    border-color var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out;
 	width: fit-content !important;
 	height: 1.5rem;
 	user-select: none;
@@ -206,24 +155,6 @@
 
 .marketplace-filter-chip input {
   display: none;
-}
-
-.marketplace-filter-chip kbd {
-  height: 1rem;
-  min-width: 1rem;
-  padding: 0 0.25rem;
-  font-size: 0.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.4);
-  box-shadow: none;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.marketplace-filter-chip:has(input:checked) kbd {
-  background: rgba(129, 140, 248, 0.15);
-  border-color: rgba(129, 140, 248, 0.3);
-  color: rgb(165, 180, 252);
 }
 
 .marketplace-filter-chip--sort {
@@ -335,27 +266,10 @@
 }
 
 .store-search-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
-  padding: 0.375rem 0.625rem 0.375rem 2rem;
-  font-size: 0.8125rem;
-  color: #fff;
   width: 180px;
-  height: 2rem;
-  outline: none;
-  transition: all 0.2s;
-  font-family: inherit;
-	box-sizing: border-box;
-}
-
-.store-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.store-search-input:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.2);
+  height: 34px;
+  padding: 0 0.625rem 0 2rem;
+  font-size: 0.8125rem;
 }
 
 /* Filter Container */
@@ -426,11 +340,9 @@
 
 .store-filter-label {
   display: block;
-  font-size: 0.6rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--text-label);
   margin-bottom: 0.5rem;
 }
 
@@ -494,28 +406,9 @@
   border-color: rgba(255, 255, 255, 0.6);
 }
 
-.store-refresh-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 0.375rem;
-  padding: 0.375rem;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: all 0.2s;
-  width: 2rem;
-  height: 2rem;
-  margin: 0;
-}
-
-.store-refresh-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
 .store-refresh-btn svg {
   width: 1rem;
   height: 1rem;
-  color: rgba(255, 255, 255, 0.7);
 }
 
 .store-modal-body {
@@ -647,7 +540,7 @@
 .store-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-card);
   overflow: hidden;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -716,15 +609,15 @@
 
 .store-card-stats {
   position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
+  top: 11px;
+  left: 11px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.25rem 0.375rem;
   backdrop-filter: blur(4px);
 	background: rgba(0,0,0,.2);
-  border-radius: 0.25rem;
+  border-radius: calc(var(--radius-card) - 12px);
 }
 
 .store-card-stat {
@@ -758,6 +651,20 @@
   transition: all 0.2s;
   width: 100%;
   user-select: none;
+}
+
+.store-card .store-card-btn {
+  height: 34px;
+  border-radius: calc(var(--radius-card) - 11px);
+  transition:
+    background var(--duration-quick) ease-out,
+    border-color var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out,
+    scale var(--duration-quick) ease-out;
+}
+
+.store-card .store-card-btn:active:not(:disabled) {
+  scale: var(--scale-press);
 }
 
 .store-card-btn-install {
@@ -846,19 +753,18 @@
 
 .store-card-badge {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 11px;
+  right: 11px;
   display: flex;
   align-items: center;
   gap: 0.25rem;
   background: rgba(99, 102, 241, 0.9);
   color: #fff;
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 600;
+  letter-spacing: 0;
   padding: 0.25rem 0.375rem;
-  border-radius: 0.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  border-radius: calc(var(--radius-card) - 12px);
 }
 
 .store-card-badge svg {
@@ -874,7 +780,7 @@
   font-size: 0.625rem;
   font-weight: 600;
   padding: 0.25rem 0.375rem;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
 	top: 0.625rem;
 	right: 0.625rem;
 	color: hsl(38deg 100% 80% / 100%);
@@ -895,7 +801,7 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   padding: 0.25rem 0.375rem;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   top: 0.625rem;
   right: 0.625rem;
   color: hsl(210deg 90% 82% / 100%);
@@ -911,8 +817,8 @@
 .store-card-badge-url {
   background: rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.9);
-  top: 0.5rem;
-  left: 0.5rem;
+  top: 11px;
+  left: 11px;
   right: auto;
 }
 
@@ -961,12 +867,12 @@
   gap: 0.25rem;
   background: rgba(99, 102, 241, 0.9);
   color: #fff;
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   padding: 0.2rem 0.25rem;
   border-radius: 0.25rem;
   flex-shrink: 0;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 .detail-shader-badge svg {
@@ -980,13 +886,12 @@
   gap: 0.25rem;
   background: rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   padding: 0.2rem 0.35rem;
   border-radius: 0.25rem;
   flex-shrink: 0;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0;
 }
 
 .detail-url-badge svg {
@@ -1539,19 +1444,6 @@
   margin-top: 0.5rem;
 }
 
-#url-install-btn {
-  background: transparent;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
-	width: fit-content;
-}
-
-#url-install-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-}
-
 /* Scrollbar for store modal */
 .store-modal-body::-webkit-scrollbar {
   width: 8px;
@@ -1648,18 +1540,14 @@ kbd.kbd-icon svg {
 }
 
 .shortcuts-group-title {
-  font-size: 0.625rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--text-label);
   margin-bottom: 0.5rem;
 }
 
 .shortcuts-group-hint {
   font-weight: 400;
-  text-transform: none;
-  letter-spacing: normal;
   opacity: 0.8;
 }
 
@@ -1684,12 +1572,6 @@ kbd.kbd-icon svg {
 .shortcut-keys span {
   font-size: 0.6875rem;
   color: rgba(255, 255, 255, 0.4);
-}
-
-.marketplace-btn-group{
-	display: flex;
-	gap: .5rem;
-	margin-left: auto;
 }
 
 /* Toast Notification */
@@ -1854,15 +1736,10 @@ kbd.kbd-icon svg {
 /* Feature-gated: browsers without corner-shape keep the original radii above. */
 
 @supports (corner-shape: superellipse(1.6)) {
-  .marketplace-filters {
-    border-radius: 1.5rem;
-  }
-
   #status-css.toast {
     border-radius: 1.25rem;
   }
 
-  .store-card,
   .store-filter-dropdown {
     border-radius: 1rem;
   }
@@ -1874,8 +1751,20 @@ kbd.kbd-icon svg {
   .marketplace-filters,
   #status-css.toast,
   .store-card,
+  .store-card .store-card-btn,
+  .store-card-stats,
+  .store-card-badge,
   .store-filter-dropdown,
   .detail-shader-info {
     corner-shape: superellipse(1.6);
+  }
+}
+
+/* -- Reduced motion ---------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .marketplace-filter-chip,
+  .store-card .store-card-btn {
+    transition: none;
   }
 }
