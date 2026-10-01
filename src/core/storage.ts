@@ -5,7 +5,7 @@ import { compressString, decompressString, isCompressed } from "./compression";
 import { errorCore, logCore, logError } from "@core/logger";
 
 /**
- * Keys that should NEVER be deleted by clearCache or any bulk delete operation.
+ * Keys that should NEVER be deleted by any bulk delete operation.
  * These keys contain critical user data that must persist across cache clears.
  */
 export const PROTECTED_STORAGE_KEYS = [
@@ -201,15 +201,22 @@ export async function setPersistentStorage(key: string, value: any): Promise<voi
   }
 }
 
+const LYRIC_CACHE_PREFIX = "blyrics_";
+const LYRIC_CACHE_SUFFIXES = [...LYRIC_SOURCE_KEYS, "metadata"].map(sourceKey => `_${sourceKey}`);
+
 function extractVideoIdFromCacheKey(key: string): string | null {
-  const withoutPrefix = key.slice("blyrics_".length);
-  for (const sourceKey of LYRIC_SOURCE_KEYS) {
-    const suffix = `_${sourceKey}`;
-    if (withoutPrefix.endsWith(suffix)) {
+  if (!key.startsWith(LYRIC_CACHE_PREFIX)) return null;
+  const withoutPrefix = key.slice(LYRIC_CACHE_PREFIX.length);
+  for (const suffix of LYRIC_CACHE_SUFFIXES) {
+    if (withoutPrefix.length > suffix.length && withoutPrefix.endsWith(suffix)) {
       return withoutPrefix.slice(0, -suffix.length);
     }
   }
   return null;
+}
+
+function isLyricCacheKey(key: string): boolean {
+  return extractVideoIdFromCacheKey(key) !== null;
 }
 
 /**
@@ -220,7 +227,7 @@ function extractVideoIdFromCacheKey(key: string): string | null {
  */
 export async function getUpdatedCacheInfo(): Promise<{ count: number; size: number }> {
   const result = await chrome.storage.local.get(null);
-  const lyricsKeys = Object.keys(result).filter(key => key.startsWith("blyrics_"));
+  const lyricsKeys = Object.keys(result).filter(isLyricCacheKey);
 
   const uniqueVideoIds = new Set<string>();
   for (const key of lyricsKeys) {
@@ -249,17 +256,9 @@ export async function saveCacheInfo(): Promise<void> {
   await chrome.storage.sync.set({ cacheInfo: cacheInfo });
 }
 
-/**
- * Clears all cached lyrics data from local storage.
- * Only removes keys with "blyrics_" prefix and explicitly excludes PROTECTED_STORAGE_KEYS.
- */
-export async function clearCache(): Promise<{ count: number; size: number }> {
+export async function clearLyricCache(): Promise<{ count: number; size: number }> {
   const result = await chrome.storage.local.get(null);
-  const lyricsKeys = Object.keys(result).filter(
-    key =>
-      key.startsWith("blyrics_") && !PROTECTED_STORAGE_KEYS.includes(key as (typeof PROTECTED_STORAGE_KEYS)[number])
-  );
-  await chrome.storage.local.remove(lyricsKeys);
+  await chrome.storage.local.remove(Object.keys(result).filter(isLyricCacheKey));
   const cacheInfo = await getUpdatedCacheInfo();
   await chrome.storage.sync
     .set({ cacheInfo })
