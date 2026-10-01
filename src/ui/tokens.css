@@ -62,6 +62,20 @@
   --text-label: rgba(255, 255, 255, 0.5);
   --text-faint: rgba(255, 255, 255, 0.4);
 
+  /* -- Type scale: every font-size reads one of these; base is row labels and modal body -- */
+  --font-size-4xs: 0.5625rem;
+  --font-size-3xs: 0.625rem;
+  --font-size-2xs: 0.6875rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-md: 0.875rem;
+  --font-size-base: 0.9375rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.125rem;
+  --font-size-2xl: 1.25rem;
+  --font-size-3xl: 1.5rem;
+  --font-size-4xl: 1.75rem;
+
   /* -- Motion -- */
   --duration-quick: 150ms;
   --duration-fast: 250ms;

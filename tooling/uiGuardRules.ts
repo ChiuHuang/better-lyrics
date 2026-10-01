@@ -22,3 +22,19 @@ export function countDarkFieldWells(css: string): number {
   }
   return count;
 }
+
+const ALLOWED_FONT_SIZE = String.raw`\s*(?:var\(--font-size-[\w-]+\)|inherit|[\d.]+(?:em|%))(?![\w-])`;
+const QUOTE = String.raw`["'\`]`;
+const RAW_FONT_SIZE = new RegExp(
+  [
+    String.raw`(?<![-\w])font-size\s*:(?!${ALLOWED_FONT_SIZE})`,
+    String.raw`\bstyle\??\.fontSize\s*=(?!=)(?!\s*${QUOTE}${ALLOWED_FONT_SIZE}${QUOTE})`,
+    String.raw`\bfontSize\s*:\s*${QUOTE}(?!${ALLOWED_FONT_SIZE})`,
+    String.raw`setProperty\(\s*${QUOTE}font-size${QUOTE}\s*,(?!\s*${QUOTE}${ALLOWED_FONT_SIZE}${QUOTE})`,
+  ].join("|"),
+  "gi"
+);
+
+export function countRawFontSizes(source: string): number {
+  return countMatches(stripCssComments(source), RAW_FONT_SIZE);
+}

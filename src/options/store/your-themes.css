@@ -50,7 +50,7 @@
 .your-themes-item-title {
   overflow: hidden;
   color: var(--text-strong);
-  font-size: 0.875rem;
+  font-size: var(--font-size-md);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -59,7 +59,7 @@
 .your-themes-item-meta {
   overflow: hidden;
   color: var(--text-label);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -78,7 +78,7 @@
   height: 36px;
   padding: 0 14px;
   border-radius: 0.75rem;
-  font-size: 0.875rem;
+  font-size: var(--font-size-md);
   font-weight: 500;
   cursor: pointer;
   transition: background var(--duration-quick), color var(--duration-quick), scale var(--duration-quick);
