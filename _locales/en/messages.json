@@ -586,6 +586,10 @@
     "message": "Theme file download started. Check your downloads folder.",
     "description": "Toast after an exported theme file starts downloading without a save dialog"
   },
+  "editor_alert_applyFailed": {
+    "message": "Could not apply theme",
+    "description": "Toast when applying a built-in or custom theme from the theme picker fails"
+  },
   "editor_alert_importFailed": {
     "message": "Could not import the theme file. Try again.",
     "description": "Toast when importing a theme file fails"

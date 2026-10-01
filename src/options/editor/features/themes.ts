@@ -230,7 +230,7 @@ class ThemeManager {
       }
     } catch (error) {
       errorEditor("Failed to apply theme:", error);
-      toast.error(t("marketplace_applyFailed"));
+      toast.error(t("editor_alert_applyFailed"));
       throw error;
     }
   }
