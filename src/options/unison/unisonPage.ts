@@ -59,7 +59,7 @@ import { type RevisionHost, createBackButton, createButton } from "@/options/uni
 import { createActionMenu } from "@/ui/actionMenu";
 import { createDropdown, type Dropdown } from "@/ui/dropdown";
 import { createModal, isAnyModalOpen } from "@/ui/modal";
-import { createSortIcon } from "@/ui/sortIcon";
+import { renderSortChip } from "@/ui/sortIcon";
 import { initTabStrip, type TabStrip } from "@/ui/tabStrip";
 import { attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
@@ -555,19 +555,10 @@ function renderFilterBarFromActiveTab(animateSort = false): void {
 
   for (const chip of filterBar.querySelectorAll<HTMLLabelElement>(".unison-filter-chip--sort")) {
     const input = chip.querySelector<HTMLInputElement>('input[type="radio"]');
-    const iconSlot = chip.querySelector(".ui-chip__sort");
-    const labelEl = chip.querySelector(".unison-filter-chip__label");
-    if (!input || !iconSlot || !labelEl) continue;
-    const isSelected = filters.sort !== "default" && input.value === filters.sort;
-    input.checked = isSelected;
-    iconSlot.replaceChildren();
-    if (isSelected) {
-      iconSlot.appendChild(createSortIcon(filters.sortDir, { animate: animateSort }));
-      const labelText = filters.sortDir === "asc" ? chip.dataset.labelAsc : chip.dataset.labelDesc;
-      if (labelText) labelEl.textContent = labelText;
-    } else if (chip.dataset.labelDesc) {
-      labelEl.textContent = chip.dataset.labelDesc;
-    }
+    if (!input) continue;
+    const selected = filters.sort !== "default" && input.value === filters.sort;
+    input.checked = selected;
+    renderSortChip(chip, { selected, direction: filters.sortDir, animate: animateSort });
   }
 
   setFilterRadio("unison-filter-sync", activeSyncChip(filters));

@@ -46,7 +46,7 @@ import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
 import { type ActionMenu, type ActionMenuItem, createActionMenu } from "@/ui/actionMenu";
 import { type CreateModalOptions, createModal, isAnyModalOpen, type Modal } from "@/ui/modal";
-import { createSortIcon } from "@/ui/sortIcon";
+import { renderSortChip } from "@/ui/sortIcon";
 import { toast } from "@/ui/toast";
 
 let detailModal: Modal | null = null;
@@ -643,41 +643,10 @@ function setupMarketplaceListeners(): void {
 }
 
 function updateSortChipsUI(animate = true): void {
-  const sortChips = document.querySelectorAll(".marketplace-filter-chip--sort");
-
-  sortChips.forEach(chip => {
-    const label = chip as HTMLLabelElement;
-    const input = label.querySelector("input") as HTMLInputElement;
-    const iconContainer = label.querySelector(".ui-chip__sort");
-    const labelSpan = label.querySelector(".marketplace-filter-chip__label");
-
-    if (!iconContainer || !labelSpan) return;
-
-    const isSelected = input.checked;
-    const labelDesc = label.dataset.labelDesc || "";
-    const labelAsc = label.dataset.labelAsc || "";
-
-    iconContainer.replaceChildren();
-
-    if (isSelected) {
-      iconContainer.appendChild(createSortIcon(currentFilters.sortDirection, { animate }));
-      labelSpan.textContent = currentFilters.sortDirection === "desc" ? labelDesc : labelAsc;
-      label.setAttribute("aria-pressed", "true");
-      label.setAttribute(
-        "aria-label",
-        t(
-          currentFilters.sortDirection === "desc"
-            ? "marketplace_sortDescendingLabel"
-            : "marketplace_sortAscendingLabel",
-          labelSpan.textContent ?? ""
-        )
-      );
-    } else {
-      labelSpan.textContent = labelDesc;
-      label.setAttribute("aria-pressed", "false");
-      label.removeAttribute("aria-label");
-    }
-  });
+  for (const chip of document.querySelectorAll<HTMLLabelElement>(".marketplace-filter-chip--sort")) {
+    const selected = Boolean(chip.querySelector("input")?.checked);
+    renderSortChip(chip, { selected, direction: currentFilters.sortDirection, animate });
+  }
 }
 
 function setupMarketplaceFilters(): void {
