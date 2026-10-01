@@ -1223,6 +1223,16 @@ function createFulfilledBlock(submitter?: UnisonSubmitter): HTMLElement {
   return block;
 }
 
+function showVote(upBtn: HTMLButtonElement, downBtn: HTMLButtonElement, vote: "up" | "down" | null): void {
+  for (const [button, direction] of [
+    [upBtn, "up"],
+    [downBtn, "down"],
+  ] as const) {
+    button.classList.toggle("ui-button--accent-tint", vote === direction);
+    button.setAttribute("aria-pressed", String(vote === direction));
+  }
+}
+
 function createDetailVoting(
   unisonId: number,
   view: AbortSignal,
@@ -1236,8 +1246,7 @@ function createDetailVoting(
   const downBtn = createButton({ label: t("unison_downvote"), icon: "downvote" });
 
   let currentVote: "up" | "down" | null = userVote === 1 ? "up" : userVote === -1 ? "down" : null;
-  upBtn.classList.toggle("ui-button--accent-tint", currentVote === "up");
-  downBtn.classList.toggle("ui-button--accent-tint", currentVote === "down");
+  showVote(upBtn, downBtn, currentVote);
 
   async function handleVote(direction: "up" | "down") {
     const vote: VoteValue = direction === "up" ? 1 : -1;
@@ -1246,15 +1255,13 @@ function createDetailVoting(
       const result = await removeVote(unisonId);
       if (result.success) {
         currentVote = null;
-        upBtn.classList.remove("ui-button--accent-tint");
-        downBtn.classList.remove("ui-button--accent-tint");
+        showVote(upBtn, downBtn, null);
       }
     } else {
       const result = await castVote(unisonId, vote);
       if (result.success) {
         currentVote = direction;
-        upBtn.classList.toggle("ui-button--accent-tint", direction === "up");
-        downBtn.classList.toggle("ui-button--accent-tint", direction === "down");
+        showVote(upBtn, downBtn, direction);
       }
     }
   }
