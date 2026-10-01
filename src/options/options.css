@@ -370,7 +370,7 @@ body {
             45deg,
             var(--card-surface),
             color-mix(in srgb, var(--card-surface) 75%, transparent),
-            color-mix(in srgb, var(--card-surface) 0%, transparent)
+            transparent
         ),
         var(--theme-img-url),
         var(--card-surface);
