@@ -1,7 +1,14 @@
 import { t } from "@core/i18n";
 import { createModal, type Modal } from "@/ui/modal";
-import type { ModalOptions } from "../types";
-import { modalCancelBtn, modalConfirmBtn, modalInput, modalMessage, modalOverlay, modalTitle } from "./dom";
+import type { ModalOptions } from "@/options/editor/types";
+import {
+  modalCancelBtn,
+  modalConfirmBtn,
+  modalInput,
+  modalMessage,
+  modalOverlay,
+  modalTitle,
+} from "@/options/editor/ui/dom";
 
 let dialog: Modal | undefined;
 let settle: ((value: string | null) => void) | undefined;
