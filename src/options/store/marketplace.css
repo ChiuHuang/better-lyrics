@@ -84,7 +84,7 @@
   row-gap: 1.5rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-card);
   padding: 14px var(--text-inset);
   margin-bottom: 1.5rem;
 }
@@ -112,7 +112,7 @@
 .marketplace-filter-label {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
 }
 
 .marketplace-filter-options {
@@ -342,7 +342,7 @@
   display: block;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
   margin-bottom: 0.5rem;
 }
 
@@ -540,7 +540,7 @@
 .store-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
+  border-radius: var(--radius-card);
   overflow: hidden;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -617,7 +617,7 @@
   padding: 0.25rem 0.375rem;
   backdrop-filter: blur(4px);
 	background: rgba(0,0,0,.2);
-  border-radius: 0.75rem;
+  border-radius: calc(var(--radius-card) - 12px);
 }
 
 .store-card-stat {
@@ -655,12 +655,12 @@
 
 .store-card .store-card-btn {
   height: 34px;
-  border-radius: calc(1.5rem - 11px);
+  border-radius: calc(var(--radius-card) - 11px);
   transition: background var(--duration-quick) ease-out, scale var(--duration-quick) ease-out;
 }
 
 .store-card .store-card-btn:active:not(:disabled) {
-  scale: 0.96;
+  scale: var(--scale-press);
 }
 
 .store-card-btn-install {
@@ -760,7 +760,7 @@
   font-weight: 600;
   letter-spacing: 0;
   padding: 0.25rem 0.375rem;
-  border-radius: 0.75rem;
+  border-radius: calc(var(--radius-card) - 12px);
 }
 
 .store-card-badge svg {
@@ -1538,7 +1538,7 @@ kbd.kbd-icon svg {
 .shortcuts-group-title {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-label);
   margin-bottom: 0.5rem;
 }
 
