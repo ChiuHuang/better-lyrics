@@ -123,7 +123,7 @@ const getOptionsFromForm = (): Options => {
   const providerElems = document.getElementById("providers-list")!.children;
   for (let i = 0; i < providerElems.length; i++) {
     let id = providerElems[i].id.slice(2);
-    if (!(providerElems[i].children[1].children[0] as HTMLInputElement).checked) {
+    if (!providerElems[i].querySelector<HTMLInputElement>(".provider-checkbox")?.checked) {
       id = "d_" + id;
     }
     preferredProviderList.push(id);
