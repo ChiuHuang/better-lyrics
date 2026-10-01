@@ -2,6 +2,10 @@ import { type IconKey, svgIcon } from "@/options/unison/icons";
 
 export type ToastKind = "success" | "error" | "info" | "loading";
 
+export interface ToastOptions {
+  id?: string;
+}
+
 export interface ToastHandle {
   update(kind: ToastKind, message: string): void;
   dismiss(): void;
@@ -27,6 +31,7 @@ type Politeness = "polite" | "assertive";
 
 let layer: HTMLElement | undefined;
 const dismissers = new WeakMap<HTMLElement, () => void>();
+const liveToasts = new Map<string, ToastHandle>();
 const liveRegions: Partial<Record<Politeness, HTMLElement>> = {};
 const announceTimers: Partial<Record<Politeness, ReturnType<typeof setTimeout>>> = {};
 
@@ -97,7 +102,13 @@ function render(el: HTMLElement, kind: ToastKind, message: string): void {
   announce(kind, message);
 }
 
-function show(kind: ToastKind, message: string): ToastHandle {
+function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): ToastHandle {
+  const key = id ?? `${kind}:${message}`;
+  const existing = liveToasts.get(key);
+  if (existing) {
+    existing.update(kind, message);
+    return existing;
+  }
   const host = ensureLayer();
   const el = document.createElement("div");
   render(el, kind, message);
@@ -133,6 +144,7 @@ function show(kind: ToastKind, message: string): ToastHandle {
     if (closed) return;
     closed = true;
     clearTimeout(timer);
+    if (liveToasts.get(key) === handle) liveToasts.delete(key);
     el.classList.remove("is-entering");
     el.classList.add("is-leaving");
     setTimeout(() => el.remove(), TOAST_EXIT_MS);
@@ -142,13 +154,7 @@ function show(kind: ToastKind, message: string): ToastHandle {
   el.addEventListener("pointerleave", resume);
   el.addEventListener("click", dismiss);
 
-  dismissers.set(el, dismiss);
-  host.prepend(el);
-  const live = host.querySelectorAll<HTMLElement>(".ui-toast:not(.is-leaving)");
-  for (const stale of Array.from(live).slice(TOAST_MAX_VISIBLE)) dismissers.get(stale)?.();
-  run();
-
-  return {
+  const handle: ToastHandle = {
     update(nextKind, nextMessage) {
       if (closed) return;
       render(el, nextKind, nextMessage);
@@ -157,11 +163,18 @@ function show(kind: ToastKind, message: string): ToastHandle {
     },
     dismiss,
   };
+  liveToasts.set(key, handle);
+  dismissers.set(el, dismiss);
+  host.prepend(el);
+  const live = host.querySelectorAll<HTMLElement>(".ui-toast:not(.is-leaving)");
+  for (const stale of Array.from(live).slice(TOAST_MAX_VISIBLE)) dismissers.get(stale)?.();
+  run();
+  return handle;
 }
 
 export const toast = {
-  success: (message: string): ToastHandle => show("success", message),
-  error: (message: string): ToastHandle => show("error", message),
-  info: (message: string): ToastHandle => show("info", message),
-  loading: (message: string): ToastHandle => show("loading", message),
+  success: (message: string, options?: ToastOptions): ToastHandle => show("success", message, options),
+  error: (message: string, options?: ToastOptions): ToastHandle => show("error", message, options),
+  info: (message: string, options?: ToastOptions): ToastHandle => show("info", message, options),
+  loading: (message: string, options?: ToastOptions): ToastHandle => show("loading", message, options),
 };

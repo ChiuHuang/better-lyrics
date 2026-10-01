@@ -127,6 +127,40 @@ const reset = (): void => {
   reset();
 }
 
+// -- Dedupe --------------------------
+{
+  const first = toast.success("Cache cleared");
+  advance(2000);
+  const second = toast.success("Cache cleared");
+  assert.equal(live().length, 1, "the same message twice stays one toast");
+  assert.equal(second, first, "a repeat returns the live handle");
+  advance(2499);
+  assert.equal(live().length, 1, "a repeat restarts the full duration");
+  advance(1);
+  assert.equal(live().length, 0, "the restarted timer still dismisses");
+  reset();
+}
+{
+  toast.success("Done");
+  toast.error("Done");
+  assert.equal(live().length, 2, "different kinds with the same text are separate toasts");
+  reset();
+}
+{
+  const exporting = toast.loading("Exporting key", { id: "export" });
+  const resolved = toast.success("Identity key exported", { id: "export" });
+  assert.equal(resolved, exporting, "an explicit id dedupes across messages");
+  assert.deepEqual(live().map(text), ["Identity key exported"], "the id re-renders the live toast");
+  reset();
+}
+{
+  const handle = toast.success("Again");
+  handle.dismiss();
+  toast.success("Again");
+  assert.equal(live().length, 1, "a dismissed key can be shown again");
+  reset();
+}
+
 // -- Hover and click --------------------------
 {
   toast.success("hover me");
