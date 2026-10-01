@@ -17,7 +17,6 @@ export interface UnisonSubmitter {
   avatarUrl?: string | null;
 }
 
-/** Submitter as feed and search rows carry it: the public actor, without reputation. */
 export type UnisonActor = Omit<UnisonSubmitter, "reputation">;
 
 export interface UnisonFulfillment {

@@ -6,7 +6,6 @@ export interface ReadableLyricsField {
   text(original?: string): string;
 }
 
-/** Readable TTML layout on a highlighted lyrics textarea; only a paste that replaces everything re-lays it out. */
 export function bindReadableLyricsField(textarea: HTMLTextAreaElement, editor: EditorHandle): ReadableLyricsField {
   let replacesAll = false;
   let relayingOut = false;
@@ -16,7 +15,6 @@ export function bindReadableLyricsField(textarea: HTMLTextAreaElement, editor: E
     editor.refresh();
   };
 
-  // Inserting through the editing pipeline keeps the paste undoable; assigning value would wipe the undo stack.
   const relayoutPaste = (): void => {
     const layout = readableTtml(textarea.value);
     if (!layout.readable) return;
