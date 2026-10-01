@@ -1441,18 +1441,18 @@ function createStoreThemeCard(
   });
 
   if (theme.hasShaders) {
-    card.appendChild(createShaderBadge("store-card-badge"));
+    card.appendChild(createShaderBadge("ui-badge ui-badge--accent-solid store-card-badge"));
   }
 
   if (urlThemeInfo) {
     const title = urlThemeInfo.sourceUrl || `Installed from ${urlThemeInfo.repo}`;
-    card.appendChild(createGitHubBadge("store-card-badge store-card-badge-url", title));
+    card.appendChild(createGitHubBadge("ui-badge store-card-badge store-card-badge-url", title));
   }
 
   if (!isCompatible) {
     const floor = themeFloorVersion(theme);
     const incompatBadge = document.createElement("span");
-    incompatBadge.className = "store-card-badge-warn";
+    incompatBadge.className = "ui-badge ui-badge--warning store-card-badge-warn";
     incompatBadge.title = `Requires Better Lyrics v${floor} or higher`;
 
     const warnIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1500,7 +1500,7 @@ function createOlderBuildBadge(
   latestMinVersion?: string
 ): HTMLSpanElement {
   const badge = document.createElement("span");
-  badge.className = "store-card-badge-older";
+  badge.className = "ui-badge ui-badge--info store-card-badge-older";
   const floorHint = latestMinVersion ? ` needs Better Lyrics ${latestMinVersion}+` : "";
   badge.title = `You're on v${resolvedVersion}. Latest v${latestVersion}${floorHint}`;
   badge.appendChild(createInfoIcon());
@@ -1631,11 +1631,11 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
   if (titleEl) {
     titleEl.replaceChildren(document.createTextNode(theme.title));
     if (theme.hasShaders) {
-      titleEl.appendChild(createShaderBadge("detail-shader-badge"));
+      titleEl.appendChild(createShaderBadge("ui-badge ui-badge--accent-solid"));
     }
     if (urlThemeInfo) {
       const title = urlThemeInfo.sourceUrl || `Installed from ${urlThemeInfo.repo}`;
-      titleEl.appendChild(createGitHubBadge("detail-url-badge", title));
+      titleEl.appendChild(createGitHubBadge("ui-badge", title));
     }
   }
   if (authorEl) authorEl.textContent = `By ${formatCreators(theme.creators)} · v${theme.version}`;
