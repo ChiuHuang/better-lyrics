@@ -54,7 +54,7 @@ export function inlineWheelStep(wheel: WheelDelta, metrics: InlineScrollMetrics,
   return rtl ? -delta : delta;
 }
 
-export interface ScrollFade {
+interface ScrollFade {
   update(): void;
   destroy(): void;
 }

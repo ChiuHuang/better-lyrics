@@ -7,7 +7,7 @@ import { attachScrollFade } from "@/ui/scrollFade";
 
 export type { DropdownOption } from "@/ui/dropdownFilter";
 
-export interface DropdownConfig {
+interface DropdownConfig {
   label: string;
   onChange: (value: string) => void;
   variant?: "inline" | "stretch" | "chip";

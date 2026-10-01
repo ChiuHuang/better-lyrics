@@ -1,13 +1,13 @@
 import { type IconKey, svgIcon } from "@/options/unison/icons";
 import { prefersReducedMotion, quickDurationMs } from "@/ui/motion";
 
-export type ToastKind = "success" | "error" | "info" | "loading";
+type ToastKind = "success" | "error" | "info" | "loading";
 
-export interface ToastOptions {
+interface ToastOptions {
   id?: string;
 }
 
-export interface ToastHandle {
+interface ToastHandle {
   update(kind: ToastKind, message: string): void;
   dismiss(): void;
 }
