@@ -689,11 +689,11 @@
   },
   "options_editor_renameTheme": {
     "message": "Rename custom theme",
-    "description": "Rename theme button title"
+    "description": "Rename theme button title, also the title of the rename theme dialog"
   },
   "options_editor_deleteTheme": {
     "message": "Delete custom theme",
-    "description": "Delete theme button title"
+    "description": "Delete theme button title, also the title of the delete theme confirm dialog"
   },
   "options_editor_doubleClickRename": {
     "message": "Double-click to rename",
@@ -1746,7 +1746,7 @@
   },
   "unison_delete": {
     "message": "Delete",
-    "description": "Delete button label on a user's own Unison submission card"
+    "description": "Generic delete button label, used on Unison submission cards and destructive confirm dialogs"
   },
   "unison_deleteConfirm": {
     "message": "Confirm delete?",
