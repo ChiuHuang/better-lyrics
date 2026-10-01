@@ -157,6 +157,7 @@ body.is-editing #css > * { flex: none; }
 body.is-editing #theme-name-display { margin-top: 0; }
 body.is-editing #editor-container { flex: 1; min-height: 0; height: auto; }
 body.is-editing #editor { height: 100%; overflow: hidden; }
+body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
 
 @media (prefers-reduced-motion: reduce) {
   .tabs .tab, .tabs__pill, .head-slot, .tabs-slot { transition: none; }

@@ -76,6 +76,9 @@
   --pane-fade-top-size: 72px;
   --pane-fade-bottom-size: 96px;
 
+  /* -- Scrollbars (where a scroll fade cannot replace them) -- */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+
   /* -- Sync type tints -- */
   --sync-syllable: #fcd34d;
   --sync-syllable-bg: rgba(252, 211, 77, 0.15);
