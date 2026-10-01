@@ -252,6 +252,15 @@ export type DiffRow =
   | { kind: "del"; lineNo: number; startMs: number | null; text: string; head?: DiffHead }
   | { kind: "word"; lineNo: number; startMs: number | null; parts: Array<["=" | "+" | "-", string]>; head?: DiffHead }
   | { kind: "timing"; lineNo: number; startMs: number; deltaMs: number; text: string }
+  | {
+      kind: "syllable";
+      lineNo: number;
+      startMs: number | null;
+      text: string;
+      before: string | null;
+      after: string | null;
+      moved: number;
+    }
   | { kind: "gap"; count: number; section?: "head" }
   | { kind: "field"; field: "language" | "isrc" | "album"; before: string | null; after: string | null };
 

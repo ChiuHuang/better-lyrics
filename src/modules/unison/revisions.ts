@@ -177,6 +177,31 @@ export function fieldChange(row: FieldDiffRow): {
   };
 }
 
+type SyllableDiffRow = Extract<DiffRow, { kind: "syllable" }>;
+
+interface SyllableLine {
+  kind: "del" | "add" | "timing";
+  content: string;
+  note: RevisionMessage | null;
+}
+
+function syllableNote(row: SyllableDiffRow): RevisionMessage | null {
+  if (row.before === null) return message("unison_rev_syllableTimingAdded");
+  if (row.after === null) return message("unison_rev_syllableTimingRemoved");
+  return row.moved > 0 ? message("unison_rev_syllablesRetimed", row.moved) : null;
+}
+
+export function syllableChange(row: SyllableDiffRow): SyllableLine[] {
+  const before = row.before ?? row.text;
+  const after = row.after ?? row.text;
+  const note = syllableNote(row);
+  if (before === after) return [{ kind: "timing", content: after, note }];
+  return [
+    { kind: "del", content: before, note: null },
+    { kind: "add", content: after, note },
+  ];
+}
+
 export function diffHeadLabel(head: DiffHead): RevisionMessage[] {
   const label = [message(HEAD_KIND_KEY[head.kind])];
   if (head.kind === "credit") return label;

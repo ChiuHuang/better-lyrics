@@ -11,6 +11,7 @@ import {
   formatTimingDelta,
   splitDiffRows,
   statusLabel,
+  syllableChange,
   unchangedLines,
 } from "@modules/unison/revisions";
 import type { DiffRow, RevisionStatus } from "@modules/unison/types";
@@ -208,7 +209,7 @@ function createDiffSection(title: string, rows: DiffRow[]): HTMLElement {
   return section;
 }
 
-function createDiffRow(row: DiffRow): HTMLElement {
+function createDiffRow(row: DiffRow): Node {
   if (row.kind === "gap") {
     const gap = document.createElement("div");
     gap.className = "unison-rev-diff-gap";
@@ -223,6 +224,13 @@ function createDiffRow(row: DiffRow): HTMLElement {
   let lead = row.startMs === null ? "" : formatDiffTime(row.startMs);
   if ("head" in row && row.head) lead = diffHeadLabel(row.head).map(messageText).join(" · ");
   if (row.kind === "timing") return createDiffLine(row.kind, lead, row.text, formatTimingDelta(row.deltaMs));
+  if (row.kind === "syllable") {
+    const lines = document.createDocumentFragment();
+    for (const line of syllableChange(row)) {
+      lines.appendChild(createDiffLine(line.kind, lead, line.content, line.note ? messageText(line.note) : undefined));
+    }
+    return lines;
+  }
   return createDiffLine(row.kind, lead, row.kind === "word" ? row.parts : row.text);
 }
 
