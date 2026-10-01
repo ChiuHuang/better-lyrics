@@ -291,6 +291,8 @@ const renderCacheStats = async (): Promise<StorageBreakdown> => {
       value: breakdown.lyrics.bySyncType[type],
       color: `var(--sync-${type})`,
       label: t("options_general_segment", [syncTypeLabel(type), breakdown.lyrics.bySyncType[type].toLocaleString()]),
+      tone: `var(--sync-${type})`,
+      icon: createSyncIcon(type),
     }))
   );
   renderStatBar(

@@ -624,6 +624,13 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
     scale var(--duration-quick) ease-out var(--tooltip-delay);
 }
 .ui-tooltip--visible.ui-tooltip--instant { transition: none; }
+.ui-tooltip:has(> .ui-tooltip__icon) { display: flex; align-items: center; gap: 6px; padding: 4px 8px; }
+.ui-tooltip__icon { width: 12px; height: 12px; flex: none; color: var(--tooltip-tone, currentColor); }
+.ui-tooltip--toned {
+  border-color: color-mix(in srgb, var(--tooltip-tone) 28%, transparent);
+  background-color: color-mix(in srgb, var(--tooltip-tone) 14%, hsl(0, 0%, 17%));
+  color: color-mix(in srgb, var(--tooltip-tone) 45%, #fff);
+}
 
 /* -- Dropdown -- */
 .ui-dropdown { position: relative; display: inline-flex; }
