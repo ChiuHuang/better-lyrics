@@ -581,6 +581,10 @@ function createCommitIcon(): SVGSVGElement {
   return svg;
 }
 
+function installsTooltip(count: number): string {
+  return count === 1 ? t("marketplace_tooltipInstallsSingular") : t("marketplace_tooltipInstalls", String(count));
+}
+
 function formatNumber(num: number): string {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
   if (num >= 1000) return (num / 1000).toFixed(1) + "K";
@@ -1380,7 +1384,7 @@ function createStoreThemeCard(
     if (stats.installs > 0) {
       const installStat = document.createElement("span");
       installStat.className = "store-card-stat";
-      installStat.dataset.tooltip = t("marketplace_tooltipInstalls", String(stats.installs));
+      installStat.dataset.tooltip = installsTooltip(stats.installs);
       installStat.appendChild(createDownloadIcon());
       installStat.appendChild(document.createTextNode(formatNumber(stats.installs)));
       statsRow.appendChild(installStat);
@@ -1602,8 +1606,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
       titleEl.appendChild(createGitHubBadge("ui-badge", title));
     }
   }
-  if (authorEl)
-    authorEl.textContent = `${t("theme_author_prefix", formatCreators(theme.creators))} · v${theme.version}`;
+  if (authorEl) authorEl.textContent = t("marketplace_byline", [formatCreators(theme.creators), theme.version]);
   if (descEl) renderDescription(descEl, theme);
 
   const statsEl = document.getElementById("detail-stats");
@@ -1623,7 +1626,7 @@ async function openDetailModal(theme: StoreTheme, urlThemeInfo?: UrlThemeInfo): 
         if (themeStats.installs > 0) {
           const installStat = document.createElement("span");
           installStat.className = "detail-stat";
-          installStat.dataset.tooltip = t("marketplace_tooltipInstalls", String(themeStats.installs));
+          installStat.dataset.tooltip = installsTooltip(themeStats.installs);
           installStat.appendChild(createDownloadIcon());
           installStat.appendChild(document.createTextNode(formatNumber(themeStats.installs)));
           statsRow.appendChild(installStat);
@@ -2172,7 +2175,7 @@ async function handleUrlInstall(): Promise<void> {
 let yourThemesMenu: ActionMenu | null = null;
 
 function refreshYourThemesMenu(): void {
-  if (yourThemesMenu?.isOpen()) void yourThemesMenu.open();
+  void yourThemesMenu?.refresh();
 }
 
 function createYourThemesRow(theme: InstalledStoreTheme, isActive: boolean): HTMLElement {
@@ -2194,7 +2197,7 @@ function createYourThemesRow(theme: InstalledStoreTheme, isActive: boolean): HTM
 
   const meta = document.createElement("span");
   meta.className = "your-themes-item-meta";
-  meta.textContent = `${t("theme_author_prefix", formatCreators(theme.creators))} · v${theme.version}`;
+  meta.textContent = t("marketplace_byline", [formatCreators(theme.creators), theme.version]);
   info.append(titleRow, meta);
   row.appendChild(info);
 
@@ -2221,7 +2224,8 @@ async function yourThemesItems(): Promise<ActionMenuItem[]> {
   return installed.map(theme => {
     const isActive = theme.id === activeThemeId;
     return {
-      label: isActive ? `${theme.title}, ${t("marketplace_active")}` : theme.title,
+      label: isActive ? t("marketplace_themeActiveLabel", theme.title) : theme.title,
+      key: theme.id,
       content: createYourThemesRow(theme, isActive),
       onSelect: () => void handleApplyTheme(theme),
     };

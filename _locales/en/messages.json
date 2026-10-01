@@ -1240,6 +1240,20 @@
       }
     }
   },
+  "marketplace_tooltipInstallsSingular": {
+    "message": "1 install",
+    "description": "Tooltip on a theme's install count when it has exactly one install"
+  },
+  "marketplace_byline": {
+    "message": "by $AUTHOR$ · v$VERSION$",
+    "description": "Byline under a theme name: its creators and version",
+    "placeholders": { "author": { "content": "$1", "example": "drago-oo" }, "version": { "content": "$2", "example": "1.3.0" } }
+  },
+  "marketplace_themeActiveLabel": {
+    "message": "$TITLE$, active",
+    "description": "Accessible name of the currently applied theme in the installed themes menu",
+    "placeholders": { "title": { "content": "$1", "example": "Lucid" } }
+  },
   "marketplace_tooltipInstalls": {
     "message": "$COUNT$ installs",
     "description": "Tooltip on a theme's install count",
