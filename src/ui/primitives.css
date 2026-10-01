@@ -778,6 +778,12 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   }
 }
 
+/* -- Forced colours -- */
+@media (forced-colors: active) {
+  .ui-switch__track, .ui-switch--tri { border: 1px solid CanvasText; }
+  .ui-switch__track::before, .ui-switch--tri::before { background: CanvasText; }
+}
+
 /* -- Reduced motion -- */
 @media (prefers-reduced-motion: reduce) {
   .ui-button, .ui-field, .ui-card__tab, .ui-card__bar, .ui-card__body, .ui-panel.is-active,
