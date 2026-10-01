@@ -85,6 +85,7 @@ const teardown = (trigger: HTMLElement): void => {
   const { trigger } = setup();
   assert.equal(trigger.getAttribute("aria-haspopup"), "menu", "the trigger announces a menu");
   assert.equal(trigger.getAttribute("aria-expanded"), "false", "starts collapsed");
+  assert.equal(trigger.getAttribute("aria-controls"), null, "aria-controls only exists while open");
   assert.equal(menuEl(), null, "the menu is not in the page until opened");
   teardown(trigger);
 }
@@ -161,7 +162,10 @@ const teardown = (trigger: HTMLElement): void => {
   trigger.click();
   await flush();
   key(items()[0], "ArrowDown");
-  assert.equal(active(), items()[2], "disabled items are skipped");
+  assert.equal(active(), items()[1], "disabled items stay focusable");
+  assert.equal(items()[1].getAttribute("aria-disabled"), "true", "disabled items announce it");
+  items()[1].click();
+  assert.ok(menu.isOpen(), "a disabled item does nothing when activated");
   doc.body.dispatchEvent(new window.MouseEvent("pointerdown", { bubbles: true }));
   assert.ok(!menu.isOpen(), "a press outside closes");
   teardown(trigger);
@@ -201,11 +205,10 @@ const teardown = (trigger: HTMLElement): void => {
   trigger.click();
   resolve([]);
   await flush();
-  assert.equal(
-    doc.querySelector(".ui-menu__empty")?.textContent,
-    "No themes installed yet",
-    "an empty list shows the empty label"
-  );
+  assert.equal(items().length, 1, "an empty menu still has one menuitem");
+  assert.equal(items()[0].textContent, "No themes installed yet", "the empty item carries the empty label");
+  assert.equal(items()[0].getAttribute("aria-disabled"), "true", "the empty item is disabled");
+  assert.equal(active(), items()[0], "the empty item takes focus");
   menu.close();
   teardown(trigger);
 }
@@ -214,12 +217,88 @@ const teardown = (trigger: HTMLElement): void => {
   doc.body.append(trigger);
   const content = doc.createElement("span");
   content.textContent = "Lucid by drago-oo";
-  createActionMenu(trigger, { label: "Themes", items: () => [{ label: "Lucid", content, onSelect: () => {} }] });
+  const richMenu = createActionMenu(trigger, {
+    label: "Themes",
+    items: () => [{ label: "Lucid", content, onSelect: () => {} }],
+  });
   trigger.click();
   await flush();
   assert.equal(items()[0].getAttribute("aria-label"), "Lucid", "rich content keeps a plain accessible name");
   assert.equal(items()[0].textContent, "Lucid by drago-oo", "rich content renders inside the item");
+  richMenu.close();
   teardown(trigger);
+}
+
+// -- Escape on document --------------------------
+{
+  const { trigger, menu } = setup();
+  trigger.click();
+  await flush();
+  (doc.activeElement as HTMLElement).blur();
+  doc.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+  assert.ok(!menu.isOpen(), "Escape anywhere closes an open menu");
+  teardown(trigger);
+}
+
+// -- Refresh --------------------------
+{
+  const trigger = doc.createElement("button");
+  doc.body.append(trigger);
+  let entries = ["a", "b", "c"];
+  const menu = createActionMenu(trigger, {
+    label: "Themes",
+    items: () => entries.map(key => ({ label: key, key, onSelect: () => {} })),
+  });
+  trigger.click();
+  await flush();
+  key(items()[0], "ArrowDown");
+  key(items()[1], "ArrowDown");
+  assert.equal(active()?.textContent, "c", "focus starts on c");
+  entries = ["x", "a", "b", "c"];
+  await menu.refresh();
+  assert.equal(active()?.textContent, "c", "refresh keeps focus on the same key");
+  entries = ["x", "a", "b"];
+  await menu.refresh();
+  assert.equal(active()?.textContent, "b", "a removed key falls back to the same index");
+  menu.close();
+  await menu.refresh();
+  assert.ok(!menu.isOpen(), "refreshing a closed menu does not open it");
+  teardown(trigger);
+}
+
+// -- Teardown --------------------------
+{
+  const controller = new AbortController();
+  const trigger = doc.createElement("button");
+  doc.body.append(trigger);
+  const menu = createActionMenu(trigger, {
+    label: "Report",
+    signal: controller.signal,
+    items: () => [{ label: "Spam", onSelect: () => {} }],
+  });
+  trigger.click();
+  await flush();
+  controller.abort();
+  assert.ok(!menu.isOpen(), "aborting the signal closes the menu");
+  advance(1000);
+  assert.equal(menuEl(), null, "aborting removes the menu from the page");
+  trigger.click();
+  await flush();
+  assert.equal(menuEl(), null, "a destroyed menu ignores its trigger");
+  assert.equal(trigger.getAttribute("aria-haspopup"), null, "destroy clears the trigger wiring");
+  trigger.remove();
+}
+{
+  const { trigger, menu } = setup();
+  trigger.click();
+  await flush();
+  trigger.remove();
+  window.dispatchEvent(new window.Event("resize"));
+  assert.ok(!menu.isOpen(), "a menu whose trigger left the page closes on the next viewport change");
+  advance(1000);
+  await menu.open();
+  assert.ok(!menu.isOpen(), "a detached trigger cannot reopen the menu");
+  menuEl()?.remove();
 }
 
 // -- Reduced motion --------------------------

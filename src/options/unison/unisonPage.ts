@@ -1108,7 +1108,7 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   scoreRow.appendChild(voteText);
   scoreRow.appendChild(createConfidenceBadge(entry.confidence));
 
-  const votingRow = createDetailVoting(entry.id, entry.userVote, isOwn);
+  const votingRow = createDetailVoting(entry.id, view, entry.userVote, isOwn);
 
   const ytLink = document.createElement("a");
   ytLink.className = "unison-yt-link";
@@ -1218,7 +1218,12 @@ function createFulfilledBlock(submitter?: UnisonSubmitter): HTMLElement {
   return block;
 }
 
-function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: boolean = false): HTMLElement {
+function createDetailVoting(
+  unisonId: number,
+  view: AbortSignal,
+  userVote?: 1 | -1 | null,
+  isOwn: boolean = false
+): HTMLElement {
   const row = document.createElement("div");
   row.className = "unison-detail-voting";
 
@@ -1258,7 +1263,7 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   if (!isOwn) {
     const reportBtn = createButton({ label: t("unison_report"), icon: "report" });
     reportBtn.classList.add("unison-vote-btn--report");
-    createReportMenu(unisonId, reportBtn);
+    createReportMenu(unisonId, reportBtn, view);
     row.appendChild(reportBtn);
   }
 
@@ -1879,9 +1884,10 @@ async function loadRevisions(id: number, openRevNo: number | null, view: AbortSi
 
 const REPORT_REASONS: ReportReason[] = ["wrong_song", "bad_sync", "offensive", "spam", "other"];
 
-function createReportMenu(unisonId: number, anchor: HTMLButtonElement): void {
+function createReportMenu(unisonId: number, anchor: HTMLButtonElement, view: AbortSignal): void {
   createActionMenu(anchor, {
     label: t("unison_report"),
+    signal: view,
     items: () =>
       REPORT_REASONS.map(reason => ({
         label: t(`unison_report_${reason}`),
@@ -1889,7 +1895,10 @@ function createReportMenu(unisonId: number, anchor: HTMLButtonElement): void {
           const result = await reportLyrics(unisonId, reason);
           if (!result.success) return;
           anchor.replaceChildren(svgIcon("report"), t("unison_reportSuccess"));
+          const hadFocus = document.activeElement === anchor;
           anchor.disabled = true;
+          const fallback = anchor.previousElementSibling;
+          if (hadFocus && fallback instanceof HTMLElement) fallback.focus();
         },
       })),
   });
