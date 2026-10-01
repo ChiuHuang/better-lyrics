@@ -8,7 +8,7 @@ Object.assign(globalThis, {
   requestAnimationFrame: window.requestAnimationFrame.bind(window),
 });
 
-const { barTransform, initCardTabs, rovingIndex, travelDirection } = await import("./cardTabs");
+const { barTransform, initCardTabs, rovingIndex, travelDirection } = await import("@/ui/cardTabs");
 
 {
   assert.equal(barTransform({ offsetLeft: 20, offsetWidth: 60 }), "translateX(20px) scaleX(60)", "bar covers the tab");

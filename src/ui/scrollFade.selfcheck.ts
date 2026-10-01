@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { fadeEdges } = await import("./scrollFade");
+const { fadeEdges } = await import("@/ui/scrollFade");
 
 {
   assert.deepEqual(

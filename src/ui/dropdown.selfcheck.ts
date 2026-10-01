@@ -18,7 +18,7 @@ Object.assign(globalThis, {
   chrome: { i18n: { getMessage: (key: string) => messages[key] ?? "" } },
 });
 
-const { createDropdown } = await import("./dropdown");
+const { createDropdown } = await import("@/ui/dropdown");
 
 const doc = window.document;
 const press = (target: Element, key: string): KeyboardEvent => {

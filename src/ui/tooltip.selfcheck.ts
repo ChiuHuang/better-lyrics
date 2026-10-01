@@ -4,7 +4,7 @@ import { JSDOM } from "jsdom";
 const { window } = new JSDOM("<!doctype html><html><body></body></html>", { pretendToBeVisual: true });
 Object.assign(globalThis, { window, document: window.document, HTMLElement: window.HTMLElement });
 
-const { initTooltips } = await import("./tooltip");
+const { initTooltips } = await import("@/ui/tooltip");
 
 const doc = window.document;
 const makeRoot = (text: string): { root: HTMLElement; anchor: HTMLElement } => {

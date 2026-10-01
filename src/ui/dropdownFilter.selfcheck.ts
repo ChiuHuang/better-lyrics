@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { filterOptions, shouldShowSearch } = await import("./dropdownFilter");
+const { filterOptions, shouldShowSearch } = await import("@/ui/dropdownFilter");
 
 const langs = [
   { value: "en", label: "English" },
