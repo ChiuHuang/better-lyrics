@@ -256,14 +256,16 @@ export async function saveCacheInfo(): Promise<void> {
   await chrome.storage.sync.set({ cacheInfo: cacheInfo });
 }
 
+export async function refreshCacheInfo(): Promise<{ count: number; size: number }> {
+  const cacheInfo = await getUpdatedCacheInfo();
+  await chrome.storage.sync.set({ cacheInfo }).catch(error => errorCore("Failed to save cache info:", error));
+  return cacheInfo;
+}
+
 export async function clearLyricCache(): Promise<{ count: number; size: number }> {
   const result = await chrome.storage.local.get(null);
   await chrome.storage.local.remove(Object.keys(result).filter(isLyricCacheKey));
-  const cacheInfo = await getUpdatedCacheInfo();
-  await chrome.storage.sync
-    .set({ cacheInfo })
-    .catch(error => errorCore("Failed to save cache info after clearing:", error));
-  return cacheInfo;
+  return refreshCacheInfo();
 }
 
 export async function clearSongCache(videoId: string): Promise<void> {

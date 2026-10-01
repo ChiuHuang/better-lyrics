@@ -20,7 +20,7 @@ import {
   invalidateDisplayName,
   signPayload,
 } from "@core/keyIdentity";
-import { clearAllOffsets, clearLyricCache, getOffsetInfo, getUpdatedCacheInfo, saveCacheInfo } from "@core/storage";
+import { clearAllOffsets, clearLyricCache, getOffsetInfo, refreshCacheInfo } from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
@@ -232,9 +232,9 @@ const reloadYouTubeMusicLyrics = async (): Promise<void> => {
 
 const clearTransientLyrics = async (): Promise<void> => {
   try {
-    const { count, size } = await getUpdatedCacheInfo();
-    if (count === 0 && size === 0) {
-      await saveCacheInfo();
+    const current = await refreshCacheInfo();
+    updateCacheInfo({ cacheInfo: current });
+    if (current.count === 0 && current.size === 0) {
       toast.info(t("options_alert_nothingToClear"));
       return;
     }

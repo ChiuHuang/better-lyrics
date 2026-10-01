@@ -23,7 +23,7 @@ Object.assign(globalThis, {
   },
 });
 
-const { clearLyricCache, getUpdatedCacheInfo } = await import("@core/storage");
+const { clearLyricCache, getUpdatedCacheInfo, refreshCacheInfo } = await import("@core/storage");
 
 const entry = { type: "transient", value: "x", expiry: 0 };
 const seed = (items: Record<string, unknown>): void => {
@@ -87,13 +87,34 @@ const seed = (items: Record<string, unknown>): void => {
 // -- Error paths --------------------------
 {
   seed({ "blyrics_abcdefghijk_yt-lyrics": entry, blyrics_featured_themes: {} });
+  sync.cacheInfo = { count: 1, size: 99 };
   failures.syncSet = true;
-  await clearLyricCache();
+  const cleared = await clearLyricCache();
   failures.syncSet = false;
   assert.deepEqual(
     Object.keys(local),
     ["blyrics_featured_themes"],
     "regression: a failed stat refresh still counts as cleared once the lyrics are removed"
+  );
+  assert.deepEqual(
+    cleared,
+    { count: 0, size: 0 },
+    "regression: the clear returns the cleared stats even when saving them fails"
+  );
+  assert.deepEqual(
+    sync.cacheInfo,
+    { count: 1, size: 99 },
+    "the stale saved copy is why callers render the returned stats"
+  );
+
+  seed({ "blyrics_abcdefghijk_yt-lyrics": entry });
+  failures.syncSet = true;
+  const current = await refreshCacheInfo();
+  failures.syncSet = false;
+  assert.deepEqual(
+    current,
+    { count: 1, size: JSON.stringify(entry).length },
+    "a refresh returns the computed stats when saving them fails"
   );
 
   seed({ "blyrics_abcdefghijk_yt-lyrics": entry });
