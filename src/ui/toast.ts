@@ -20,9 +20,9 @@ const DISMISS_AFTER_MS: Record<ToastKind, number | null> = {
   loading: null,
 };
 const KIND_ICONS: Record<Exclude<ToastKind, "loading">, IconKey> = {
-  success: "ok",
-  error: "bad",
-  info: "info",
+  success: "success",
+  error: "error",
+  info: "infoOutline",
 };
 
 const ANNOUNCE_DELAY_MS = 50;
