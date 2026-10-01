@@ -1394,8 +1394,6 @@ function switchExclusionTab(tab: "romanization" | "translation"): void {
     const tabName = t(tab === "romanization" ? "options_romanization_tab" : "options_translation_tab");
     resetBtn.textContent = t("options_resetToDefault", tabName);
   }
-
-  (document.getElementById(`${tab}-search`) as HTMLInputElement | null)?.focus();
 }
 
 let langExclusionsModal: Modal | undefined;
