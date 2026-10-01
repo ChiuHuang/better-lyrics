@@ -565,8 +565,8 @@ body {
 }
 
 .CodeMirror-hints {
-    background: #28292c !important;
-    border: 1px solid #3e3e41 !important;
+    background: var(--menu-bg) !important;
+    border: var(--menu-edge) !important;
 }
 
 .CodeMirror-hint {

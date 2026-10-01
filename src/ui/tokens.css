@@ -29,7 +29,9 @@
   /* -- Surfaces -- */
   --card-bg: rgba(255, 255, 255, 0.05);
   --card-edge: 1px solid rgba(255, 255, 255, 0.1);
-  --card-surface: #333437;
+  --card-bg-hover: rgba(255, 255, 255, 0.08);
+  --card-edge-hover: rgba(255, 255, 255, 0.2);
+  --card-surface: #333437; /* --card-bg composited over the page, for gradients that must hide what is behind them */
   --pane-bg: rgba(255, 255, 255, 0.03);
   --pane-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   --raised-bg: rgba(255, 255, 255, 0.05);
@@ -109,6 +111,7 @@
 
   /* -- Layers: portalled menus sit above page modals (max 100000), tooltips above menus.
      Keep these at 6 digits or fewer: the CSS minifier rounds longer custom property numbers, which made both equal. -- */
+  --z-sticky: 5;
   --z-modal: 999990;
   --z-toast: 999997;
   --z-menu: 999998;

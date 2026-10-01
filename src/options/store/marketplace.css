@@ -330,8 +330,8 @@
 }
 
 .store-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--card-bg-hover);
+  border-color: var(--card-edge-hover);
 }
 
 .store-card-cover {

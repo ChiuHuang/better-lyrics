@@ -152,8 +152,8 @@
 }
 
 .unison-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--card-bg-hover);
+  border-color: var(--card-edge-hover);
 }
 
 .unison-card-header {
@@ -1591,7 +1591,7 @@
 .unison-rev-savebar {
   position: sticky;
   bottom: 1rem;
-  z-index: 5;
+  z-index: var(--z-sticky);
   margin-top: 1rem;
   padding: 0.75rem;
   display: flex;
