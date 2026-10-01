@@ -13,7 +13,9 @@ function showTooltip(target: HTMLElement): void {
   anchor = target;
   tooltip.textContent = target.dataset.tooltip ?? "";
 
-  const rect = target.getBoundingClientRect();
+  const box = target.getBoundingClientRect();
+  const inset = parseFloat(window.getComputedStyle(target).getPropertyValue("--tooltip-inset-block")) || 0;
+  const rect = { top: box.top + inset, bottom: box.bottom - inset, left: box.left, width: box.width };
   const width = tooltip.offsetWidth;
   const height = tooltip.offsetHeight;
   const fitsAbove = rect.top - TOOLTIP_GAP_PX - height >= VIEWPORT_MARGIN_PX;

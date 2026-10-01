@@ -60,4 +60,23 @@ const second = makeRoot("Second");
   assert.equal(isVisible(), false, "Escape hides the tooltip");
 }
 
+// -- Block inset: tall hit areas anchor the tooltip to their painted part --------------------------
+{
+  const { root, anchor } = makeRoot("Inset");
+  initTooltips(root);
+  const rect = { top: 100, bottom: 122, left: 0, right: 40, width: 40, height: 22, x: 0, y: 100 };
+  anchor.getBoundingClientRect = () => ({ ...rect, toJSON: () => rect });
+  enter(anchor);
+  const plainTop = tip()!.style.top;
+  leave(anchor);
+  anchor.style.setProperty("--tooltip-inset-block", "8px");
+  enter(anchor);
+  assert.equal(
+    parseFloat(tip()!.style.top) - parseFloat(plainTop),
+    8,
+    "the tooltip sits against the painted stripe, not the transparent hit area"
+  );
+  leave(anchor);
+}
+
 console.log("tooltip self-check passed");
