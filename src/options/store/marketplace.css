@@ -103,12 +103,6 @@
   box-shadow: none;
 }
 
-.marketplace-header-right .ui-button {
-  height: 34px;
-  padding: 0 12px;
-  font-size: 0.8125rem;
-}
-
 .marketplace-filter-group {
   display: flex;
   flex-direction: column;
@@ -410,12 +404,6 @@
 .store-filter-option input[type="radio"]:hover,
 .store-filter-option input[type="checkbox"]:hover {
   border-color: rgba(255, 255, 255, 0.6);
-}
-
-.marketplace-header-right .store-refresh-btn {
-  justify-content: center;
-  width: 34px;
-  padding: 0;
 }
 
 .store-refresh-btn svg {
