@@ -13,6 +13,23 @@ export function renderAppVersion(target: HTMLElement | null): void {
   target.textContent = manifest.version_name ?? manifest.version;
 }
 
+// -- Width --------------------------
+
+export function fitPopupToWindow(): void {
+  if (!chrome.extension.getViews({ type: "popup" }).includes(window)) return;
+  const root = document.documentElement;
+  const pinned = parseFloat(getComputedStyle(root).getPropertyValue("--popup-width"));
+  const fit = (): void => {
+    const available = window.innerWidth;
+    if (!pinned || available <= 0) return;
+    const width = Math.min(pinned, available);
+    if (width === pinned) root.style.removeProperty("--popup-width");
+    else root.style.setProperty("--popup-width", `${width}px`);
+  };
+  window.addEventListener("resize", fit);
+  fit();
+}
+
 // -- Tab pill --------------------------
 
 function movePill(tabs: HTMLElement, animate: boolean): void {

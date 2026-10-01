@@ -39,6 +39,7 @@ import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
 import { renderAboutLinks } from "@/options/aboutPage";
 import { toast } from "@/ui/toast";
 import {
+  fitPopupToWindow,
   flashSaved,
   initAboutToggle,
   initPopupCards,
@@ -680,6 +681,7 @@ const localeReady = new Promise<void>(resolve => {
 document.addEventListener("DOMContentLoaded", async () => {
   await localeReady;
   renderAppVersion(document.getElementById("app-version"));
+  fitPopupToWindow();
   mountIcons(document);
   initRefreshLyricsButton(() => toast.error(t("options_alert_refreshFailed")));
   mountDropdownFields();
