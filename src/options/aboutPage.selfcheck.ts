@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 
 Object.assign(globalThis, { chrome: { i18n: { getMessage: () => "" } } });
-const { linkPlaceholders, splitLinked } = await import("./aboutPage");
+const { linkPlaceholders, splitLinked } = await import("@/options/aboutPage");
 
 {
   const [github] = linkPlaceholders(1);

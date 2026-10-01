@@ -20,7 +20,7 @@ import {
   performUrlThemeUpdates,
   setActiveStoreTheme,
 } from "./store/themeStoreManager";
-import { initIdentityBackupWatcher } from "./identityBackup";
+import { initIdentityBackupWatcher } from "@/options/identityBackup";
 import { fetchAllStoreThemes } from "./store/themeStoreService";
 import { logBackground, warnBackground } from "@core/logger";
 
