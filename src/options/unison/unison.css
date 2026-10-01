@@ -9,7 +9,7 @@
 /* -- Standalone Unison Page --------------------------  */
 
 .unison-standalone {
-  background: #1a1a1c;
+  background: var(--page-bg);
   min-height: 100vh;
   margin: 0;
   padding: 0;
@@ -70,7 +70,7 @@
   text-decoration: none;
   color: inherit;
 	font-weight: 600;
-  transition: opacity 0.15s;
+  transition: opacity var(--duration-quick);
 }
 
 .unison-logo-link:hover {
@@ -97,95 +97,8 @@
 
 /* -- Search --------------------------  */
 
-.unison-search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.unison-search-icon {
-  position: absolute;
-  left: 0.625rem;
-  width: 1rem;
-  height: 1rem;
-  color: rgba(255, 255, 255, 0.4);
-  pointer-events: none;
-}
-
-.unison-search-input {
-  box-sizing: border-box;
+.unison-search .ui-search__input {
   width: 340px;
-  height: 34px;
-  padding: 0 2rem;
-  border: none;
-  border-radius: var(--radius-control);
-  background: var(--raised-bg);
-  box-shadow: var(--raised-edge);
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  outline: none;
-  transition:
-    background var(--duration-quick) ease-out,
-    box-shadow var(--duration-quick) ease-out;
-}
-
-.unison-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.unison-search-input:hover {
-  background: var(--raised-bg-hover);
-}
-
-.unison-search-input:focus {
-  background: var(--raised-bg-hover);
-  box-shadow: var(--field-edge-focus);
-}
-
-.unison-search-hint {
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  opacity: 0.6;
-  transition: opacity 0.15s;
-}
-
-kbd {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.25rem;
-  padding: 0 0.375rem;
-  font-family: inherit;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0.25rem;
-  box-shadow: 0 2px 0 1px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
-  user-select: none;
-}
-
-.unison-search-hint kbd {
-  font-size: 0.6875rem;
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-.unison-search-input:focus ~ .unison-search-hint {
-  opacity: 0;
-}
-
-.unison-search-input:not(:placeholder-shown) ~ .unison-search-hint {
-  opacity: 0;
 }
 
 /* -- Nav Buttons --------------------------  */
@@ -193,8 +106,6 @@ kbd {
 #unison-submit-nav-btn[aria-current="page"] {
   background: var(--raised-bg-hover);
   color: #fff;
-  --button-icon: currentColor;
-  --button-icon-hover: currentColor;
 }
 
 /* -- Identity Badge --------------------------  */
@@ -239,8 +150,8 @@ kbd {
 }
 
 .unison-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--card-bg-hover);
+  border-color: var(--card-edge-color-hover);
 }
 
 .unison-card-header {
@@ -280,28 +191,10 @@ kbd {
   padding: 8px 12px 0;
 }
 
-.unison-badge {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 0.5rem;
-  height: 1.25rem;
-  border-radius: 1000rem;
-}
-
-.unison-badge--format {
-  background: rgba(129, 140, 248, 0.15);
-  color: rgb(165, 180, 252);
-}
-
 /* -- Confidence Badge --------------------------  */
 
 .unison-badge--confidence {
-  gap: 0.3rem;
   margin-left: auto;
-  padding-left: 0.375rem;
 }
 
 .unison-confidence-icon {
@@ -313,24 +206,6 @@ kbd {
 .unison-confidence-icon .unison-icon {
   width: 0.75rem;
   height: 0.75rem;
-}
-
-.unison-badge--confidence-low {
-  background: rgba(254, 240, 138, 0.08);
-  border: 1px solid rgba(254, 240, 138, 0.18);
-  color: rgb(254, 240, 138);
-}
-
-.unison-badge--confidence-medium {
-  background: rgba(125, 211, 252, 0.08);
-  border: 1px solid rgba(125, 211, 252, 0.18);
-  color: rgb(125, 211, 252);
-}
-
-.unison-badge--confidence-high {
-  background: rgba(134, 239, 172, 0.08);
-  border: 1px solid rgba(134, 239, 172, 0.18);
-  color: rgb(134, 239, 172);
 }
 
 /* -- Card Footer --------------------------  */
@@ -460,31 +335,6 @@ kbd {
   margin-bottom: 1rem;
 }
 
-.unison-feed-tab {
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 0.375rem 0;
-  margin-inline-end: 16px;
-  color: var(--text-label);
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    color var(--duration-quick) ease-out,
-    border-color var(--duration-quick) ease-out;
-}
-
-.unison-feed-tab:hover {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.unison-feed-tab--active {
-  color: #fff;
-  border-bottom-color: #fff;
-}
-
 .unison-results-meta {
   margin-inline-start: auto;
   font-size: 0.875rem;
@@ -544,14 +394,15 @@ kbd {
   color: transparent;
   -webkit-text-fill-color: transparent;
   border: none;
-  outline: none;
+  border-radius: var(--radius-control);
   background-color: transparent;
+  cursor: pointer;
   animation: unison-shimmer-text 3s linear infinite;
 }
 
-.unison-feed-more:focus,
 .unison-feed-more:focus-visible {
-  outline: none;
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .unison-feed-more[hidden] {
@@ -789,47 +640,12 @@ kbd {
   gap: 0.375rem;
 }
 
-.unison-vote-btn--active {
-  background: rgba(129, 140, 248, 0.15);
-  box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.4);
-  color: rgb(165, 180, 252);
-  --button-icon: currentColor;
-  --button-icon-hover: currentColor;
-}
-
 .unison-vote-btn--report {
   margin-left: auto;
 }
 
-.unison-vote-btn--report:hover {
-  color: rgb(239, 68, 68);
-  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.3);
-  --button-icon-hover: currentColor;
-}
-
 .unison-vote-btn--delete {
   align-self: flex-start;
-  color: rgba(239, 68, 68, 0.85);
-  --button-icon: currentColor;
-  --button-icon-hover: currentColor;
-}
-
-.unison-vote-btn--delete:hover {
-  background: rgba(239, 68, 68, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.5);
-  color: rgb(248, 113, 113);
-}
-
-.unison-vote-btn--delete-confirm,
-.unison-vote-btn--delete-confirm:hover {
-  background: rgba(239, 68, 68, 0.2);
-  box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.6);
-  color: rgb(248, 113, 113);
-}
-
-.unison-vote-btn--delete:disabled {
-  cursor: default;
-  opacity: 0.7;
 }
 
 /* -- Video linking (owner tools) --------------------------  */
@@ -961,7 +777,7 @@ kbd {
 }
 
 .unison-match-mark--related {
-  color: rgb(254, 240, 138);
+  color: var(--pending);
 }
 
 .unison-match-mark--different {
@@ -1015,63 +831,9 @@ kbd {
   color: rgb(252, 165, 165);
 }
 
-.unison-video-remove,
-.unison-video-add,
-.unison-video-retry {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;
-  padding: 0.25rem 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-family: inherit;
-  font-size: 0.6875rem;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.unison-video-remove:hover:not(:disabled),
-.unison-video-add:hover:not(:disabled),
-.unison-video-retry:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-.unison-video-remove svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-.unison-video-remove:disabled,
-.unison-video-add:disabled,
-.unison-video-retry:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
 .unison-suggest-more {
   display: flex;
   justify-content: center;
-}
-
-.unison-suggest-more-btn {
-  padding: 0.3125rem 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-family: inherit;
-  font-size: 0.6875rem;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.unison-suggest-more-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
 }
 
 .unison-submit-suggestions:not([hidden]) {
@@ -1084,68 +846,7 @@ kbd {
 /* -- Confirm Dialog --------------------------  */
 
 .unison-confirm {
-  max-width: 24rem;
-  padding: 1.25rem;
-  background: #3e3e41;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0.75rem;
-  box-shadow: rgba(0, 0, 0, 0.4) 0px 20px 50px -10px;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.unison-confirm::backdrop {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.unison-confirm-title {
-  margin: 0 0 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: #fff;
-}
-
-.unison-confirm-body {
-  margin: 0;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-}
-
-.unison-confirm-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1.25rem;
-}
-
-.unison-confirm-btn {
-  padding: 0.5rem 0.875rem;
-  border: 1px solid transparent;
-  border-radius: 0.375rem;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.unison-confirm-btn--cancel {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.unison-confirm-btn--cancel:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
-
-.unison-confirm-btn--save {
-  background: rgb(99, 102, 241);
-  color: #fff;
-}
-
-.unison-confirm-btn--save:hover {
-  background: rgb(79, 82, 221);
+  --modal-width: 24rem;
 }
 
 .unison-link-preview {
@@ -1158,7 +859,7 @@ kbd {
   border-radius: 0.5rem;
   color: inherit;
   text-decoration: none;
-  transition: background 0.15s;
+  transition: background var(--duration-quick);
 }
 
 .unison-link-preview:hover {
@@ -1208,43 +909,6 @@ kbd {
   height: 0.75rem;
 }
 
-/* -- Report Dropdown --------------------------  */
-
-.unison-report-dropdown {
-  position: absolute;
-  margin-top: 0.25rem;
-  min-width: 160px;
-  background: var(--menu-bg);
-  border: var(--menu-edge);
-  border-radius: 0.5rem;
-  box-shadow: var(--menu-shadow);
-  z-index: 100;
-  overflow: hidden;
-  padding: 0.25rem;
-}
-
-.unison-report-dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 0.375rem 0.625rem;
-  border: none;
-  border-radius: 0.25rem;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.8);
-  font-family: inherit;
-  font-size: 0.8125rem;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    background var(--duration-quick) ease-out,
-    color var(--duration-quick) ease-out;
-}
-
-.unison-report-dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
 /* -- Dropdown Select --------------------------  */
 
 .unison-detail-col-head--changes .ui-dropdown {
@@ -1254,34 +918,8 @@ kbd {
 /* -- YT Music Link --------------------------  */
 
 .unison-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  height: 30px;
-  padding: 0 0.625rem;
-  border: none;
-  border-radius: var(--radius-control);
-  background: var(--raised-bg);
-  box-shadow: var(--raised-edge);
-  color: rgba(255, 255, 255, 0.75);
-  font-family: inherit;
-  font-size: 0.75rem;
-  cursor: pointer;
   width: fit-content;
   margin-bottom: 0.5rem;
-  transition:
-    background var(--duration-quick) ease-out,
-    color var(--duration-quick) ease-out,
-    scale var(--duration-quick) ease-out;
-}
-
-.unison-back-btn:hover {
-  background: var(--raised-bg-hover);
-  color: #fff;
-}
-
-.unison-back-btn:active {
-  scale: var(--scale-press);
 }
 
 .unison-yt-link {
@@ -1291,7 +929,7 @@ kbd {
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.5);
   text-decoration: none;
-  transition: color 0.15s;
+  transition: color var(--duration-quick);
   margin-top: auto;
   padding-top: 0.75rem;
 }
@@ -1356,34 +994,12 @@ kbd {
 .unison-inline-link {
   color: rgb(165, 180, 252);
   text-decoration: none;
-  transition: color 0.15s;
+  transition: color var(--duration-quick);
 }
 
 .unison-inline-link:hover {
   color: rgb(189, 200, 255);
   text-decoration: underline;
-}
-
-/* -- Skeleton Loader --------------------------  */
-
-.unison-skeleton {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 0.375rem;
-  overflow: hidden;
-  position: relative;
-}
-
-.unison-skeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 50%, transparent 100%);
-  animation: unison-shimmer 1.5s ease-in-out infinite;
-}
-
-@keyframes unison-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
 }
 
 /* -- Form Fields --------------------------  */
@@ -1546,7 +1162,7 @@ kbd {
   font-size: 0.9375rem;
   line-height: 1;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: opacity var(--duration-quick);
 }
 
 .unison-token-remove:hover,
@@ -1594,122 +1210,7 @@ kbd {
   gap: 1rem;
 }
 
-.unison-composer-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.75rem;
-  text-decoration: none;
-  transition: all 0.15s;
-}
-
-.unison-composer-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.unison-composer-link svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-.unison-submit-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 0.75rem;
-  border: none;
-  border-radius: 0.375rem;
-  background: rgb(99, 102, 241);
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-  height: 2rem;
-  box-sizing: border-box;
-}
-
-.unison-submit-btn:hover {
-  background: rgb(79, 82, 221);
-}
-
-.unison-submit-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 /* -- Feedback --------------------------  */
-
-.unison-feedback {
-  padding: 0.625rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.8125rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.625rem;
-}
-
-.unison-feedback-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  flex-shrink: 0;
-}
-
-.unison-feedback-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-  flex: 1;
-}
-
-.unison-feedback-title {
-  font-weight: 500;
-  line-height: 1.4;
-}
-
-.unison-feedback-hint {
-  font-size: 0.75rem;
-  opacity: 0.8;
-}
-
-.unison-feedback--success {
-  background: color-mix(in srgb, var(--success) 10%, transparent);
-  color: var(--success);
-  border: 1px solid color-mix(in srgb, var(--success) 15%, transparent);
-}
-
-.unison-feedback--error {
-  background: rgba(239, 68, 68, 0.1);
-  color: rgb(239, 68, 68);
-  border: 1px solid rgba(239, 68, 68, 0.15);
-}
-
-.unison-feedback--pending {
-  background: rgba(254, 240, 138, 0.08);
-  color: rgb(254, 240, 138);
-  border: 1px solid rgba(254, 240, 138, 0.18);
-}
-
-.unison-feedback--info {
-  background: rgba(129, 140, 248, 0.1);
-  color: rgb(165, 180, 252);
-  border: 1px solid rgba(129, 140, 248, 0.2);
-}
-
-.unison-feedback--neutral {
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
 
 .unison-feedback-actions {
   display: flex;
@@ -1720,7 +1221,6 @@ kbd {
 
 .unison-feedback--row {
   align-items: center;
-  border-radius: var(--radius-card);
 }
 
 .unison-feedback--row .unison-feedback-actions {
@@ -1728,9 +1228,8 @@ kbd {
   flex-shrink: 0;
 }
 
-.unison-feedback--row .unison-feedback-icon {
+.unison-feedback--row .ui-callout__icon {
   align-self: flex-start;
-  margin-top: 0.0625rem;
 }
 
 /* -- Preview Panel --------------------------  */
@@ -1804,7 +1303,8 @@ kbd {
     flex-wrap: wrap;
   }
 
-  .unison-search-input {
+  .unison-search,
+  .unison-search .ui-search__input {
     width: 100%;
   }
 
@@ -1836,24 +1336,6 @@ kbd {
 
 /* -- Filter Bar --------------------------  */
 
-.unison-filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: 32px;
-  row-gap: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  border: none;
-  border-radius: var(--radius-card);
-  padding: 14px var(--text-inset);
-  margin-bottom: 1.5rem;
-}
-
-.unison-filters[hidden] {
-  display: none;
-}
-
 .unison-filter-group {
   display: flex;
   flex-direction: column;
@@ -1875,46 +1357,6 @@ kbd {
 
 .unison-filter-chip kbd {
   display: none;
-}
-
-.unison-filter-chip__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 0;
-  margin-right: -0.375rem;
-  overflow: hidden;
-  transition: width 0.15s ease, margin-right 0.15s ease;
-}
-
-.unison-filter-chip--sort:has(input:checked) .unison-filter-chip__icon {
-  width: 0.875rem;
-  margin-right: 0;
-}
-
-.unison-filter-chip__icon .sort-direction-icon {
-  flex-shrink: 0;
-  width: 0.75rem;
-  height: 0.75rem;
-}
-
-.unison-filter-chip__icon .sort-direction-icon--animate {
-  animation: sort-icon-flip 0.25s ease-out;
-}
-
-@keyframes sort-icon-flip {
-  0% {
-    transform: scaleY(-1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scaleY(1.1);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scaleY(1);
-    opacity: 1;
-  }
 }
 
 .unison-filter-chip__sync-icon {
@@ -1943,7 +1385,7 @@ kbd {
 }
 
 .unison-filter-chip__label {
-  transition: color 0.15s ease;
+  transition: color var(--duration-quick) ease;
 }
 
 /* -- Revisions --------------------------  */
@@ -1952,37 +1394,6 @@ kbd {
   display: flex;
   flex-direction: column;
   min-width: 0;
-}
-
-.unison-rev-chip--live {
-  background: rgba(134, 239, 172, 0.08);
-  border: 1px solid rgba(134, 239, 172, 0.18);
-  color: rgb(134, 239, 172);
-}
-
-.unison-rev-chip--pending {
-  background: rgba(254, 240, 138, 0.08);
-  border: 1px solid rgba(254, 240, 138, 0.18);
-  color: rgb(254, 240, 138);
-}
-
-.unison-rev-chip--rejected {
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.2);
-  color: rgb(248, 113, 113);
-}
-
-.unison-rev-chip--past,
-.unison-rev-chip--superseded,
-.unison-rev-chip--withdrawn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.unison-rev-chip--superseded,
-.unison-rev-chip--withdrawn {
-  color: rgba(255, 255, 255, 0.35);
 }
 
 .unison-rev-bar {
@@ -2035,27 +1446,6 @@ kbd {
 }
 
 /* -- Revisions: editor --------------------------  */
-
-.unison-rev-locked {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 0.625rem 0.75rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
-}
-
-.unison-rev-locked > .unison-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.unison-rev-locked__sub {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
-}
 
 .unison-rev-input--error,
 .unison-rev-input--error:focus {
@@ -2127,11 +1517,11 @@ kbd {
 }
 
 .unison-rev-meter--over .unison-rev-meter__fill {
-  background: rgb(254, 240, 138);
+  background: var(--pending);
 }
 
 .unison-rev-meter--over .unison-rev-meter__val b {
-  color: rgb(254, 240, 138);
+  color: var(--pending);
 }
 
 .unison-rev-meter--idle .unison-rev-meter__val {
@@ -2141,7 +1531,7 @@ kbd {
 .unison-rev-savebar {
   position: sticky;
   bottom: 1rem;
-  z-index: 5;
+  z-index: var(--z-sticky);
   margin-top: 1rem;
   padding: 0.75rem;
   display: flex;
@@ -2166,47 +1556,6 @@ kbd {
   gap: 0.375rem;
 }
 
-.unison-rev-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  height: 1.5rem;
-  padding: 0 0.625rem 0 0.4375rem;
-  border-radius: 1000rem;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
-  white-space: nowrap;
-}
-
-.unison-rev-pill .unison-icon {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-.unison-rev-pill--ok {
-  background: rgba(134, 239, 172, 0.08);
-  border-color: rgba(134, 239, 172, 0.2);
-  color: rgb(134, 239, 172);
-}
-
-.unison-rev-pill--warn {
-  background: rgba(254, 240, 138, 0.08);
-  border-color: rgba(254, 240, 138, 0.18);
-  color: rgb(254, 240, 138);
-}
-
-.unison-rev-pill--bad {
-  background: rgba(248, 113, 113, 0.08);
-  border-color: rgba(248, 113, 113, 0.25);
-  color: rgb(248, 113, 113);
-}
-
-.unison-rev-pill--idle .unison-icon {
-  color: rgba(255, 255, 255, 0.25);
-}
-
 .unison-rev-savebar__issues {
   margin: 0;
   padding: 0;
@@ -2228,7 +1577,7 @@ kbd {
 }
 
 .unison-rev-savebar__issues .unison-rev-issue--warn {
-  color: rgb(254, 240, 138);
+  color: var(--pending);
 }
 
 .unison-rev-savebar__foot {
@@ -2240,48 +1589,11 @@ kbd {
 }
 
 .unison-rev-outcome {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
   min-width: 0;
-  font-size: 0.8125rem;
 }
 
-.unison-rev-outcome > .unison-icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  flex-shrink: 0;
-}
-
-.unison-rev-outcome__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
-.unison-rev-outcome__title {
-  font-weight: 500;
-}
-
-.unison-rev-outcome__hint {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.unison-rev-outcome--live {
-  color: var(--success);
-}
-
-.unison-rev-outcome--review {
-  color: rgb(254, 240, 138);
-}
-
-.unison-rev-outcome--error {
-  color: rgb(239, 68, 68);
-}
-
-.unison-rev-outcome--neutral {
-  color: rgba(255, 255, 255, 0.6);
+.unison-rev-outcome:empty {
+  display: none;
 }
 
 .unison-rev-inline-textarea {
@@ -2468,7 +1780,7 @@ kbd {
 }
 
 .unison-rev-swatch--timing {
-  background: rgba(125, 211, 252, 0.5);
+  background: color-mix(in srgb, var(--info) 50%, transparent);
 }
 
 .unison-rev-diff {
@@ -2530,12 +1842,12 @@ kbd {
 }
 
 .unison-rev-diff-row--timing {
-  background: rgba(125, 211, 252, 0.06);
+  background: color-mix(in srgb, var(--info) 6%, transparent);
 }
 
 .unison-rev-diff-row--timing .unison-rev-diff-time,
 .unison-rev-diff-row--timing .unison-rev-diff-mark {
-  color: rgb(125, 211, 252);
+  color: var(--info);
 }
 
 .unison-rev-diff-row--timing .unison-rev-diff-mark .unison-icon {
@@ -2546,7 +1858,7 @@ kbd {
 
 .unison-rev-timing-tag {
   font-size: 0.6875rem;
-  color: rgb(125, 211, 252);
+  color: var(--info);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -2630,43 +1942,7 @@ kbd {
 }
 
 .unison-rev-tabs {
-  display: flex;
-  gap: 0.25rem;
   margin-bottom: -1px;
-}
-
-.unison-rev-tab.unison-feed-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.25rem 0 0.4375rem;
-  margin-inline-end: 16px;
-  font-size: 0.8125rem;
-  color: var(--text-label);
-}
-
-.unison-rev-tab.unison-feed-tab[aria-selected="true"] {
-  color: #fff;
-  border-bottom-color: #fff;
-}
-
-.unison-rev-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.125rem;
-  height: 1rem;
-  padding: 0 0.3125rem;
-  box-sizing: border-box;
-  border-radius: 1000rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  transition:
-    background-color 0.15s,
-    color 0.15s;
 }
 
 .unison-rev-count:empty {
@@ -2674,19 +1950,22 @@ kbd {
 }
 
 .unison-rev-count--bare {
+  min-width: 0;
   padding: 0;
+  border-color: transparent;
   background: none;
 }
 
 .unison-rev-count--bare .unison-icon {
   width: 0.875rem;
   height: 0.875rem;
-  color: rgb(254, 240, 138);
+  color: var(--pending);
 }
 
 .unison-rev-tab[aria-selected="true"] > .unison-rev-count:not(.unison-rev-count--bare) {
-  background: rgba(129, 140, 248, 0.18);
-  color: rgb(165, 180, 252);
+  --badge-bg: color-mix(in srgb, var(--accent) 18%, transparent);
+  --badge-edge: color-mix(in srgb, var(--accent) 26%, transparent);
+  --badge-fg: color-mix(in srgb, var(--accent) 45%, #fff);
 }
 
 .unison-rev-spin {
@@ -2700,7 +1979,6 @@ kbd {
   border-top-color: rgb(165, 180, 252);
 }
 
-.unison-rev-tab:focus-visible,
 .unison-rev-link:focus-visible {
   outline: 2px solid rgba(129, 140, 248, 0.7);
   outline-offset: 2px;
@@ -2736,7 +2014,7 @@ kbd {
 .unison-rev-changes__diff {
   max-height: 80vh;
   overflow: auto;
-  transition: opacity 0.15s ease-out;
+  transition: opacity var(--duration-quick) ease-out;
 }
 
 .unison-rev-changes__diff--stale {
@@ -2754,8 +2032,8 @@ kbd {
   text-decoration-color: rgba(165, 180, 252, 0.35);
   text-underline-offset: 2px;
   transition:
-    color 0.15s,
-    text-decoration-color 0.15s;
+    color var(--duration-quick),
+    text-decoration-color var(--duration-quick);
 }
 
 .unison-rev-link:hover {
@@ -2791,8 +2069,8 @@ kbd {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-card);
   transition:
-    background 0.15s,
-    border-color 0.15s;
+    background var(--duration-quick),
+    border-color var(--duration-quick);
 }
 
 .unison-rev-table__item:hover {
@@ -2802,7 +2080,7 @@ kbd {
 .unison-rev-table__panel {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.25s cubic-bezier(0.2, 0, 0, 1);
+  transition: grid-template-rows var(--duration-fast) var(--ease-smooth-out);
 }
 
 .unison-rev-table__item--open .unison-rev-table__panel {
@@ -2814,7 +2092,7 @@ kbd {
   overflow: hidden;
   min-height: 0;
   opacity: 0;
-  transition: opacity 0.2s ease-out;
+  transition: opacity var(--duration-quick) ease-out;
 }
 
 .unison-rev-table__item--open .unison-rev-table__panel-inner {
@@ -2854,7 +2132,7 @@ kbd {
   width: 1rem;
   height: 1rem;
   color: rgba(255, 255, 255, 0.35);
-  transition: transform 0.15s ease-out;
+  transition: transform var(--duration-quick) ease-out;
 }
 
 .unison-rev-table__item--open .unison-rev-chev {
@@ -2887,32 +2165,23 @@ kbd {
 /* Feature-gated: browsers without corner-shape keep the original radii above. */
 
 @supports (corner-shape: superellipse(1.6)) {
-  .unison-filters,
-  .unison-feedback,
   .unison-card {
     border-radius: var(--radius-card);
   }
 
-  .unison-report-dropdown,
   .unison-preview-content {
     border-radius: 1rem;
   }
 
-  .unison-filters,
-  .unison-feedback,
   .unison-card,
-  .unison-report-dropdown,
   .unison-preview-content,
   .unison-input,
-  .unison-token-input,
-  .unison-back-btn,
-  .unison-search-input {
+  .unison-token-input {
     corner-shape: superellipse(1.6);
   }
 
   .unison-rev-diff,
-  .unison-rev-diff-empty,
-  .unison-rev-locked {
+  .unison-rev-diff-empty {
     border-radius: 1rem;
     corner-shape: superellipse(1.6);
   }
@@ -2936,13 +2205,24 @@ kbd {
 /* -- Reduced motion ---------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
+  .unison-feed-more {
+    animation: none;
+    background: none;
+    color: var(--text-muted);
+    -webkit-text-fill-color: currentColor;
+  }
+
   .unison-card,
-  .unison-feed-tab,
   .unison-input,
   .unison-token-input,
-  .unison-back-btn,
-  .unison-search-input,
-  .unison-report-dropdown-item {
+  .unison-rev-link,
+  .unison-rev-chev,
+  .unison-rev-table__item {
     transition: none;
+  }
+
+  .unison-token--flash {
+    animation: none;
+    box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.5);
   }
 }

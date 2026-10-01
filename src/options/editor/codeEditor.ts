@@ -6,8 +6,9 @@ import { editorStateManager } from "@/options/editor/core/state";
 import { generateDefaultFilename, importManager, saveCSSToFile } from "@/options/editor/features/import";
 import { saveToStorage } from "@/options/editor/features/themes";
 import { isEditingCSS } from "@/options/editor/ui/dom";
-import { showAlert, showModal } from "@/options/editor/ui/feedback";
+import { showModal } from "@/options/editor/ui/feedback";
 import { errorEditor, logEditor } from "@core/logger";
+import { toast } from "@/ui/toast";
 
 let mounted = false;
 
@@ -79,11 +80,11 @@ function initializeFileOperations() {
   document.getElementById("file-export-btn")?.addEventListener("click", async () => {
     const css = editorStateManager.getContent();
     if (css === null) {
-      showAlert(t("options_editor_notReady"));
+      toast.error(t("options_editor_notReady"));
       return;
     }
     if (!css) {
-      showAlert(t("options_editor_nothingToExport"));
+      toast.info(t("options_editor_nothingToExport"));
       return;
     }
 

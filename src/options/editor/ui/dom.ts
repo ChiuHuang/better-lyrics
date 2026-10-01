@@ -4,8 +4,6 @@ export const modalMessage = document.getElementById("modal-message") as HTMLElem
 export const modalInput = document.getElementById("modal-input") as HTMLInputElement;
 export const modalConfirmBtn = document.getElementById("modal-confirm") as HTMLButtonElement;
 export const modalCancelBtn = document.getElementById("modal-cancel") as HTMLButtonElement;
-export const modalCloseBtn = document.getElementById("modal-close") as HTMLButtonElement;
-export const syncIndicator = document.getElementById("sync-indicator")!;
 export const themeNameDisplay = document.getElementById("theme-name-display");
 export const themeNameText = document.getElementById("theme-name-text");
 export const themeSourceBadge = document.getElementById("theme-source-badge");
@@ -17,7 +15,6 @@ export const themePreviewName = document.getElementById("theme-preview-name") as
 export const themePreviewBadge = document.getElementById("theme-preview-badge") as HTMLElement | null;
 export const themePreviewAuthor = document.getElementById("theme-preview-author") as HTMLElement | null;
 export const themeModalOverlay = document.getElementById("theme-modal-overlay") as HTMLElement | null;
-export const themeModalClose = document.getElementById("theme-modal-close") as HTMLButtonElement | null;
 export const themeModalGrid = document.getElementById("theme-modal-grid") as HTMLElement | null;
 
 const EDITING_CLASS = "is-editing";

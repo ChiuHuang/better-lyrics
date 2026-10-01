@@ -52,8 +52,8 @@ interface ButtonOptions {
 export function createButton({ label, icon, primary = false, active = false }: ButtonOptions): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
-  button.className = primary ? "unison-submit-btn" : "ui-button ui-button--header unison-vote-btn";
-  button.classList.toggle("unison-vote-btn--active", active);
+  button.className = primary ? "ui-button ui-button--header ui-button--accent" : "ui-button ui-button--header";
+  button.classList.toggle("ui-button--accent-tint", active);
   setButtonContent(button, label, icon);
   return button;
 }
@@ -61,7 +61,7 @@ export function createButton({ label, icon, primary = false, active = false }: B
 export function createBackButton(label: string, onClick: () => void): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
-  button.className = "unison-back-btn";
+  button.className = "ui-button ui-button--compact unison-back-btn";
   button.append(svgIcon("back"), label);
   button.addEventListener("click", onClick);
   return button;
@@ -91,19 +91,28 @@ export function createLoadingLine(): HTMLElement {
 
 // -- Chips --------------------------
 
+const STATUS_TONE: Record<RevisionStatus, string> = {
+  live: "ui-badge--success",
+  pending: "ui-badge--warning",
+  rejected: "ui-badge--danger",
+  past: "",
+  superseded: "ui-badge--muted",
+  withdrawn: "ui-badge--muted",
+};
+
 export function createStatusChip(
   status: RevisionStatus,
   label: string = messageText(statusLabel(status))
 ): HTMLElement {
   const chip = document.createElement("span");
-  chip.className = `unison-badge unison-rev-chip--${status}`;
+  chip.className = `ui-badge ${STATUS_TONE[status]}`;
   chip.textContent = label;
   return chip;
 }
 
 export function createAnchorChip(): HTMLElement {
   const chip = document.createElement("span");
-  chip.className = "unison-badge unison-badge--format";
+  chip.className = "ui-badge ui-badge--accent";
   chip.textContent = t("unison_rev_anchor");
   return chip;
 }

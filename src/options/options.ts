@@ -39,6 +39,8 @@ import { syncVideoQualityControls, videoQualityOptions } from "@/options/videoQu
 import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFields";
 import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
 import { renderAboutLinks } from "@/options/aboutPage";
+import { createModal, type Modal } from "@/ui/modal";
+import { initTabStrip, type TabStrip } from "@/ui/tabStrip";
 import { toast } from "@/ui/toast";
 import {
   fitPopupToWindow,
@@ -122,7 +124,7 @@ const getOptionsFromForm = (): Options => {
   const providerElems = document.getElementById("providers-list")!.children;
   for (let i = 0; i < providerElems.length; i++) {
     let id = providerElems[i].id.slice(2);
-    if (!(providerElems[i].children[1].children[0] as HTMLInputElement).checked) {
+    if (!providerElems[i].querySelector<HTMLInputElement>(".provider-checkbox")?.checked) {
       id = "d_" + id;
     }
     preferredProviderList.push(id);
@@ -533,16 +535,22 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
   const labelElem = document.createElement("label");
   labelElem.classList.add("checkbox-container");
 
+  const switchElem = document.createElement("span");
+  switchElem.className = "ui-switch ui-switch--compact";
+
   const checkboxElem = document.createElement("input");
-  checkboxElem.classList.add("provider-checkbox");
+  checkboxElem.className = "ui-switch__input provider-checkbox";
   checkboxElem.type = "checkbox";
+  checkboxElem.setAttribute("role", "switch");
   checkboxElem.checked = checked;
   checkboxElem.id = "p-" + providerId + "-checkbox";
-  labelElem.appendChild(checkboxElem);
 
-  const checkmarkElem = document.createElement("span");
-  checkmarkElem.classList.add("checkmark");
-  labelElem.appendChild(checkmarkElem);
+  const trackElem = document.createElement("span");
+  trackElem.className = "ui-switch__track";
+  trackElem.setAttribute("aria-hidden", "true");
+
+  switchElem.append(checkboxElem, trackElem);
+  labelElem.appendChild(switchElem);
 
   const textElem = document.createElement("span");
   textElem.classList.add("provider-name");
@@ -593,10 +601,10 @@ function syncFullscreenDependents(): void {
 
 const LETTER_WAVE_ORDER: LetterWavePref[] = ["off", "auto", "on"];
 
-const LETTER_WAVE_STATE_LABELS: Record<LetterWavePref, string> = {
-  off: "Off",
-  auto: "Auto",
-  on: "On",
+const LETTER_WAVE_STATE_KEYS: Record<LetterWavePref, string> = {
+  off: "options_display_letterWaveOff",
+  auto: "options_display_videoQualityAuto",
+  on: "options_display_letterWaveOn",
 };
 
 function getLetterWaveSwitchState(): LetterWavePref {
@@ -609,7 +617,7 @@ function setLetterWaveSwitchState(pref: LetterWavePref): void {
   if (!el) return;
   el.dataset.state = pref;
   el.setAttribute("aria-valuenow", String(LETTER_WAVE_ORDER.indexOf(pref)));
-  el.setAttribute("aria-valuetext", LETTER_WAVE_STATE_LABELS[pref]);
+  el.setAttribute("aria-valuetext", t(LETTER_WAVE_STATE_KEYS[pref]));
 }
 
 function initLetterWaveSwitch(): void {
@@ -869,54 +877,38 @@ interface NicknameMutationResponse {
   };
 }
 
+let nicknameModal: Modal | undefined;
+
 function getNicknameModalElements() {
   const overlay = document.getElementById("nickname-modal-overlay");
-  const closeBtn = document.getElementById("nickname-modal-close");
-  const cancelBtn = document.getElementById("nickname-modal-cancel");
   const saveBtn = document.getElementById("nickname-modal-save") as HTMLButtonElement | null;
   const resetBtn = document.getElementById("nickname-modal-reset") as HTMLButtonElement | null;
   const input = document.getElementById("nickname-modal-input") as HTMLInputElement | null;
   const status = document.getElementById("nickname-modal-status");
-  return { overlay, closeBtn, cancelBtn, saveBtn, resetBtn, input, status };
+  return { overlay, saveBtn, resetBtn, input, status };
 }
 
 function openNicknameModal(): void {
-  const { overlay, input, saveBtn } = getNicknameModalElements();
-  if (!overlay || !input || !saveBtn) return;
+  const { input, saveBtn } = getNicknameModalElements();
+  if (!nicknameModal || !input || !saveBtn) return;
   const display = document.getElementById("identity-display-name");
   input.value = display?.textContent ?? "";
   saveBtn.disabled = true;
-  overlay.classList.add("active");
-  setTimeout(() => {
-    input.focus();
-    input.select();
-  }, 100);
+  nicknameModal.open();
+  input.select();
 }
 
 function closeNicknameModal(): void {
-  const { overlay } = getNicknameModalElements();
-  overlay?.classList.remove("active");
+  nicknameModal?.close();
 }
 
 function initNicknameModal(): void {
-  const { overlay, closeBtn, cancelBtn, saveBtn, resetBtn, input, status } = getNicknameModalElements();
-  if (!overlay || !closeBtn || !cancelBtn || !saveBtn || !resetBtn || !input || !status) return;
+  const { overlay, saveBtn, resetBtn, input, status } = getNicknameModalElements();
+  if (!overlay || !saveBtn || !resetBtn || !input || !status) return;
+  nicknameModal = createModal(overlay);
 
   const editBtn = document.getElementById("nickname-edit-btn");
   editBtn?.addEventListener("click", openNicknameModal);
-
-  closeBtn.addEventListener("click", closeNicknameModal);
-  cancelBtn.addEventListener("click", closeNicknameModal);
-
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) closeNicknameModal();
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && overlay.classList.contains("active")) {
-      closeNicknameModal();
-    }
-  });
 
   let checkSeq = 0;
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -1157,27 +1149,25 @@ async function handleImportIdentity(): Promise<void> {
 
 // -- Import Identity Modal --------------------------
 
+let importIdentityModal: Modal | undefined;
+
 function getImportIdentityModalElements() {
   const overlay = document.getElementById("import-identity-modal-overlay");
-  const closeBtn = document.getElementById("import-identity-modal-close");
   const fileBtn = document.getElementById("import-identity-file-btn");
-  const cancelBtn = document.getElementById("import-identity-cancel");
   const confirmBtn = document.getElementById("import-identity-confirm");
   const textarea = document.getElementById("import-identity-textarea") as HTMLTextAreaElement | null;
-  return { overlay, closeBtn, fileBtn, cancelBtn, confirmBtn, textarea };
+  return { overlay, fileBtn, confirmBtn, textarea };
 }
 
 function openImportIdentityModal(): void {
-  const { overlay, textarea } = getImportIdentityModalElements();
-  if (!overlay || !textarea) return;
+  const { textarea } = getImportIdentityModalElements();
+  if (!importIdentityModal || !textarea) return;
   textarea.value = "";
-  overlay.classList.add("active");
-  setTimeout(() => textarea.focus(), 100);
+  importIdentityModal.open();
 }
 
 function closeImportIdentityModal(): void {
-  const { overlay } = getImportIdentityModalElements();
-  overlay?.classList.remove("active");
+  importIdentityModal?.close();
 }
 
 async function importIdentityFromJson(json: string): Promise<void> {
@@ -1221,21 +1211,9 @@ function triggerIdentityFilePicker(): void {
 }
 
 function initImportIdentityModal(): void {
-  const { overlay, closeBtn, fileBtn, cancelBtn, confirmBtn, textarea } = getImportIdentityModalElements();
-  if (!overlay || !closeBtn || !fileBtn || !cancelBtn || !confirmBtn || !textarea) return;
-
-  closeBtn.addEventListener("click", closeImportIdentityModal);
-  cancelBtn.addEventListener("click", closeImportIdentityModal);
-
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) closeImportIdentityModal();
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && overlay.classList.contains("active")) {
-      closeImportIdentityModal();
-    }
-  });
+  const { overlay, fileBtn, confirmBtn, textarea } = getImportIdentityModalElements();
+  if (!overlay || !fileBtn || !confirmBtn || !textarea) return;
+  importIdentityModal = createModal(overlay);
 
   fileBtn.addEventListener("click", triggerIdentityFilePicker);
 
@@ -1339,48 +1317,38 @@ function initLangExclusionsModal(): void {
   const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
   const translateToggle = document.getElementById("translate") as HTMLInputElement;
   const modalOverlay = document.getElementById("lang-exclusions-modal-overlay");
-  const modalClose = document.getElementById("lang-exclusions-modal-close");
   const romanizationSearchInput = document.getElementById("romanization-search") as HTMLInputElement;
   const translationSearchInput = document.getElementById("translation-search") as HTMLInputElement;
   const resetBtn = document.getElementById("lang-exclusions-reset-btn");
-  const tabButtons = modalOverlay?.querySelectorAll(".modal-tab");
 
   if (!modalOverlay) return;
+  langExclusionsModal = createModal(modalOverlay, {
+    onClose: clearExclusionSearch,
+    initialFocus: () => (activeExclusionTab === "romanization" ? romanizationSearchInput : translationSearchInput),
+  });
 
   romanizationToggle?.addEventListener("change", updateExclusionsConfigVisibility);
   translateToggle?.addEventListener("change", updateExclusionsConfigVisibility);
 
   const openExclusions = (tab: "romanization" | "translation"): void => {
     switchExclusionTab(tab);
-    modalOverlay.classList.add("active");
-    (tab === "romanization" ? romanizationSearchInput : translationSearchInput)?.focus();
+    langExclusionsModal?.open();
   };
   document
     .getElementById("romanization-exclusions-btn")
     ?.addEventListener("click", () => openExclusions("romanization"));
   document.getElementById("translation-exclusions-btn")?.addEventListener("click", () => openExclusions("translation"));
 
-  modalClose?.addEventListener("click", closeLangExclusionsModal);
-
-  modalOverlay.addEventListener("click", e => {
-    if (e.target === modalOverlay) {
-      closeLangExclusionsModal();
-    }
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && modalOverlay.classList.contains("active")) {
-      closeLangExclusionsModal();
-    }
-  });
-
-  // Tab switching
-  tabButtons?.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const tab = (btn as HTMLElement).dataset.tab as "romanization" | "translation";
-      switchExclusionTab(tab);
+  const tablist = document.getElementById("lang-exclusions-tablist");
+  if (tablist) {
+    exclusionTabs = initTabStrip(tablist, {
+      onChange: tab => switchExclusionTab(tab.dataset.tab === "translation" ? "translation" : "romanization"),
     });
-  });
+    tablist.addEventListener("click", event => {
+      if (event.detail === 0 || !(event.target as Element).closest(".ui-segmented__tab")) return;
+      (document.getElementById(`${activeExclusionTab}-search`) as HTMLInputElement | null)?.focus();
+    });
+  }
 
   romanizationSearchInput?.addEventListener("input", () => {
     filterLanguagePills("romanization-pills-container", romanizationSearchInput.value);
@@ -1414,39 +1382,33 @@ function initLangExclusionsModal(): void {
   });
 }
 
+let exclusionTabs: TabStrip | undefined;
+
 function switchExclusionTab(tab: "romanization" | "translation"): void {
   activeExclusionTab = tab;
 
-  const tabButtons = document.querySelectorAll("#lang-exclusions-modal-overlay .modal-tab");
-  const tabContents = document.querySelectorAll(".lang-exclusions-tab-content");
+  const button = exclusionTabs?.tabs.find(candidate => candidate.dataset.tab === tab);
+  if (exclusionTabs && button && exclusionTabs.selected() !== button) exclusionTabs.select(button, { notify: false });
+  for (const content of document.querySelectorAll(".lang-exclusions-tab-content")) {
+    content.classList.toggle("active", content.id === `${tab}-tab-content`);
+  }
+
   const resetBtn = document.getElementById("lang-exclusions-reset-btn");
-
-  tabButtons.forEach(btn => {
-    const btnTab = (btn as HTMLElement).dataset.tab;
-    btn.classList.toggle("active", btnTab === tab);
-  });
-
-  tabContents.forEach(content => {
-    const contentId = content.id;
-    content.classList.toggle("active", contentId === `${tab}-tab-content`);
-  });
-
   if (resetBtn) {
     const tabName = t(tab === "romanization" ? "options_romanization_tab" : "options_translation_tab");
     resetBtn.textContent = t("options_resetToDefault", tabName);
   }
-
-  // Focus the search input of the active tab
-  const searchInput = document.getElementById(`${tab}-search`) as HTMLInputElement;
-  searchInput?.focus();
 }
 
+let langExclusionsModal: Modal | undefined;
+
 function closeLangExclusionsModal(): void {
-  const modalOverlay = document.getElementById("lang-exclusions-modal-overlay");
+  langExclusionsModal?.close();
+}
+
+function clearExclusionSearch(): void {
   const romanizationSearchInput = document.getElementById("romanization-search") as HTMLInputElement;
   const translationSearchInput = document.getElementById("translation-search") as HTMLInputElement;
-
-  modalOverlay?.classList.remove("active");
 
   if (romanizationSearchInput) {
     romanizationSearchInput.value = "";
@@ -1458,68 +1420,50 @@ function closeLangExclusionsModal(): void {
   }
 }
 
-let romanizationPillsDelegated = false;
+function createLanguageChip(langCode: string, included: boolean): HTMLLabelElement {
+  const langName = getLanguageDisplayName(langCode);
+  const chip = document.createElement("label");
+  chip.className = "ui-chip";
+  chip.dataset.langCode = langCode;
+  chip.dataset.langName = langName.toLowerCase();
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = included;
+  const label = document.createElement("span");
+  label.textContent = langName;
+  chip.append(input, label);
+  return chip;
+}
+
+function bindLanguageChips(container: HTMLElement, toggle: (langCode: string) => void): void {
+  if (container.dataset.bound) return;
+  container.dataset.bound = "true";
+  container.addEventListener("change", event => {
+    const code = (event.target as HTMLElement).closest<HTMLElement>("[data-lang-code]")?.dataset.langCode;
+    if (code) toggle(code);
+  });
+}
 
 function renderRomanizationLanguagePills(): void {
   const container = document.getElementById("romanization-pills-container");
   if (!container) return;
-
-  if (!romanizationPillsDelegated) {
-    container.addEventListener("click", e => {
-      const pill = (e.target as HTMLElement).closest("[data-lang-code]") as HTMLElement | null;
-      if (pill?.dataset.langCode) {
-        toggleRomanizationLanguage(pill.dataset.langCode);
-      }
-    });
-    romanizationPillsDelegated = true;
-  }
-
-  container.replaceChildren();
-
-  for (const langCode of Object.keys(ROMANIZATION_LANGUAGES)) {
-    const langName = getLanguageDisplayName(langCode);
-    const isDisabled = romanizationDisabledLanguages.includes(langCode);
-
-    const pill = document.createElement("div");
-    pill.className = `lang-pill${isDisabled ? " disabled" : ""}`;
-    pill.dataset.langCode = langCode;
-    pill.dataset.langName = langName.toLowerCase();
-    pill.textContent = langName;
-
-    container.appendChild(pill);
-  }
+  bindLanguageChips(container, toggleRomanizationLanguage);
+  container.replaceChildren(
+    ...Object.keys(ROMANIZATION_LANGUAGES).map(code =>
+      createLanguageChip(code, !romanizationDisabledLanguages.includes(code))
+    )
+  );
 }
-
-let translationPillsDelegated = false;
 
 function renderTranslationLanguagePills(): void {
   const container = document.getElementById("translation-pills-container");
   if (!container) return;
-
-  if (!translationPillsDelegated) {
-    container.addEventListener("click", e => {
-      const pill = (e.target as HTMLElement).closest("[data-lang-code]") as HTMLElement | null;
-      if (pill?.dataset.langCode) {
-        toggleTranslationLanguage(pill.dataset.langCode);
-      }
-    });
-    translationPillsDelegated = true;
-  }
-
-  container.replaceChildren();
-
-  for (const { value: langCode } of TRANSLATION_LANGUAGES) {
-    const langName = getLanguageDisplayName(langCode);
-    const isDisabled = translationDisabledLanguages.includes(langCode);
-
-    const pill = document.createElement("div");
-    pill.className = `lang-pill${isDisabled ? " disabled" : ""}`;
-    pill.dataset.langCode = langCode;
-    pill.dataset.langName = langName.toLowerCase();
-    pill.textContent = langName;
-
-    container.appendChild(pill);
-  }
+  bindLanguageChips(container, toggleTranslationLanguage);
+  container.replaceChildren(
+    ...TRANSLATION_LANGUAGES.map(({ value }) =>
+      createLanguageChip(value, !translationDisabledLanguages.includes(value))
+    )
+  );
 }
 
 function toggleRomanizationLanguage(langCode: string): void {
@@ -1530,7 +1474,6 @@ function toggleRomanizationLanguage(langCode: string): void {
     romanizationDisabledLanguages.splice(index, 1);
   }
   saveOptions();
-  renderRomanizationLanguagePills();
 }
 
 function toggleTranslationLanguage(langCode: string): void {
@@ -1541,7 +1484,6 @@ function toggleTranslationLanguage(langCode: string): void {
     translationDisabledLanguages.splice(index, 1);
   }
   saveOptions();
-  renderTranslationLanguagePills();
 }
 
 function filterLanguagePills(containerId: string, query: string): void {
@@ -1549,32 +1491,47 @@ function filterLanguagePills(containerId: string, query: string): void {
   if (!container) return;
 
   const normalizedQuery = query.toLowerCase().trim();
-  const pills = container.querySelectorAll(".lang-pill");
-
-  pills.forEach(pill => {
-    const langName = (pill as HTMLElement).dataset.langName || "";
-    const langCode = (pill as HTMLElement).dataset.langCode || "";
-    const matches = langName.includes(normalizedQuery) || langCode.includes(normalizedQuery);
-    pill.classList.toggle("lang-pill-hidden", !matches);
-  });
+  for (const chip of container.querySelectorAll<HTMLElement>("[data-lang-code]")) {
+    const langName = chip.dataset.langName || "";
+    const langCode = chip.dataset.langCode || "";
+    chip.hidden = !(langName.includes(normalizedQuery) || langCode.includes(normalizedQuery));
+  }
 }
 
 function setUnisonPositionInForm(position: string): void {
   const frame = document.getElementById("unison-position-frame");
   if (!frame) return;
   frame.querySelectorAll<HTMLElement>(".position-cell").forEach(cell => {
-    if (cell.dataset.pos === position) {
-      cell.dataset.selected = "true";
-    } else {
-      delete cell.dataset.selected;
-    }
+    const selected = cell.dataset.pos === position;
+    if (selected) cell.dataset.selected = "true";
+    else delete cell.dataset.selected;
+    cell.setAttribute("aria-checked", String(selected));
+    cell.tabIndex = selected ? 0 : -1;
   });
+}
+
+const POSITION_GRID_COLUMNS = 3;
+const POSITION_KEY_STEPS: Record<string, number> = {
+  ArrowLeft: -1,
+  ArrowRight: 1,
+  ArrowUp: -POSITION_GRID_COLUMNS,
+  ArrowDown: POSITION_GRID_COLUMNS,
+};
+
+function choosePosition(cell: HTMLElement, focus: boolean): void {
+  if (!cell.dataset.pos) return;
+  setUnisonPositionInForm(cell.dataset.pos);
+  if (focus) cell.focus();
+  saveOptions();
 }
 
 function syncUnisonModalDependentState(enabled: boolean): void {
   const body = document.getElementById("unison-actions-modal-body");
   if (!body) return;
   body.dataset.pinnedDisabled = enabled ? "false" : "true";
+  for (const row of body.querySelectorAll<HTMLElement>(".unison-modal-row--dependent")) {
+    row.inert = !enabled;
+  }
 }
 
 function resetDockSettings(): void {
@@ -1595,31 +1552,33 @@ function resetDockSettings(): void {
 function setupUnisonActionsModal(): void {
   const openBtn = document.getElementById("unison-actions-btn");
   const overlay = document.getElementById("unison-actions-modal-overlay");
-  const closeBtn = document.getElementById("unison-actions-modal-close");
   const frame = document.getElementById("unison-position-frame");
   const pinnedToggle = document.getElementById("isUnisonPinnedDockEnabled") as HTMLInputElement | null;
   const autoHideToggle = document.getElementById("isUnisonAutoHideInFullscreenEnabled") as HTMLInputElement | null;
 
-  if (!openBtn || !overlay || !closeBtn || !frame || !pinnedToggle || !autoHideToggle) return;
+  if (!openBtn || !overlay || !frame || !pinnedToggle || !autoHideToggle) return;
 
-  const closeModal = (): void => overlay.classList.remove("active");
-
-  openBtn.addEventListener("click", () => overlay.classList.add("active"));
-  closeBtn.addEventListener("click", closeModal);
-
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) closeModal();
-  });
-
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && overlay.classList.contains("active")) closeModal();
-  });
+  const modal = createModal(overlay);
+  openBtn.addEventListener("click", () => modal.open());
 
   frame.addEventListener("click", e => {
     const cell = (e.target as HTMLElement).closest<HTMLElement>(".position-cell");
-    if (!cell?.dataset.pos) return;
-    setUnisonPositionInForm(cell.dataset.pos);
-    saveOptions();
+    if (cell) choosePosition(cell, false);
+  });
+  frame.addEventListener("keydown", e => {
+    if (frame.closest<HTMLElement>("[inert]")) return;
+    const cells = Array.from(frame.querySelectorAll<HTMLElement>(".position-cell"));
+    const current = cells.indexOf(document.activeElement as HTMLElement);
+    if (current < 0) return;
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      choosePosition(cells[current], true);
+      return;
+    }
+    const step = POSITION_KEY_STEPS[e.key];
+    if (!step) return;
+    e.preventDefault();
+    choosePosition(cells[(current + step + cells.length) % cells.length], true);
   });
 
   pinnedToggle.addEventListener("change", () => {
@@ -1670,18 +1629,10 @@ function setOffsetDisplay(id: string, value: number): void {
 function initPictureInPictureModal(): void {
   const openBtn = document.getElementById("pip-settings-btn");
   const overlay = document.getElementById("pip-modal-overlay");
-  const closeBtn = document.getElementById("pip-modal-close");
-  if (!openBtn || !overlay || !closeBtn) return;
+  if (!openBtn || !overlay) return;
 
-  const close = (): void => overlay.classList.remove("active");
-  openBtn.addEventListener("click", () => overlay.classList.add("active"));
-  closeBtn.addEventListener("click", close);
-  overlay.addEventListener("click", event => {
-    if (event.target === overlay) close();
-  });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && overlay.classList.contains("active")) close();
-  });
+  const modal = createModal(overlay);
+  openBtn.addEventListener("click", () => modal.open());
 
   for (const control of overlay.querySelectorAll("input, select")) {
     control.addEventListener("change", saveOptions);
@@ -1700,25 +1651,17 @@ function syncPictureInPictureModalDependentState(enabled: boolean): void {
 function initOffsetModal(): void {
   const openBtn = document.getElementById("offset-settings-btn");
   const overlay = document.getElementById("offset-modal-overlay");
-  const closeBtn = document.getElementById("offset-modal-close");
-  if (!openBtn || !overlay || !closeBtn) return;
+  if (!openBtn || !overlay) return;
 
   const offsetCount = document.getElementById("offset-count");
   const refreshOffsetCount = async (): Promise<void> => {
     if (offsetCount) offsetCount.textContent = String((await getOffsetInfo()).count);
   };
 
-  const close = (): void => overlay.classList.remove("active");
+  const modal = createModal(overlay);
   openBtn.addEventListener("click", () => {
-    overlay.classList.add("active");
+    modal.open();
     void refreshOffsetCount();
-  });
-  closeBtn.addEventListener("click", close);
-  overlay.addEventListener("click", event => {
-    if (event.target === overlay) close();
-  });
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && overlay.classList.contains("active")) close();
   });
 
   document.getElementById("offset-modal-reset")?.addEventListener("click", () => {

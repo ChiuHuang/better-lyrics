@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US" style="width: unset; max-width: unset; height: 100%">
+<html lang="en-US">
 	<head>
 		<meta name="color-scheme" content="dark" />
 		<title>__MSG_editor_pageTitle__</title>
@@ -7,12 +7,11 @@
 		<link rel="stylesheet" href="../src/ui/tokens.css" />
 		<link rel="stylesheet" href="../src/ui/primitives.css" />
 		<link rel="stylesheet" href="../src/options/options.css" />
+		<link rel="stylesheet" href="../src/options/editor/standaloneEditor.css" />
 		<style>body:not(.i18n-ready){opacity:0}</style>
 	</head>
-	<body style="height: 100%; width: auto; margin: 0; padding: 0">
-		<div
-			style="height: 100%; width: auto; display: flex; flex-direction: column"
-		>
+	<body class="standalone-editor">
+		<div class="standalone-editor__shell">
 			<div id="theme-name-display" class="theme-name-display standalone">
 				<div class="theme-name-container">
 					<div class="theme-name-wrapper">
@@ -50,14 +49,16 @@
 						<span
 							id="theme-name-text"
 							class="theme-name-text"
-							title="__MSG_options_editor_doubleClickRename__"
+							data-tooltip="__MSG_options_editor_doubleClickRename__"
 						></span>
 					</div>
 					<div class="theme-btn-container">
 						<button
 							id="edit-theme-btn"
-							class="edit-theme-btn"
-							title="__MSG_options_editor_renameTheme__"
+							type="button"
+							class="ui-button ui-button--compact ui-button--icon edit-theme-btn"
+							data-tooltip="__MSG_options_editor_renameTheme__"
+							aria-label="__MSG_options_editor_renameTheme__"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -74,8 +75,10 @@
 						</button>
 						<button
 							id="delete-theme-btn"
-							class="delete-theme-btn"
-							title="__MSG_options_editor_deleteTheme__"
+							type="button"
+							class="ui-button ui-button--compact ui-button--icon ui-button--danger-tint delete-theme-btn"
+							data-tooltip="__MSG_options_editor_deleteTheme__"
+							aria-label="__MSG_options_editor_deleteTheme__"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 								<path
@@ -87,14 +90,10 @@
 					</div>
 				</div>
 			</div>
-			<div id="editor-container" style="flex-grow: 2; width: 100%">
-				<div
-					id="editor"
-					style="height: 100%; min-height: 100%; width: 100%; overflow: auto"
-				></div>
-				<div id="sync-indicator">__MSG_options_editor_saving__</div>
+			<div id="editor-container">
+				<div id="editor"></div>
 			</div>
-			<div class="ie-utils" style="margin-left: 1em; margin-top: 1em;">
+			<div class="ie-utils">
 				<button id="file-import-btn" class="ui-button">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -147,7 +146,7 @@
 					__MSG_editor_stylingGuide__
 				</button>
 			</div>
-			<p class="note" style="margin-left: 1em; margin-bottom: 0.5em">
+			<p class="note">
 				<span>
 					__MSG_editor_tip__ <a href="https://github.com/better-lyrics/better-lyrics/blob/master/STYLING.md" target="_blank">__MSG_editor_stylingGuide__</a>.
 				</span>
@@ -170,14 +169,13 @@
 				<a href="https://github.com/better-lyrics/rics" target="_blank">__MSG_editor_docs__</a>
 				</div>
 			</div>
-			<div id="status-css"></div>
 		</div>
 
-		<div id="modal-overlay" class="modal-overlay">
-			<div id="modal" class="modal">
-				<div class="modal-header">
-					<h3 id="modal-title" class="modal-title"></h3>
-					<button id="modal-close" class="modal-close-btn" aria-label="Close">
+		<div id="modal-overlay" class="ui-modal" hidden>
+			<div class="ui-modal__surface">
+				<div class="ui-modal__head">
+					<h3 id="modal-title" class="ui-modal__title"></h3>
+					<button id="modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close aria-label="__MSG_ui_close__">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 20 20"
@@ -189,18 +187,17 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
-					<p id="modal-message" class="modal-message"></p>
+				<div class="ui-modal__body" data-scroll-fade>
+					<p id="modal-message" class="ui-modal__message"></p>
 					<input
 						type="text"
 						id="modal-input"
-						class="modal-input"
-						placeholder="Enter new name"
-						style="display: none"
+						class="ui-field"
+						hidden
 					/>
 				</div>
-				<div class="modal-footer">
-					<button id="modal-cancel" type="button" class="ui-button ui-button--header">
+				<div class="ui-modal__foot">
+					<button id="modal-cancel" type="button" data-modal-close class="ui-button ui-button--header">
 						__MSG_options_modal_cancel__
 					</button>
 					<button id="modal-confirm" type="button" class="ui-button ui-button--header ui-button--primary">

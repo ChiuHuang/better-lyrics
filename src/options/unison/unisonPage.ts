@@ -56,7 +56,11 @@ import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
 import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revisions/revisionEditor";
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
 import { type RevisionHost, createBackButton, createButton } from "@/options/unison/revisions/revisionUi";
+import { createActionMenu } from "@/ui/actionMenu";
 import { createDropdown, type Dropdown } from "@/ui/dropdown";
+import { createModal, isAnyModalOpen } from "@/ui/modal";
+import { renderSortChip } from "@/ui/sortIcon";
+import { initTabStrip, type TabStrip } from "@/ui/tabStrip";
 import { attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
 import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
@@ -65,23 +69,6 @@ import { attachEditor, highlightInto } from "@braccato/highlight";
 import { XMLParser } from "fast-xml-parser";
 
 // -- Icons --------------------------
-
-const SORT_ICON_PATH = {
-  desc: "m278.6 438.6l-96 96c-12.5 12.5-32.8 12.5-45.3 0l-96-96c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l41.4 41.4V128c0-17.7 14.3-32 32-32s32 14.3 32 32v306.7l41.4-41.4c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3zM352 544c-17.7 0-32-14.3-32-32s14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32zm0-128c-17.7 0-32-14.3-32-32s14.3-32 32-32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32zm0-128c-17.7 0-32-14.3-32-32s14.3-32 32-32h160c17.7 0 32 14.3 32 32s-14.3 32-32 32zm0-128c-17.7 0-32-14.3-32-32s14.3-32 32-32h224c17.7 0 32 14.3 32 32s-14.3 32-32 32z",
-  asc: "M352 96c-17.7 0-32 14.3-32 32s14.3 32 32 32h32c17.7 0 32-14.3 32-32s-14.3-32-32-32zm0 128c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32zm0 128c-17.7 0-32 14.3-32 32s14.3 32 32 32h160c17.7 0 32-14.3 32-32s-14.3-32-32-32zm0 128c-17.7 0-32 14.3-32 32s14.3 32 32 32h224c17.7 0 32-14.3 32-32s-14.3-32-32-32zM182.6 105.4c-12.5-12.5-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l41.4-41.4V512c0 17.7 14.3 32 32 32s32-14.3 32-32V205.3l41.4 41.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-96-96z",
-} as const;
-
-function createSortIcon(direction: "desc" | "asc"): SVGSVGElement {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("viewBox", "0 0 640 640");
-  svg.setAttribute("aria-hidden", "true");
-  svg.classList.add("sort-direction-icon");
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("fill", "currentColor");
-  path.setAttribute("d", SORT_ICON_PATH[direction]);
-  svg.appendChild(path);
-  return svg;
-}
 
 const CONFIDENCE_ICON_KEY = {
   low: "confidenceUnverified",
@@ -568,21 +555,10 @@ function renderFilterBarFromActiveTab(animateSort = false): void {
 
   for (const chip of filterBar.querySelectorAll<HTMLLabelElement>(".unison-filter-chip--sort")) {
     const input = chip.querySelector<HTMLInputElement>('input[type="radio"]');
-    const iconSlot = chip.querySelector(".unison-filter-chip__icon");
-    const labelEl = chip.querySelector(".unison-filter-chip__label");
-    if (!input || !iconSlot || !labelEl) continue;
-    const isSelected = filters.sort !== "default" && input.value === filters.sort;
-    input.checked = isSelected;
-    iconSlot.replaceChildren();
-    if (isSelected) {
-      const icon = createSortIcon(filters.sortDir);
-      if (animateSort) icon.classList.add("sort-direction-icon--animate");
-      iconSlot.appendChild(icon);
-      const labelText = filters.sortDir === "asc" ? chip.dataset.labelAsc : chip.dataset.labelDesc;
-      if (labelText) labelEl.textContent = labelText;
-    } else if (chip.dataset.labelDesc) {
-      labelEl.textContent = chip.dataset.labelDesc;
-    }
+    if (!input) continue;
+    const selected = filters.sort !== "default" && input.value === filters.sort;
+    input.checked = selected;
+    renderSortChip(chip, { selected, direction: filters.sortDir, animate: animateSort, ascendingClears: true });
   }
 
   setFilterRadio("unison-filter-sync", activeSyncChip(filters));
@@ -648,31 +624,50 @@ function appendToTab(tab: FeedTabName, node: Node): void {
 
 // -- Feed Tabs --------------------------
 
-let tabRecent: HTMLButtonElement;
-let tabMine: HTMLButtonElement;
+let feedTabs: TabStrip | undefined;
 let resultsMeta: HTMLElement;
+
+function createFeedTab(name: FeedTabName, label: string): HTMLButtonElement {
+  const tab = document.createElement("button");
+  tab.type = "button";
+  tab.className = "ui-tabs__tab";
+  tab.dataset.tab = name;
+  tab.id = `unison-feed-tab-${name}`;
+  tab.setAttribute("aria-controls", "unison-feed");
+  tab.textContent = label;
+  return tab;
+}
 
 function setupFeedTabs(): void {
   const tabsRow = document.createElement("div");
   tabsRow.className = "unison-feed-tabs";
 
-  tabRecent = document.createElement("button");
-  tabRecent.className = "unison-feed-tab unison-feed-tab--active";
-  tabRecent.textContent = t("unison_tabFeed");
-  tabRecent.addEventListener("click", () => onTabClick("recent"));
-
-  tabMine = document.createElement("button");
-  tabMine.className = "unison-feed-tab";
-  tabMine.textContent = t("unison_tabMySubmissions");
-  tabMine.addEventListener("click", () => onTabClick("mine"));
+  const strip = document.createElement("div");
+  strip.className = "ui-tabs";
+  strip.setAttribute("aria-label", t("unison_feedTabsLabel"));
+  const bar = document.createElement("span");
+  bar.className = "ui-tabs__bar";
+  bar.setAttribute("aria-hidden", "true");
+  const tabRecent = createFeedTab("recent", t("unison_tabFeed"));
+  tabRecent.setAttribute("aria-selected", String(activeFeedTab === "recent"));
+  const tabMine = createFeedTab("mine", t("unison_tabMySubmissions"));
+  tabMine.setAttribute("aria-selected", String(activeFeedTab === "mine"));
+  strip.append(bar, tabRecent, tabMine);
 
   resultsMeta = document.createElement("span");
   resultsMeta.className = "unison-results-meta";
   resultsMeta.hidden = true;
 
-  tabsRow.append(tabRecent, tabMine, resultsMeta);
+  tabsRow.append(strip, resultsMeta);
   const anchor = filterBar ?? feedContainer;
   anchor.parentElement?.insertBefore(tabsRow, anchor);
+  feedContainer.setAttribute("role", "tabpanel");
+  feedContainer.setAttribute("aria-labelledby", `unison-feed-tab-${activeFeedTab}`);
+  feedTabs = initTabStrip(strip, {
+    variant: "underline",
+    onChange: tab => onTabClick(tab.dataset.tab === "mine" ? "mine" : "recent"),
+    onReselect: tab => onTabClick(tab.dataset.tab === "mine" ? "mine" : "recent"),
+  });
 }
 
 function onTabClick(next: FeedTabName): void {
@@ -693,8 +688,9 @@ function switchTab(next: FeedTabName): void {
 }
 
 function updateTabActiveState(): void {
-  tabRecent?.classList.toggle("unison-feed-tab--active", activeFeedTab === "recent");
-  tabMine?.classList.toggle("unison-feed-tab--active", activeFeedTab === "mine");
+  const tab = feedTabs?.tabs.find(candidate => candidate.dataset.tab === activeFeedTab);
+  if (feedTabs && tab) feedTabs.select(tab, { notify: false });
+  feedContainer?.setAttribute("aria-labelledby", `unison-feed-tab-${activeFeedTab}`);
 }
 
 // -- Feed --------------------------
@@ -855,7 +851,7 @@ function setupSearch(): void {
   });
 
   document.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.key === "/" && !isInputFocused()) {
+    if (e.key === "/" && !isInputFocused() && !isAnyModalOpen()) {
       e.preventDefault();
       searchInput.focus();
       searchInput.select();
@@ -948,7 +944,7 @@ function createLyricsCard(entry: UnisonSearchEntry | UnisonFeedEntry, options: L
   badges.className = "unison-card-badges";
 
   const formatBadge = document.createElement("span");
-  formatBadge.className = "unison-badge unison-badge--format";
+  formatBadge.className = "ui-badge ui-badge--accent";
   formatBadge.textContent = t(`unison_format_${entry.format}`);
   badges.appendChild(formatBadge);
 
@@ -1013,17 +1009,17 @@ function renderDetailSkeleton(): void {
   savebarSlot.replaceChildren();
 
   const titleSkel = document.createElement("div");
-  titleSkel.className = "unison-skeleton";
+  titleSkel.className = "ui-skeleton";
   titleSkel.style.width = "60%";
   titleSkel.style.height = "1.25rem";
 
   const artistSkel = document.createElement("div");
-  artistSkel.className = "unison-skeleton";
+  artistSkel.className = "ui-skeleton";
   artistSkel.style.width = "40%";
   artistSkel.style.height = "0.875rem";
 
   const metaSkel = document.createElement("div");
-  metaSkel.className = "unison-skeleton";
+  metaSkel.className = "ui-skeleton";
   metaSkel.style.width = "100%";
   metaSkel.style.height = "6rem";
 
@@ -1033,13 +1029,13 @@ function renderDetailSkeleton(): void {
 
   renderPreviewInto(detailPreview, "", false, detailPreviewHead);
   const previewSkel = document.createElement("div");
-  previewSkel.className = "unison-skeleton";
+  previewSkel.className = "ui-skeleton";
   previewSkel.style.width = "100%";
   previewSkel.style.height = "50vh";
   detailPreview.appendChild(previewSkel);
 
   const lyricsSkel = document.createElement("div");
-  lyricsSkel.className = "unison-skeleton";
+  lyricsSkel.className = "ui-skeleton";
   lyricsSkel.style.width = "100%";
   lyricsSkel.style.height = "50vh";
   detailLyrics.appendChild(lyricsSkel);
@@ -1108,7 +1104,7 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   scoreRow.appendChild(voteText);
   scoreRow.appendChild(createConfidenceBadge(entry.confidence));
 
-  const votingRow = createDetailVoting(entry.id, entry.userVote, isOwn);
+  const votingRow = createDetailVoting(entry.id, view, entry.userVote, isOwn);
 
   const ytLink = document.createElement("a");
   ytLink.className = "unison-yt-link";
@@ -1151,9 +1147,15 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   fitToViewport(detailFrame, view);
 }
 
+const CONFIDENCE_TONE: Record<UnisonConfidence, string> = {
+  low: "ui-badge--warning",
+  medium: "ui-badge--info",
+  high: "ui-badge--success",
+};
+
 function createConfidenceBadge(confidence: UnisonConfidence): HTMLElement {
   const badge = document.createElement("span");
-  badge.className = `unison-badge unison-badge--confidence unison-badge--confidence-${confidence}`;
+  badge.className = `ui-badge ${CONFIDENCE_TONE[confidence]} unison-badge--confidence`;
 
   const iconWrap = document.createElement("span");
   iconWrap.className = "unison-confidence-icon";
@@ -1212,7 +1214,22 @@ function createFulfilledBlock(submitter?: UnisonSubmitter): HTMLElement {
   return block;
 }
 
-function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: boolean = false): HTMLElement {
+function showVote(upBtn: HTMLButtonElement, downBtn: HTMLButtonElement, vote: "up" | "down" | null): void {
+  for (const [button, direction] of [
+    [upBtn, "up"],
+    [downBtn, "down"],
+  ] as const) {
+    button.classList.toggle("ui-button--accent-tint", vote === direction);
+    button.setAttribute("aria-pressed", String(vote === direction));
+  }
+}
+
+function createDetailVoting(
+  unisonId: number,
+  view: AbortSignal,
+  userVote?: 1 | -1 | null,
+  isOwn: boolean = false
+): HTMLElement {
   const row = document.createElement("div");
   row.className = "unison-detail-voting";
 
@@ -1220,8 +1237,7 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   const downBtn = createButton({ label: t("unison_downvote"), icon: "downvote" });
 
   let currentVote: "up" | "down" | null = userVote === 1 ? "up" : userVote === -1 ? "down" : null;
-  upBtn.classList.toggle("unison-vote-btn--active", currentVote === "up");
-  downBtn.classList.toggle("unison-vote-btn--active", currentVote === "down");
+  showVote(upBtn, downBtn, currentVote);
 
   async function handleVote(direction: "up" | "down") {
     const vote: VoteValue = direction === "up" ? 1 : -1;
@@ -1230,15 +1246,13 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
       const result = await removeVote(unisonId);
       if (result.success) {
         currentVote = null;
-        upBtn.classList.remove("unison-vote-btn--active");
-        downBtn.classList.remove("unison-vote-btn--active");
+        showVote(upBtn, downBtn, null);
       }
     } else {
       const result = await castVote(unisonId, vote);
       if (result.success) {
         currentVote = direction;
-        upBtn.classList.toggle("unison-vote-btn--active", direction === "up");
-        downBtn.classList.toggle("unison-vote-btn--active", direction === "down");
+        showVote(upBtn, downBtn, direction);
       }
     }
   }
@@ -1252,7 +1266,7 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   if (!isOwn) {
     const reportBtn = createButton({ label: t("unison_report"), icon: "report" });
     reportBtn.classList.add("unison-vote-btn--report");
-    reportBtn.addEventListener("click", () => showReportMenu(unisonId, reportBtn));
+    createReportMenu(unisonId, reportBtn, view);
     row.appendChild(reportBtn);
   }
 
@@ -1261,21 +1275,21 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
 
 function createDetailDeleteButton(unisonId: number): HTMLButtonElement {
   const btn = createButton({ label: t("unison_delete"), icon: "trash" });
-  btn.classList.add("unison-vote-btn--delete");
+  btn.classList.add("ui-button--danger-tint", "unison-vote-btn--delete");
 
   const setIdle = () => {
     btn.replaceChildren(svgIcon("trash"), document.createTextNode(t("unison_delete")));
-    btn.classList.remove("unison-vote-btn--delete-confirm");
+    btn.classList.replace("ui-button--danger", "ui-button--danger-tint");
   };
 
   const setConfirm = () => {
     btn.replaceChildren(svgIcon("trash"), document.createTextNode(t("unison_deleteConfirm")));
-    btn.classList.add("unison-vote-btn--delete-confirm");
+    btn.classList.replace("ui-button--danger-tint", "ui-button--danger");
   };
 
   const setError = (message: string) => {
     btn.replaceChildren(svgIcon("trash"), document.createTextNode(message));
-    btn.classList.remove("unison-vote-btn--delete-confirm");
+    btn.classList.replace("ui-button--danger", "ui-button--danger-tint");
   };
 
   setIdle();
@@ -1404,7 +1418,7 @@ function renderLinkedVideoList(
     } else {
       const removeBtn = document.createElement("button");
       removeBtn.type = "button";
-      removeBtn.className = "unison-video-remove";
+      removeBtn.className = "ui-button ui-button--compact";
       removeBtn.appendChild(svgIcon("trash"));
       removeBtn.append(t("unison_removeVideo"));
       removeBtn.addEventListener("click", async () => {
@@ -1433,7 +1447,7 @@ function renderVideoListError(listEl: HTMLElement, onRetry: () => void): void {
 
   const retryBtn = document.createElement("button");
   retryBtn.type = "button";
-  retryBtn.className = "unison-video-retry";
+  retryBtn.className = "ui-button ui-button--compact";
   retryBtn.textContent = t("marketplace_retry");
   retryBtn.addEventListener("click", () => {
     retryBtn.disabled = true;
@@ -1482,49 +1496,53 @@ function createVideoPreview(suggestion: SuggestedVideo): HTMLElement {
 
 function confirmLinkVideo(song: string, suggestion: SuggestedVideo): Promise<boolean> {
   return new Promise(resolve => {
-    const dialog = document.createElement("dialog");
-    dialog.className = "unison-confirm";
+    const overlay = document.createElement("div");
+    overlay.className = "ui-modal";
+    const surface = document.createElement("div");
+    surface.className = "ui-modal__surface unison-confirm";
 
+    const head = document.createElement("div");
+    head.className = "ui-modal__head";
     const heading = document.createElement("h3");
-    heading.className = "unison-confirm-title";
+    heading.className = "ui-modal__title";
     heading.textContent = t("unison_linkConfirmTitle");
+    head.append(heading);
 
-    const body = document.createElement("p");
-    body.className = "unison-confirm-body";
-    body.textContent = t("unison_linkConfirmBody", [suggestion.title, song]);
+    const body = document.createElement("div");
+    body.className = "ui-modal__body";
+    const message = document.createElement("p");
+    message.className = "ui-modal__message";
+    message.textContent = t("unison_linkConfirmBody", [suggestion.title, song]);
+    body.append(message, createVideoPreview(suggestion));
 
-    const actions = document.createElement("div");
-    actions.className = "unison-confirm-actions";
+    const foot = document.createElement("div");
+    foot.className = "ui-modal__foot";
     const cancelBtn = document.createElement("button");
     cancelBtn.type = "button";
-    cancelBtn.className = "unison-confirm-btn unison-confirm-btn--cancel";
+    cancelBtn.className = "ui-button ui-button--header";
+    cancelBtn.dataset.modalClose = "";
     cancelBtn.textContent = t("options_modal_cancel");
     const confirmBtn = document.createElement("button");
     confirmBtn.type = "button";
-    confirmBtn.className = "unison-confirm-btn unison-confirm-btn--save";
+    confirmBtn.className = "ui-button ui-button--header ui-button--accent";
     confirmBtn.textContent = t("unison_addVideo");
-    actions.append(cancelBtn, confirmBtn);
+    foot.append(cancelBtn, confirmBtn);
 
-    dialog.append(heading, body, createVideoPreview(suggestion), actions);
+    surface.append(head, body, foot);
+    overlay.append(surface);
+    document.body.appendChild(overlay);
 
-    const close = (confirmed: boolean): void => {
-      dialog.close();
-      dialog.remove();
-      resolve(confirmed);
-    };
-    cancelBtn.addEventListener("click", () => close(false));
-    confirmBtn.addEventListener("click", () => close(true));
-    dialog.addEventListener("cancel", event => {
-      event.preventDefault();
-      close(false);
+    let confirmed = false;
+    const modal = createModal(overlay, {
+      initialFocus: () => cancelBtn,
+      onClose: () => resolve(confirmed),
+      onHidden: () => overlay.remove(),
     });
-    dialog.addEventListener("click", event => {
-      if (event.target === dialog) close(false);
+    confirmBtn.addEventListener("click", () => {
+      confirmed = true;
+      modal.close();
     });
-
-    document.body.appendChild(dialog);
-    dialog.showModal();
-    cancelBtn.focus();
+    modal.open();
   });
 }
 
@@ -1576,7 +1594,7 @@ function createSuggestedVideoRow(song: string, suggestion: SuggestedVideo, onAdd
 
   const addBtn = document.createElement("button");
   addBtn.type = "button";
-  addBtn.className = "unison-video-add";
+  addBtn.className = "ui-button ui-button--compact";
   addBtn.textContent = t("unison_addVideo");
   addBtn.addEventListener("click", async () => {
     const titleDiffers = normalizeTitle(suggestion.title) !== normalizeTitle(song);
@@ -1624,7 +1642,7 @@ function renderSuggestedVideoList(
     moreRow.className = "unison-suggest-more";
     const moreBtn = document.createElement("button");
     moreBtn.type = "button";
-    moreBtn.className = "unison-suggest-more-btn";
+    moreBtn.className = "ui-button ui-button--compact";
     moreBtn.textContent = t("unison_showMore");
     moreBtn.addEventListener("click", () => {
       moreRow.replaceWith(...createRows(likely.slice(SUGGESTED_VIDEO_PAGE_SIZE)));
@@ -1665,7 +1683,7 @@ function createManualVideoLinkForm(onLink: (videoId: string) => Promise<string |
 
   const addBtn = document.createElement("button");
   addBtn.type = "submit";
-  addBtn.className = "unison-video-add";
+  addBtn.className = "ui-button ui-button--compact";
   addBtn.textContent = t("unison_addVideo");
 
   const error = document.createElement("p");
@@ -1858,7 +1876,7 @@ function fitToViewport(frame: HTMLElement, view: AbortSignal): void {
 
 async function loadRevisions(id: number, openRevNo: number | null, view: AbortSignal): Promise<void> {
   const skeleton = document.createElement("div");
-  skeleton.className = "unison-skeleton";
+  skeleton.className = "ui-skeleton";
   skeleton.style.width = "100%";
   skeleton.style.height = "50vh";
   revisionsRoot.replaceChildren(skeleton);
@@ -1867,39 +1885,26 @@ async function loadRevisions(id: number, openRevNo: number | null, view: AbortSi
   renderRevisionsPage(loaded.entry, revisionsRoot, revisionHost(view), loaded.isOwner, openRevNo);
 }
 
-function showReportMenu(unisonId: number, anchor: HTMLButtonElement): void {
-  const existing = document.querySelector(".unison-report-dropdown");
-  if (existing) existing.remove();
+const REPORT_REASONS: ReportReason[] = ["wrong_song", "bad_sync", "offensive", "spam", "other"];
 
-  const menu = document.createElement("div");
-  menu.className = "unison-report-dropdown";
-
-  const reasons: ReportReason[] = ["wrong_song", "bad_sync", "offensive", "spam", "other"];
-
-  for (const reason of reasons) {
-    const btn = document.createElement("button");
-    btn.className = "unison-report-dropdown-item";
-    btn.textContent = t(`unison_report_${reason}`);
-    btn.addEventListener("click", async () => {
-      menu.remove();
-      const result = await reportLyrics(unisonId, reason);
-      if (result.success) {
-        anchor.replaceChildren(svgIcon("report"), t("unison_reportSuccess"));
-        anchor.disabled = true;
-      }
-    });
-    menu.appendChild(btn);
-  }
-
-  anchor.parentElement?.appendChild(menu);
-
-  const dismiss = (e: MouseEvent) => {
-    if (!menu.contains(e.target as Node)) {
-      menu.remove();
-      document.removeEventListener("click", dismiss);
-    }
-  };
-  setTimeout(() => document.addEventListener("click", dismiss), 0);
+function createReportMenu(unisonId: number, anchor: HTMLButtonElement, view: AbortSignal): void {
+  createActionMenu(anchor, {
+    label: t("unison_report"),
+    signal: view,
+    items: () =>
+      REPORT_REASONS.map(reason => ({
+        label: t(`unison_report_${reason}`),
+        onSelect: async () => {
+          const result = await reportLyrics(unisonId, reason);
+          if (!result.success) return;
+          anchor.replaceChildren(svgIcon("report"), t("unison_reportSuccess"));
+          const hadFocus = document.activeElement === anchor;
+          anchor.disabled = true;
+          const fallback = anchor.previousElementSibling;
+          if (hadFocus && fallback instanceof HTMLElement) fallback.focus();
+        },
+      })),
+  });
 }
 
 // -- Submit Form --------------------------

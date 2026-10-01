@@ -73,6 +73,12 @@ interface SaveBar {
 
 const CHECK_FIELDS: FieldCheck["field"][] = ["lyrics", "language", "isrc", "album"];
 const CHECK_ICON = { ok: "ok", warn: "warn", bad: "bad", idle: "ok" } as const;
+const CHECK_TONE = {
+  ok: "ui-badge--success",
+  warn: "ui-badge--warning",
+  bad: "ui-badge--danger",
+  idle: "ui-badge--muted",
+} as const;
 
 // -- Editor --------------------------
 
@@ -321,11 +327,13 @@ function renderSidebar(
   appendMetaRow(table, t("unison_rev_revision"), String(entry.revision?.revNo ?? 1));
 
   const locked = document.createElement("div");
-  locked.className = "unison-rev-locked";
+  locked.className = "ui-callout";
+  const lockedIcon = svgIcon("lock");
+  lockedIcon.classList.add("ui-callout__icon");
   const lockedText = document.createElement("span");
-  lockedText.className = "unison-rev-locked__sub";
+  lockedText.className = "ui-callout__text";
   lockedText.textContent = t("unison_rev_locked");
-  locked.append(svgIcon("lock"), lockedText);
+  locked.append(lockedIcon, lockedText);
 
   const fields = document.createElement("div");
   fields.className = "unison-rev-sidebar-fields";
@@ -458,9 +466,15 @@ function createPills(preview: PreviewResult): HTMLElement {
     const check = byField.get(field);
     const status = !check || preview.noChanges ? "idle" : check.status;
     const pill = document.createElement("span");
-    pill.className = `unison-rev-pill unison-rev-pill--${status}`;
-    if (check) pill.title = check.message;
+    pill.className = `ui-badge ${CHECK_TONE[status]}`;
     pill.append(svgIcon(CHECK_ICON[status]), messageText(checkFieldLabel(field)));
+    if (check) {
+      pill.dataset.tooltip = check.message;
+      const description = document.createElement("span");
+      description.className = "ui-visually-hidden";
+      description.textContent = `: ${check.message}`;
+      pill.append(description);
+    }
     pills.appendChild(pill);
   }
   return pills;
@@ -513,20 +527,29 @@ function markField(
   error.textContent = check?.message ?? "";
 }
 
+const OUTCOME_TONE: Record<ReturnType<typeof editorOutcome>["kind"], string> = {
+  live: "ui-callout--success",
+  review: "ui-callout--warning",
+  error: "ui-callout--danger",
+  neutral: "",
+};
+
 function renderOutcome(bar: SaveBar, outcome: ReturnType<typeof editorOutcome>): void {
-  bar.outcome.className = `unison-rev-outcome unison-rev-outcome--${outcome.kind}`;
+  bar.outcome.className = `ui-callout ${OUTCOME_TONE[outcome.kind]} unison-rev-outcome`;
   const text = document.createElement("div");
-  text.className = "unison-rev-outcome__text";
+  text.className = "ui-callout__body";
   const title = document.createElement("span");
-  title.className = "unison-rev-outcome__title";
+  title.className = "ui-callout__title";
   title.textContent = messageText(outcome.title);
   const hint = document.createElement("span");
-  hint.className = "unison-rev-outcome__hint";
+  hint.className = "ui-callout__text unison-rev-outcome__hint";
   const hintText = messagesText(outcome.hint);
   if (hintText) hint.append(hintText, " ");
   hint.append(bar.viewChanges, " ", bar.tryAgain);
   text.append(title, hint);
-  bar.outcome.replaceChildren(svgIcon(outcome.icon), text);
+  const icon = svgIcon(outcome.icon);
+  icon.classList.add("ui-callout__icon");
+  bar.outcome.replaceChildren(icon, text);
   syncOutcomeHint(bar);
 }
 

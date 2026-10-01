@@ -26,6 +26,9 @@ Object.assign(globalThis, {
   document: window.document,
   DOMParser: window.DOMParser,
   Node: window.Node,
+  HTMLElement: window.HTMLElement,
+  HTMLInputElement: window.HTMLInputElement,
+  HTMLTextAreaElement: window.HTMLTextAreaElement,
   getComputedStyle: window.getComputedStyle.bind(window),
   matchMedia: (query: string) => ({ matches: query.includes("reduce") && reducedMotion }),
   setTimeout: (fn: () => void, ms = 0) => {
@@ -40,6 +43,7 @@ Object.assign(globalThis, {
 Date.now = () => now;
 
 const { toast } = await import("@/ui/toast");
+const { createModal } = await import("@/ui/modal");
 
 const doc = window.document;
 const toasts = (): HTMLElement[] => Array.from(doc.querySelectorAll<HTMLElement>(".ui-toast"));
@@ -303,6 +307,325 @@ for (const key of ["Escape", "Enter", " "]) {
   advance(2500);
   assert.equal(live().length, 0, "regression: a repeat while hovered restarts the full duration on leave");
   first.dismiss();
+  reset();
+}
+
+// -- Action button --------------------------
+const pressEnter = (init: KeyboardEventInit = {}): KeyboardEvent => {
+  const event = new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true, ...init });
+  (doc.activeElement ?? doc.body).dispatchEvent(event);
+  return event;
+};
+const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector("button.ui-toast__action");
+{
+  let applied = 0;
+  toast.success("Installed Minimal", { action: { label: "Apply", onClick: () => applied++ } });
+  const [el] = toasts();
+  const button = actionOf(el);
+  assert.ok(button, "an action renders a button");
+  assert.ok(button?.classList.contains("ui-button--compact"), "the action is a compact shared button");
+  assert.equal(button?.getAttribute("type"), "button", "the action never submits a form");
+  assert.equal(button?.getAttribute("aria-keyshortcuts"), "Enter", "the shortcut is exposed to assistive tech");
+  assert.ok(text(el).startsWith("Installed MinimalApply"), "the label follows the message");
+  button?.dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(applied, 1, "clicking the action runs it once");
+  assert.equal(live().length, 0, "clicking the action dismisses the toast");
+  reset();
+}
+{
+  toast.success("Installed Minimal", { action: { label: "Apply", onClick: () => {} } });
+  const button = actionOf(toasts()[0]);
+  button?.focus();
+  const event = new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+  button?.dispatchEvent(event);
+  assert.equal(event.defaultPrevented, false, "regression: Enter on a focused action is left to the button");
+  assert.equal(live().length, 1, "regression: Enter on a focused action does not dismiss before it runs");
+  button?.blur();
+  reset();
+}
+{
+  toast.success("Plain");
+  assert.equal(actionOf(toasts()[0]), null, "no action, no button");
+  const event = pressEnter();
+  assert.equal(event.defaultPrevented, false, "Enter is left alone without an action toast");
+  reset();
+}
+{
+  toast.success("Installed Minimal", { action: { label: "Apply", onClick: () => {} } });
+  advance(2500);
+  assert.equal(live().length, 1, "an action toast outlasts the plain success duration");
+  advance(2500);
+  assert.equal(live().length, 0, "an action toast dismisses at 5s");
+  reset();
+}
+{
+  toast.error("Install failed", { action: { label: "Retry", onClick: () => {} } });
+  advance(4999);
+  assert.equal(live().length, 1, "errors with an action also get at least 5s");
+  reset();
+}
+
+// -- Enter shortcut --------------------------
+{
+  const calls: string[] = [];
+  toast.success("Installed A", { action: { label: "Apply", onClick: () => calls.push("a") } });
+  toast.success("Installed B", { action: { label: "Apply", onClick: () => calls.push("b") } });
+  const event = pressEnter();
+  assert.deepEqual(calls, ["b"], "Enter runs the newest toast's action");
+  assert.ok(event.defaultPrevented, "Enter is consumed when it runs an action");
+  assert.deepEqual(
+    live()
+      .map(text)
+      .map(s => s.replace(/Apply.*/, "")),
+    ["Installed A"],
+    "only that toast is dismissed"
+  );
+  pressEnter();
+  assert.deepEqual(calls, ["b", "a"], "once the newest toast is gone, the next one down is the newest");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  toast.info("No action");
+  const event = pressEnter();
+  assert.equal(applied, 0, "an older action toast under a newer plain toast does not answer Enter");
+  assert.equal(event.defaultPrevented, false, "Enter is left alone when the newest toast has no action");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  pressEnter({ repeat: true });
+  assert.equal(applied, 0, "a held Enter (auto-repeat) never runs the action");
+  pressEnter();
+  assert.equal(applied, 1, "a fresh Enter press still runs it");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  const input = doc.createElement("input");
+  doc.body.appendChild(input);
+  input.focus();
+  pressEnter();
+  assert.equal(applied, 0, "Enter in a text input does not run the action");
+  const checkbox = doc.createElement("input");
+  checkbox.type = "checkbox";
+  doc.body.appendChild(checkbox);
+  checkbox.focus();
+  pressEnter();
+  assert.equal(applied, 0, "Enter on a keyboard-focused checkbox stays with the checkbox");
+  input.remove();
+  checkbox.remove();
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  const button = doc.createElement("button");
+  doc.body.appendChild(button);
+  button.focus();
+  const event = pressEnter();
+  assert.equal(applied, 0, "Enter on a keyboard-focused button stays with the button");
+  assert.equal(event.defaultPrevented, false, "the button keeps its own Enter activation");
+  button.remove();
+  pressEnter();
+  assert.equal(applied, 1, "once focus leaves the control, Enter runs the action");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  const area = doc.createElement("textarea");
+  doc.body.appendChild(area);
+  area.focus();
+  pressEnter();
+  area.remove();
+  pressEnter({ metaKey: true });
+  pressEnter({ shiftKey: true });
+  pressEnter({ isComposing: true });
+  assert.equal(applied, 0, "textareas, modified Enter and IME composition never run the action");
+  const handled = new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+  handled.preventDefault();
+  doc.body.dispatchEvent(handled);
+  assert.equal(applied, 0, "an Enter another handler already consumed is ignored");
+  reset();
+}
+{
+  let applied = 0;
+  const handle = toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  handle.dismiss();
+  pressEnter();
+  assert.equal(applied, 0, "a leaving toast no longer answers Enter");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  advance(5000);
+  pressEnter();
+  assert.equal(applied, 0, "an expired toast no longer answers Enter");
+  reset();
+}
+
+// -- Modals --------------------------
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  const overlay = doc.createElement("div");
+  overlay.className = "ui-modal";
+  const surface = doc.createElement("div");
+  surface.className = "ui-modal__surface";
+  overlay.append(surface);
+  doc.body.append(overlay);
+  const modal = createModal(overlay);
+  modal.open();
+  const blocked = pressEnter();
+  assert.equal(applied, 0, "Enter never reaches a toast action through an open modal");
+  assert.equal(blocked.defaultPrevented, false, "the modal keeps its own Enter");
+  modal.close();
+  advance(1000);
+  const stray = doc.createElement("button");
+  stray.className = "ui-modal";
+  doc.body.append(stray);
+  overlay.remove();
+  reset();
+  toast.success("Installed again", { action: { label: "Apply", onClick: () => applied++ } });
+  stray.tabIndex = -1;
+  const inner = doc.createElement("span");
+  inner.tabIndex = -1;
+  stray.append(inner);
+  inner.focus();
+  pressEnter();
+  assert.equal(applied, 0, "focus inside a .ui-modal also stands the shortcut down");
+  stray.remove();
+  pressEnter();
+  assert.equal(applied, 1, "once the modal is gone, Enter runs the action again");
+  reset();
+}
+
+// -- Dismiss by id --------------------------
+{
+  let applied = 0;
+  toast.success("Installed Minimal", { id: "install:minimal", action: { label: "Apply", onClick: () => applied++ } });
+  toast.success("Installed Lucid", { id: "install:lucid" });
+  toast.dismiss("install:minimal");
+  assert.deepEqual(live().map(text), ["Installed Lucid"], "dismiss by id closes only that toast");
+  pressEnter();
+  assert.equal(applied, 0, "a toast dismissed by id no longer answers Enter");
+  toast.dismiss("install:missing");
+  toast.dismiss("install:minimal");
+  assert.equal(live().length, 1, "dismissing an unknown or closed id is a no-op");
+  reset();
+}
+
+// -- Focus restore --------------------------
+const activate = (button: HTMLButtonElement | null, detail: number): void => {
+  button?.dispatchEvent(new window.MouseEvent("click", { bubbles: true, detail }));
+};
+{
+  const origin = doc.createElement("button");
+  doc.body.appendChild(origin);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  assert.equal(doc.activeElement, action, "keyboard focus can reach the action");
+  activate(action, 0);
+  assert.equal(doc.activeElement, origin, "keyboard activation returns focus to where it came from");
+  origin.remove();
+  reset();
+}
+{
+  const origin = doc.createElement("button");
+  doc.body.appendChild(origin);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  activate(action, 1);
+  assert.notEqual(doc.activeElement, origin, "a mouse click does not move focus back");
+  origin.remove();
+  reset();
+}
+{
+  const origin = doc.createElement("button");
+  doc.body.appendChild(origin);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  origin.remove();
+  activate(action, 0);
+  assert.notEqual(doc.activeElement, origin, "a removed origin is not refocused");
+  reset();
+}
+{
+  const origin = doc.createElement("button");
+  const elsewhere = doc.createElement("button");
+  doc.body.append(origin, elsewhere);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  elsewhere.focus();
+  toast.success("Installed again", { action: { label: "Apply", onClick: () => {} } });
+  const next = actionOf(toasts()[0]);
+  next?.focus();
+  activate(next, 0);
+  assert.equal(doc.activeElement, elsewhere, "the origin is the last element outside the toasts, not a stale one");
+  origin.remove();
+  elsewhere.remove();
+  reset();
+}
+{
+  const origin = doc.createElement("button");
+  doc.body.appendChild(origin);
+  origin.focus();
+  toast.success("Installed", { action: { label: "Apply", onClick: () => {} } });
+  const action = actionOf(toasts()[0]);
+  action?.focus();
+  action?.blur();
+  action?.focus();
+  activate(action, 0);
+  assert.notEqual(doc.activeElement, origin, "regression: entering from nowhere forgets an older origin");
+  origin.remove();
+  reset();
+}
+
+// -- Action invariants --------------------------
+{
+  let applied = 0;
+  const handle = toast.loading("Installing", { id: "install" });
+  handle.update("success", "Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  assert.ok(actionOf(toasts()[0]), "update can add an action");
+  handle.update("success", "Installed again");
+  assert.equal(actionOf(toasts()[0]), null, "an update without an action removes it");
+  pressEnter();
+  assert.equal(applied, 0, "a removed action no longer answers Enter");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  assert.equal(live().length, 1, "a repeated action toast stays one toast");
+  assert.equal(toasts()[0].querySelectorAll("button").length, 1, "a repeat keeps a single button");
+  pressEnter();
+  assert.equal(applied, 1, "a repeat runs its action once");
+  reset();
+}
+{
+  const order: string[] = [];
+  toast.success("Installed", {
+    action: {
+      label: "Apply",
+      onClick: () => order.push(live().length === 0 ? "after-dismiss" : "before-dismiss"),
+    },
+  });
+  actionOf(toasts()[0])?.dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.deepEqual(order, ["after-dismiss"], "the toast is dismissed before the action runs");
   reset();
 }
 

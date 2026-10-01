@@ -13,7 +13,6 @@ const MAX_RETRY_ATTEMPTS = 3;
 interface SaveResult {
   success: boolean;
   strategy?: "local" | "sync" | "chunked";
-  wasRetry?: boolean;
   error?: any;
 }
 
@@ -179,7 +178,7 @@ export async function saveCustomCss(css: string, retryCount = 0): Promise<SaveRe
 
         await saveChunkedCSS(cssToStore);
         await chrome.storage.sync.set({ cssCompressed: shouldCompress });
-        return { success: true, strategy: "chunked", wasRetry: true };
+        return { success: true, strategy: "chunked" };
       } catch (chunkError) {
         errorCore("Chunked storage fallback failed:", chunkError);
         return { success: false, error: chunkError };
