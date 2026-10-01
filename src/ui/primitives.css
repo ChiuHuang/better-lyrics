@@ -415,7 +415,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 @keyframes ui-toast-in {
   from { opacity: 0; transform: translateY(calc(var(--distance-toast) * -1)) scale(var(--scale-press)); filter: blur(var(--blur-small)); }
 }
-@keyframes ui-toast-out { to { opacity: 0; transform: translateY(-6px) scale(0.98); } }
+@keyframes ui-toast-out { to { opacity: 0; transform: translateY(calc(var(--distance-toast) / -2)) scale(var(--scale-menu-close)); } }
 
 /* -- Visually hidden (screen readers only) -- */
 .ui-visually-hidden {
