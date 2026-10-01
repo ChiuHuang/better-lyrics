@@ -1739,163 +1739,6 @@ input.cm-textfield:focus-visible {
 	height: 0.875rem;
 }
 
-.modal-overlay {
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.25);
-	backdrop-filter: blur(8px);
-	display: none;
-	align-items: center;
-	justify-content: center;
-	z-index: 10000;
-	opacity: 0;
-	transition: opacity 0.2s ease;
-}
-
-.modal-overlay.active {
-	display: flex;
-	opacity: 1;
-}
-
-@keyframes slideUp {
-	from {
-		opacity: 0;
-		transform: translateY(16px) scale(0.98);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-	}
-}
-
-@keyframes slideDown {
-	from {
-		opacity: 1;
-		transform: translateY(0) scale(1);
-	}
-	to {
-		opacity: 0;
-		transform: translateY(16px) scale(0.98);
-	}
-}
-
-.modal {
-	background: #3e3e41;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 0.75rem;
-	box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 25px -5px, rgba(0, 0, 0, 0.05) 0px 10px 10px -5px;
-	width: 90%;
-	max-width: 450px;
-	max-height: 85vh;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-	animation: slideUp 0.2s ease;
-}
-
-.modal.closing {
-	animation: slideDown 0.2s ease;
-}
-
-.modal-header {
-	padding: 0.675rem 1.5rem;
-	padding-right: 1rem;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	background: rgba(255, 255, 255, 0.03);
-}
-
-.modal-title {
-	margin: 0;
-	font-size: 1rem;
-	font-weight: 500;
-	color: #fff;
-}
-
-.modal-close-btn {
-	background: none;
-	border: none;
-	color: rgba(255, 255, 255, 0.5);
-	cursor: pointer;
-	padding: 0.25rem;
-	width: 2rem;
-	height: 2rem;
-	display: grid;
-	place-items: center;
-	border-radius: 0.75rem;
-	transition: all 0.2s;
-	margin: 0;
-}
-
-.modal-close-btn:hover {
-	color: rgba(255, 255, 255, 0.9);
-	background: rgba(255, 255, 255, 0.1);
-}
-
-.modal-close-btn svg {
-	width: 1.25rem;
-	height: 1.25rem;
-}
-
-.modal-body {
-	min-height: 0;
-	padding: 1.5rem;
-	overflow-y: auto;
-}
-
-.modal-message {
-	margin: 0 0 1rem 0;
-	font-size: 0.95rem;
-	color: rgba(255, 255, 255, 0.85);
-	line-height: 1.5;
-}
-
-.modal-message code {
-	background: rgba(0, 0, 0, 0.3);
-	padding: 0.2em 0.5em;
-	border-radius: 0.25rem;
-	font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
-	font-size: 0.9em;
-	color: rgba(255, 255, 255, 0.95);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.modal-input {
-	width: 100%;
-	background: rgba(0, 0, 0, 0.1);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 0.5rem;
-	padding: 0.75rem 1rem;
-	color: #fff;
-	font-size: 0.95rem;
-	font-family: inherit;
-	outline: none;
-	transition: all 0.2s;
-	box-sizing: border-box;
-}
-
-.modal-input:focus {
-	border-color: rgba(255, 255, 255, 0.2);
-	background: rgba(0, 0, 0, 0.15);
-	box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
-}
-
-.modal-input::placeholder {
-	color: rgba(255, 255, 255, 0.3);
-}
-
-.modal-footer {
-	flex: none;
-	padding: var(--row-pad);
-	border-top: 1px solid rgba(255, 255, 255, 0.1);
-	display: flex;
-	gap: 0.5rem;
-	justify-content: flex-end;
-	background: rgba(255, 255, 255, 0.02);
-}
-
 /* -- Import Identity Modal --------------------------*/
 
 .import-identity-modal {
@@ -2307,7 +2150,6 @@ input.cm-textfield:focus-visible {
 /* Feature-gated: browsers without corner-shape keep the original radii below. */
 
 @supports (corner-shape: superellipse(1.6)) {
-    .modal,
     .theme-preview-card {
         border-radius: 1.5rem;
     }
@@ -2324,7 +2166,6 @@ input.cm-textfield:focus-visible {
 
     .text-group,
     .sortable-item,
-    .modal,
     .theme-preview-card,
     .theme-card,
     .position-frame {
