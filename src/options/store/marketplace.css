@@ -122,39 +122,7 @@
 }
 
 .marketplace-filter-chip {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0 0.625rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1000rem;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  transition:
-    background var(--duration-quick) ease-out,
-    border-color var(--duration-quick) ease-out,
-    color var(--duration-quick) ease-out;
-	width: fit-content !important;
-	height: 1.5rem;
-	user-select: none;
-}
-
-.marketplace-filter-chip:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-
-.marketplace-filter-chip:has(input:checked) {
-  background: rgba(129, 140, 248, 0.15);
-  border-color: rgba(129, 140, 248, 0.4);
-  color: rgb(165, 180, 252);
-}
-
-.marketplace-filter-chip input {
-  display: none;
 }
 
 .marketplace-filter-chip--sort {
@@ -1755,7 +1723,6 @@ kbd.kbd-icon svg {
 /* -- Reduced motion ---------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .marketplace-filter-chip,
   .store-card .store-card-btn {
     transition: none;
   }

@@ -1923,50 +1923,6 @@ kbd {
   gap: 0.375rem;
 }
 
-.unison-filter-chip {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0 0.625rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1000rem;
-  font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  transition:
-    background var(--duration-quick) ease-out,
-    border-color var(--duration-quick) ease-out,
-    color var(--duration-quick) ease-out;
-  width: fit-content;
-  height: 26px;
-  box-sizing: border-box;
-  user-select: none;
-}
-
-.unison-filter-chip::after {
-  content: "";
-  position: absolute;
-  inset: -7px 0;
-}
-
-.unison-filter-chip:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-
-.unison-filter-chip:has(input:checked) {
-  background: rgba(129, 140, 248, 0.15);
-  border-color: rgba(129, 140, 248, 0.4);
-  color: rgb(165, 180, 252);
-}
-
-.unison-filter-chip input {
-  display: none;
-}
-
 .unison-filter-chip kbd {
   display: none;
 }
@@ -3031,7 +2987,6 @@ kbd {
 /* -- Reduced motion ---------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .unison-filter-chip,
   .unison-card,
   .unison-feed-tab,
   .unison-input,

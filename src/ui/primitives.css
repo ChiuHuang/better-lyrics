@@ -159,22 +159,29 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 }
 .ui-action-strip::before { content: ""; position: absolute; inset: 0 0 auto; height: 1px; background: var(--divider); }
 
-/* -- Chip -- */
+/* -- Chip (a label wrapping a hidden radio or checkbox) -- */
 .ui-chip {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  gap: 0.375rem;
+  box-sizing: border-box;
+  width: fit-content;
   height: 26px;
-  padding: 0 10px;
+  padding: 0 0.625rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.75);
+  border-radius: 1000rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.8125rem;
   cursor: pointer;
-  transition: background var(--duration-quick) ease-out, color var(--duration-quick) ease-out;
+  user-select: none;
+  transition: background var(--duration-quick) ease-out, border-color var(--duration-quick) ease-out, color var(--duration-quick) ease-out;
 }
 .ui-chip::after { content: ""; position: absolute; inset: -7px 0; }
+.ui-chip:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15); color: #fff; }
+.ui-chip:has(input:checked) { background: rgba(129, 140, 248, 0.15); border-color: rgba(129, 140, 248, 0.4); color: rgb(165, 180, 252); }
+.ui-chip input { display: none; }
 
 /* -- Sync tag -- */
 .ui-sync-tag {
