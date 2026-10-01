@@ -25,7 +25,9 @@ Object.assign(globalThis, {
   window,
   document: window.document,
   DOMParser: window.DOMParser,
-  Node: window.Node,
+  HTMLElement: window.HTMLElement,
+  HTMLInputElement: window.HTMLInputElement,
+  HTMLTextAreaElement: window.HTMLTextAreaElement,
   getComputedStyle: window.getComputedStyle.bind(window),
   matchMedia: (query: string) => ({ matches: query.includes("reduce") && reducedMotion }),
   setTimeout: (fn: () => void, ms = 0) => {
@@ -303,6 +305,158 @@ for (const key of ["Escape", "Enter", " "]) {
   advance(2500);
   assert.equal(live().length, 0, "regression: a repeat while hovered restarts the full duration on leave");
   first.dismiss();
+  reset();
+}
+
+// -- Action button --------------------------
+const pressEnter = (init: KeyboardEventInit = {}): KeyboardEvent => {
+  const event = new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true, ...init });
+  (doc.activeElement ?? doc.body).dispatchEvent(event);
+  return event;
+};
+const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector("button.ui-toast__action");
+{
+  let applied = 0;
+  toast.success("Installed Minimal", { action: { label: "Apply", onClick: () => applied++ } });
+  const [el] = toasts();
+  const button = actionOf(el);
+  assert.ok(button, "an action renders a button");
+  assert.ok(button?.classList.contains("ui-button--compact"), "the action is a compact shared button");
+  assert.equal(button?.getAttribute("type"), "button", "the action never submits a form");
+  assert.equal(button?.getAttribute("aria-keyshortcuts"), "Enter", "the shortcut is exposed to assistive tech");
+  assert.ok(text(el).startsWith("Installed MinimalApply"), "the label follows the message");
+  button?.dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(applied, 1, "clicking the action runs it once");
+  assert.equal(live().length, 0, "clicking the action dismisses the toast");
+  reset();
+}
+{
+  toast.success("Plain");
+  assert.equal(actionOf(toasts()[0]), null, "no action, no button");
+  const event = pressEnter();
+  assert.equal(event.defaultPrevented, false, "Enter is left alone without an action toast");
+  reset();
+}
+{
+  toast.success("Installed Minimal", { action: { label: "Apply", onClick: () => {} } });
+  advance(2500);
+  assert.equal(live().length, 1, "an action toast outlasts the plain success duration");
+  advance(2500);
+  assert.equal(live().length, 0, "an action toast dismisses at 5s");
+  reset();
+}
+{
+  toast.error("Install failed", { action: { label: "Retry", onClick: () => {} } });
+  advance(4999);
+  assert.equal(live().length, 1, "errors with an action also get at least 5s");
+  reset();
+}
+
+// -- Enter shortcut --------------------------
+{
+  const calls: string[] = [];
+  toast.success("Installed A", { action: { label: "Apply", onClick: () => calls.push("a") } });
+  toast.success("Installed B", { action: { label: "Apply", onClick: () => calls.push("b") } });
+  toast.info("No action");
+  const event = pressEnter();
+  assert.deepEqual(calls, ["b"], "Enter runs the newest toast that has an action");
+  assert.ok(event.defaultPrevented, "Enter is consumed when it runs an action");
+  assert.deepEqual(
+    live()
+      .map(text)
+      .map(s => s.replace(/Apply.*/, "")),
+    ["No action", "Installed A"],
+    "only that toast is dismissed"
+  );
+  pressEnter();
+  assert.deepEqual(calls, ["b", "a"], "the next Enter falls back to the older action toast");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  const input = doc.createElement("input");
+  doc.body.appendChild(input);
+  input.focus();
+  pressEnter();
+  assert.equal(applied, 0, "Enter in a text input does not run the action");
+  const checkbox = doc.createElement("input");
+  checkbox.type = "checkbox";
+  doc.body.appendChild(checkbox);
+  checkbox.focus();
+  pressEnter();
+  assert.equal(applied, 1, "Enter on a non-text control still runs the action");
+  input.remove();
+  checkbox.remove();
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  const area = doc.createElement("textarea");
+  doc.body.appendChild(area);
+  area.focus();
+  pressEnter();
+  area.remove();
+  pressEnter({ metaKey: true });
+  pressEnter({ shiftKey: true });
+  pressEnter({ isComposing: true });
+  assert.equal(applied, 0, "textareas, modified Enter and IME composition never run the action");
+  const handled = new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+  handled.preventDefault();
+  doc.body.dispatchEvent(handled);
+  assert.equal(applied, 0, "an Enter another handler already consumed is ignored");
+  reset();
+}
+{
+  let applied = 0;
+  const handle = toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  handle.dismiss();
+  pressEnter();
+  assert.equal(applied, 0, "a leaving toast no longer answers Enter");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  advance(5000);
+  pressEnter();
+  assert.equal(applied, 0, "an expired toast no longer answers Enter");
+  reset();
+}
+
+// -- Action invariants --------------------------
+{
+  let applied = 0;
+  const handle = toast.loading("Installing", { id: "install" });
+  handle.update("success", "Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  assert.ok(actionOf(toasts()[0]), "update can add an action");
+  handle.update("success", "Installed again");
+  assert.equal(actionOf(toasts()[0]), null, "an update without an action removes it");
+  pressEnter();
+  assert.equal(applied, 0, "a removed action no longer answers Enter");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  assert.equal(live().length, 1, "a repeated action toast stays one toast");
+  assert.equal(toasts()[0].querySelectorAll("button").length, 1, "a repeat keeps a single button");
+  pressEnter();
+  assert.equal(applied, 1, "a repeat runs its action once");
+  reset();
+}
+{
+  const order: string[] = [];
+  toast.success("Installed", {
+    action: {
+      label: "Apply",
+      onClick: () => order.push(live().length === 0 ? "after-dismiss" : "before-dismiss"),
+    },
+  });
+  actionOf(toasts()[0])?.dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.deepEqual(order, ["after-dismiss"], "the toast is dismissed before the action runs");
   reset();
 }
 

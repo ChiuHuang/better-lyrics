@@ -1,14 +1,21 @@
 import { type IconKey, svgIcon } from "@/options/unison/icons";
 import { prefersReducedMotion, quickDurationMs } from "@/ui/motion";
+import { isTextEntry } from "@/ui/textEntry";
 
 type ToastKind = "success" | "error" | "info" | "loading";
 
+interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 interface ToastOptions {
   id?: string;
+  action?: ToastAction;
 }
 
 interface ToastHandle {
-  update(kind: ToastKind, message: string): void;
+  update(kind: ToastKind, message: string, options?: Pick<ToastOptions, "action">): void;
   dismiss(): void;
 }
 
@@ -19,6 +26,7 @@ const DISMISS_AFTER_MS: Record<ToastKind, number | null> = {
   error: 4000,
   loading: null,
 };
+const ACTION_DISMISS_AFTER_MS = 5000;
 const KIND_ICONS: Record<Exclude<ToastKind, "loading">, IconKey> = {
   success: "success",
   error: "error",
@@ -32,6 +40,7 @@ type Politeness = "polite" | "assertive";
 
 let layer: HTMLElement | undefined;
 const dismissers = new WeakMap<HTMLElement, () => void>();
+const actionTriggers = new WeakMap<HTMLElement, () => void>();
 const liveToasts = new Map<string, ToastHandle>();
 const liveRegions: Partial<Record<Politeness, HTMLElement>> = {};
 const announceTimers: Partial<Record<Politeness, ReturnType<typeof setTimeout>>> = {};
@@ -95,27 +104,69 @@ function toastIcon(kind: ToastKind): Element {
   return icon;
 }
 
-function render(el: HTMLElement, kind: ToastKind, message: string): void {
-  el.className = `ui-toast ui-toast--${kind}`;
-  const text = document.createElement("span");
-  text.textContent = message;
-  el.replaceChildren(toastIcon(kind), text);
-  announce(kind, message);
+function actionButton(action: ToastAction, trigger: () => void): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "ui-button ui-button--compact ui-toast__action";
+  button.setAttribute("aria-keyshortcuts", "Enter");
+  const hint = document.createElement("kbd");
+  hint.textContent = "\u21b5";
+  hint.setAttribute("aria-hidden", "true");
+  button.append(action.label, hint);
+  button.addEventListener("click", trigger);
+  return button;
 }
 
-function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): ToastHandle {
+function dismissAfter(kind: ToastKind, action: ToastAction | undefined): number | null {
+  const base = DISMISS_AFTER_MS[kind];
+  return action && base !== null ? Math.max(base, ACTION_DISMISS_AFTER_MS) : base;
+}
+
+function newestActionToast(): HTMLElement | undefined {
+  const live = layer?.querySelectorAll<HTMLElement>(".ui-toast:not(.is-leaving)") ?? [];
+  return Array.from(live).find(el => actionTriggers.has(el));
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key !== "Enter" || event.defaultPrevented || event.isComposing) return;
+  if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+  if (isTextEntry(document.activeElement)) return;
+  const target = newestActionToast();
+  if (!target) return;
+  event.preventDefault();
+  actionTriggers.get(target)?.();
+});
+
+function show(kind: ToastKind, message: string, { id, action }: ToastOptions = {}): ToastHandle {
   const key = id ?? `${kind}:${message}`;
   const existing = liveToasts.get(key);
   if (existing) {
-    existing.update(kind, message);
+    existing.update(kind, message, { action });
     return existing;
   }
   const el = document.createElement("div");
-  el.tabIndex = 0;
-  render(el, kind, message);
+
+  const render = (nextKind: ToastKind, nextMessage: string, nextAction: ToastAction | undefined): void => {
+    el.className = `ui-toast ui-toast--${nextKind}`;
+    const text = document.createElement("span");
+    text.textContent = nextMessage;
+    el.replaceChildren(toastIcon(nextKind), text);
+    actionTriggers.delete(el);
+    if (nextAction) {
+      const trigger = (): void => {
+        dismiss();
+        nextAction.onClick();
+      };
+      actionTriggers.set(el, trigger);
+      el.append(actionButton(nextAction, trigger));
+    }
+    announce(nextKind, nextMessage);
+  };
+
+  render(kind, message, action);
   el.classList.add("is-entering");
 
-  let remaining = DISMISS_AFTER_MS[kind];
+  let remaining = dismissAfter(kind, action);
   let startedAt = 0;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let hovered = false;
@@ -140,6 +191,7 @@ function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): Toas
     if (closed) return;
     closed = true;
     clearTimeout(timer);
+    actionTriggers.delete(el);
     if (liveToasts.get(key) === handle) liveToasts.delete(key);
     el.classList.remove("is-entering");
     el.classList.add("is-leaving");
@@ -171,10 +223,10 @@ function show(kind: ToastKind, message: string, { id }: ToastOptions = {}): Toas
   el.addEventListener("click", dismiss);
 
   const handle: ToastHandle = {
-    update(nextKind, nextMessage) {
+    update(nextKind, nextMessage, { action: nextAction } = {}) {
       if (closed) return;
-      render(el, nextKind, nextMessage);
-      remaining = DISMISS_AFTER_MS[nextKind];
+      render(nextKind, nextMessage, nextAction);
+      remaining = dismissAfter(nextKind, nextAction);
       run();
     },
     dismiss,

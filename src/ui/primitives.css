@@ -418,6 +418,9 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-toast > .ui-toast__icon { width: 20px; height: 20px; flex: none; color: var(--text-muted); }
 .ui-toast--error > .ui-toast__icon { color: var(--danger-soft); }
 .ui-toast__spinner { box-sizing: border-box; margin: 2px; flex: none; }
+/* Negative margins keep the toast at its text height and leave a 4px inset, concentric with --radius-row. */
+.ui-toast__action { margin: -5px -10px -5px 4px; }
+.ui-toast__action kbd { font: inherit; color: var(--text-faint); }
 .ui-toast.is-entering { animation: ui-toast-in var(--duration-slow) var(--ease-smooth-out) both; }
 .ui-toast.is-leaving { animation: ui-toast-out var(--duration-quick) ease-in both; pointer-events: none; }
 @keyframes ui-toast-in {
