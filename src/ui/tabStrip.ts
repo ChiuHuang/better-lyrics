@@ -1,5 +1,6 @@
 import { observeResize } from "@modules/ui/layout/layoutWidth";
 import { barTransform, rovingIndex, travelDirection } from "@/ui/cardTabs";
+import { prefersReducedMotion } from "@/ui/motion";
 
 interface TabStripOptions {
   variant?: "segmented" | "underline";
@@ -34,7 +35,8 @@ export function initTabStrip(
 
   let pillWidth = 0;
 
-  function place(animate = true): void {
+  function place(requestedAnimate = true): void {
+    const animate = requestedAnimate && !prefersReducedMotion();
     const current = selected();
     if (!pill || !current) return;
     if (!animate) pill.style.transition = "none";
