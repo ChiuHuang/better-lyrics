@@ -52,7 +52,7 @@ export function mountChangesTabs(surface: ChangesSurface, host: RevisionHost, ha
   const previewTab = createTab("preview", t("unison_preview"), preview.id);
   const changesTab = createTab("changes", t("unison_rev_changes"), "unison-rev-changes");
   const badge = document.createElement("span");
-  badge.className = "unison-rev-count";
+  badge.className = "ui-badge ui-badge--count unison-rev-count";
   changesTab.appendChild(badge);
   const tabs = { preview: previewTab, changes: changesTab };
 

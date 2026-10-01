@@ -73,6 +73,12 @@ interface SaveBar {
 
 const CHECK_FIELDS: FieldCheck["field"][] = ["lyrics", "language", "isrc", "album"];
 const CHECK_ICON = { ok: "ok", warn: "warn", bad: "bad", idle: "ok" } as const;
+const CHECK_TONE = {
+  ok: "ui-badge--success",
+  warn: "ui-badge--warning",
+  bad: "ui-badge--danger",
+  idle: "ui-badge--muted",
+} as const;
 
 // -- Editor --------------------------
 
@@ -458,7 +464,7 @@ function createPills(preview: PreviewResult): HTMLElement {
     const check = byField.get(field);
     const status = !check || preview.noChanges ? "idle" : check.status;
     const pill = document.createElement("span");
-    pill.className = `unison-rev-pill unison-rev-pill--${status}`;
+    pill.className = `ui-badge ${CHECK_TONE[status]}`;
     if (check) pill.title = check.message;
     pill.append(svgIcon(CHECK_ICON[status]), messageText(checkFieldLabel(field)));
     pills.appendChild(pill);

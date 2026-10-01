@@ -91,19 +91,28 @@ export function createLoadingLine(): HTMLElement {
 
 // -- Chips --------------------------
 
+const STATUS_TONE: Record<RevisionStatus, string> = {
+  live: "ui-badge--success",
+  pending: "ui-badge--warning",
+  rejected: "ui-badge--danger",
+  past: "",
+  superseded: "ui-badge--muted",
+  withdrawn: "ui-badge--muted",
+};
+
 export function createStatusChip(
   status: RevisionStatus,
   label: string = messageText(statusLabel(status))
 ): HTMLElement {
   const chip = document.createElement("span");
-  chip.className = `unison-badge unison-rev-chip--${status}`;
+  chip.className = `ui-badge ${STATUS_TONE[status]}`;
   chip.textContent = label;
   return chip;
 }
 
 export function createAnchorChip(): HTMLElement {
   const chip = document.createElement("span");
-  chip.className = "unison-badge unison-badge--format";
+  chip.className = "ui-badge ui-badge--accent";
   chip.textContent = t("unison_rev_anchor");
   return chip;
 }

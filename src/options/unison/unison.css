@@ -193,28 +193,10 @@
   padding: 8px 12px 0;
 }
 
-.unison-badge {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 0.5rem;
-  height: 1.25rem;
-  border-radius: 1000rem;
-}
-
-.unison-badge--format {
-  background: rgba(129, 140, 248, 0.15);
-  color: rgb(165, 180, 252);
-}
-
 /* -- Confidence Badge --------------------------  */
 
 .unison-badge--confidence {
-  gap: 0.3rem;
   margin-left: auto;
-  padding-left: 0.375rem;
 }
 
 .unison-confidence-icon {
@@ -226,24 +208,6 @@
 .unison-confidence-icon .unison-icon {
   width: 0.75rem;
   height: 0.75rem;
-}
-
-.unison-badge--confidence-low {
-  background: rgba(254, 240, 138, 0.08);
-  border: 1px solid rgba(254, 240, 138, 0.18);
-  color: rgb(254, 240, 138);
-}
-
-.unison-badge--confidence-medium {
-  background: rgba(125, 211, 252, 0.08);
-  border: 1px solid rgba(125, 211, 252, 0.18);
-  color: rgb(125, 211, 252);
-}
-
-.unison-badge--confidence-high {
-  background: rgba(134, 239, 172, 0.08);
-  border: 1px solid rgba(134, 239, 172, 0.18);
-  color: rgb(134, 239, 172);
 }
 
 /* -- Card Footer --------------------------  */
@@ -1807,37 +1771,6 @@
   min-width: 0;
 }
 
-.unison-rev-chip--live {
-  background: rgba(134, 239, 172, 0.08);
-  border: 1px solid rgba(134, 239, 172, 0.18);
-  color: rgb(134, 239, 172);
-}
-
-.unison-rev-chip--pending {
-  background: rgba(254, 240, 138, 0.08);
-  border: 1px solid rgba(254, 240, 138, 0.18);
-  color: rgb(254, 240, 138);
-}
-
-.unison-rev-chip--rejected {
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.2);
-  color: rgb(248, 113, 113);
-}
-
-.unison-rev-chip--past,
-.unison-rev-chip--superseded,
-.unison-rev-chip--withdrawn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.unison-rev-chip--superseded,
-.unison-rev-chip--withdrawn {
-  color: rgba(255, 255, 255, 0.35);
-}
-
 .unison-rev-bar {
   display: flex;
   align-items: center;
@@ -2017,47 +1950,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
-}
-
-.unison-rev-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  height: 1.5rem;
-  padding: 0 0.625rem 0 0.4375rem;
-  border-radius: 1000rem;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
-  white-space: nowrap;
-}
-
-.unison-rev-pill .unison-icon {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-.unison-rev-pill--ok {
-  background: rgba(134, 239, 172, 0.08);
-  border-color: rgba(134, 239, 172, 0.2);
-  color: rgb(134, 239, 172);
-}
-
-.unison-rev-pill--warn {
-  background: rgba(254, 240, 138, 0.08);
-  border-color: rgba(254, 240, 138, 0.18);
-  color: rgb(254, 240, 138);
-}
-
-.unison-rev-pill--bad {
-  background: rgba(248, 113, 113, 0.08);
-  border-color: rgba(248, 113, 113, 0.25);
-  color: rgb(248, 113, 113);
-}
-
-.unison-rev-pill--idle .unison-icon {
-  color: rgba(255, 255, 255, 0.25);
 }
 
 .unison-rev-savebar__issues {
@@ -2503,31 +2395,14 @@
   border-bottom-color: #fff;
 }
 
-.unison-rev-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.125rem;
-  height: 1rem;
-  padding: 0 0.3125rem;
-  box-sizing: border-box;
-  border-radius: 1000rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  transition:
-    background-color 0.15s,
-    color 0.15s;
-}
-
 .unison-rev-count:empty {
   display: none;
 }
 
 .unison-rev-count--bare {
+  min-width: 0;
   padding: 0;
+  border-color: transparent;
   background: none;
 }
 
@@ -2538,8 +2413,9 @@
 }
 
 .unison-rev-tab[aria-selected="true"] > .unison-rev-count:not(.unison-rev-count--bare) {
-  background: rgba(129, 140, 248, 0.18);
-  color: rgb(165, 180, 252);
+  --badge-bg: color-mix(in srgb, var(--accent) 18%, transparent);
+  --badge-edge: color-mix(in srgb, var(--accent) 26%, transparent);
+  --badge-fg: color-mix(in srgb, var(--accent) 45%, #fff);
 }
 
 .unison-rev-spin {

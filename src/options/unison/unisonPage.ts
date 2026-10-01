@@ -949,7 +949,7 @@ function createLyricsCard(entry: UnisonSearchEntry | UnisonFeedEntry, options: L
   badges.className = "unison-card-badges";
 
   const formatBadge = document.createElement("span");
-  formatBadge.className = "unison-badge unison-badge--format";
+  formatBadge.className = "ui-badge ui-badge--accent";
   formatBadge.textContent = t(`unison_format_${entry.format}`);
   badges.appendChild(formatBadge);
 
@@ -1152,9 +1152,15 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   fitToViewport(detailFrame, view);
 }
 
+const CONFIDENCE_TONE: Record<UnisonConfidence, string> = {
+  low: "ui-badge--warning",
+  medium: "ui-badge--info",
+  high: "ui-badge--success",
+};
+
 function createConfidenceBadge(confidence: UnisonConfidence): HTMLElement {
   const badge = document.createElement("span");
-  badge.className = `unison-badge unison-badge--confidence unison-badge--confidence-${confidence}`;
+  badge.className = `ui-badge ${CONFIDENCE_TONE[confidence]} unison-badge--confidence`;
 
   const iconWrap = document.createElement("span");
   iconWrap.className = "unison-confidence-icon";
