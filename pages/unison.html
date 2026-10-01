@@ -196,54 +196,55 @@
 						<p class="unison-submit-desc">__MSG_unison_submitDescription__</p>
 						<p class="unison-submit-desc" id="unison-composer-hint"></p>
 						<div class="unison-form-grid">
-							<label class="unison-field">
-								<span class="unison-field-label unison-field-label--required">__MSG_unison_song__</span>
-								<input type="text" id="unison-field-song" class="unison-input" placeholder="__MSG_unison_placeholder_song__" />
-							</label>
-							<label class="unison-field">
-								<span class="unison-field-label unison-field-label--required">__MSG_unison_artist__</span>
-								<input type="text" id="unison-field-artist" class="unison-input" placeholder="__MSG_unison_placeholder_artist__" />
-							</label>
-							<label class="unison-field">
-								<span class="unison-field-label">__MSG_unison_album__</span>
-								<input type="text" id="unison-field-album" class="unison-input" maxlength="500" placeholder="__MSG_unison_placeholder_album__" />
-							</label>
-							<label class="unison-field">
-								<span class="unison-field-label">__MSG_unison_language__</span>
-								<select id="unison-field-language" class="unison-input"></select>
-							</label>
 							<div class="unison-form-row unison-form-row--2x2">
 								<label class="unison-field">
-									<span class="unison-field-label">__MSG_unison_duration__</span>
-									<span class="unison-field-hint">__MSG_unison_durationHint__</span>
-									<input type="number" id="unison-field-duration" class="unison-input" step="1" min="0" inputmode="numeric" placeholder="__MSG_unison_placeholder_duration__" />
+									<span class="unison-field-label unison-field-label--required">__MSG_unison_song__</span>
+									<input type="text" id="unison-field-song" class="unison-input" placeholder="__MSG_unison_placeholder_song__" />
 								</label>
+								<label class="unison-field">
+									<span class="unison-field-label unison-field-label--required">__MSG_unison_artist__</span>
+									<input type="text" id="unison-field-artist" class="unison-input" placeholder="__MSG_unison_placeholder_artist__" />
+								</label>
+							</div>
+							<div class="unison-form-row unison-form-row--2x2">
+								<label class="unison-field">
+									<span class="unison-field-label">__MSG_unison_album__</span>
+									<input type="text" id="unison-field-album" class="unison-input" maxlength="500" placeholder="__MSG_unison_placeholder_album__" />
+								</label>
+								<div class="unison-field">
+									<span class="unison-field-label">__MSG_unison_language__</span>
+									<div id="unison-field-language-mount"></div>
+								</div>
+							</div>
+							<div class="unison-form-row unison-form-row--2x2">
 								<label class="unison-field">
 									<span class="unison-field-label unison-field-label--required">__MSG_unison_videoId__</span>
-									<span class="unison-field-hint">__MSG_unison_videoIdHint__</span>
 									<input type="text" id="unison-field-videoId" class="unison-input unison-input--mono" placeholder="__MSG_unison_placeholder_videoId__" />
+									<span class="unison-field-hint">__MSG_unison_videoIdHint__</span>
 								</label>
+								<label class="unison-field">
+									<span class="unison-field-label">__MSG_unison_duration__</span>
+									<input type="number" id="unison-field-duration" class="unison-input" step="1" min="0" inputmode="numeric" placeholder="__MSG_unison_placeholder_duration__" />
+									<span class="unison-field-hint">__MSG_unison_durationHint__</span>
+								</label>
+							</div>
+							<div class="unison-form-row unison-form-row--2x2">
 								<label class="unison-field">
 									<span class="unison-field-label">__MSG_unison_isrc__</span>
-									<span class="unison-field-hint" id="unison-isrc-hint"></span>
 									<input type="text" id="unison-field-isrc" class="unison-input unison-input--mono" placeholder="__MSG_unison_placeholder_isrc__" />
+									<span class="unison-field-hint" id="unison-isrc-hint"></span>
 								</label>
-								<label class="unison-field">
+								<div class="unison-field">
 									<span class="unison-field-label">__MSG_unison_format__</span>
+									<div id="unison-field-format-mount"></div>
 									<span class="unison-field-hint">__MSG_unison_formatHint__</span>
-									<select id="unison-field-format" class="unison-input">
-										<option value="auto">__MSG_unison_autoDetect__</option>
-										<option value="lrc">__MSG_unison_format_lrc__</option>
-										<option value="ttml">__MSG_unison_format_ttml__</option>
-										<option value="plain">__MSG_unison_format_plain__</option>
-									</select>
-								</label>
+								</div>
 							</div>
 						</div>
 						<div class="unison-field">
 							<span class="unison-field-label">__MSG_unison_additionalVideos__</span>
-							<span class="unison-field-hint">__MSG_unison_additionalVideosHint__</span>
 							<div id="unison-additional-videos-mount"></div>
+							<span class="unison-field-hint">__MSG_unison_additionalVideosHint__</span>
 							<div id="unison-submit-suggestions" class="unison-submit-suggestions" hidden>
 								<span class="unison-field-hint">__MSG_unison_suggestedVideos__</span>
 								<ul id="unison-submit-suggestions-list" class="unison-video-list unison-suggest-list"></ul>
@@ -251,7 +252,7 @@
 						</div>
 						<label class="unison-field">
 							<span class="unison-field-label unison-field-label--required">__MSG_unison_lyrics__</span>
-							<textarea id="unison-field-lyrics" class="unison-textarea" rows="18" spellcheck="false" placeholder="__MSG_unison_placeholder_lyrics__"></textarea>
+							<textarea id="unison-field-lyrics" class="unison-lyrics-input" rows="18" spellcheck="false" placeholder="__MSG_unison_placeholder_lyrics__"></textarea>
 						</label>
 						<div class="unison-submit-actions">
 							<a id="unison-composer-link" class="unison-composer-link" target="_blank" rel="noreferrer noopener">

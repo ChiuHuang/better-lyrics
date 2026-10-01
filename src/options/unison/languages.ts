@@ -55,15 +55,6 @@ function languageDisplayNames(): Intl.DisplayNames | null {
   }
 }
 
-export function appendLanguageOptions(select: HTMLSelectElement): void {
-  for (const { value, label } of languageOptionList()) {
-    const opt = document.createElement("option");
-    opt.value = value;
-    opt.textContent = label;
-    select.appendChild(opt);
-  }
-}
-
 export function languageOptionList(opts: { leading?: DropdownOption; current?: string } = {}): DropdownOption[] {
   const names = languageDisplayNames();
   const list: DropdownOption[] = opts.leading ? [opts.leading] : [];
