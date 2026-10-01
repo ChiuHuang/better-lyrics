@@ -158,8 +158,8 @@ assert.equal(isReadableLayout(""), false, "empty text is never readable layout")
   const pastedFormatted = FORMATTED;
   assert.equal(
     lyricsForSave(pastedFormatted, MINIFIED_388),
-    FORMATTED.trim(),
-    "regression: pasted formatted text is saved as written"
+    compactTtml(FORMATTED),
+    "pasted formatted text over a minified original is saved compact"
   );
   assert.equal(
     lyricsForSave(opened, MINIFIED_388),
@@ -177,6 +177,30 @@ assert.equal(isReadableLayout(""), false, "empty text is never readable layout")
     original,
     "regression: undoing back to formatted text saves it untouched"
   );
+}
+
+// -- Saving follows the stored layout --------------------------
+
+{
+  const customIndent = readableTtml(MINIFIED_388).text.replace(
+    "</div>",
+    '\n\t\t<p begin="0:40.000" end="0:41.000">new line</p>\n</div>'
+  );
+  assert.equal(isReadableLayout(customIndent), false, "a custom-indented line breaks the exact readable form");
+  const saved = lyricsForSave(customIndent, MINIFIED_388);
+  assert.ok(
+    !/\s<(?:p|\/div|div|body|\/body|head|\/tt)[\s>]/.test(saved),
+    "a minified original stays compact whatever indent was typed"
+  );
+  assert.ok(
+    saved.includes('</p><p begin="0:40.000" end="0:41.000">new line</p></div>'),
+    "the added line is kept, compacted"
+  );
+}
+
+{
+  const edited = FORMATTED.replace(">grace<", ">mercy<");
+  assert.equal(lyricsForSave(`${edited}\n`, FORMATTED), edited, "a formatted original saves a word edit as typed");
 }
 
 console.log("ttml layout self-check passed");

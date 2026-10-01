@@ -23,8 +23,10 @@ export function isReadableLayout(text: string): boolean {
   return layout.readable && layout.text === text;
 }
 
-/** Text to save: undoes the readable layout, and keeps the stored bytes exactly when nothing changed (the server hashes them). */
+/** Text to save: unchanged text keeps its exact bytes (the server hashes them); a minified original stays compact whatever the user typed. */
 export function lyricsForSave(text: string, original?: string): string {
-  const source = isReadableLayout(text) ? compactTtml(text) : text;
+  if (text === original) return text;
+  const compact = isReadableLayout(text) || (original !== undefined && readableTtml(original).readable);
+  const source = compact ? compactTtml(text) : text;
   return source === original ? source : source.trim();
 }
