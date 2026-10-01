@@ -421,7 +421,7 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
   transition: text-decoration-color var(--duration-quick) ease-out;
 }
 .about__body a:hover { text-decoration-color: currentColor; }
-.about__body a svg { width: 0.75rem; height: 0.75rem; margin-inline-start: 3px; vertical-align: -1px; color: rgba(255, 255, 255, 0.55); }
+.about__body a svg { width: 0.75rem; height: 0.75rem; margin-inline-start: 3px; vertical-align: -1px; color: var(--text-muted); }
 .about__list { margin: 0; padding-left: 16px; }
 .about__list li { margin-bottom: 3px; }
 
