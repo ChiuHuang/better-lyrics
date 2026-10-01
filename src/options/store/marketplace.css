@@ -552,7 +552,7 @@
 .store-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
+  border-radius: 1.5rem;
   overflow: hidden;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -663,6 +663,16 @@
   transition: all 0.2s;
   width: 100%;
   user-select: none;
+}
+
+.store-card .store-card-btn {
+  height: 34px;
+  border-radius: calc(1.5rem - 11px);
+  transition: background var(--duration-quick) ease-out, scale var(--duration-quick) ease-out;
+}
+
+.store-card .store-card-btn:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .store-card-btn-install {
@@ -1744,7 +1754,6 @@ kbd.kbd-icon svg {
     border-radius: 1.25rem;
   }
 
-  .store-card,
   .store-filter-dropdown {
     border-radius: 1rem;
   }
@@ -1756,6 +1765,7 @@ kbd.kbd-icon svg {
   .marketplace-filters,
   #status-css.toast,
   .store-card,
+  .store-card .store-card-btn,
   .store-filter-dropdown,
   .detail-shader-info {
     corner-shape: superellipse(1.6);
@@ -1765,7 +1775,8 @@ kbd.kbd-icon svg {
 /* -- Reduced motion ---------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .marketplace-filter-chip {
+  .marketplace-filter-chip,
+  .store-card .store-card-btn {
     transition: none;
   }
 }
