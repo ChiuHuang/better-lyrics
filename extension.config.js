@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { dedupePopupBundle } from "./tooling/dedupePopupBundle.mjs";
 
 const require = createRequire(import.meta.url);
 const projectRoot = dirname(fileURLToPath(import.meta.url));
@@ -18,6 +19,8 @@ const projectRoot = dirname(fileURLToPath(import.meta.url));
 const rendererStylesDir = dirname(require.resolve("@braccato/core/styles/lyrics.css"));
 const rendererStylesOutputDir = "css/blyrics";
 const extensionStylesDir = join(projectRoot, "public", "css", "blyrics");
+const bundledThemesDir = join(projectRoot, "public", "css", "themes");
+const bundledThemes = () => readdirSync(bundledThemesDir).filter(name => name.endsWith(".css"));
 
 // Asserted flat because the emit is flat and css/blyrics/index.css imports by bare name. A subpath
 // pattern matches across a slash, so the package may legally nest a stylesheet; this reads one level,
@@ -56,6 +59,8 @@ const emitRendererStyles = {
       // A stylesheet added or removed is a change to the directory, not to any file watch already
       // holds, so without this a new one never reaches a running watch.
       compilation.contextDependencies.add(rendererStylesDir);
+      compilation.contextDependencies.add(bundledThemesDir);
+      for (const name of bundledThemes()) compilation.fileDependencies.add(join(bundledThemesDir, name));
       for (const { path } of rendererStylesheets()) {
         compilation.fileDependencies.add(path);
       }
@@ -68,6 +73,13 @@ const emitRendererStyles = {
           source: () => contents,
           size: () => contents.length,
         });
+      }
+      for (const name of bundledThemes()) {
+        const contents = readFileSync(join(bundledThemesDir, name));
+        const asset = { source: () => contents, size: () => contents.length };
+        const path = `css/themes/${name}`;
+        if (compilation.getAsset(path)) compilation.updateAsset(path, asset);
+        else compilation.emitAsset(path, asset);
       }
     });
   },
@@ -162,6 +174,8 @@ const config = {
           });
         },
       });
+
+      rspackConfig.plugins.push(dedupePopupBundle);
     }
 
     rspackConfig.devtool = shouldBuildSourcemaps ? "source-map" : false;

@@ -1,5 +1,5 @@
 import { compressString } from "./compression";
-import { getLocalStorage } from "./storage";
+import { getLocalStorage, isLyricCacheKey } from "@core/storage";
 import { errorCore, logCore } from "@core/logger";
 
 const SYNC_STORAGE_LIMIT = 7000;
@@ -13,7 +13,6 @@ const MAX_RETRY_ATTEMPTS = 3;
 interface SaveResult {
   success: boolean;
   strategy?: "local" | "sync" | "chunked";
-  wasRetry?: boolean;
   error?: any;
 }
 
@@ -55,7 +54,7 @@ async function clearLyricsCacheIfNeeded(requiredSpace: number): Promise<void> {
   if (availableSpace < requiredSpace) {
     logCore("Not enough space, clearing lyrics cache...");
     const allData = await chrome.storage.local.get(null);
-    const lyricsKeys = Object.keys(allData).filter(key => key.startsWith("blyrics_"));
+    const lyricsKeys = Object.keys(allData).filter(isLyricCacheKey);
 
     if (lyricsKeys.length > 0) {
       logCore(`Removing ${lyricsKeys.length} cached lyrics entries`);
@@ -179,7 +178,7 @@ export async function saveCustomCss(css: string, retryCount = 0): Promise<SaveRe
 
         await saveChunkedCSS(cssToStore);
         await chrome.storage.sync.set({ cssCompressed: shouldCompress });
-        return { success: true, strategy: "chunked", wasRetry: true };
+        return { success: true, strategy: "chunked" };
       } catch (chunkError) {
         errorCore("Chunked storage fallback failed:", chunkError);
         return { success: false, error: chunkError };

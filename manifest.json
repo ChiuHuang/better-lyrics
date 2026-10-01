@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "3.0.0.2",
+  "version": "3.0.0.3",
   "default_locale": "en",
   "name": "Better Lyrics (Lyrics for YouTube Music)",
   "description": "__MSG_extensionDescription__",
@@ -92,6 +92,16 @@
         "*://music.youtube.com/*"
       ],
       "js": [
+        "src/videoQualityPage.ts"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "*://music.youtube.com/*"
+      ],
+      "js": [
         "src/index.ts"
       ],
       "run_at": "document_start",
@@ -131,5 +141,5 @@
   "action": {
     "default_popup": "src/options/options.html"
   },
-  "version_name": "3.0.0 2"
+  "version_name": "3.0.0 3"
 }

@@ -42,6 +42,7 @@ export const PICTURE_IN_PICTURE_TOGGLE_SELECTOR = "[data-blyrics-picture-in-pict
 export const LYRICS_LOADER_ID = "blyrics-loader" as const;
 export const LYRICS_DISABLED_ATTR = "blyrics-dfs" as const;
 export const FULLSCREEN_CONTROLS_DISABLED_ATTR = "blyrics-no-fs-controls" as const;
+export const KARAOKE_ACTIVE_ATTR = "blyrics-karaoke" as const;
 export const DISABLE_EFFECTS_STYLE_ID = "blyrics-disable-effects" as const;
 export const HIDDEN_CLASS = "blyrics-hidden" as const;
 export const REPORT_MODAL = "blyrics-report-lyrics" as const;
@@ -67,8 +68,29 @@ export const HOMEPAGE_DOMAIN = "betterlyrics.org" as const;
 export const HOMEPAGE_ICON_URL = "https://betterlyrics.org/icon-512.png" as const;
 export const UNISON_API_URL = "https://unison.betterlyrics.org/lyrics" as const;
 export const DISCORD_INVITE_URL = "https://discord.gg/UsHE3d5fWF" as const;
+export const GITHUB_REPO_URL = "https://github.com/better-lyrics/better-lyrics" as const;
+export const BUY_ME_A_COFFEE_URL = "https://buymeacoffee.com/boidu" as const;
+export const GITHUB_SPONSORS_URL = "https://github.com/sponsors/boidushya" as const;
+interface AboutCredit {
+  name: string;
+  href: string;
+  avatar: string;
+  avatarRound?: boolean;
+}
+
+export const ABOUT_MAKERS: readonly AboutCredit[] = [
+  { name: "Boidu", href: "https://boidu.dev", avatar: "/images/credits/boidushya.jpg" },
+  { name: "Adalie", href: "https://adalie.me/", avatar: "/images/credits/adaliea.jpg" },
+];
+export const ABOUT_BADGE_ARTIST: AboutCredit = {
+  name: "Kiyoshi",
+  href: "https://github.com/KiyoshiTheDevil",
+  avatar: "/images/credits/kiyoshithedevil.png",
+  avatarRound: true,
+};
 export const SHADERS_CWS_URL =
   "https://chromewebstore.google.com/detail/better-lyrics-shaders/mffpncjphfmkppebdoaehdlnagnlpfai" as const;
+export const SHADERS_SITE_URL = "https://shaders.betterlyrics.org" as const;
 export const SHADERS_AMO_URL = "https://addons.mozilla.org/en-US/firefox/addon/better-lyrics-shaders/" as const;
 export const STORE_CWS_URL =
   "https://chromewebstore.google.com/detail/better-lyrics/effdbpeggelllpfkjppbokhmmiinhlmg" as const;
@@ -81,6 +103,7 @@ export const THEME_STORE_API_URL = "https://themes.betterlyrics.org" as const;
 export const UNISON_API_BASE_URL = "https://unison.betterlyrics.org" as const;
 export const UNISON_TRANSLATE_URL = `${UNISON_API_BASE_URL}/translate` as const;
 export const UNISON_REVISION_PREVIEW_DEBOUNCE_MS = 400;
+export const UNISON_LYRICS_PREVIEW_DEBOUNCE_MS = 150;
 export const UNISON_REVISION_PREVIEW_RETRY_MS = 5000;
 export const UNISON_REVISION_PREVIEW_RETRY_MAX_MS = 10000;
 export const UNISON_PICTURE_URL = `${UNISON_API_BASE_URL}/me` as const;
@@ -195,6 +218,8 @@ export const LYRICS_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const LYRICS_NEGATIVE_CACHE_TTL_MS = 30 * 60 * 1000;
 export const UNISON_NEGATIVE_CACHE_TTL_MS = 5 * 60 * 1000;
 export const UNISON_MAX_VIDEOS_PER_LYRIC = 20;
+
+export const ARTWORK_MIN_SIZE_PX = 1440;
 
 export const OFFSET_STORAGE_PREFIX = "blyricsOffset_";
 

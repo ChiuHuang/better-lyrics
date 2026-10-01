@@ -4,6 +4,8 @@ import { injectI18nCssVars, loadLocaleOverride, subscribeToLocaleChanges } from 
 import { purgeExpiredKeys, saveCacheInfo } from "@core/storage";
 import { prewarmAuthenticationToken } from "@modules/lyrics/providers/unified";
 import { initProviders } from "@modules/lyrics/providers/shared";
+import { disposeKaraoke, syncKaraoke } from "@modules/karaoke/karaokeView";
+import { loadKaraokeSettings } from "@modules/karaoke/settings";
 import { setupRequestSniffer } from "@modules/lyrics/requestSniffer/requestSniffer";
 import {
   handleSettings,
@@ -23,6 +25,7 @@ import {
   observeLyricsPageType,
   reloadAlbumArt,
   setupAdObserver,
+  setupFullscreenPlayerBarReveal,
   unmountDock,
 } from "@modules/ui/dom";
 import {
@@ -30,7 +33,8 @@ import {
   enableLyricsTab,
   initializeLyrics,
   lyricReloader,
-  setUpAvButtonListener,
+  onFullscreenChange,
+  setUpVideoModeListener,
   setupAltHoverHandler,
   setupHomepageFullscreenHandler,
   setupWakeLockForFullscreen,
@@ -43,7 +47,8 @@ import {
 } from "@modules/ui/pictureInPicture/browserController";
 import { subscribeToCustomStyles } from "@modules/ui/styleInjector";
 import { applyLoggingSetting } from "@modules/settings/settings";
-import { logCore } from "@core/logger";
+import { logCore, logError } from "@core/logger";
+import { startVideoQualitySettingsBridge } from "@modules/settings/videoQualityBridge";
 
 /**
  * Initializes the BetterLyrics extension by setting up all required components.
@@ -70,10 +75,12 @@ async function modify(isDisposed: () => boolean): Promise<void> {
   loadEndTimeModeSetting();
   loadLyricOffsetSettings();
   loadPassiveScrollSetting();
+  loadKaraokeSettings(syncKaraoke);
+  onFullscreenChange(syncKaraoke, syncKaraoke);
   loadDockSettings(hideDockOnIdleInFullscreen);
   subscribeToCustomStyles();
   await purgeExpiredKeys();
-  await saveCacheInfo();
+  await saveCacheInfo().catch(error => logError("Failed to save cache info:", error));
   listenForPopupMessages();
   lyricReloader();
   initializeLyrics();
@@ -81,7 +88,7 @@ async function modify(isDisposed: () => boolean): Promise<void> {
   setupAltHoverHandler();
   initProviders();
   prewarmAuthenticationToken();
-  setUpAvButtonListener();
+  setUpVideoModeListener();
   logCore(
     INITIALIZE_LOG,
     "background: rgba(10,11,12,1) ; color: rgba(214, 250, 214,1) ; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 1rem; "
@@ -104,6 +111,7 @@ async function modify(isDisposed: () => boolean): Promise<void> {
  * Entry point for the BetterLyrics extension.
  */
 function init(): () => void {
+  const cleanupVideoQualitySettings = startVideoQualitySettingsBridge();
   let disposed = false;
   let modifyStarted = false;
   const runModify = (): void => {
@@ -121,13 +129,17 @@ function init(): () => void {
   }
 
   const cleanupRequestSniffer = setupRequestSniffer();
+  const cleanupPlayerBarReveal = setupFullscreenPlayerBarReveal();
   return () => {
     disposed = true;
+    cleanupVideoQualitySettings();
     document.removeEventListener("DOMContentLoaded", runModify);
     cleanupRequestSniffer();
     disposePictureInPictureBrowserController();
     if (document.querySelector('[data-extension-root="true"]')) cleanupLyrics();
     unmountDock();
+    cleanupPlayerBarReveal();
+    disposeKaraoke();
   };
 }
 

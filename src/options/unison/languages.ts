@@ -1,4 +1,6 @@
-import { warnUnison } from "@core/logger";
+import { getLanguageDisplayName } from "@core/i18n";
+import { findBestLanguageMatch } from "@utils";
+import type { DropdownOption } from "@/ui/dropdownFilter";
 
 // -- Languages --------------------------
 
@@ -44,26 +46,15 @@ const LANGUAGE_OPTIONS = [
   "sw",
 ];
 
-export function appendLanguageOptions(select: HTMLSelectElement): void {
-  let displayNames: Intl.DisplayNames | null = null;
-  try {
-    displayNames = new Intl.DisplayNames(undefined, { type: "language" });
-  } catch (err) {
-    warnUnison("Intl.DisplayNames unavailable, falling back to language codes", err);
-    displayNames = null;
+export function languageOptionList(opts: { leading?: DropdownOption; current?: string } = {}): DropdownOption[] {
+  const list: DropdownOption[] = opts.leading ? [opts.leading] : [];
+  for (const code of LANGUAGE_OPTIONS) list.push({ value: code, label: getLanguageDisplayName(code) });
+  if (opts.current && !list.some(option => option.value === opts.current)) {
+    list.push({ value: opts.current, label: opts.current });
   }
-  for (const code of LANGUAGE_OPTIONS) {
-    const opt = document.createElement("option");
-    opt.value = code;
-    opt.textContent = displayNames?.of(code) ?? code;
-    select.appendChild(opt);
-  }
+  return list;
 }
 
 export function matchLanguageOption(lang: string): string | null {
-  const lower = lang.toLowerCase();
-  const exact = LANGUAGE_OPTIONS.find(code => code.toLowerCase() === lower);
-  if (exact) return exact;
-  const base = lower.split("-")[0];
-  return LANGUAGE_OPTIONS.find(code => code.toLowerCase().split("-")[0] === base) ?? null;
+  return findBestLanguageMatch(lang, LANGUAGE_OPTIONS) ?? null;
 }
