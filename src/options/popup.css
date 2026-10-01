@@ -377,7 +377,7 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 
 @media (prefers-reduced-motion: reduce) {
   .text-btn, .pop__status { transition: none; }
-  .text-btn.is-refreshing .refresh-icon { animation-duration: 2s; }
+  .text-btn.is-refreshing .refresh-icon { animation: none; }
 }
 
 /* -- About ------------------------------------------------------------------ */
