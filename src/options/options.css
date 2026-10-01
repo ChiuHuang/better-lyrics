@@ -1450,7 +1450,7 @@ input.cm-textfield:focus-visible {
 
 /* Theme Modal */
 .theme-modal {
-	width: min(700px, 100%);
+	--modal-width: 95vw;
 }
 
 .theme-modal-section {
@@ -1742,7 +1742,7 @@ input.cm-textfield:focus-visible {
 /* -- Import Identity Modal --------------------------*/
 
 .import-identity-modal {
-	width: min(480px, 100%);
+	--modal-width: 480px;
 }
 
 .import-identity-modal .import-identity-file-btn {
@@ -2092,7 +2092,7 @@ input.cm-textfield:focus-visible {
 /* -- Language Exclusions Modal Tabs --------------------------*/
 
 .lang-exclusions-modal {
-	width: min(500px, 100%);
+	--modal-width: 500px;
 }
 
 .modal-tab-container {

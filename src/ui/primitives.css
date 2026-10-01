@@ -436,7 +436,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   z-index: var(--z-modal);
   display: grid;
   place-items: center;
-  padding: var(--page-pad);
+  padding: var(--row-pad);
 }
 .ui-modal[hidden] { display: none; }
 .ui-modal-open { overflow: hidden; }
@@ -453,7 +453,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: min(450px, 100%);
+  width: min(var(--modal-width, 450px), 100%);
   max-height: min(85vh, 100%);
   overflow: hidden;
   border: var(--card-edge);

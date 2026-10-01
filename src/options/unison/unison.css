@@ -1084,7 +1084,7 @@ kbd {
 /* -- Confirm Dialog --------------------------  */
 
 .unison-confirm {
-  width: min(24rem, 100%);
+  --modal-width: 24rem;
 }
 
 .unison-link-preview {

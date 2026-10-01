@@ -256,7 +256,7 @@
 
 /* URL Permission Modal */
 .url-permission-modal {
-  width: min(28rem, 100%);
+  --modal-width: 28rem;
 }
 
 .url-permission-header-left {
@@ -618,7 +618,7 @@
 
 /* Detail Modal */
 .detail-modal {
-  width: min(600px, 100%);
+  --modal-width: 600px;
 }
 
 .detail-modal .ui-modal__head {
@@ -1214,7 +1214,7 @@
 
 /* URL Install Modal */
 #url-modal-overlay .ui-modal__surface {
-  width: min(576px, 100%);
+  --modal-width: 576px;
 }
 
 #url-modal-error {
@@ -1275,7 +1275,7 @@ kbd.kbd-icon svg {
 
 /* Keyboard Shortcuts Modal */
 .shortcuts-modal {
-  width: min(560px, 100%);
+  --modal-width: 560px;
 }
 
 .shortcuts-modal .ui-modal__body {
