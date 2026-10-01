@@ -1653,79 +1653,15 @@ input.cm-textfield:focus-visible {
 	gap: 0.375rem;
 }
 
-.lang-pill {
-	padding: 0.25rem 0.375rem;
-	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid rgba(255, 255, 255, 0.15);
-	border-radius: 0.375rem;
-	cursor: pointer;
-	transition: all 0.15s ease;
-	user-select: none;
-	font-size: 0.8rem;
-	color: #fff;
-}
-
-.lang-pill:hover {
-	background: rgba(255, 255, 255, 0.12);
-	border-color: rgba(255, 255, 255, 0.25);
-}
-
-.lang-pill.disabled {
-	background: rgba(255, 255, 255, 0.02);
-	border-color: rgba(255, 255, 255, 0.08);
-	opacity: 0.5;
-	color: rgba(255, 255, 255, 0.6);
-}
-
-.lang-pill.disabled:hover {
-	background: rgba(255, 255, 255, 0.05);
-	border-color: rgba(255, 255, 255, 0.12);
-	opacity: 0.7;
-}
-
-.lang-pill-hidden {
-	display: none;
-}
-
 /* -- Language Exclusions Modal Tabs --------------------------*/
 
 .lang-exclusions-modal {
 	--modal-width: 500px;
 }
 
-.modal-tab-container {
-	display: flex;
-	gap: 0.5rem;
-	padding: 0.375rem 1.25rem;
-	background: rgba(255, 255, 255, 0.025);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.075);
-}
-
-.modal-tab {
-	border-radius: 0.75rem;
-	padding: 0.375rem 0.75rem;
-	border: none;
-	background: none;
-	color: rgba(255, 255, 255, 0.5);
-	cursor: pointer;
-	font-size: 0.8125rem;
-	font-weight: 600;
-	transition: background 0.2s, color 0.2s;
-	width: auto;
-	margin: 0;
-}
-
-.modal-tab:hover {
-	color: rgba(255, 255, 255, 0.7);
-	background: rgba(255, 255, 255, 0.05);
-}
-
-.modal-tab.active {
-	background: rgba(255, 255, 255, 0.05);
-	color: #fff;
-	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
-		rgba(0, 0, 0, 0.05) 0px 4px 6px -2px,
-		inset rgba(255, 255, 255, 0.1) 0px 1px 0px 0px;
+.lang-exclusions-tabs {
+	flex: none;
+	margin: 12px var(--text-inset) 0;
 }
 
 .lang-exclusions-tab-content {

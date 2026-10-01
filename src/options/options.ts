@@ -40,6 +40,7 @@ import { mountDropdownField, setDropdownFieldValue } from "@/options/dropdownFie
 import { TRANSLATION_LANGUAGES } from "@/options/translationLanguages";
 import { renderAboutLinks } from "@/options/aboutPage";
 import { createModal, type Modal } from "@/ui/modal";
+import { initSegmentedTabs, type SegmentedTabs } from "@/ui/segmentedTabs";
 import { toast } from "@/ui/toast";
 import {
   fitPopupToWindow,
@@ -1319,7 +1320,6 @@ function initLangExclusionsModal(): void {
   const romanizationSearchInput = document.getElementById("romanization-search") as HTMLInputElement;
   const translationSearchInput = document.getElementById("translation-search") as HTMLInputElement;
   const resetBtn = document.getElementById("lang-exclusions-reset-btn");
-  const tabButtons = modalOverlay?.querySelectorAll(".modal-tab");
 
   if (!modalOverlay) return;
   langExclusionsModal = createModal(modalOverlay, {
@@ -1339,13 +1339,12 @@ function initLangExclusionsModal(): void {
     ?.addEventListener("click", () => openExclusions("romanization"));
   document.getElementById("translation-exclusions-btn")?.addEventListener("click", () => openExclusions("translation"));
 
-  // Tab switching
-  tabButtons?.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const tab = (btn as HTMLElement).dataset.tab as "romanization" | "translation";
-      switchExclusionTab(tab);
+  const tablist = document.getElementById("lang-exclusions-tablist");
+  if (tablist) {
+    exclusionTabs = initSegmentedTabs(tablist, {
+      onChange: tab => switchExclusionTab(tab.dataset.tab === "translation" ? "translation" : "romanization"),
     });
-  });
+  }
 
   romanizationSearchInput?.addEventListener("input", () => {
     filterLanguagePills("romanization-pills-container", romanizationSearchInput.value);
@@ -1379,31 +1378,24 @@ function initLangExclusionsModal(): void {
   });
 }
 
+let exclusionTabs: SegmentedTabs | undefined;
+
 function switchExclusionTab(tab: "romanization" | "translation"): void {
   activeExclusionTab = tab;
 
-  const tabButtons = document.querySelectorAll("#lang-exclusions-modal-overlay .modal-tab");
-  const tabContents = document.querySelectorAll(".lang-exclusions-tab-content");
+  const button = exclusionTabs?.tabs.find(candidate => candidate.dataset.tab === tab);
+  if (exclusionTabs && button && exclusionTabs.selected() !== button) exclusionTabs.select(button, { notify: false });
+  for (const content of document.querySelectorAll(".lang-exclusions-tab-content")) {
+    content.classList.toggle("active", content.id === `${tab}-tab-content`);
+  }
+
   const resetBtn = document.getElementById("lang-exclusions-reset-btn");
-
-  tabButtons.forEach(btn => {
-    const btnTab = (btn as HTMLElement).dataset.tab;
-    btn.classList.toggle("active", btnTab === tab);
-  });
-
-  tabContents.forEach(content => {
-    const contentId = content.id;
-    content.classList.toggle("active", contentId === `${tab}-tab-content`);
-  });
-
   if (resetBtn) {
     const tabName = t(tab === "romanization" ? "options_romanization_tab" : "options_translation_tab");
     resetBtn.textContent = t("options_resetToDefault", tabName);
   }
 
-  // Focus the search input of the active tab
-  const searchInput = document.getElementById(`${tab}-search`) as HTMLInputElement;
-  searchInput?.focus();
+  (document.getElementById(`${tab}-search`) as HTMLInputElement | null)?.focus();
 }
 
 let langExclusionsModal: Modal | undefined;
@@ -1426,68 +1418,50 @@ function clearExclusionSearch(): void {
   }
 }
 
-let romanizationPillsDelegated = false;
+function createLanguageChip(langCode: string, included: boolean): HTMLLabelElement {
+  const langName = getLanguageDisplayName(langCode);
+  const chip = document.createElement("label");
+  chip.className = "ui-chip lang-chip";
+  chip.dataset.langCode = langCode;
+  chip.dataset.langName = langName.toLowerCase();
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = included;
+  const label = document.createElement("span");
+  label.textContent = langName;
+  chip.append(input, label);
+  return chip;
+}
+
+function bindLanguageChips(container: HTMLElement, toggle: (langCode: string) => void): void {
+  if (container.dataset.bound) return;
+  container.dataset.bound = "true";
+  container.addEventListener("change", event => {
+    const code = (event.target as HTMLElement).closest<HTMLElement>("[data-lang-code]")?.dataset.langCode;
+    if (code) toggle(code);
+  });
+}
 
 function renderRomanizationLanguagePills(): void {
   const container = document.getElementById("romanization-pills-container");
   if (!container) return;
-
-  if (!romanizationPillsDelegated) {
-    container.addEventListener("click", e => {
-      const pill = (e.target as HTMLElement).closest("[data-lang-code]") as HTMLElement | null;
-      if (pill?.dataset.langCode) {
-        toggleRomanizationLanguage(pill.dataset.langCode);
-      }
-    });
-    romanizationPillsDelegated = true;
-  }
-
-  container.replaceChildren();
-
-  for (const langCode of Object.keys(ROMANIZATION_LANGUAGES)) {
-    const langName = getLanguageDisplayName(langCode);
-    const isDisabled = romanizationDisabledLanguages.includes(langCode);
-
-    const pill = document.createElement("div");
-    pill.className = `lang-pill${isDisabled ? " disabled" : ""}`;
-    pill.dataset.langCode = langCode;
-    pill.dataset.langName = langName.toLowerCase();
-    pill.textContent = langName;
-
-    container.appendChild(pill);
-  }
+  bindLanguageChips(container, toggleRomanizationLanguage);
+  container.replaceChildren(
+    ...Object.keys(ROMANIZATION_LANGUAGES).map(code =>
+      createLanguageChip(code, !romanizationDisabledLanguages.includes(code))
+    )
+  );
 }
-
-let translationPillsDelegated = false;
 
 function renderTranslationLanguagePills(): void {
   const container = document.getElementById("translation-pills-container");
   if (!container) return;
-
-  if (!translationPillsDelegated) {
-    container.addEventListener("click", e => {
-      const pill = (e.target as HTMLElement).closest("[data-lang-code]") as HTMLElement | null;
-      if (pill?.dataset.langCode) {
-        toggleTranslationLanguage(pill.dataset.langCode);
-      }
-    });
-    translationPillsDelegated = true;
-  }
-
-  container.replaceChildren();
-
-  for (const { value: langCode } of TRANSLATION_LANGUAGES) {
-    const langName = getLanguageDisplayName(langCode);
-    const isDisabled = translationDisabledLanguages.includes(langCode);
-
-    const pill = document.createElement("div");
-    pill.className = `lang-pill${isDisabled ? " disabled" : ""}`;
-    pill.dataset.langCode = langCode;
-    pill.dataset.langName = langName.toLowerCase();
-    pill.textContent = langName;
-
-    container.appendChild(pill);
-  }
+  bindLanguageChips(container, toggleTranslationLanguage);
+  container.replaceChildren(
+    ...TRANSLATION_LANGUAGES.map(({ value }) =>
+      createLanguageChip(value, !translationDisabledLanguages.includes(value))
+    )
+  );
 }
 
 function toggleRomanizationLanguage(langCode: string): void {
@@ -1498,7 +1472,6 @@ function toggleRomanizationLanguage(langCode: string): void {
     romanizationDisabledLanguages.splice(index, 1);
   }
   saveOptions();
-  renderRomanizationLanguagePills();
 }
 
 function toggleTranslationLanguage(langCode: string): void {
@@ -1509,7 +1482,6 @@ function toggleTranslationLanguage(langCode: string): void {
     translationDisabledLanguages.splice(index, 1);
   }
   saveOptions();
-  renderTranslationLanguagePills();
 }
 
 function filterLanguagePills(containerId: string, query: string): void {
@@ -1517,14 +1489,11 @@ function filterLanguagePills(containerId: string, query: string): void {
   if (!container) return;
 
   const normalizedQuery = query.toLowerCase().trim();
-  const pills = container.querySelectorAll(".lang-pill");
-
-  pills.forEach(pill => {
-    const langName = (pill as HTMLElement).dataset.langName || "";
-    const langCode = (pill as HTMLElement).dataset.langCode || "";
-    const matches = langName.includes(normalizedQuery) || langCode.includes(normalizedQuery);
-    pill.classList.toggle("lang-pill-hidden", !matches);
-  });
+  for (const chip of container.querySelectorAll<HTMLElement>("[data-lang-code]")) {
+    const langName = chip.dataset.langName || "";
+    const langCode = chip.dataset.langCode || "";
+    chip.hidden = !(langName.includes(normalizedQuery) || langCode.includes(normalizedQuery));
+  }
 }
 
 function setUnisonPositionInForm(position: string): void {
