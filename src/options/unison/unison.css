@@ -97,77 +97,8 @@
 
 /* -- Search --------------------------  */
 
-.unison-search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.unison-search-icon {
-  position: absolute;
-  left: 0.625rem;
-  width: 1rem;
-  height: 1rem;
-  color: rgba(255, 255, 255, 0.4);
-  pointer-events: none;
-}
-
-.unison-search-input {
-  box-sizing: border-box;
+.unison-search .ui-search__input {
   width: 340px;
-  height: 34px;
-  padding: 0 2rem;
-  border: none;
-  border-radius: var(--radius-control);
-  background: var(--raised-bg);
-  box-shadow: var(--raised-edge);
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  outline: none;
-  transition:
-    background var(--duration-quick) ease-out,
-    box-shadow var(--duration-quick) ease-out;
-}
-
-.unison-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.unison-search-input:hover {
-  background: var(--raised-bg-hover);
-}
-
-.unison-search-input:focus {
-  background: var(--raised-bg-hover);
-  box-shadow: var(--field-edge-focus);
-}
-
-.unison-search-hint {
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  opacity: 0.6;
-  transition: opacity 0.15s;
-}
-
-.unison-search-hint kbd {
-  font-size: 0.6875rem;
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-.unison-search-input:focus ~ .unison-search-hint {
-  opacity: 0;
-}
-
-.unison-search-input:not(:placeholder-shown) ~ .unison-search-hint {
-  opacity: 0;
 }
 
 /* -- Nav Buttons --------------------------  */
@@ -1725,7 +1656,8 @@
     flex-wrap: wrap;
   }
 
-  .unison-search-input {
+  .unison-search,
+  .unison-search .ui-search__input {
     width: 100%;
   }
 
@@ -2826,8 +2758,7 @@
   .unison-preview-content,
   .unison-input,
   .unison-token-input,
-  .unison-back-btn,
-  .unison-search-input {
+  .unison-back-btn {
     corner-shape: superellipse(1.6);
   }
 
@@ -2862,7 +2793,6 @@
   .unison-input,
   .unison-token-input,
   .unison-back-btn,
-  .unison-search-input,
   .unison-report-dropdown-item {
     transition: none;
   }
