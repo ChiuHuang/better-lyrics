@@ -33,8 +33,6 @@ body.options-page {
 .page.active { display: flex; }
 .page--flow { flex: none; }
 
-/* options.css sizes every popup button to full width; primitives size themselves */
-.options-page :where(.ui-button:not(.ui-button--icon), .ui-card__tab, .ui-dropdown__trigger) { width: auto; }
 
 /* -- Nav ------------------------------------------------------------------- */
 
@@ -189,30 +187,7 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 #sources-content > .ui-card { flex: 1; }
 #sources-content .ui-card__body { flex: 1; padding-bottom: 24px; overflow-y: auto; }
 
-.head-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  width: auto;
-  height: 28px;
-  margin: 0;
-  padding: 0 9px 0 7px;
-  border: none;
-  border-radius: var(--radius-control);
-  background: var(--raised-bg);
-  box-shadow: var(--raised-edge);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background var(--duration-quick) ease-out,
-    color var(--duration-quick) ease-out,
-    scale var(--duration-quick) ease-out;
-}
-.head-link:hover { background: var(--raised-bg-hover); color: #fff; }
-.head-link:active { scale: var(--scale-press); }
+/* raised surface like the dropdown trigger and nav tiles; the plain link read too subtle */
 .head-link img { width: 14px; height: 14px; border-radius: 50%; }
 .head-link svg {
   width: 12px;
@@ -239,12 +214,11 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 .providers > li.disabled-item .ui-sync-tag { opacity: 0.5; }
 
 @supports (corner-shape: superellipse(1.6)) {
-  .head-link { corner-shape: superellipse(1.6); }
   .providers > li { border-radius: var(--radius-row); corner-shape: superellipse(1.6); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .head-link, .head-link svg, .providers > li { transition: none; }
+  .head-link svg, .providers > li { transition: none; }
 }
 
 /* -- Identity ----------------------------------------------------------------- */
@@ -321,31 +295,9 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 }
 .pop__foot-spacer { flex: 1; }
 
-.text-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  width: auto;
-  margin: 0;
-  padding: 7px 10px;
-  border: none;
-  border-radius: var(--radius-control);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.6);
-  font: inherit;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background-color var(--duration-quick) ease-out,
-    color var(--duration-quick) ease-out,
-    scale var(--duration-quick) ease-out;
-}
-.text-btn:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
-.text-btn:active { scale: var(--scale-press); }
 .text-btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.08); color: #fff; }
-.text-btn svg { width: 14px; height: 14px; flex: none; }
-.text-btn.is-refreshing .refresh-icon { animation: ui-spin var(--duration-spin) linear infinite; }
+.text-btn .refresh-icon { transition: rotate var(--duration-spin) var(--ease-smooth-out); }
+.text-btn.is-spinning .refresh-icon { rotate: 360deg; }
 
 .pop__status {
   padding: 0 8px;
@@ -359,13 +311,8 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 }
 .pop__status.is-shown { opacity: 1; transform: none; }
 
-@supports (corner-shape: superellipse(1.6)) {
-  .text-btn { corner-shape: superellipse(1.6); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .text-btn, .pop__status { transition: none; }
-  .text-btn.is-refreshing .refresh-icon { animation: none; }
+  .text-btn .refresh-icon, .pop__status { transition: none; }
 }
 
 /* -- About ------------------------------------------------------------------ */
