@@ -885,6 +885,71 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   border-top: 1px solid var(--divider-strong);
 }
 
+/* -- Stat tile (value, label, corner icon, optional breakdown bar) -- */
+.ui-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--card-pad); padding: var(--card-pad) 0 var(--row-pad); }
+.ui-stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px var(--row-pad);
+  border-radius: var(--radius-row);
+  background: linear-gradient(rgba(255, 255, 255, 0.03), transparent 60%), var(--raised-bg);
+  box-shadow: var(--raised-edge);
+}
+.ui-stat__value { font-size: var(--font-size-2xl); font-weight: 600; letter-spacing: -0.01em; color: var(--text-strong); }
+.ui-stat__label { font-size: var(--font-size-sm); color: var(--text-label); }
+.ui-stat__icon { position: absolute; top: 12px; right: var(--row-pad); width: 18px; height: 18px; color: var(--text-muted); }
+/* Segments are 22px-tall hit targets, min 10px wide; only the 6px stripe in their middle is painted */
+.ui-stat__bar { display: flex; gap: 2px; height: 22px; margin-block: -2px -8px; }
+.ui-stat__bar > span { position: relative; min-width: 10px; cursor: default; }
+.ui-stat__bar > span::after {
+  content: "";
+  position: absolute;
+  inset: 8px 0;
+  border-radius: 2px;
+  background: var(--segment-color);
+  transition: opacity var(--duration-quick) ease-out;
+}
+.ui-stat__bar > span:first-child::after { border-radius: 3px 2px 2px 3px; }
+.ui-stat__bar > span:last-child::after { border-radius: 2px 3px 3px 2px; }
+.ui-stat__bar:hover > span:not(:hover)::after { opacity: 0.4; }
+
+/* -- Jump tile (icon, label, one-line description, corner arrow) -- */
+.ui-jump-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--card-pad); }
+.ui-jump {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px var(--row-pad);
+  border: var(--card-edge);
+  border-radius: var(--radius-row);
+  background: var(--card-bg);
+  color: var(--text-strong);
+  text-decoration: none;
+  transition:
+    background var(--duration-quick) ease-out,
+    border-color var(--duration-quick) ease-out,
+    scale var(--duration-quick) ease-out;
+}
+.ui-jump:hover { background: var(--card-bg-hover); border-color: var(--card-edge-color-hover); }
+.ui-jump:active { scale: var(--scale-press); }
+.ui-jump:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.ui-jump__icon { width: 16px; height: 16px; margin-bottom: 8px; color: var(--text-muted); }
+.ui-jump__label { font-size: var(--font-size-sm); font-weight: 500; white-space: nowrap; }
+.ui-jump__sub { font-size: var(--font-size-xs); color: var(--text-label); }
+.ui-jump__arrow {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 14px;
+  height: 14px;
+  color: var(--text-faint);
+  transition: color var(--duration-quick) ease-out, translate var(--duration-quick) ease-out;
+}
+.ui-jump:hover .ui-jump__arrow { color: var(--text-muted); translate: 1px -1px; }
+
 /* -- Visually hidden (screen readers only; chip inputs stay focusable) -- */
 .ui-visually-hidden, .ui-chip input {
   position: absolute;
@@ -914,7 +979,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   .ui-segmented__tab, .ui-segmented__pill { border-radius: var(--radius-tab); }
   .ui-button, .ui-field, .ui-card, .ui-row, .ui-sync-tag, .ui-dropdown__trigger,
   .ui-menu, .ui-menu__option, .ui-frame, .ui-toast, .ui-modal__surface, .ui-callout,
-  .ui-segmented, .ui-segmented__tab, .ui-segmented__pill, .ui-filter-bar {
+  .ui-segmented, .ui-segmented__tab, .ui-segmented__pill, .ui-filter-bar, .ui-stat, .ui-jump {
     corner-shape: superellipse(1.6);
   }
 }
@@ -939,6 +1004,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   .ui-skeleton::after { animation: none; }
   .ui-modal__backdrop, .ui-modal__surface { transition: none; }
   .ui-switch__track, .ui-switch__track::before, .ui-switch--tri, .ui-switch--tri::before, .ui-search__hint,
-  .ui-segmented__tab, .ui-segmented__pill, .ui-tabs__tab, .ui-tabs__bar, .ui-chip__sort { transition: none; }
+  .ui-segmented__tab, .ui-segmented__pill, .ui-tabs__tab, .ui-tabs__bar, .ui-chip__sort,
+  .ui-stat__bar > span::after, .ui-jump, .ui-jump__arrow { transition: none; }
   .ui-sort-icon--animate { animation: none; }
 }
