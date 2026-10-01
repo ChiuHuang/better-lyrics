@@ -187,6 +187,7 @@ export function initRefreshLyricsButton(onFailed: () => void): void {
   const button = document.getElementById("refresh-lyrics-btn");
   const icon = button?.querySelector<SVGElement>(".refresh-icon");
   if (!button || !icon) return;
+  icon.addEventListener("transitionend", () => resetSpin(button, icon));
   button.addEventListener("click", async () => {
     resetSpin(button, icon);
     button.classList.add("is-spinning");
