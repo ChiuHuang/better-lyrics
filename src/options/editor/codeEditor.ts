@@ -5,6 +5,7 @@ import { createEditorState, createEditorView } from "@/options/editor/core/edito
 import { editorStateManager } from "@/options/editor/core/state";
 import { generateDefaultFilename, importManager, saveCSSToFile } from "@/options/editor/features/import";
 import { saveToStorage } from "@/options/editor/features/themes";
+import { isEditingCSS } from "@/options/editor/ui/dom";
 import { showAlert, showModal } from "@/options/editor/ui/feedback";
 import { errorEditor, logEditor } from "@core/logger";
 
@@ -19,8 +20,7 @@ function initializeEditorKeyboardShortcuts() {
   const isStandalone = document.querySelector(".theme-name-display.standalone") !== null;
 
   document.addEventListener("keydown", function (e) {
-    const cssSection = document.getElementById("css");
-    const editorIsVisible = isStandalone || (cssSection && cssSection.style.display === "block");
+    const editorIsVisible = isStandalone || isEditingCSS();
 
     if (!editorIsVisible) return;
 

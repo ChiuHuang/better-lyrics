@@ -68,17 +68,17 @@
 				<div class="marketplace-filter-group">
 					<span class="marketplace-filter-label">__MSG_marketplace_sortBy__</span>
 					<div class="marketplace-filter-options" role="group" aria-label="Sort options">
-						<label class="marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortRatingDesc__" data-label-asc="__MSG_marketplace_sortRatingAsc__">
+						<label class="ui-chip marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortRatingDesc__" data-label-asc="__MSG_marketplace_sortRatingAsc__">
 							<input type="radio" name="store-filter-sort" value="rating" checked>
 							<span class="marketplace-filter-chip__icon" aria-hidden="true"></span>
 							<span class="marketplace-filter-chip__label">__MSG_marketplace_sortRatingDesc__</span>
 						</label>
-						<label class="marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortDownloadsDesc__" data-label-asc="__MSG_marketplace_sortDownloadsAsc__">
+						<label class="ui-chip marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortDownloadsDesc__" data-label-asc="__MSG_marketplace_sortDownloadsAsc__">
 							<input type="radio" name="store-filter-sort" value="downloads">
 							<span class="marketplace-filter-chip__icon" aria-hidden="true"></span>
 							<span class="marketplace-filter-chip__label">__MSG_marketplace_sortDownloadsDesc__</span>
 						</label>
-						<label class="marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortNewest__" data-label-asc="__MSG_marketplace_sortOldest__">
+						<label class="ui-chip marketplace-filter-chip marketplace-filter-chip--sort" data-label-desc="__MSG_marketplace_sortNewest__" data-label-asc="__MSG_marketplace_sortOldest__">
 							<input type="radio" name="store-filter-sort" value="newest">
 							<span class="marketplace-filter-chip__icon" aria-hidden="true"></span>
 							<span class="marketplace-filter-chip__label">__MSG_marketplace_sortNewest__</span>
@@ -88,15 +88,15 @@
 				<div class="marketplace-filter-group">
 					<span class="marketplace-filter-label">__MSG_marketplace_show__</span>
 					<div class="marketplace-filter-options">
-						<label class="marketplace-filter-chip">
+						<label class="ui-chip marketplace-filter-chip">
 							<input type="radio" name="store-filter-show" value="all" checked>
 							<span>__MSG_marketplace_showAll__</span>
 						</label>
-						<label class="marketplace-filter-chip">
+						<label class="ui-chip marketplace-filter-chip">
 							<input type="radio" name="store-filter-show" value="installed">
 							<span>__MSG_marketplace_showInstalled__</span>
 						</label>
-						<label class="marketplace-filter-chip">
+						<label class="ui-chip marketplace-filter-chip">
 							<input type="radio" name="store-filter-show" value="not-installed">
 							<span>__MSG_marketplace_showNotInstalled__</span>
 						</label>
@@ -105,11 +105,11 @@
 				<div class="marketplace-filter-group">
 					<span class="marketplace-filter-label">__MSG_marketplace_options__</span>
 					<div class="marketplace-filter-options">
-						<label class="marketplace-filter-chip">
+						<label class="ui-chip marketplace-filter-chip">
 							<input type="checkbox" id="store-filter-shaders">
 							<span>__MSG_marketplace_hasShaders__</span>
 						</label>
-						<label class="marketplace-filter-chip">
+						<label class="ui-chip marketplace-filter-chip">
 							<input type="checkbox" id="store-filter-compatible" checked>
 							<span>__MSG_marketplace_compatibleOnly__</span>
 						</label>
@@ -119,7 +119,7 @@
 
 			<main class="marketplace-content">
 				<div id="store-loading" class="store-loading">
-					<div class="store-loading-spinner"></div>
+					<div class="ui-spinner store-loading-spinner"></div>
 					<span>__MSG_marketplace_loading__</span>
 				</div>
 				<div id="store-error" class="store-error">
@@ -243,14 +243,14 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body" data-scroll-fade>
 					<p class="modal-message">__MSG_marketplace_urlModalMessage__</p>
 					<input type="text" id="url-modal-input" class="modal-input" placeholder="__MSG_marketplace_urlModalPlaceholder__" />
 					<p id="url-modal-error"></p>
 				</div>
 				<div class="modal-footer">
-					<button id="url-modal-cancel" class="modal-btn modal-btn-secondary">__MSG_marketplace_cancel__</button>
-					<button id="url-modal-install" class="modal-btn modal-btn-primary">__MSG_marketplace_install__</button>
+					<button id="url-modal-cancel" type="button" class="ui-button ui-button--header">__MSG_marketplace_cancel__</button>
+					<button id="url-modal-install" type="button" class="ui-button ui-button--header ui-button--primary">__MSG_marketplace_install__</button>
 				</div>
 			</div>
 		</div>
@@ -271,7 +271,7 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body" data-scroll-fade>
 					<p class="url-permission-title">__MSG_marketplace_urlPermissionWhy__</p>
 					<p class="url-permission-description">__MSG_marketplace_urlPermissionDesc__</p>
 					<ul class="url-permission-list">
@@ -282,8 +282,8 @@
 					<p class="url-permission-note">__MSG_marketplace_urlPermissionNote__</p>
 				</div>
 				<div class="modal-footer">
-					<button id="url-permission-modal-cancel" class="modal-btn modal-btn-secondary">__MSG_marketplace_cancel__</button>
-					<button id="url-permission-modal-grant" class="modal-btn modal-btn-primary">__MSG_marketplace_grantPermission__</button>
+					<button id="url-permission-modal-cancel" type="button" class="ui-button ui-button--header">__MSG_marketplace_cancel__</button>
+					<button id="url-permission-modal-grant" type="button" class="ui-button ui-button--header ui-button--primary">__MSG_marketplace_grantPermission__</button>
 				</div>
 			</div>
 		</div>
@@ -299,7 +299,7 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body" data-scroll-fade>
 					<div class="shortcuts-list">
 						<div class="shortcuts-group">
 							<div class="shortcuts-group-title">__MSG_marketplace_shortcutsNavigation__</div>
@@ -451,13 +451,13 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body" data-scroll-fade>
 					<p id="modal-message" class="modal-message"></p>
 					<input type="text" id="modal-input" class="modal-input" style="display: none" />
 				</div>
 				<div class="modal-footer">
-					<button id="modal-cancel" class="modal-btn modal-btn-secondary">__MSG_marketplace_cancel__</button>
-					<button id="modal-confirm" class="modal-btn modal-btn-primary">__MSG_options_modal_confirm__</button>
+					<button id="modal-cancel" type="button" class="ui-button ui-button--header">__MSG_marketplace_cancel__</button>
+					<button id="modal-confirm" type="button" class="ui-button ui-button--header ui-button--primary">__MSG_options_modal_confirm__</button>
 				</div>
 			</div>
 		</div>

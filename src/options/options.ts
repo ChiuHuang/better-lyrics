@@ -11,14 +11,16 @@ import { attachHoldRepeat } from "@core/holdRepeat";
 import { getLanguageDisplayName, initI18n, loadLocaleOverride, SUPPORTED_LOCALES, t } from "@core/i18n";
 import {
   exportIdentity,
+  forgetDisplayName,
   getDisplayName,
   getIdentity,
+  getLastKnownDisplayName,
   getResolvedProfile,
   importIdentity,
   invalidateDisplayName,
   signPayload,
 } from "@core/keyIdentity";
-import { clearAllOffsets, clearCache, getOffsetInfo } from "@core/storage";
+import { clearAllOffsets, clearLyricCache, getOffsetInfo, refreshCacheInfo } from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
@@ -56,7 +58,7 @@ import {
   readBackedUpKeyId,
   rememberPendingBackup,
 } from "@/options/identityBackup";
-import { attachScrollFade } from "@/ui/scrollFade";
+import { attachDeclaredScrollFades, attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeLabel } from "@/ui/syncTag";
 import { initTooltips } from "@/ui/tooltip";
 
@@ -218,41 +220,31 @@ const saveOptionsToStorage = (options: Options): void => {
   });
 };
 
-// Function to clear transient lyrics
-const clearTransientLyrics = (callback?: () => void): void => {
-  chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
-    if (tabs.length === 0) {
-      clearCache()
-        .then(
-          cacheInfo => {
-            updateCacheInfo({ cacheInfo });
-            toast.success(t("options_alert_cacheCleared"));
-          },
-          error => {
-            errorCore("Failed to clear cached lyrics:", error);
-            toast.error(t("options_alert_cacheClearFailed"));
-          }
-        )
-        .finally(() => callback?.());
+const reloadYouTubeMusicLyrics = async (): Promise<void> => {
+  const tabs = await chrome.tabs.query({ url: "https://music.youtube.com/*" });
+  const results = await Promise.allSettled(
+    tabs.flatMap(tab => (tab.id == null ? [] : [chrome.tabs.sendMessage(tab.id, { action: "reloadLyrics" })]))
+  );
+  for (const result of results) {
+    if (result.status === "rejected") warnCore("reloadLyrics send failed:", result.reason);
+  }
+};
+
+const clearTransientLyrics = async (): Promise<void> => {
+  try {
+    const current = await refreshCacheInfo();
+    updateCacheInfo({ cacheInfo: current });
+    if (current.count === 0 && current.size === 0) {
+      toast.info(t("options_alert_nothingToClear"));
       return;
     }
-
-    let completedTabs = 0;
-    tabs.forEach(tab => {
-      chrome.tabs.sendMessage(tab.id!, { action: "clearCache" }, response => {
-        completedTabs++;
-        if (completedTabs === tabs.length) {
-          if (response?.success) {
-            if (response.cacheInfo) updateCacheInfo({ cacheInfo: response.cacheInfo });
-            toast.success(t("options_alert_cacheCleared"));
-          } else {
-            toast.error(t("options_alert_cacheClearFailed"));
-          }
-          if (callback && typeof callback === "function") callback();
-        }
-      });
-    });
-  });
+    updateCacheInfo({ cacheInfo: await clearLyricCache() });
+    await reloadYouTubeMusicLyrics();
+    toast.success(t("options_alert_cacheCleared"));
+  } catch (error) {
+    errorCore("Failed to clear cached lyrics:", error);
+    toast.error(t("options_alert_cacheClearFailed"));
+  }
 };
 
 const _formatBytes = (bytes: number, decimals = 2): string => {
@@ -584,7 +576,7 @@ function createProviderElem(providerId: string, checked = true): HTMLLIElement |
 function initPopupScrollFades(): void {
   const body = document.getElementById("options");
   if (body) attachScrollFade(body);
-  for (const el of document.querySelectorAll<HTMLElement>("[data-scroll-fade]")) attachScrollFade(el);
+  attachDeclaredScrollFades();
 }
 
 // -- Fullscreen dependents --------------------------
@@ -795,7 +787,13 @@ async function initIdentityUI(): Promise<void> {
   onBackupFlagChanged(() => void syncBackupWarning());
 
   try {
-    displayNameEl.textContent = await getDisplayName();
+    const lastKnown = await getLastKnownDisplayName();
+    displayNameEl.textContent = lastKnown;
+    getDisplayName()
+      .then(current => {
+        if (displayNameEl.textContent === lastKnown) displayNameEl.textContent = current;
+      })
+      .catch(error => errorCore("Failed to resolve the display name:", error));
   } catch (error) {
     errorCore("Failed to load identity:", error);
     displayNameEl.textContent = t("options_alert_identityLoadError");
@@ -1082,7 +1080,7 @@ function initNicknameModal(): void {
         invalidateDisplayName(responseDisplayName);
         resolvedDisplayName = responseDisplayName;
       } else {
-        invalidateDisplayName();
+        await forgetDisplayName();
         resolvedDisplayName = await getDisplayName();
       }
       applyDisplayName(resolvedDisplayName);

@@ -25,7 +25,7 @@ export function rovingIndex(current: number, key: string, count: number, rtl = f
   }
 }
 
-export interface CardTabsOptions {
+interface CardTabsOptions {
   animateHeight?: boolean;
   onChange?: (id: string) => void;
 }

@@ -1,5 +1,5 @@
 import { compressString } from "./compression";
-import { getLocalStorage } from "./storage";
+import { getLocalStorage, isLyricCacheKey } from "@core/storage";
 import { errorCore, logCore } from "@core/logger";
 
 const SYNC_STORAGE_LIMIT = 7000;
@@ -55,7 +55,7 @@ async function clearLyricsCacheIfNeeded(requiredSpace: number): Promise<void> {
   if (availableSpace < requiredSpace) {
     logCore("Not enough space, clearing lyrics cache...");
     const allData = await chrome.storage.local.get(null);
-    const lyricsKeys = Object.keys(allData).filter(key => key.startsWith("blyrics_"));
+    const lyricsKeys = Object.keys(allData).filter(isLyricCacheKey);
 
     if (lyricsKeys.length > 0) {
       logCore(`Removing ${lyricsKeys.length} cached lyrics entries`);

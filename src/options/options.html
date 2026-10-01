@@ -56,15 +56,8 @@
 		<main id="options" class="pop__body">
 			<section class="page tab-content active" id="general-content">
 				<div class="ui-card">
-					<div class="ui-card__head">
-						<div class="ui-card__tabs">
-							<button class="ui-card__tab" data-tab="behavior" type="button" aria-selected="true">__MSG_options_general_behavior__</button>
-							<button class="ui-card__tab" data-tab="cache" type="button" aria-selected="false">__MSG_options_general_cache__</button>
-							<span class="ui-card__bar"></span>
-						</div>
-					</div>
 					<div class="ui-card__body">
-						<div class="ui-panel" data-panel="behavior">
+						<div class="ui-panel is-active">
 							<div class="ui-row">
 								<span class="ui-row__label">__MSG_options_general_showLogs__</span>
 								<label><input type="checkbox" id="logs"><span class="checkmark"></span></label>
@@ -73,8 +66,6 @@
 								<span class="ui-row__label">__MSG_options_general_autoSwitch__</span>
 								<label><input type="checkbox" id="autoSwitch"><span class="checkmark"></span></label>
 							</div>
-						</div>
-						<div class="ui-panel" data-panel="cache">
 							<div class="ui-row">
 								<span class="ui-row__label">__MSG_options_general_totalLyrics__</span>
 								<span class="ui-row__value" id="lyrics-count">0</span>
@@ -270,7 +261,7 @@
 							</div>
 							<div class="ui-row">
 								<span class="ui-row__label">__MSG_options_themes_customStyles__</span>
-								<button class="small-btn" id="edit-css-btn">
+								<button class="ui-button" id="edit-css-btn">
 									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
 										<path d="M13.488 2.513a1.75 1.75 0 0 0-2.475 0L6.75 6.774a2.75 2.75 0 0 0-.596.892l-.848 2.047a.75.75 0 0 0 .98.98l2.047-.848a2.75 2.75 0 0 0 .892-.596l4.261-4.262a1.75 1.75 0 0 0 0-2.474Z"></path>
 										<path d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5H4.75Z"></path>
@@ -279,7 +270,7 @@
 								</button>
 							</div>
 							<div class="store-buttons-row">
-								<button class="small-btn" id="browse-themes-btn">
+								<button class="ui-button" id="browse-themes-btn">
 									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
 										<path d="M5.223 2.25c-.497 0-.974.198-1.325.55l-1.3 1.298A3.75 3.75 0 0 0 7.5 9.75c.627.47 1.406.75 2.25.75.844 0 1.624-.28 2.25-.75.626.47 1.406.75 2.25.75.844 0 1.623-.28 2.25-.75a3.75 3.75 0 0 0 4.902-5.652l-1.3-1.299a1.875 1.875 0 0 0-1.325-.549H5.223Z"></path>
 										<path fill-rule="evenodd" d="M3 20.25v-8.755c1.42.674 3.08.673 4.5 0A5.234 5.234 0 0 0 9.75 12c.804 0 1.568-.182 2.25-.506a5.234 5.234 0 0 0 2.25.506c.804 0 1.567-.182 2.25-.506 1.42.674 3.08.675 4.5.001v8.755h.75a.75.75 0 0 1 0 1.5H2.25a.75.75 0 0 1 0-1.5H3Zm3-6a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-.75.75h-3a.75.75 0 0 1-.75-.75v-3Zm8.25-.75a.75.75 0 0 0-.75.75v5.25c0 .414.336.75.75.75h3a.75.75 0 0 0 .75-.75v-5.25a.75.75 0 0 0-.75-.75h-3Z" clip-rule="evenodd"></path>
@@ -287,7 +278,7 @@
 									__MSG_options_themes_marketplace__
 								</button>
 								<div class="your-themes-container">
-									<button class="small-btn" id="your-themes-btn">
+									<button class="ui-button" id="your-themes-btn">
 										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="installed-icon">
 											<path fill="currentColor" fill-rule="evenodd" d="M17.5 11c-2.121 0-3.182 0-3.841-.659S13 8.621 13 6.5s0-3.182.659-3.841S15.379 2 17.5 2s3.182 0 3.841.659S22 4.379 22 6.5s0 3.182-.659 3.841S19.621 11 17.5 11m-1.455-2.784c-.765-.67-1.545-1.564-1.545-2.418c0-1.773 1.65-2.435 3-1.065c1.35-1.37 3-.708 3 1.065c0 .854-.78 1.747-1.545 2.418c-.596.523-.894.784-1.455.784c-.56 0-.859-.261-1.455-.784" clip-rule="evenodd"></path><path fill="currentColor" d="M21.904 16.441c.083-1.024.094-2.274.096-3.743a.697.697 0 1 0-1.396 0c-.001 1.477-.012 2.658-.091 3.63c-.084 1.032-.242 1.763-.507 2.32l-2.633-2.37a2.79 2.79 0 0 0-3.471-.21l-.277.196a1.86 1.86 0 0 1-2.386-.207l-3.99-3.99a2.14 2.14 0 0 0-2.922-.097l-.931.814V12c0-2.212 0-3.801.163-5.01c.16-1.19.464-1.907.994-2.437S5.8 3.72 6.99 3.56c1.079-.145 2.458-.161 4.313-.163a.699.699 0 0 0 0-1.396c-1.829.002-3.33.02-4.499.177c-1.343.18-2.404.557-3.236 1.39s-1.21 1.893-1.39 3.236C2 8.116 2 9.8 2 11.947V12q0 .736.002 1.396c.007 1.729.044 3.121.243 4.24c.203 1.14.584 2.058 1.322 2.796c.832.833 1.893 1.21 3.236 1.39C8.116 22 9.8 22 11.947 22h.106c2.148 0 3.83 0 5.144-.177c1.344-.18 2.404-.557 3.236-1.39a4.2 4.2 0 0 0 .73-.983c.445-.825.644-1.82.74-3.009" opacity="0.66"></path>
 										</svg>
@@ -404,15 +395,15 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body" data-scroll-fade>
 					<p id="modal-message" class="modal-message"></p>
 					<input type="text" id="modal-input" class="modal-input" placeholder="">
 				</div>
 				<div class="modal-footer">
-					<button id="modal-cancel" class="modal-btn modal-btn-secondary">
+					<button id="modal-cancel" type="button" class="ui-button ui-button--header">
 						__MSG_options_modal_cancel__
 					</button>
-					<button id="modal-confirm" class="modal-btn modal-btn-primary">
+					<button id="modal-confirm" type="button" class="ui-button ui-button--header ui-button--primary">
 						__MSG_options_modal_confirm__
 					</button>
 				</div>
@@ -437,7 +428,7 @@
 				</div>
 
 				<!-- Romanization Tab Content -->
-				<div class="lang-exclusions-tab-content active" id="romanization-tab-content">
+				<div class="lang-exclusions-tab-content active" id="romanization-tab-content" data-scroll-fade>
 					<div class="lang-search-container">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="lang-search-icon">
 							<path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"></path>
@@ -449,7 +440,7 @@
 				</div>
 
 				<!-- Translation Tab Content -->
-				<div class="lang-exclusions-tab-content" id="translation-tab-content">
+				<div class="lang-exclusions-tab-content" id="translation-tab-content" data-scroll-fade>
 					<div class="lang-search-container">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="lang-search-icon">
 							<path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"></path>
@@ -461,7 +452,7 @@
 				</div>
 
 				<div class="modal-footer">
-					<button id="lang-exclusions-reset-btn" class="modal-btn modal-btn-secondary">__MSG_options_resetToDefault__</button>
+					<button id="lang-exclusions-reset-btn" type="button" class="ui-button ui-button--header">__MSG_options_resetToDefault__</button>
 				</div>
 			</div>
 		</div>
@@ -477,7 +468,7 @@
 					</button>
 				</div>
 
-				<div class="modal-body" id="unison-actions-modal-body">
+				<div class="modal-body" id="unison-actions-modal-body" data-scroll-fade>
 					<div class="container unison-modal-row">
 						<div class="unison-modal-row__text">
 							<span>__MSG_options_unisonModal_showPinned__</span>
@@ -542,7 +533,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button id="dock-settings-reset" class="modal-btn modal-btn-secondary">__MSG_options_reset__</button>
+					<button id="dock-settings-reset" type="button" class="ui-button ui-button--header">__MSG_options_reset__</button>
 				</div>
 			</div>
 		</div>
@@ -557,7 +548,7 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body" id="pip-modal-body">
+				<div class="modal-body" id="pip-modal-body" data-scroll-fade>
 					<div class="container">
 						<span>__MSG_options_display_pipEnabled__</span>
 						<label>
@@ -617,7 +608,7 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body" data-scroll-fade>
 					<div class="container offset-row">
 						<div class="offset-info">
 							<span>__MSG_lyricsDock_offsetGlobal__</span>
@@ -662,11 +653,11 @@
 					</div>
 					<div class="container container--small">
 						<p>__MSG_options_offsetModal_perSong__</p>
-						<button class="small-btn btn-danger" id="clear-offsets">
+						<button class="ui-button ui-button--danger" id="clear-offsets">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
 								<path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd"></path>
 							</svg>
-							<span style="padding-top: 0.1rem">__MSG_options_offsetModal_perSongClear__</span>
+							<span>__MSG_options_offsetModal_perSongClear__</span>
 						</button>
 					</div>
 					<div class="text-group">
@@ -678,7 +669,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button id="offset-modal-reset" class="modal-btn modal-btn-secondary">__MSG_options_reset__</button>
+					<button id="offset-modal-reset" type="button" class="ui-button ui-button--header">__MSG_options_reset__</button>
 				</div>
 			</div>
 		</div>
@@ -693,8 +684,8 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
-					<button id="import-identity-file-btn" class="modal-btn modal-btn-secondary import-identity-file-btn">
+				<div class="modal-body" data-scroll-fade>
+					<button id="import-identity-file-btn" type="button" class="ui-button import-identity-file-btn">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
 							<path fill-rule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v11.69l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.22 3.22V3a.75.75 0 0 1 .75-.75Zm-9 13.5a.75.75 0 0 1 .75.75v2.25a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5V16.5a.75.75 0 0 1 1.5 0v2.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V16.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"></path>
 						</svg>
@@ -706,10 +697,10 @@
 					<textarea id="import-identity-textarea" class="modal-textarea" rows="6" spellcheck="false" placeholder="__MSG_options_identityImport_pastePlaceholder__"></textarea>
 				</div>
 				<div class="modal-footer">
-					<button id="import-identity-cancel" class="modal-btn modal-btn-secondary">
+					<button id="import-identity-cancel" type="button" class="ui-button ui-button--header">
 						__MSG_options_modal_cancel__
 					</button>
-					<button id="import-identity-confirm" class="modal-btn modal-btn-primary">
+					<button id="import-identity-confirm" type="button" class="ui-button ui-button--header ui-button--primary">
 						__MSG_options_identityImport_import__
 					</button>
 				</div>
@@ -726,19 +717,19 @@
 						</svg>
 					</button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body" data-scroll-fade>
 					<p class="modal-message">__MSG_options_nickname_description__</p>
 					<input type="text" id="nickname-modal-input" class="modal-input" maxlength="20" autocomplete="off" spellcheck="false" placeholder="__MSG_options_nickname_placeholder__">
 					<p id="nickname-modal-status" role="status"></p>
 				</div>
 				<div class="modal-footer">
-					<button id="nickname-modal-reset" class="modal-btn modal-btn-secondary">
+					<button id="nickname-modal-reset" type="button" class="ui-button ui-button--header">
 						__MSG_options_nickname_reset__
 					</button>
-					<button id="nickname-modal-cancel" class="modal-btn modal-btn-secondary">
+					<button id="nickname-modal-cancel" type="button" class="ui-button ui-button--header">
 						__MSG_options_modal_cancel__
 					</button>
-					<button id="nickname-modal-save" class="modal-btn modal-btn-primary">
+					<button id="nickname-modal-save" type="button" class="ui-button ui-button--header ui-button--primary">
 						__MSG_options_nickname_save__
 					</button>
 				</div>
@@ -755,7 +746,7 @@
 						</svg>
 					</button>
 				</div>
-				<div class="theme-modal-body">
+				<div class="theme-modal-body" data-scroll-fade>
 					<div id="theme-modal-grid"></div>
 				</div>
 			</div>
@@ -794,7 +785,7 @@
 				</div>
 			</div>
 			<div id="editor-container">
-				<div id="editor" style="height: 300px; overflow: auto"></div>
+				<div id="editor"></div>
 				<div id="sync-indicator">__MSG_options_editor_saving__</div>
 			</div>
 			<div class="ie-utils-container">

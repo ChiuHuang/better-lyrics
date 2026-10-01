@@ -41,14 +41,6 @@
     "message": "Auto switch to lyrics tab",
     "description": "Auto switch to lyrics tab setting label"
   },
-  "options_general_cache": {
-    "message": "Cache",
-    "description": "Cache section label"
-  },
-  "options_general_behavior": {
-    "message": "Behavior",
-    "description": "Header tab in General for behaviour toggles"
-  },
   "options_general_clearCachedLyrics": {
     "message": "Clear cached lyrics",
     "description": "Label for the clear cache action row"
@@ -391,7 +383,7 @@
     "description": "Theme marketplace button label"
   },
   "options_themes_installedThemes": {
-    "message": "Installed Themes",
+    "message": "Installed themes",
     "description": "Installed themes button label"
   },
 
@@ -546,7 +538,7 @@
     "description": "Cache clear failed message"
   },
   "options_alert_nothingToClear": {
-    "message": "Nothing to clear!",
+    "message": "Nothing to clear :/",
     "description": "Nothing to clear message"
   },
   "options_alert_exportFailed": {
@@ -934,7 +926,7 @@
   },
 
   "marketplace_shortcutsTitle": {
-    "message": "Keyboard Shortcuts",
+    "message": "Keyboard shortcuts",
     "description": "Shortcuts modal title"
   },
   "marketplace_shortcutsNavigation": {
@@ -1001,7 +993,7 @@
   },
 
   "marketplace_shortcutsDetails": {
-    "message": "Theme Details",
+    "message": "Theme details",
     "description": "Theme details shortcuts group"
   },
   "marketplace_shortcutsInstallRemove": {

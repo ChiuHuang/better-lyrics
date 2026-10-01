@@ -1,13 +1,13 @@
 import { type IconKey, svgIcon } from "@/options/unison/icons";
 import { prefersReducedMotion, quickDurationMs } from "@/ui/motion";
 
-export type ToastKind = "success" | "error" | "info" | "loading";
+type ToastKind = "success" | "error" | "info" | "loading";
 
-export interface ToastOptions {
+interface ToastOptions {
   id?: string;
 }
 
-export interface ToastHandle {
+interface ToastHandle {
   update(kind: ToastKind, message: string): void;
   dismiss(): void;
 }
@@ -20,9 +20,9 @@ const DISMISS_AFTER_MS: Record<ToastKind, number | null> = {
   loading: null,
 };
 const KIND_ICONS: Record<Exclude<ToastKind, "loading">, IconKey> = {
-  success: "ok",
-  error: "bad",
-  info: "info",
+  success: "success",
+  error: "error",
+  info: "infoOutline",
 };
 
 const ANNOUNCE_DELAY_MS = 50;

@@ -27,9 +27,7 @@ const RULES: Rule[] = [
 
 const KNOWN: Record<string, Record<string, number>> = {
   "native select": {},
-  "uppercase text": {
-    "src/options/options.css": 4,
-  },
+  "uppercase text": {},
   "dark field well": {},
 };
 

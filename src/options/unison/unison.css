@@ -193,6 +193,8 @@ kbd {
 #unison-submit-nav-btn[aria-current="page"] {
   background: var(--raised-bg-hover);
   color: #fff;
+  --button-icon: currentColor;
+  --button-icon-hover: currentColor;
 }
 
 /* -- Identity Badge --------------------------  */
@@ -218,8 +220,8 @@ kbd {
 /* -- Lyrics Card --------------------------  */
 
 .unison-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: var(--card-edge);
   border-radius: var(--radius-card);
   overflow: hidden;
   cursor: pointer;
@@ -703,40 +705,12 @@ kbd {
 }
 
 .blyrics-gam__ring {
-  position: relative;
   width: 28px;
   height: 28px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-}
-
-.blyrics-gam__ring svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.blyrics-gam__ring-track {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 4;
-}
-
-.blyrics-gam__ring-prog {
-  fill: none;
-  stroke: #ffc83d;
-  stroke-width: 4;
-  stroke-linecap: round;
 }
 
 .blyrics-gam__ring-num {
   font-size: 11px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: #f5f5f7;
 }
 
 .blyrics-gam__ring.blyrics-gam__ring--avatar {
@@ -748,40 +722,9 @@ kbd {
   font-size: 9px;
 }
 
-.blyrics-gam__tier {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 28px;
-  flex-shrink: 0;
-  padding: 0 12px 0 7px;
-  border-radius: 999px;
-  background-color: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 1px 0 0 #ffffff13, inset 0 -1px 0 0 #ffffff06;
-  font-size: 12px;
-  font-weight: 500;
-  color: #f5f5f7;
-  white-space: nowrap;
-}
-
-.blyrics-gam__gem {
-  width: 18px;
-  height: 19px;
-  flex-shrink: 0;
-  display: block;
-}
-
-.blyrics-gam__featured {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .blyrics-gam__featured-gem {
   width: 22px;
   height: 22px;
-  flex-shrink: 0;
-  display: block;
 }
 
 /* -- Detail Fulfilled --------------------------  */
@@ -850,6 +793,8 @@ kbd {
   background: rgba(129, 140, 248, 0.15);
   box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.4);
   color: rgb(165, 180, 252);
+  --button-icon: currentColor;
+  --button-icon-hover: currentColor;
 }
 
 .unison-vote-btn--report {
@@ -859,11 +804,14 @@ kbd {
 .unison-vote-btn--report:hover {
   color: rgb(239, 68, 68);
   box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.3);
+  --button-icon-hover: currentColor;
 }
 
 .unison-vote-btn--delete {
   align-self: flex-start;
   color: rgba(239, 68, 68, 0.85);
+  --button-icon: currentColor;
+  --button-icon-hover: currentColor;
 }
 
 .unison-vote-btn--delete:hover {
@@ -1266,10 +1214,10 @@ kbd {
   position: absolute;
   margin-top: 0.25rem;
   min-width: 160px;
-  background: #3e3e41;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--menu-bg);
+  border: var(--menu-edge);
   border-radius: 0.5rem;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 30px -5px;
+  box-shadow: var(--menu-shadow);
   z-index: 100;
   overflow: hidden;
   padding: 0.25rem;
@@ -1287,7 +1235,9 @@ kbd {
   font-size: 0.8125rem;
   text-align: left;
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    background var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out;
 }
 
 .unison-report-dropdown-item:hover {
@@ -1367,7 +1317,7 @@ kbd {
 
 .unison-detail-meta {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
   scrollbar-gutter: stable;
 }
 
@@ -1732,9 +1682,9 @@ kbd {
 }
 
 .unison-feedback--success {
-  background: rgba(34, 197, 94, 0.1);
-  color: rgb(34, 197, 94);
-  border: 1px solid rgba(34, 197, 94, 0.15);
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 15%, transparent);
 }
 
 .unison-feedback--error {
@@ -1921,50 +1871,6 @@ kbd {
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
-}
-
-.unison-filter-chip {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0 0.625rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1000rem;
-  font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  transition:
-    background var(--duration-quick) ease-out,
-    border-color var(--duration-quick) ease-out,
-    color var(--duration-quick) ease-out;
-  width: fit-content;
-  height: 26px;
-  box-sizing: border-box;
-  user-select: none;
-}
-
-.unison-filter-chip::after {
-  content: "";
-  position: absolute;
-  inset: -7px 0;
-}
-
-.unison-filter-chip:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-
-.unison-filter-chip:has(input:checked) {
-  background: rgba(129, 140, 248, 0.15);
-  border-color: rgba(129, 140, 248, 0.4);
-  color: rgb(165, 180, 252);
-}
-
-.unison-filter-chip input {
-  display: none;
 }
 
 .unison-filter-chip kbd {
@@ -2363,7 +2269,7 @@ kbd {
 }
 
 .unison-rev-outcome--live {
-  color: rgb(34, 197, 94);
+  color: var(--success);
 }
 
 .unison-rev-outcome--review {
@@ -2554,7 +2460,7 @@ kbd {
 }
 
 .unison-rev-swatch--add {
-  background: rgba(34, 197, 94, 0.5);
+  background: color-mix(in srgb, var(--success) 50%, transparent);
 }
 
 .unison-rev-swatch--del {
@@ -2597,7 +2503,7 @@ kbd {
 }
 
 .unison-rev-diff-row--add {
-  background: rgba(34, 197, 94, 0.08);
+  background: color-mix(in srgb, var(--success) 8%, transparent);
 }
 
 .unison-rev-diff-row--add .unison-rev-diff-text,
@@ -2653,7 +2559,7 @@ kbd {
 
 .unison-rev-diff-text ins {
   text-decoration: none;
-  background: rgba(34, 197, 94, 0.18);
+  background: color-mix(in srgb, var(--success) 18%, transparent);
   color: rgb(134, 239, 172);
 }
 
@@ -2789,22 +2695,9 @@ kbd {
   width: 0.625rem;
   height: 0.625rem;
   box-sizing: border-box;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-width: 1.5px;
+  border-color: rgba(255, 255, 255, 0.18);
   border-top-color: rgb(165, 180, 252);
-  animation: unison-rev-spin 0.8s linear infinite;
-}
-
-@keyframes unison-rev-spin {
-  to {
-    rotate: 360deg;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .unison-rev-spin {
-    animation: none;
-  }
 }
 
 .unison-rev-tab:focus-visible,
@@ -3012,7 +2905,6 @@ kbd {
   .unison-preview-content,
   .unison-input,
   .unison-token-input,
-  .unison-submit-lyrics-frame,
   .unison-back-btn,
   .unison-search-input {
     corner-shape: superellipse(1.6);
@@ -3044,13 +2936,13 @@ kbd {
 /* -- Reduced motion ---------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .unison-filter-chip,
   .unison-card,
   .unison-feed-tab,
   .unison-input,
   .unison-token-input,
   .unison-back-btn,
-  .unison-search-input {
+  .unison-search-input,
+  .unison-report-dropdown-item {
     transition: none;
   }
 }

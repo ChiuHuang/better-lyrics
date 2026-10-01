@@ -24,13 +24,15 @@
     color var(--duration-quick) ease-out,
     scale var(--duration-quick) ease-out;
 }
+.ui-button { --button-icon: rgba(255, 255, 255, 0.55); --button-icon-hover: rgba(255, 255, 255, 0.8); }
 .ui-button:hover { background: var(--button-bg-hover); color: var(--text-strong); }
 .ui-button:active { scale: var(--scale-press); }
 .ui-button:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
-.ui-button svg { width: 0.875rem; height: 0.875rem; flex: none; color: rgba(255, 255, 255, 0.55); transition: color var(--duration-quick) ease-out; }
-.ui-button:hover svg { color: rgba(255, 255, 255, 0.8); }
-.ui-button--danger, .ui-button--danger svg { color: #fff; }
-.ui-button--danger { background: var(--danger); box-shadow: inset rgba(255, 255, 255, 0.18) 0 1px 0 0; }
+.ui-button svg { width: 0.875rem; height: 0.875rem; flex: none; color: var(--button-icon); transition: color var(--duration-quick) ease-out; }
+.ui-button:hover svg { color: var(--button-icon-hover); }
+.ui-button--primary { background: var(--button-primary-bg); color: var(--text-strong); --button-icon: currentColor; --button-icon-hover: currentColor; }
+.ui-button--primary:hover { background: var(--button-primary-bg-hover); }
+.ui-button--danger { background: var(--danger); box-shadow: inset rgba(255, 255, 255, 0.18) 0 1px 0 0; color: #fff; --button-icon: currentColor; --button-icon-hover: currentColor; }
 .ui-button--danger:hover { background: var(--danger-hover); }
 .ui-button--compact { height: 30px; padding: 0 12px 0 10px; gap: 6px; font-size: 0.8125rem; }
 .ui-button--header {
@@ -140,7 +142,7 @@
 .ui-row:is(button, :has(label, button, .ui-dropdown)):hover { background: rgba(255, 255, 255, 0.035); }
 .ui-row__label { display: inline-flex; align-items: center; gap: 0.4rem; min-width: 0; }
 .ui-row__sub { display: block; margin-top: 1px; font-size: 0.8125rem; color: var(--text-label); }
-.ui-row__value { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.ui-row__value { color: var(--text-muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
 button.ui-row { width: 100%; margin: 0; border: none; background: none; font: inherit; font-size: 0.9375rem; text-align: start; cursor: pointer; }
 button.ui-row:active { background: rgba(255, 255, 255, 0.06); }
 .ui-row__chevron { width: 16px; height: 16px; flex: none; color: rgba(255, 255, 255, 0.35); transition: color var(--duration-quick) ease-out, transform var(--duration-fast) var(--ease-smooth-out); }
@@ -159,22 +161,29 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 }
 .ui-action-strip::before { content: ""; position: absolute; inset: 0 0 auto; height: 1px; background: var(--divider); }
 
-/* -- Chip -- */
+/* -- Chip (a label wrapping a hidden radio or checkbox) -- */
 .ui-chip {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  gap: 0.375rem;
+  box-sizing: border-box;
+  width: fit-content;
   height: 26px;
-  padding: 0 10px;
+  padding: 0 0.625rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.75);
+  border-radius: 1000rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.8125rem;
   cursor: pointer;
-  transition: background var(--duration-quick) ease-out, color var(--duration-quick) ease-out;
+  user-select: none;
+  transition: background var(--duration-quick) ease-out, border-color var(--duration-quick) ease-out, color var(--duration-quick) ease-out;
 }
 .ui-chip::after { content: ""; position: absolute; inset: -7px 0; }
+.ui-chip:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15); color: #fff; }
+.ui-chip:has(input:checked) { background: rgba(129, 140, 248, 0.15); border-color: rgba(129, 140, 248, 0.4); color: rgb(165, 180, 252); }
+.ui-chip:has(input:focus-visible) { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
 
 /* -- Sync tag -- */
 .ui-sync-tag {
@@ -406,10 +415,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   cursor: pointer;
 }
 .ui-toast:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
-.ui-toast > .ui-toast__icon { width: 20px; height: 20px; flex: none; }
-.ui-toast--success .ui-toast__icon { color: var(--success); }
-.ui-toast--error .ui-toast__icon { color: var(--danger); }
-.ui-toast--info .ui-toast__icon { color: var(--text-strong); }
+.ui-toast > .ui-toast__icon { width: 20px; height: 20px; flex: none; color: var(--text-muted); }
+.ui-toast--error > .ui-toast__icon { color: var(--danger-soft); }
 .ui-toast__spinner { box-sizing: border-box; margin: 2px; flex: none; }
 .ui-toast.is-entering { animation: ui-toast-in var(--duration-slow) var(--ease-smooth-out) both; }
 .ui-toast.is-leaving { animation: ui-toast-out var(--duration-quick) ease-in both; pointer-events: none; }
@@ -418,8 +425,8 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 }
 @keyframes ui-toast-out { to { opacity: 0; transform: translateY(calc(var(--distance-toast) / -2)) scale(var(--scale-menu-close)); } }
 
-/* -- Visually hidden (screen readers only) -- */
-.ui-visually-hidden {
+/* -- Visually hidden (screen readers only; chip inputs stay focusable) -- */
+.ui-visually-hidden, .ui-chip input {
   position: absolute;
   width: 1px;
   height: 1px;

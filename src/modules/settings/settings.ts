@@ -7,7 +7,7 @@ import {
   LYRICS_DISABLED_ATTR,
 } from "@constants";
 import { AppState, refreshCurrentSong, reloadLyrics } from "@core/appState";
-import { clearCache, compileRicsToStyles, getStorage } from "@core/storage";
+import { compileRicsToStyles, getStorage } from "@core/storage";
 import { configureLogging, logContent } from "@core/logger";
 import { syncKaraoke } from "@modules/karaoke/karaokeView";
 import { loadKaraokeSettings } from "@modules/karaoke/settings";
@@ -275,18 +275,9 @@ export function listenForPopupMessages(): void {
       );
       getAndApplyCustomStyles();
       reloadLyrics();
-    } else if (request.action === "clearCache") {
-      clearCache().then(
-        cacheInfo => {
-          reloadLyrics();
-          sendResponse({ success: true, cacheInfo });
-        },
-        error => {
-          logContent("clearCache failed:", error);
-          sendResponse({ success: false });
-        }
-      );
-      return true;
+    } else if (request.action === "reloadLyrics") {
+      reloadLyrics();
+      sendResponse({ success: true });
     } else if (request.action === "refreshLyrics") {
       refreshCurrentSong().then(
         () => sendResponse({ success: true }),

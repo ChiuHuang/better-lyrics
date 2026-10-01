@@ -32,12 +32,13 @@
   --raised-edge: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset rgba(255, 255, 255, 0.06) 0 1px 0 0;
   --button-bg: rgba(255, 255, 255, 0.06);
   --button-bg-hover: rgba(255, 255, 255, 0.1);
+  --button-primary-bg: rgba(255, 255, 255, 0.15);
+  --button-primary-bg-hover: rgba(255, 255, 255, 0.2);
   --menu-bg: #333437;
   --menu-edge: 1px solid rgba(255, 255, 255, 0.1);
   --menu-shadow: rgba(0, 0, 0, 0.45) 0 18px 40px -12px, inset rgba(255, 255, 255, 0.06) 0 1px 0 0;
   --toast-bg: #36373b;
-  --toast-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 8px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+  --toast-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), var(--menu-shadow);
   --divider: rgba(255, 255, 255, 0.06);
   --divider-strong: rgba(255, 255, 255, 0.08);
 
@@ -75,6 +76,9 @@
   --pane-fade-top-size: 72px;
   --pane-fade-bottom-size: 96px;
 
+  /* -- Scrollbars (where a scroll fade cannot replace them) -- */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+
   /* -- Sync type tints -- */
   --sync-syllable: #fcd34d;
   --sync-syllable-bg: rgba(252, 211, 77, 0.15);
@@ -94,6 +98,7 @@
   /* -- Danger -- */
   --danger: rgb(239, 68, 68);
   --danger-hover: rgb(220, 38, 38);
+  --danger-soft: color-mix(in srgb, var(--danger) 60%, var(--text-muted));
 
   /* -- Success -- */
   --success: rgb(34, 197, 94);

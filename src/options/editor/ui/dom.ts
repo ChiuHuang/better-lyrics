@@ -20,15 +20,18 @@ export const themeModalOverlay = document.getElementById("theme-modal-overlay") 
 export const themeModalClose = document.getElementById("theme-modal-close") as HTMLButtonElement | null;
 export const themeModalGrid = document.getElementById("theme-modal-grid") as HTMLElement | null;
 
+const EDITING_CLASS = "is-editing";
+
+export const isEditingCSS = (): boolean => document.body.classList.contains(EDITING_CLASS);
+
 export const openEditCSS = (): void => {
   const editCSS = document.getElementById("css");
   const options = document.getElementById("options");
   const themeContent = document.getElementById("themes-content");
   if (editCSS && themeContent && options) {
-    editCSS.style.display = "block";
     options.style.display = "none";
     themeContent.style.display = "none";
-    document.body.classList.add("is-editing");
+    document.body.classList.add(EDITING_CLASS);
   }
 };
 
@@ -38,9 +41,8 @@ export const openOptions = (): void => {
   const themeContent = document.getElementById("themes-content");
 
   if (editCSS && themeContent && options) {
-    editCSS.style.display = "";
     options.style.display = "";
     themeContent.style.display = "";
-    document.body.classList.remove("is-editing");
+    document.body.classList.remove(EDITING_CLASS);
   }
 };
