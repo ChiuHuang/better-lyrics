@@ -827,46 +827,18 @@
 }
 
 .detail-shader-info {
-  position: relative;
   display: none;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 0.75rem;
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: 0.375rem;
-	margin-top: 0.5rem;
-	margin-bottom: 1rem;
-}
-
-.detail-shader-info svg {
-  color: #a5b4fc;
-	border-radius: .375rem;
-	flex-shrink: 0;
-	width: 1rem;
-	height: 1rem;
-	position: absolute;
-	top: -2px;
-	left: 16px;
-	transform: translateX(-50%) translateY(-50%);
-	box-shadow: 0 0 0 2px #3e3e41;
-	background: #3e3e41;
-}
-
-.detail-shader-info-text {
-  flex: 1;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.8);
+  margin: 0.5rem 0 1rem;
 }
 
 .detail-shader-link {
-  color: rgb(165, 180, 252);
+  color: var(--callout-title);
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
 .detail-shader-link:hover {
-  color: rgb(199, 210, 254);
+  color: var(--text-strong);
 }
 
 /* Detail Rating Section */
@@ -1177,15 +1149,10 @@
 /* Feature-gated: browsers without corner-shape keep the original radii above. */
 
 @supports (corner-shape: superellipse(1.6)) {
-  .detail-shader-info {
-    border-radius: 0.75rem;
-  }
-
   .marketplace-filters,
   .store-card,
   .store-card .store-card-btn,
-  .store-card-stats,
-  .detail-shader-info {
+  .store-card-stats {
     corner-shape: superellipse(1.6);
   }
 }
