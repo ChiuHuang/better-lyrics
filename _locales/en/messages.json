@@ -87,10 +87,6 @@
     "message": "Latest release notes",
     "description": "Popup General tab: one-line description on the What's new shortcut"
   },
-  "options_general_cacheSize": {
-    "message": "Cache size",
-    "description": "Cache size label"
-  },
 
   "options_display_fullscreenTab": {
     "message": "Fullscreen",
