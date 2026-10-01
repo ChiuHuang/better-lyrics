@@ -211,9 +211,16 @@ export function createPictureInPictureHost(
     }
 
     const payload = lyricsPayload;
+    const videoId = view.videoId;
     const mount = view.prepareLyricsMount(animate);
     const mountLyrics = (): void => {
       if (build !== buildCount || activeView !== view) return;
+      if (videoId !== null && view.videoId !== videoId) {
+        builtLines = null;
+        view.showSearching();
+        renderer.clear();
+        return;
+      }
       // The container the copy hung off is about to go, so the next sync makes a fresh one.
       clonedFooterSource = null;
       renderer.setLyrics([...lines], {

@@ -98,7 +98,6 @@ const LYRICS_EXIT_CLASS = "blyrics-pip-lyrics__exit";
 const LYRICS_HELD_ATTRIBUTE = "data-held";
 const LYRICS_REVEALING_ATTRIBUTE = "data-revealing";
 const LYRICS_SWAPPING_ATTRIBUTE = "data-swapping";
-// The scroll keeps settling after the snap and can pull in a line from below.
 const LYRICS_REVEAL_OVERSCAN = 0.5;
 
 function readLyricsMotion(style: CSSStyleDeclaration): LyricsMotion {
@@ -377,6 +376,10 @@ export class PictureInPictureLyricsView {
     return this.lyricsScroller;
   }
 
+  get videoId(): string | null {
+    return this.currentVideoId;
+  }
+
   get playbackSnapshot(): PictureInPicturePlaybackSnapshot | null {
     return this.lastPlaybackSnapshot;
   }
@@ -455,7 +458,6 @@ export class PictureInPictureLyricsView {
     });
   }
 
-  // After a committed frame, so the exit fade is already on the compositor while the build blocks.
   afterNextFrame(callback: () => void): void {
     this.pipWindow.requestAnimationFrame(() => this.pipWindow.setTimeout(callback, 0));
   }

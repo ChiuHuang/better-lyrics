@@ -571,7 +571,6 @@ body {
   overflow: visible !important;
 }
 
-/* Sits where the loader did instead of under the top fade. */
 .blyrics-pip-lyrics .blyrics-container[data-no-lyrics="true"] {
   display: flex;
   min-height: 100%;

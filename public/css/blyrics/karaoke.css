@@ -246,7 +246,6 @@
 
 /* -- Video frame -------------------------------------------- */
 
-/* The whole video stays in view; the bars around it show the page behind instead of black. */
 ytmusic-player-page[video-mode][blyrics-karaoke] :is(#player, .html5-video-player) {
     background: transparent !important;
 }
