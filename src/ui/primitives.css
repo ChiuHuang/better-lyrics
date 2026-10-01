@@ -376,6 +376,60 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 .ui-badge--muted { --badge-bg: rgba(255, 255, 255, 0.04); --badge-edge: rgba(255, 255, 255, 0.08); --badge-fg: var(--text-faint); }
 .ui-badge--count { min-width: 1.25rem; justify-content: center; padding: 0 0.3125rem; }
 
+/* -- Callout (inline notice; uniform edge, tinted fill, coloured icon) -- */
+.ui-callout {
+  --callout-tone: rgba(255, 255, 255, 0.45);
+  --callout-bg: rgba(255, 255, 255, 0.03);
+  --callout-edge: rgba(255, 255, 255, 0.08);
+  --callout-title: var(--text-strong);
+  --callout-text: var(--text-muted);
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--callout-edge);
+  border-radius: var(--radius-row);
+  background: var(--callout-bg);
+  color: var(--callout-text);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.ui-callout__icon { display: grid; flex: none; place-items: center; width: 18px; height: 18px; margin-top: 1px; color: var(--callout-tone); }
+.ui-callout__icon svg, svg.ui-callout__icon { width: 18px; height: 18px; }
+.ui-callout__body { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.ui-callout__title { margin: 0; color: var(--callout-title); font-weight: 600; line-height: 1.4; text-wrap: pretty; }
+.ui-callout__text { margin: 0; text-wrap: pretty; }
+.ui-callout__text:empty { display: none; }
+.ui-callout--accent {
+  --callout-tone: color-mix(in srgb, var(--accent) 55%, #fff);
+  --callout-bg: color-mix(in srgb, var(--accent) 10%, transparent);
+  --callout-edge: color-mix(in srgb, var(--accent) 24%, transparent);
+  --callout-title: color-mix(in srgb, var(--accent) 30%, #fff);
+  --callout-text: color-mix(in srgb, var(--accent) 25%, rgba(255, 255, 255, 0.75));
+}
+.ui-callout--success {
+  --callout-tone: var(--success);
+  --callout-bg: color-mix(in srgb, var(--success) 9%, transparent);
+  --callout-edge: color-mix(in srgb, var(--success) 20%, transparent);
+  --callout-title: color-mix(in srgb, var(--success) 55%, #fff);
+  --callout-text: color-mix(in srgb, var(--success) 30%, rgba(255, 255, 255, 0.75));
+}
+.ui-callout--warning {
+  --callout-tone: var(--warning);
+  --callout-bg: color-mix(in srgb, var(--warning) 9%, transparent);
+  --callout-edge: color-mix(in srgb, var(--warning) 22%, transparent);
+  --callout-title: color-mix(in srgb, var(--warning) 60%, #fff);
+  --callout-text: color-mix(in srgb, var(--warning) 35%, rgba(255, 255, 255, 0.8));
+}
+.ui-callout--danger {
+  --callout-tone: color-mix(in srgb, var(--danger) 80%, #fff);
+  --callout-bg: color-mix(in srgb, var(--danger) 9%, transparent);
+  --callout-edge: color-mix(in srgb, var(--danger) 22%, transparent);
+  --callout-title: color-mix(in srgb, var(--danger) 45%, #fff);
+  --callout-text: color-mix(in srgb, var(--danger) 30%, rgba(255, 255, 255, 0.8));
+}
+
 /* -- Tooltip (delay in, instant out) -- */
 .ui-tooltip {
   position: fixed;
@@ -692,7 +746,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 @supports (corner-shape: superellipse(1.6)) {
   .ui-card, .ui-modal__surface { border-radius: var(--radius-card); }
   .ui-button, .ui-field, .ui-card, .ui-row, .ui-sync-tag, .ui-dropdown__trigger,
-  .ui-menu, .ui-menu__option, .ui-frame, .ui-toast, .ui-modal__surface {
+  .ui-menu, .ui-menu__option, .ui-frame, .ui-toast, .ui-modal__surface, .ui-callout {
     corner-shape: superellipse(1.6);
   }
 }
