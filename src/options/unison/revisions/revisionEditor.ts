@@ -416,10 +416,7 @@ function createSaveBar(): SaveBar {
   const viewChanges = createLink(t("unison_rev_viewChanges"));
   const tryAgain = createLink(t("unison_rev_tryAgain"));
 
-  const cancel = document.createElement("button");
-  cancel.type = "button";
-  cancel.className = "unison-nav-btn";
-  cancel.textContent = t("options_modal_cancel");
+  const cancel = createButton({ label: t("options_modal_cancel") });
 
   const save = createButton({ label: t("options_nickname_save"), icon: "upload", primary: true });
   save.disabled = true;

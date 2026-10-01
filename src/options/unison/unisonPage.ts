@@ -718,7 +718,7 @@ function createFeedEmptyState(tab: FeedTabName, filters: FeedFilters): HTMLEleme
     hint.textContent = t("unison_emptyMineHint");
     const submit = document.createElement("button");
     submit.type = "button";
-    submit.className = "unison-nav-btn";
+    submit.className = "ui-button ui-button--header";
     submit.append(svgIcon("submit"), t("unison_submit"));
     submit.addEventListener("click", () => navigateTo({ submit: "true" }));
     wrap.append(hint, submit);
@@ -1205,15 +1205,8 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   const row = document.createElement("div");
   row.className = "unison-detail-voting";
 
-  const upBtn = document.createElement("button");
-  upBtn.className = "unison-vote-btn";
-  upBtn.appendChild(svgIcon("upvote"));
-  upBtn.append(t("unison_upvote"));
-
-  const downBtn = document.createElement("button");
-  downBtn.className = "unison-vote-btn";
-  downBtn.appendChild(svgIcon("downvote"));
-  downBtn.append(t("unison_downvote"));
+  const upBtn = createButton({ label: t("unison_upvote"), icon: "upvote" });
+  const downBtn = createButton({ label: t("unison_downvote"), icon: "downvote" });
 
   let currentVote: "up" | "down" | null = userVote === 1 ? "up" : userVote === -1 ? "down" : null;
   upBtn.classList.toggle("unison-vote-btn--active", currentVote === "up");
@@ -1246,10 +1239,8 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   row.appendChild(downBtn);
 
   if (!isOwn) {
-    const reportBtn = document.createElement("button");
-    reportBtn.className = "unison-vote-btn unison-vote-btn--report";
-    reportBtn.appendChild(svgIcon("report"));
-    reportBtn.append(t("unison_report"));
+    const reportBtn = createButton({ label: t("unison_report"), icon: "report" });
+    reportBtn.classList.add("unison-vote-btn--report");
     reportBtn.addEventListener("click", () => showReportMenu(unisonId, reportBtn));
     row.appendChild(reportBtn);
   }
@@ -1258,9 +1249,8 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
 }
 
 function createDetailDeleteButton(unisonId: number): HTMLButtonElement {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "unison-vote-btn unison-vote-btn--delete";
+  const btn = createButton({ label: t("unison_delete"), icon: "trash" });
+  btn.classList.add("unison-vote-btn--delete");
 
   const setIdle = () => {
     btn.replaceChildren(svgIcon("trash"), document.createTextNode(t("unison_delete")));
