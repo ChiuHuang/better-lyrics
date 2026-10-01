@@ -2898,7 +2898,6 @@ kbd {
   .unison-preview-content,
   .unison-input,
   .unison-token-input,
-  .unison-submit-lyrics-frame,
   .unison-back-btn,
   .unison-search-input {
     corner-shape: superellipse(1.6);
