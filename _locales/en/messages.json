@@ -574,14 +574,6 @@
     "description": "Identity load error message"
   },
 
-  "editor_alert_notReady": {
-    "message": "The editor is not ready yet",
-    "description": "Toast when an editor action runs before the code editor has loaded"
-  },
-  "editor_alert_nothingToExport": {
-    "message": "No styles to export",
-    "description": "Toast when the user exports an empty editor"
-  },
   "editor_alert_nothingToSave": {
     "message": "No styles to save as a theme",
     "description": "Toast when the user saves an empty editor as a custom theme"
@@ -622,14 +614,6 @@
     "message": "Delete the theme $NAME$? This cannot be undone.",
     "description": "Message in the delete custom theme dialog",
     "placeholders": { "name": { "content": "$1", "example": "Night drive" } }
-  },
-  "editor_findReplaceTitle": {
-    "message": "Find and replace",
-    "description": "Title of the dialog shown when find and replace is used in the small popup editor"
-  },
-  "editor_findReplaceBody": {
-    "message": "Find and replace is only available in the full editor. Open it in a new tab to use it.",
-    "description": "Message of the dialog shown when find and replace is used in the small popup editor"
   },
   "editor_alert_importFailed": {
     "message": "Could not import the theme file. Try again",

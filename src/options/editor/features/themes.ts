@@ -18,7 +18,7 @@ import THEMES, {
   saveCustomTheme,
   ThemeNameTakenError,
 } from "../../themes";
-import { SAVE_CUSTOM_THEME_DEBOUNCE, SAVE_DEBOUNCE_DELAY } from "../constants";
+import { SAVE_CUSTOM_THEME_DEBOUNCE, SAVE_DEBOUNCE_DELAY } from "@/options/editor/constants";
 import { editorStateManager } from "../core/state";
 import type { ThemeCardOptions } from "../types";
 import {
@@ -977,7 +977,7 @@ export async function setThemeName() {
 export async function handleSaveTheme() {
   const css = editorStateManager.getContent();
   if (css === null) {
-    toast.error(t("editor_alert_notReady"));
+    toast.error(t("options_editor_notReady"));
     return;
   }
   if (!css || css.trim() === "") {

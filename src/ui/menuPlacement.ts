@@ -48,13 +48,14 @@ export function menuLeft(input: MenuLeftInput): number {
 
 export function positionMenu(menu: HTMLElement, trigger: HTMLElement): void {
   const rect = trigger.getBoundingClientRect();
+  menu.style.maxHeight = "";
   const horizontal = {
     triggerLeft: rect.left,
     triggerRight: rect.right,
     menuWidth: menu.offsetWidth,
     viewportWidth: window.innerWidth,
   };
-  const { placement, top } = menuPlacement({
+  const { placement, top, maxHeight } = menuPlacement({
     triggerTop: rect.top,
     triggerBottom: rect.bottom,
     menuHeight: menu.offsetHeight,
@@ -64,4 +65,5 @@ export function positionMenu(menu: HTMLElement, trigger: HTMLElement): void {
   menu.dataset.placement = placement;
   menu.style.left = `${menuLeft(horizontal)}px`;
   menu.style.top = `${top}px`;
+  menu.style.maxHeight = `${maxHeight}px`;
 }

@@ -188,6 +188,7 @@ function show(kind: ToastKind, message: string, { id, action }: ToastOptions = {
     announce(nextKind, nextMessage);
   };
 
+  el.tabIndex = 0;
   render(kind, message, action);
   el.classList.add("is-entering");
 

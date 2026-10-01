@@ -33,6 +33,7 @@ body.options-page {
 .page.active { display: flex; }
 .page--flow { flex: none; }
 
+.options-page :where(.ui-button, .ui-card__tab, .ui-dropdown__trigger) { width: auto; }
 
 /* -- Nav ------------------------------------------------------------------- */
 
@@ -78,7 +79,6 @@ body.options-page {
 /* -- Tab strip ------------------------------------------------------------- */
 
 .tabs-wrap { margin-bottom: 16px; }
-/* long locales only: the strip scrolls and fades instead of clipping its last tab */
 .tabs[data-scrollable] { overflow-x: auto; scroll-padding-inline: var(--fade-inline-size); }
 
 .head-slot, .tabs-slot {
@@ -138,7 +138,6 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 #sources-content > .ui-card { flex: 1; }
 #sources-content .ui-card__body { flex: 1; padding-bottom: 24px; overflow-y: auto; }
 
-/* raised surface like the dropdown trigger and nav tiles; the plain link read too subtle */
 .head-link img { width: 14px; height: 14px; border-radius: 50%; }
 .head-link svg {
   width: 12px;
@@ -215,7 +214,6 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
   transition-delay: 0s, 0s, var(--duration-slow);
 }
 
-/* Unison stats on the text inset; the divider runs edge to edge like the card header's */
 .gam-panel { margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); }
 .gam-panel .blyrics-gam__stats-row { padding: var(--row-pad) var(--text-inset) var(--text-inset); }
 .gam-panel .blyrics-gam__stats-foot { margin-top: 0; padding: 12px var(--text-inset); border-top-color: var(--divider-strong); }
@@ -247,8 +245,8 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 .pop__foot-spacer { flex: 1; }
 
 .text-btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.08); color: #fff; }
-.text-btn .refresh-icon { transition: rotate var(--duration-spin) var(--ease-smooth-out); }
-.text-btn.is-spinning .refresh-icon { rotate: 360deg; }
+.text-btn svg { width: 14px; height: 14px; flex: none; }
+.text-btn.is-refreshing .refresh-icon { animation: ui-spin var(--duration-spin) linear infinite; }
 
 .pop__status {
   padding: 0 8px;
@@ -263,7 +261,8 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 .pop__status.is-shown { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .text-btn .refresh-icon, .pop__status { transition: none; }
+  .text-btn, .pop__status { transition: none; }
+  .text-btn.is-refreshing .refresh-icon { animation: none; }
 }
 
 /* -- About ------------------------------------------------------------------ */

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { menuLeft, menuPlacement, menuSide } = await import("./menuPlacement");
+const { menuLeft, menuPlacement, menuSide } = await import("@/ui/menuPlacement");
 
 const viewportHeight = 800;
 

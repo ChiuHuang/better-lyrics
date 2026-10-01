@@ -42,8 +42,8 @@ Object.assign(globalThis, {
 });
 Date.now = () => now;
 
-const { toast } = await import("./toast");
-const { createModal } = await import("./modal");
+const { toast } = await import("@/ui/toast");
+const { createModal } = await import("@/ui/modal");
 
 const doc = window.document;
 const toasts = (): HTMLElement[] => Array.from(doc.querySelectorAll<HTMLElement>(".ui-toast"));

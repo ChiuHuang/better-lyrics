@@ -8,8 +8,8 @@ import {
   openThemeModal,
   preloadInstalledThemeImages,
   setThemeName,
-} from "./features/themes";
-import { deleteThemeBtn, editThemeBtn, themeNameText, themeSelectorBtn } from "./ui/dom";
+} from "@/options/editor/features/themes";
+import { deleteThemeBtn, editThemeBtn, themeNameText, themeSelectorBtn } from "@/options/editor/ui/dom";
 import { logEditor } from "@core/logger";
 
 // -- Theme picker, theme actions, storage sync (no CodeMirror) --------------------------

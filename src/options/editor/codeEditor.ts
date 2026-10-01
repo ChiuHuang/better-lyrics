@@ -1,12 +1,12 @@
 import { openSearchPanel } from "@codemirror/search";
 import { GITHUB_REPO_URL } from "@constants";
-import { createEditorState, createEditorView } from "./core/editor";
-import { editorStateManager } from "./core/state";
-import { generateDefaultFilename, importManager, saveCSSToFile } from "./features/import";
-import { saveToStorage } from "./features/themes";
-import { isEditingCSS } from "./ui/dom";
-import { showModal } from "./ui/feedback";
 import { t } from "@core/i18n";
+import { createEditorState, createEditorView } from "@/options/editor/core/editor";
+import { editorStateManager } from "@/options/editor/core/state";
+import { generateDefaultFilename, importManager, saveCSSToFile } from "@/options/editor/features/import";
+import { saveToStorage } from "@/options/editor/features/themes";
+import { isEditingCSS } from "@/options/editor/ui/dom";
+import { showModal } from "@/options/editor/ui/feedback";
 import { errorEditor, logEditor } from "@core/logger";
 import { toast } from "@/ui/toast";
 
@@ -37,11 +37,16 @@ function initializeEditorKeyboardShortcuts() {
           openSearchPanel(view);
         }
       } else {
+        const message = document.createDocumentFragment();
+        message.append(t("options_editor_findReplaceFullscreenOnly"));
+        message.append(document.createElement("br"), document.createElement("br"));
+        message.append(t("options_editor_findReplaceOpenHint"));
+
         showModal({
-          title: t("editor_findReplaceTitle"),
-          message: t("editor_findReplaceBody"),
-          confirmText: t("options_editor_openInNewTab"),
-          cancelText: t("ui_close"),
+          title: t("options_editor_findReplaceTitle"),
+          message,
+          confirmText: t("options_editor_openFullscreen"),
+          cancelText: t("options_editor_close"),
         }).then(result => {
           if (result) {
             chrome.tabs.create({
@@ -75,11 +80,11 @@ function initializeFileOperations() {
   document.getElementById("file-export-btn")?.addEventListener("click", async () => {
     const css = editorStateManager.getContent();
     if (css === null) {
-      toast.error(t("editor_alert_notReady"));
+      toast.error(t("options_editor_notReady"));
       return;
     }
     if (!css) {
-      toast.info(t("editor_alert_nothingToExport"));
+      toast.info(t("options_editor_nothingToExport"));
       return;
     }
 
