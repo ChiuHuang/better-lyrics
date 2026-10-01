@@ -934,10 +934,6 @@ hr {
     border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
-#clear-offsets {
-    line-height: 1rem;
-}
-
 .container > h3 {
     font-size: 1.25rem;
     font-weight: 600;
