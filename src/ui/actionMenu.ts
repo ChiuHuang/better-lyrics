@@ -137,6 +137,7 @@ export function createActionMenu(
     if (state !== "open") return;
     const all = menuItems();
     const focused = document.activeElement as HTMLButtonElement;
+    const focusWasInList = list.contains(focused);
     const index = all.indexOf(focused);
     const key = focused?.dataset?.key;
     const seq = ++openSeq;
@@ -144,6 +145,7 @@ export function createActionMenu(
     if (seq !== openSeq || state !== "open") return;
     render(entries);
     positionMenu(menu, trigger);
+    if (!focusWasInList) return;
     const next = menuItems();
     focusItem(
       next.find(item => key && item.dataset.key === key) ?? next[Math.min(Math.max(index, 0), next.length - 1)]
