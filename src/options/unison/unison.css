@@ -106,8 +106,6 @@
 #unison-submit-nav-btn[aria-current="page"] {
   background: var(--raised-bg-hover);
   color: #fff;
-  --button-icon: currentColor;
-  --button-icon-hover: currentColor;
 }
 
 /* -- Identity Badge --------------------------  */

@@ -32,7 +32,8 @@ html {
     color var(--duration-quick) ease-out,
     scale var(--duration-quick) ease-out;
 }
-.ui-button { --button-icon: rgba(255, 255, 255, 0.55); --button-icon-hover: rgba(255, 255, 255, 0.8); }
+.ui-button { --button-icon: currentColor; --button-icon-hover: currentColor; }
+.ui-button--icon { --button-icon: rgba(255, 255, 255, 0.55); --button-icon-hover: rgba(255, 255, 255, 0.8); }
 .ui-button:where(:not(:disabled)):hover { background: var(--button-bg-hover); color: var(--text-strong); }
 .ui-button:active { scale: var(--scale-press); }
 .ui-button:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
