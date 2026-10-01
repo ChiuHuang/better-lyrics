@@ -246,21 +246,26 @@ export interface DiffHead {
   line: number | null;
 }
 
+export interface SyllableChange {
+  before: string | null;
+  after: string | null;
+  moved: number;
+}
+
 export type DiffRow =
   | { kind: "same"; lineNo: number; startMs: number | null; text: string; head?: DiffHead }
   | { kind: "add"; lineNo: number; startMs: number | null; text: string; head?: DiffHead }
   | { kind: "del"; lineNo: number; startMs: number | null; text: string; head?: DiffHead }
   | { kind: "word"; lineNo: number; startMs: number | null; parts: Array<["=" | "+" | "-", string]>; head?: DiffHead }
-  | { kind: "timing"; lineNo: number; startMs: number; deltaMs: number; text: string }
   | {
-      kind: "syllable";
+      kind: "timing";
       lineNo: number;
-      startMs: number | null;
+      startMs: number;
+      deltaMs: number;
       text: string;
-      before: string | null;
-      after: string | null;
-      moved: number;
+      syllables?: SyllableChange;
     }
+  | ({ kind: "syllable"; lineNo: number; startMs: number | null; text: string } & SyllableChange)
   | { kind: "gap"; count: number; section?: "head" }
   | { kind: "field"; field: "language" | "isrc" | "album"; before: string | null; after: string | null };
 

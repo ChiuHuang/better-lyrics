@@ -559,6 +559,22 @@ const REASONS: PendingReason[] = ["sealed", "flagged", "large_text_drift", "larg
   assert.deepEqual(notesOf({ ...merged, before: null }), [null, "unison_rev_syllableTimingAdded"]);
 
   assert.equal(countDiffChanges([merged, retimed, { kind: "gap", count: 4 }]), 2, "syllable rows count as changes");
+
+  const movedSyllables = { before: "So tell me", after: "So tell me", moved: 1 };
+  const movedLine: DiffRow = {
+    kind: "timing",
+    lineNo: 4,
+    startMs: 8_300,
+    deltaMs: 300,
+    text: "So tell me",
+    syllables: movedSyllables,
+  };
+  assert.equal(countDiffChanges([movedLine]), 1, "a moved line with a syllable change is one change");
+  assert.deepEqual(
+    syllableChange({ ...movedSyllables, text: "So tell me" }).map(({ kind, content }) => [kind, content]),
+    [["timing", "So tell me"]],
+    "a moved line's syllable change reads like a syllable row"
+  );
 }
 
 // -- Field rows --------------------------
