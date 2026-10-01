@@ -537,7 +537,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   padding: 10px 12px;
   border: 1px solid var(--callout-edge);
   border-radius: var(--radius-row);
-  background: var(--callout-bg);
+  background: linear-gradient(var(--callout-bg), var(--callout-bg)), var(--callout-base);
   color: var(--callout-text);
   font-size: var(--font-size-sm);
   line-height: 1.5;

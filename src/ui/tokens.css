@@ -141,6 +141,9 @@
   /* -- Accent -- */
   --accent: rgb(99, 102, 241);
 
+  /* -- Callout: tints sit on a darker base so they stay clean on lighter page backdrops -- */
+  --callout-base: rgba(0, 0, 0, 0.2);
+
   /* -- Warning -- */
   --warning: #f5b942;
 
