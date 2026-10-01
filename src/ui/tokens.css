@@ -90,7 +90,8 @@
   --scale-menu-close: 0.99;
   --scale-modal-open: 0.96;
   --scale-modal-close: 0.98;
-  --tooltip-delay: 300ms;
+  --tooltip-delay: 200ms;
+  --tooltip-skip-delay: 300ms;
 
   /* -- Focus -- */
   --focus-ring: 2px solid rgba(255, 255, 255, 0.4);

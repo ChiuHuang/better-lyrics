@@ -592,7 +592,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   to { transform: translateX(100%); }
 }
 
-/* -- Tooltip (delay in, instant out) -- */
+/* -- Tooltip (delay in, instant out, instant between neighbours) -- */
 .ui-tooltip {
   position: fixed;
   top: 0;
@@ -624,6 +624,7 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
     visibility 0s linear var(--tooltip-delay),
     scale var(--duration-quick) ease-out var(--tooltip-delay);
 }
+.ui-tooltip--visible.ui-tooltip--instant { transition: none; }
 
 /* -- Dropdown -- */
 .ui-dropdown { position: relative; display: inline-flex; }

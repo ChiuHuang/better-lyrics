@@ -1,8 +1,22 @@
+import { cssTimeMs } from "@/ui/motion";
+
 const TOOLTIP_GAP_PX = 8;
 const VIEWPORT_MARGIN_PX = 8;
+const DELAY_FALLBACK_MS = 200;
+const SKIP_DELAY_FALLBACK_MS = 300;
 
 let tooltip: HTMLDivElement | undefined;
 let anchor: HTMLElement | null = null;
+let visibleFrom = Number.POSITIVE_INFINITY;
+let lastHiddenAt = Number.NEGATIVE_INFINITY;
+
+function tooltipTiming(): { delayMs: number; skipDelayMs: number } {
+  const root = window.getComputedStyle(document.documentElement);
+  return {
+    delayMs: cssTimeMs(root.getPropertyValue("--tooltip-delay"), DELAY_FALLBACK_MS),
+    skipDelayMs: cssTimeMs(root.getPropertyValue("--tooltip-skip-delay"), SKIP_DELAY_FALLBACK_MS),
+  };
+}
 
 function tooltipAnchor(target: EventTarget | null): HTMLElement | null {
   return target instanceof HTMLElement && target.dataset.tooltip ? target : null;
@@ -23,6 +37,12 @@ function showTooltip(target: HTMLElement): void {
   const maxLeft = window.innerWidth - width - VIEWPORT_MARGIN_PX;
   const left = Math.max(VIEWPORT_MARGIN_PX, Math.min(rect.left + rect.width / 2 - width / 2, maxLeft));
 
+  const now = performance.now();
+  const { delayMs, skipDelayMs } = tooltipTiming();
+  const instant = now - lastHiddenAt < skipDelayMs;
+  visibleFrom = instant ? now : now + delayMs;
+
+  tooltip.classList.toggle("ui-tooltip--instant", instant);
   tooltip.dataset.placement = fitsAbove ? "above" : "below";
   tooltip.style.top = `${top}px`;
   tooltip.style.left = `${left}px`;
@@ -31,6 +51,8 @@ function showTooltip(target: HTMLElement): void {
 
 function hideTooltip(): void {
   if (!tooltip) return;
+  const now = performance.now();
+  if (anchor && now >= visibleFrom) lastHiddenAt = now;
   anchor = null;
   tooltip.classList.remove("ui-tooltip--visible");
 }
