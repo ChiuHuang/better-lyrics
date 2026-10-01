@@ -72,7 +72,6 @@
   padding: 0 var(--text-inset);
   border-bottom: 1px solid var(--divider-strong);
 }
-/* Groups the tabs and bar apart from a title or action, so the group can be the tablist. The head stays the bar's positioned ancestor. */
 .ui-card__tabs { display: flex; align-items: center; align-self: stretch; gap: 24px; }
 .ui-card__title { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.875rem; font-weight: 600; color: var(--text-strong); }
 .ui-card__tab {

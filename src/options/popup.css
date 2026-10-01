@@ -33,7 +33,6 @@ body.options-page {
 .page.active { display: flex; }
 .page--flow { flex: none; }
 
-/* options.css sizes every popup button to full width; primitives size themselves */
 .options-page :where(.ui-button, .ui-card__tab, .ui-dropdown__trigger) { width: auto; }
 
 /* -- Nav ------------------------------------------------------------------- */
@@ -42,7 +41,6 @@ body.options-page {
 #navbar h1 { gap: 0.5rem; }
 #navbar .nav-container { gap: 6px; }
 
-/* quiet tiles; Discord keeps its accent and stays the most noticeable */
 #navbar a {
   color: rgba(255, 255, 255, 0.7);
   background: rgba(255, 255, 255, 0.05);
@@ -88,7 +86,6 @@ body.options-page {
   box-shadow: rgba(0, 0, 0, 0.05) 0 4px 6px -1px, rgba(0, 0, 0, 0.03) 0 2px 4px -1px;
 }
 .tabs { position: relative; display: flex; gap: 0.5rem; padding: 0.25rem; }
-/* long locales only: the strip scrolls and fades instead of clipping its last tab */
 .tabs[data-scrollable] { overflow-x: auto; scroll-padding-inline: var(--fade-inline-size); }
 .tabs .tab {
   position: relative;
@@ -134,7 +131,6 @@ body.options-page {
   .tabs-wrap, .tabs .tab, .tabs__pill { corner-shape: superellipse(1.6); }
 }
 
-/* the head collapses while About is open: grid rows, no padding on the track */
 .head-slot, .tabs-slot {
   display: grid;
   grid-template-rows: 1fr;
@@ -159,7 +155,6 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 
 .page > .ui-card { flex: none; }
 
-/* every tab is the same card in the same place, so only its contents enter; animating the card blinked its surface */
 .page.active > .ui-card > *,
 .page--flow.active { animation: var(--ui-enter, none) var(--duration-fast) var(--ease-smooth-out); }
 
@@ -181,7 +176,6 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 #sources-content > .ui-card { flex: 1; }
 #sources-content .ui-card__body { flex: 1; padding-bottom: 24px; overflow-y: auto; }
 
-/* raised surface like the dropdown trigger and nav tiles; the plain link read too subtle */
 .head-link {
   display: inline-flex;
   align-items: center;
@@ -266,7 +260,6 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
 }
 .keyfield__box .ui-button--compact { border-radius: calc(0.875rem - 6px); }
 
-/* shown until this key id has been exported, so a new identity brings it back */
 .warn-slot {
   display: grid;
   grid-template-rows: 1fr;
@@ -310,7 +303,6 @@ body.is-editing #css { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(
   color: color-mix(in srgb, #f5d38a 75%, #fff);
 }
 
-/* Unison stats on the text inset; the divider runs edge to edge like the card header's */
 .gam-panel { margin: 0 calc(var(--card-pad) * -1) calc(var(--card-pad) * -1); }
 .gam-panel .blyrics-gam__stats-row { padding: var(--row-pad) var(--text-inset) var(--text-inset); }
 .gam-panel .blyrics-gam__stats-foot { margin-top: 0; padding: 12px var(--text-inset); border-top-color: var(--divider-strong); }
