@@ -24,7 +24,6 @@ import type { ThemeCardOptions } from "../types";
 import {
   deleteThemeBtn,
   editThemeBtn,
-  syncIndicator,
   themeModalGrid,
   themeModalOverlay,
   themeNameDisplay,
@@ -37,7 +36,13 @@ import {
   themeSourceBadge,
 } from "../ui/dom";
 import { showConfirm, showPrompt } from "../ui/feedback";
-import { applyStoreThemeComplete, broadcastRICSToTabs, showSyncError, showSyncSuccess } from "./storage";
+import {
+  applyStoreThemeComplete,
+  broadcastRICSToTabs,
+  showSyncError,
+  showSyncSaving,
+  showSyncSuccess,
+} from "./storage";
 import { errorEditor, logEditor, warnEditor } from "@core/logger";
 import { createModal, type Modal } from "@/ui/modal";
 import { toast } from "@/ui/toast";
@@ -343,7 +348,7 @@ class ThemeManager {
         throw new Error(`Failed to save theme: ${result.error?.message || "Unknown error"}`);
       }
 
-      showSyncSuccess(result.strategy, result.wasRetry);
+      showSyncSuccess();
       await broadcastRICSToTabs(css, result.strategy);
     } finally {
       editorStateManager.setIsSaving(false);
@@ -499,7 +504,7 @@ function debounceSaveCustomTheme() {
 }
 
 function debounceSave() {
-  syncIndicator.style.display = "block";
+  showSyncSaving();
   editorStateManager.clearSaveTimeout();
   editorStateManager.setSaveTimeout(window.setTimeout(saveToStorage, SAVE_DEBOUNCE_DELAY));
 }
@@ -526,7 +531,7 @@ export function saveToStorage(isTheme = false) {
     .then(result => {
       logEditor("saveCustomCss result:", result);
       if (result.success && result.strategy) {
-        showSyncSuccess(result.strategy, result.wasRetry);
+        showSyncSuccess();
         broadcastRICSToTabs(css, result.strategy);
       } else {
         throw result.error;

@@ -526,29 +526,6 @@ body {
     width: auto;
 }
 
-#sync-indicator {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    padding: 5px 10px;
-    background-color: rgba(128, 128, 128, 0.2);
-    backdrop-filter: blur(10px);
-    color: white;
-    border-radius: 3px;
-    font-size: 12px;
-    font-family: "JetBrains Mono", monospace;
-    z-index: 1000;
-    display: none;
-}
-
-#sync-indicator.success {
-    color: #4caf50;
-}
-
-#sync-indicator.error {
-    color: #ff7961;
-}
-
 .ie-utils-container {
 	display: flex;
 	align-items: flex-start;

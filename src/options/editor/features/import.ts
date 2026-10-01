@@ -132,7 +132,7 @@ class ImportManager {
         }
 
         logEditor(` Step 5: Sending update message`);
-        showSyncSuccess(result.strategy, result.wasRetry);
+        showSyncSuccess();
         await broadcastRICSToTabs(css, result.strategy);
 
         logEditor(` Import completed successfully`);

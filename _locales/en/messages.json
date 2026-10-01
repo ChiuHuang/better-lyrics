@@ -598,6 +598,14 @@
     "message": "Could not apply theme",
     "description": "Toast when applying a built-in or custom theme from the theme picker fails"
   },
+  "editor_alert_saveFailed": {
+    "message": "Could not save your styles",
+    "description": "Toast when saving the custom CSS editor content fails"
+  },
+  "editor_alert_storageFull": {
+    "message": "Storage is full. Clear the lyrics cache in settings, then try again",
+    "description": "Toast when saving the custom CSS editor content fails because extension storage is full"
+  },
   "editor_alert_importFailed": {
     "message": "Could not import the theme file. Try again",
     "description": "Toast when importing a theme file fails"
