@@ -21,7 +21,52 @@ const KIND_ICONS: Record<Exclude<ToastKind, "loading">, IconKey> = {
   info: "info",
 };
 
+const ANNOUNCE_DELAY_MS = 50;
+
+type Politeness = "polite" | "assertive";
+
 let layer: HTMLElement | undefined;
+const liveRegions: Partial<Record<Politeness, HTMLElement>> = {};
+const announceTimers: Partial<Record<Politeness, ReturnType<typeof setTimeout>>> = {};
+
+function whenDomReady(run: () => void): void {
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run, { once: true });
+  else run();
+}
+
+// -- Live regions --------------------------
+
+function liveRegion(politeness: Politeness): HTMLElement {
+  const existing = liveRegions[politeness];
+  if (existing?.isConnected) return existing;
+  const region = document.createElement("div");
+  region.className = "ui-visually-hidden";
+  region.setAttribute("role", politeness === "assertive" ? "alert" : "status");
+  region.setAttribute("aria-live", politeness);
+  region.setAttribute("aria-atomic", "true");
+  document.body.appendChild(region);
+  liveRegions[politeness] = region;
+  return region;
+}
+
+whenDomReady(() => {
+  liveRegion("polite");
+  liveRegion("assertive");
+});
+
+function announce(kind: ToastKind, message: string): void {
+  const politeness: Politeness = kind === "error" ? "assertive" : "polite";
+  whenDomReady(() => {
+    const region = liveRegion(politeness);
+    region.textContent = "";
+    clearTimeout(announceTimers[politeness]);
+    announceTimers[politeness] = setTimeout(() => {
+      region.textContent = message;
+    }, ANNOUNCE_DELAY_MS);
+  });
+}
+
+// -- Toasts --------------------------
 
 function ensureLayer(): HTMLElement {
   if (layer?.isConnected) return layer;
@@ -45,17 +90,15 @@ function toastIcon(kind: ToastKind): Element {
 
 function render(el: HTMLElement, kind: ToastKind, message: string): void {
   el.className = `ui-toast ui-toast--${kind}`;
-  el.setAttribute("role", kind === "error" ? "alert" : "status");
-  el.setAttribute("aria-live", kind === "error" ? "assertive" : "polite");
   const text = document.createElement("span");
   text.textContent = message;
   el.replaceChildren(toastIcon(kind), text);
+  announce(kind, message);
 }
 
 function show(kind: ToastKind, message: string): ToastHandle {
   const host = ensureLayer();
   const el = document.createElement("div");
-  el.setAttribute("aria-atomic", "true");
   render(el, kind, message);
   el.classList.add("is-entering");
 

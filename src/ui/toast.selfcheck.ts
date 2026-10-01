@@ -40,10 +40,20 @@ const doc = window.document;
 const toasts = (): HTMLElement[] => Array.from(doc.querySelectorAll<HTMLElement>(".ui-toast"));
 const live = (): HTMLElement[] => toasts().filter(el => !el.classList.contains("is-leaving"));
 const text = (el: HTMLElement): string => el.textContent ?? "";
+const politeRegion = (): HTMLElement | null => doc.querySelector('[role="status"][aria-live="polite"]');
+const assertiveRegion = (): HTMLElement | null => doc.querySelector('[role="alert"][aria-live="assertive"]');
 const reset = (): void => {
   advance(60_000);
   doc.querySelector(".ui-toast-layer")?.replaceChildren();
 };
+
+// -- Live regions --------------------------
+{
+  assert.ok(politeRegion(), "polite region exists before the first toast");
+  assert.ok(assertiveRegion(), "assertive region exists before the first toast");
+  assert.equal(politeRegion()?.getAttribute("aria-atomic"), "true", "polite region is atomic");
+  assert.equal(doc.querySelectorAll("[aria-live]").length, 2, "exactly two live regions");
+}
 
 // -- Happy paths --------------------------
 {
@@ -51,10 +61,12 @@ const reset = (): void => {
   const [el] = toasts();
   assert.equal(text(el), "Cache cleared", "renders the message");
   assert.ok(el.classList.contains("ui-toast--success"), "success variant class");
-  assert.equal(el.getAttribute("role"), "status", "success is a status");
-  assert.equal(el.getAttribute("aria-live"), "polite", "success is polite");
+  assert.equal(el.getAttribute("role"), null, "visual toast carries no role");
+  assert.equal(el.getAttribute("aria-live"), null, "visual toast is not a live region");
+  advance(50);
+  assert.equal(politeRegion()?.textContent, "Cache cleared", "success is announced politely");
   assert.ok(el.querySelector("svg.ui-toast__icon"), "success has an icon");
-  advance(2499);
+  advance(2449);
   assert.equal(live().length, 1, "still visible just before 2.5s");
   advance(1);
   assert.equal(live().length, 0, "auto-dismisses at 2.5s");
@@ -65,9 +77,10 @@ const reset = (): void => {
 {
   toast.error("No YouTube Music tab to refresh");
   const [el] = toasts();
-  assert.equal(el.getAttribute("role"), "alert", "error is an alert");
-  assert.equal(el.getAttribute("aria-live"), "assertive", "error is assertive");
-  advance(2500);
+  assert.equal(el.getAttribute("role"), null, "error toast carries no role");
+  advance(50);
+  assert.equal(assertiveRegion()?.textContent, "No YouTube Music tab to refresh", "error is announced assertively");
+  advance(2450);
   assert.equal(live().length, 1, "errors outlast 2.5s");
   advance(1500);
   assert.equal(live().length, 0, "errors dismiss at 4s");
@@ -135,10 +148,24 @@ const reset = (): void => {
 {
   const handle = toast.loading("Exporting key");
   handle.update("error", "Failed to export identity");
-  const [el] = toasts();
-  assert.equal(el.getAttribute("role"), "alert", "resolving to error becomes an alert");
-  advance(3999);
+  advance(50);
+  assert.equal(
+    assertiveRegion()?.textContent,
+    "Failed to export identity",
+    "resolving to error is announced assertively"
+  );
+  advance(3949);
   assert.equal(live().length, 1, "resolved error uses the 4s timer");
+  reset();
+}
+
+{
+  toast.info("Nothing new");
+  advance(50);
+  toast.info("Nothing new");
+  assert.equal(politeRegion()?.textContent, "", "a repeat clears the region first");
+  advance(50);
+  assert.equal(politeRegion()?.textContent, "Nothing new", "a repeat is announced again");
   reset();
 }
 

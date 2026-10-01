@@ -417,6 +417,19 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
 }
 @keyframes ui-toast-out { to { opacity: 0; transform: translateY(-6px) scale(0.98); } }
 
+/* -- Visually hidden (screen readers only) -- */
+.ui-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* -- Hidden: the display rules above would otherwise beat the UA [hidden] rule -- */
 :is(
   .ui-button, .ui-card, .ui-card__head, .ui-card__tabs, .ui-panel, .ui-row, .ui-row__label, .ui-row__sub, .ui-action-strip,
