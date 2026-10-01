@@ -92,7 +92,7 @@
 .unison-header-right {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 /* -- Search --------------------------  */
@@ -113,27 +113,34 @@
 }
 
 .unison-search-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.375rem;
-  padding: 0.375rem 2rem 0.375rem 2rem;
-  font-size: 0.8125rem;
-  color: #fff;
-  width: 340px;
-  height: 2rem;
-  outline: none;
-  transition: all 0.2s;
-  font-family: inherit;
   box-sizing: border-box;
+  width: 340px;
+  height: 34px;
+  padding: 0 2rem;
+  border: none;
+  border-radius: var(--radius-control);
+  background: var(--raised-bg);
+  box-shadow: var(--raised-edge);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  outline: none;
+  transition:
+    background var(--duration-quick) ease-out,
+    box-shadow var(--duration-quick) ease-out;
 }
 
 .unison-search-input::placeholder {
   color: rgba(255, 255, 255, 0.4);
 }
 
+.unison-search-input:hover {
+  background: var(--raised-bg-hover);
+}
+
 .unison-search-input:focus {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--raised-bg-hover);
+  box-shadow: var(--field-edge-focus);
 }
 
 .unison-search-hint {
@@ -184,24 +191,39 @@ kbd {
 /* -- Nav Buttons --------------------------  */
 
 .unison-nav-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.75rem;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.15s;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 34px;
   margin: 0;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: var(--raised-bg);
+  box-shadow: var(--raised-edge);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: inherit;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out,
+    scale var(--duration-quick) ease-out;
 }
 
 .unison-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--raised-bg-hover);
+  color: #fff;
+}
+
+.unison-nav-btn:active {
+  scale: 0.96;
+}
+
+.unison-nav-btn[aria-current] {
+  background: var(--raised-bg-hover);
   color: #fff;
 }
 
@@ -220,17 +242,6 @@ kbd {
 
 .unison-identity:empty {
   display: none;
-}
-
-#unison-header-identity {
-  background: rgba(129, 140, 248, 0.1);
-  color: rgb(165, 180, 252);
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  margin: 0;
 }
 
 /* -- Results Grid --------------------------  */
@@ -3059,7 +3070,9 @@ kbd {
   .unison-token-input,
   .unison-submit-lyrics-frame,
   .unison-back-btn,
-  .unison-vote-btn {
+  .unison-vote-btn,
+  .unison-search-input,
+  .unison-nav-btn {
     corner-shape: superellipse(1.6);
   }
 
@@ -3089,7 +3102,9 @@ kbd {
   .unison-input,
   .unison-token-input,
   .unison-back-btn,
-  .unison-vote-btn {
+  .unison-vote-btn,
+  .unison-search-input,
+  .unison-nav-btn {
     transition: none;
   }
 }

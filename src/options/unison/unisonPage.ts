@@ -226,16 +226,9 @@ function showView(view: View): void {
   viewDetail.hidden = view !== "detail";
   viewSubmit.hidden = view !== "submit";
   viewRevisions.hidden = view !== "revisions";
-
-  const isSubmit = view === "submit";
-  const headerSearch = document.getElementById("unison-header-search");
-  const submitNavBtn = document.getElementById("unison-submit-nav-btn");
-  const headerIdentity = document.getElementById("unison-header-identity");
-  const leftIdentity = document.getElementById("unison-identity");
-  if (headerSearch) headerSearch.style.display = isSubmit ? "none" : "";
-  if (submitNavBtn) submitNavBtn.style.display = isSubmit ? "none" : "";
-  if (headerIdentity) headerIdentity.style.display = isSubmit ? "" : "none";
-  if (leftIdentity) leftIdentity.style.display = isSubmit ? "none" : "";
+  const submitNav = document.getElementById("unison-submit-nav-btn");
+  if (view === "submit") submitNav?.setAttribute("aria-current", "page");
+  else submitNav?.removeAttribute("aria-current");
 }
 
 function navigateTo(params: Record<string, string>, options: { replace?: boolean } = {}): void {
@@ -357,11 +350,8 @@ export function initUnisonPage(): void {
 async function loadIdentity(): Promise<void> {
   try {
     const name = await getDisplayName();
-    const text = `${t("unison_interactingAs")} ${name}`;
-    for (const id of ["unison-identity", "unison-header-identity"]) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = text;
-    }
+    const identity = document.getElementById("unison-identity");
+    if (identity) identity.textContent = `${t("unison_interactingAs")} ${name}`;
   } catch (err) {
     warnUnison("Failed to load identity:", err);
   }
