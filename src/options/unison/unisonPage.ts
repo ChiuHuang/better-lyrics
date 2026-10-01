@@ -1227,8 +1227,8 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
   const downBtn = createButton({ label: t("unison_downvote"), icon: "downvote" });
 
   let currentVote: "up" | "down" | null = userVote === 1 ? "up" : userVote === -1 ? "down" : null;
-  upBtn.classList.toggle("unison-vote-btn--active", currentVote === "up");
-  downBtn.classList.toggle("unison-vote-btn--active", currentVote === "down");
+  upBtn.classList.toggle("ui-button--accent-tint", currentVote === "up");
+  downBtn.classList.toggle("ui-button--accent-tint", currentVote === "down");
 
   async function handleVote(direction: "up" | "down") {
     const vote: VoteValue = direction === "up" ? 1 : -1;
@@ -1237,15 +1237,15 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
       const result = await removeVote(unisonId);
       if (result.success) {
         currentVote = null;
-        upBtn.classList.remove("unison-vote-btn--active");
-        downBtn.classList.remove("unison-vote-btn--active");
+        upBtn.classList.remove("ui-button--accent-tint");
+        downBtn.classList.remove("ui-button--accent-tint");
       }
     } else {
       const result = await castVote(unisonId, vote);
       if (result.success) {
         currentVote = direction;
-        upBtn.classList.toggle("unison-vote-btn--active", direction === "up");
-        downBtn.classList.toggle("unison-vote-btn--active", direction === "down");
+        upBtn.classList.toggle("ui-button--accent-tint", direction === "up");
+        downBtn.classList.toggle("ui-button--accent-tint", direction === "down");
       }
     }
   }
@@ -1268,21 +1268,21 @@ function createDetailVoting(unisonId: number, userVote?: 1 | -1 | null, isOwn: b
 
 function createDetailDeleteButton(unisonId: number): HTMLButtonElement {
   const btn = createButton({ label: t("unison_delete"), icon: "trash" });
-  btn.classList.add("unison-vote-btn--delete");
+  btn.classList.add("ui-button--danger-tint", "unison-vote-btn--delete");
 
   const setIdle = () => {
     btn.replaceChildren(svgIcon("trash"), document.createTextNode(t("unison_delete")));
-    btn.classList.remove("unison-vote-btn--delete-confirm");
+    btn.classList.replace("ui-button--danger", "ui-button--danger-tint");
   };
 
   const setConfirm = () => {
     btn.replaceChildren(svgIcon("trash"), document.createTextNode(t("unison_deleteConfirm")));
-    btn.classList.add("unison-vote-btn--delete-confirm");
+    btn.classList.replace("ui-button--danger-tint", "ui-button--danger");
   };
 
   const setError = (message: string) => {
     btn.replaceChildren(svgIcon("trash"), document.createTextNode(message));
-    btn.classList.remove("unison-vote-btn--delete-confirm");
+    btn.classList.replace("ui-button--danger", "ui-button--danger-tint");
   };
 
   setIdle();
@@ -1411,7 +1411,7 @@ function renderLinkedVideoList(
     } else {
       const removeBtn = document.createElement("button");
       removeBtn.type = "button";
-      removeBtn.className = "unison-video-remove";
+      removeBtn.className = "ui-button ui-button--compact";
       removeBtn.appendChild(svgIcon("trash"));
       removeBtn.append(t("unison_removeVideo"));
       removeBtn.addEventListener("click", async () => {
@@ -1440,7 +1440,7 @@ function renderVideoListError(listEl: HTMLElement, onRetry: () => void): void {
 
   const retryBtn = document.createElement("button");
   retryBtn.type = "button";
-  retryBtn.className = "unison-video-retry";
+  retryBtn.className = "ui-button ui-button--compact";
   retryBtn.textContent = t("marketplace_retry");
   retryBtn.addEventListener("click", () => {
     retryBtn.disabled = true;
@@ -1587,7 +1587,7 @@ function createSuggestedVideoRow(song: string, suggestion: SuggestedVideo, onAdd
 
   const addBtn = document.createElement("button");
   addBtn.type = "button";
-  addBtn.className = "unison-video-add";
+  addBtn.className = "ui-button ui-button--compact";
   addBtn.textContent = t("unison_addVideo");
   addBtn.addEventListener("click", async () => {
     const titleDiffers = normalizeTitle(suggestion.title) !== normalizeTitle(song);
@@ -1635,7 +1635,7 @@ function renderSuggestedVideoList(
     moreRow.className = "unison-suggest-more";
     const moreBtn = document.createElement("button");
     moreBtn.type = "button";
-    moreBtn.className = "unison-suggest-more-btn";
+    moreBtn.className = "ui-button ui-button--compact";
     moreBtn.textContent = t("unison_showMore");
     moreBtn.addEventListener("click", () => {
       moreRow.replaceWith(...createRows(likely.slice(SUGGESTED_VIDEO_PAGE_SIZE)));
@@ -1676,7 +1676,7 @@ function createManualVideoLinkForm(onLink: (videoId: string) => Promise<string |
 
   const addBtn = document.createElement("button");
   addBtn.type = "submit";
-  addBtn.className = "unison-video-add";
+  addBtn.className = "ui-button ui-button--compact";
   addBtn.textContent = t("unison_addVideo");
 
   const error = document.createElement("p");
