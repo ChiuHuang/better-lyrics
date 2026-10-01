@@ -50,6 +50,10 @@ interface TransientStorageItem {
   expiry: number;
 }
 
+function isExpired(expiry: number | undefined, now = Date.now()): boolean {
+  return Boolean(expiry && now >= expiry);
+}
+
 const COMPILE_TIMEOUT = 3000;
 const MAX_ITERATIONS = 10000;
 const HARD_TIMEOUT = 5000;
@@ -138,7 +142,7 @@ export async function peekTransientStorage(key: string): Promise<{ value: any; e
     const { value, expiry } = item;
     const decoded = typeof value === "string" && isCompressed(value) ? decompressString(value) : value;
 
-    return { value: decoded, expired: Boolean(expiry && Date.now() > expiry) };
+    return { value: decoded, expired: isExpired(expiry) };
   } catch (error) {
     logError(error);
     return null;
@@ -233,6 +237,9 @@ const THEME_STORAGE_KEYS = new Set([
   "storeThemeIndex",
   "customThemes",
   "customCSS",
+  "customCSS_chunked",
+  "customCSS_chunkCount",
+  "cssCompressed",
   "userThemeRatings",
   "userThemeInstalls",
   "blyrics_featured_themes",
@@ -271,7 +278,7 @@ export function summarizeLyricCache(items: Record<string, unknown>): LyricCacheS
   for (const [key, item] of Object.entries(items)) {
     const parsed = parseLyricCacheKey(key);
     const provider = parsed && PROVIDER_BY_KEY.get(parsed.source);
-    if (!parsed || !provider || isMissEntry(item)) continue;
+    if (!parsed || !provider || isExpired((item as { expiry?: number } | null)?.expiry) || isMissEntry(item)) continue;
     const current = best.get(parsed.videoId);
     if (!current || provider.priority < current.priority) {
       best.set(parsed.videoId, { priority: provider.priority, syncType: provider.syncType });
@@ -301,7 +308,6 @@ export async function getStorageBreakdown(): Promise<StorageBreakdown> {
     string[]
   >;
   for (const key of Object.keys(items)) keysByCategory[storageCategoryForKey(key)].push(key);
-  // storage.local.getBytesInUse only exists from Firefox 144
   const canMeasure = typeof chrome.storage.local.getBytesInUse === "function";
   const sizes = await Promise.all(
     STORAGE_CATEGORIES.map(category => {
@@ -398,7 +404,7 @@ export async function purgeExpiredKeys(): Promise<void> {
     Object.keys(result).forEach(key => {
       if (key.startsWith("blyrics_")) {
         const item = result[key] as TransientStorageItem;
-        if (item.expiry && now >= item.expiry) {
+        if (isExpired(item.expiry, now)) {
           keysToRemove.push(key);
         }
       }

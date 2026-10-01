@@ -145,6 +145,9 @@ const seed = (items: Record<string, unknown>): void => {
   assert.equal(storageCategoryForKey("customThemes"), "themes");
   assert.equal(storageCategoryForKey("customCSS"), "themes");
   assert.equal(storageCategoryForKey("customCSS_chunk_3"), "themes");
+  assert.equal(storageCategoryForKey("customCSS_chunked"), "themes", "regression: chunk bookkeeping is theme storage");
+  assert.equal(storageCategoryForKey("customCSS_chunkCount"), "themes");
+  assert.equal(storageCategoryForKey("cssCompressed"), "themes");
   assert.equal(storageCategoryForKey("userThemeRatings"), "themes");
   assert.equal(storageCategoryForKey("userThemeInstalls"), "themes");
   assert.equal(storageCategoryForKey("blyrics_featured_themes"), "themes");
@@ -181,6 +184,21 @@ const seed = (items: Record<string, unknown>): void => {
 
 // -- Lyric cache summary: edge cases --------------------------
 {
+  const body = JSON.stringify({ version: 1, lyrics: [] });
+  assert.equal(
+    summarizeLyricCache({
+      "blyrics_aaaaaaaaaaa_lrclib-synced": { type: "transient", value: body, expiry: Date.now() - 1 },
+    }).songs,
+    0,
+    "regression: expired entries waiting for the purge are not cached lyrics"
+  );
+  assert.equal(
+    summarizeLyricCache({
+      "blyrics_aaaaaaaaaaa_lrclib-synced": { type: "transient", value: body, expiry: Date.now() + 60_000 },
+    }).songs,
+    1,
+    "unexpired entries count"
+  );
   assert.deepEqual(summarizeLyricCache({}), { songs: 0, bySyncType: { syllable: 0, word: 0, line: 0, unsynced: 0 } });
   const legacy = { type: "transient", value: "not json", expiry: 0 };
   assert.equal(
