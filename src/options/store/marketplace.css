@@ -78,11 +78,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.5rem;
+  column-gap: 32px;
+  row-gap: 1.5rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
-  padding: 1rem;
+  border-radius: 1.5rem;
+  padding: 14px var(--text-inset);
   margin-bottom: 1.5rem;
 }
 
@@ -113,11 +114,9 @@
 }
 
 .marketplace-filter-label {
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .marketplace-filter-options {
@@ -137,7 +136,10 @@
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    background var(--duration-quick) ease-out,
+    border-color var(--duration-quick) ease-out,
+    color var(--duration-quick) ease-out;
 	width: fit-content !important;
 	height: 1.5rem;
 	user-select: none;
@@ -157,24 +159,6 @@
 
 .marketplace-filter-chip input {
   display: none;
-}
-
-.marketplace-filter-chip kbd {
-  height: 1rem;
-  min-width: 1rem;
-  padding: 0 0.25rem;
-  font-size: 0.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.4);
-  box-shadow: none;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.marketplace-filter-chip:has(input:checked) kbd {
-  background: rgba(129, 140, 248, 0.15);
-  border-color: rgba(129, 140, 248, 0.3);
-  color: rgb(165, 180, 252);
 }
 
 .marketplace-filter-chip--sort {
@@ -1756,10 +1740,6 @@ kbd.kbd-icon svg {
 /* Feature-gated: browsers without corner-shape keep the original radii above. */
 
 @supports (corner-shape: superellipse(1.6)) {
-  .marketplace-filters {
-    border-radius: 1.5rem;
-  }
-
   #status-css.toast {
     border-radius: 1.25rem;
   }
@@ -1779,5 +1759,13 @@ kbd.kbd-icon svg {
   .store-filter-dropdown,
   .detail-shader-info {
     corner-shape: superellipse(1.6);
+  }
+}
+
+/* -- Reduced motion ---------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .marketplace-filter-chip {
+    transition: none;
   }
 }
