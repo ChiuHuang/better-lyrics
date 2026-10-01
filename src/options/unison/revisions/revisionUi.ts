@@ -58,6 +58,15 @@ export function createButton({ label, icon, primary = false, active = false }: B
   return button;
 }
 
+export function createBackButton(label: string, onClick: () => void): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "unison-back-btn";
+  button.append(svgIcon("back"), label);
+  button.addEventListener("click", onClick);
+  return button;
+}
+
 export function setButtonContent(button: HTMLButtonElement, label: string, icon?: IconKey): void {
   button.replaceChildren(...(icon ? [svgIcon(icon)] : []), document.createTextNode(label));
 }

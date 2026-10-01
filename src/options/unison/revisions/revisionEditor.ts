@@ -28,6 +28,7 @@ import { mountChangesTabs } from "@/options/unison/revisions/revisionChanges";
 import { compactTtml, readableTtml } from "@/options/unison/ttmlLayout";
 import {
   type RevisionHost,
+  createBackButton,
   createButton,
   createDriftMeter,
   messageText,
@@ -299,11 +300,7 @@ function renderSidebar(
   host: RevisionHost,
   controls: SidebarControls
 ): HTMLTableCellElement {
-  const back = document.createElement("button");
-  back.type = "button";
-  back.className = "unison-back-btn";
-  back.append(svgIcon("back"), t("options_modal_cancel"));
-  back.addEventListener("click", () => host.leave({ id: String(entry.id) }));
+  const back = createBackButton(t("options_modal_cancel"), () => host.leave({ id: String(entry.id) }));
 
   const title = document.createElement("h2");
   title.className = "unison-detail-title";

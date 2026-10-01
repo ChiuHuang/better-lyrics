@@ -54,7 +54,7 @@ import { IS_DEV, devFixtureHint, devFixtures } from "@modules/unison/devFixtures
 import { renderRevisionBar } from "@/options/unison/revisions/revisionBar";
 import { type EditorSurface, renderRevisionEditor } from "@/options/unison/revisions/revisionEditor";
 import { renderRevisionsPage } from "@/options/unison/revisions/revisionList";
-import { type RevisionHost, createButton } from "@/options/unison/revisions/revisionUi";
+import { type RevisionHost, createBackButton, createButton } from "@/options/unison/revisions/revisionUi";
 import { createDropdown, type Dropdown } from "@/ui/dropdown";
 import { attachScrollFade } from "@/ui/scrollFade";
 import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
@@ -1117,13 +1117,7 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   ytLink.appendChild(svgIcon("externalLink"));
   ytLink.append(t("unison_openInYTMusic"));
 
-  const backBtn = document.createElement("button");
-  backBtn.className = "unison-back-btn";
-  backBtn.appendChild(svgIcon("back"));
-  backBtn.append(t("unison_back"));
-  backBtn.addEventListener("click", () => {
-    window.history.back();
-  });
+  const backBtn = createBackButton(t("unison_back"), () => window.history.back());
 
   detailMeta.appendChild(backBtn);
   detailMeta.appendChild(title);
