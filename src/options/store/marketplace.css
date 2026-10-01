@@ -1,6 +1,6 @@
 /* Standalone Marketplace Page */
 .marketplace-standalone {
-  background: #1a1a1c;
+  background: var(--page-bg);
   min-height: 100vh;
   margin: 0;
   padding: 0;
