@@ -95,7 +95,7 @@ const reset = (): void => {
 // -- Stacking --------------------------
 {
   for (const label of ["one", "two", "three", "four"]) toast.success(label);
-  assert.deepEqual(toasts().map(text), ["four", "three", "two"], "newest on top, capped at 3");
+  assert.deepEqual(live().map(text), ["four", "three", "two"], "newest on top, capped at 3");
   reset();
 }
 {
@@ -105,6 +105,25 @@ const reset = (): void => {
   toast.success("b");
   toast.success("c");
   assert.equal(live().length, 3, "a leaving toast does not count toward the cap");
+  reset();
+}
+
+{
+  const loading = toast.loading("Exporting key");
+  for (const label of ["a", "b", "c"]) toast.success(label);
+  assert.deepEqual(live().map(text), ["c", "b", "a"], "the oldest toast is evicted at the cap");
+  assert.ok(
+    toasts().some(el => text(el) === "Exporting key" && el.classList.contains("is-leaving")),
+    "eviction plays the exit"
+  );
+  loading.update("success", "Identity key exported");
+  assert.equal(
+    toasts().filter(el => text(el) === "Identity key exported").length,
+    0,
+    "an evicted toast does not come back on update"
+  );
+  advance(60_000);
+  assert.equal(pending.size, 0, "no timer is left pending after eviction");
   reset();
 }
 

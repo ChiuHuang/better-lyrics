@@ -26,6 +26,7 @@ const ANNOUNCE_DELAY_MS = 50;
 type Politeness = "polite" | "assertive";
 
 let layer: HTMLElement | undefined;
+const dismissers = new WeakMap<HTMLElement, () => void>();
 const liveRegions: Partial<Record<Politeness, HTMLElement>> = {};
 const announceTimers: Partial<Record<Politeness, ReturnType<typeof setTimeout>>> = {};
 
@@ -141,9 +142,10 @@ function show(kind: ToastKind, message: string): ToastHandle {
   el.addEventListener("pointerleave", resume);
   el.addEventListener("click", dismiss);
 
+  dismissers.set(el, dismiss);
   host.prepend(el);
-  const live = host.querySelectorAll(".ui-toast:not(.is-leaving)");
-  for (const stale of Array.from(live).slice(TOAST_MAX_VISIBLE)) stale.remove();
+  const live = host.querySelectorAll<HTMLElement>(".ui-toast:not(.is-leaving)");
+  for (const stale of Array.from(live).slice(TOAST_MAX_VISIBLE)) dismissers.get(stale)?.();
   run();
 
   return {
