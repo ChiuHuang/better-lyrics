@@ -344,11 +344,9 @@
 
 .store-filter-label {
   display: block;
-  font-size: 0.6rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 0.5rem;
 }
 
@@ -875,12 +873,12 @@
   gap: 0.25rem;
   background: rgba(99, 102, 241, 0.9);
   color: #fff;
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   padding: 0.2rem 0.25rem;
   border-radius: 0.25rem;
   flex-shrink: 0;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
 }
 
 .detail-shader-badge svg {
@@ -894,13 +892,12 @@
   gap: 0.25rem;
   background: rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   padding: 0.2rem 0.35rem;
   border-radius: 0.25rem;
   flex-shrink: 0;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0;
 }
 
 .detail-url-badge svg {
@@ -1549,18 +1546,14 @@ kbd.kbd-icon svg {
 }
 
 .shortcuts-group-title {
-  font-size: 0.625rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 0.5rem;
 }
 
 .shortcuts-group-hint {
   font-weight: 400;
-  text-transform: none;
-  letter-spacing: normal;
   opacity: 0.8;
 }
 
