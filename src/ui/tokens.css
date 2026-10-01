@@ -112,6 +112,12 @@
   /* -- Accent -- */
   --accent: rgb(99, 102, 241);
 
+  /* -- Warning -- */
+  --warning: #f5b942;
+
+  /* -- Info -- */
+  --info: rgb(125, 211, 252);
+
   /* -- Danger -- */
   --danger: rgb(239, 68, 68);
   --danger-hover: rgb(220, 38, 38);
