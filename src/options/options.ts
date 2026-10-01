@@ -682,6 +682,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await localeReady;
   renderAppVersion(document.getElementById("app-version"));
   fitPopupToWindow();
+  renderAboutLinks(document);
   mountIcons(document);
   initRefreshLyricsButton(() => toast.error(t("options_alert_refreshFailed")));
   mountDropdownFields();
@@ -693,7 +694,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initPopupScrollFades();
   initPopupTabs(page => pageCard(page)?.place(true));
   initAboutToggle(page => pageCard(page)?.place(true));
-  renderAboutLinks(document);
   checkForStableRelease();
 });
 

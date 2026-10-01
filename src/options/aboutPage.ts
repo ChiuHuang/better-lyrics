@@ -1,4 +1,4 @@
-import { ABOUT_MAKERS, DISCORD_INVITE_URL, GITHUB_REPO_URL } from "@constants";
+import { ABOUT_MAKERS, DISCORD_INVITE_URL, GITHUB_REPO_URL, SHADERS_SITE_URL } from "@constants";
 import { t } from "@core/i18n";
 
 const LINK_MARKER = "\u2063";
@@ -16,19 +16,29 @@ export function splitLinked(message: string): (string | number)[] {
   return message.split(LINK_MARKER).map((part, i) => (i % 2 === 0 ? part : Number(part)));
 }
 
+function createLink({ href, text }: Link): HTMLAnchorElement {
+  const anchor = document.createElement("a");
+  anchor.href = href;
+  anchor.target = "_blank";
+  anchor.rel = "noopener noreferrer";
+  anchor.textContent = text;
+  return anchor;
+}
+
 function fillLinked(el: HTMLElement, key: string, links: Link[]): void {
   el.replaceChildren(
-    ...splitLinked(t(key, linkPlaceholders(links.length))).map(part => {
-      if (typeof part === "string") return document.createTextNode(part);
-      const link = links[part];
-      const anchor = document.createElement("a");
-      anchor.href = link.href;
-      anchor.target = "_blank";
-      anchor.rel = "noopener noreferrer";
-      anchor.textContent = link.text;
-      return anchor;
-    })
+    ...splitLinked(t(key, linkPlaceholders(links.length))).map(part =>
+      typeof part === "string" ? document.createTextNode(part) : createLink(links[part])
+    )
   );
+}
+
+function fillExternalLink(el: HTMLElement, link: Link): void {
+  const anchor = createLink(link);
+  const icon = document.createElement("span");
+  icon.dataset.icon = "externalLink";
+  anchor.append(icon);
+  el.replaceChildren(anchor);
 }
 
 export function renderAboutLinks(root: ParentNode): void {
@@ -45,4 +55,6 @@ export function renderAboutLinks(root: ParentNode): void {
     const el = root.querySelector<HTMLElement>(`[data-linked="${name}"]`);
     if (el) fillLinked(el, key, links);
   }
+  const shaders = root.querySelector<HTMLElement>('[data-linked="shaders"]');
+  if (shaders) fillExternalLink(shaders, { href: SHADERS_SITE_URL, text: t("lyrics_getShaders") });
 }

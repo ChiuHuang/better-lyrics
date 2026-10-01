@@ -75,6 +75,7 @@ export const ABOUT_MAKERS: readonly { name: string; href: string }[] = [
 ];
 export const SHADERS_CWS_URL =
   "https://chromewebstore.google.com/detail/better-lyrics-shaders/mffpncjphfmkppebdoaehdlnagnlpfai" as const;
+export const SHADERS_SITE_URL = "https://shaders.betterlyrics.org" as const;
 export const SHADERS_AMO_URL = "https://addons.mozilla.org/en-US/firefox/addon/better-lyrics-shaders/" as const;
 export const STORE_CWS_URL =
   "https://chromewebstore.google.com/detail/better-lyrics/effdbpeggelllpfkjppbokhmmiinhlmg" as const;
