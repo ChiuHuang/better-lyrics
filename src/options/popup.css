@@ -77,58 +77,9 @@ body.options-page {
 
 /* -- Tab strip ------------------------------------------------------------- */
 
-.tabs-wrap {
-  margin-bottom: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: rgba(0, 0, 0, 0.05) 0 4px 6px -1px, rgba(0, 0, 0, 0.03) 0 2px 4px -1px;
-}
-.tabs { position: relative; display: flex; gap: 0.5rem; padding: 0.25rem; }
+.tabs-wrap { margin-bottom: 16px; }
+/* long locales only: the strip scrolls and fades instead of clipping its last tab */
 .tabs[data-scrollable] { overflow-x: auto; scroll-padding-inline: var(--fade-inline-size); }
-.tabs .tab {
-  position: relative;
-  z-index: 1;
-  flex: 1 0 auto;
-  width: auto;
-  margin: 0;
-  padding: 0.375rem 0.75rem;
-  border: none;
-  border-radius: 0.25rem;
-  background: none;
-  color: rgba(255, 255, 255, 0.5);
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color var(--duration-quick) ease-out;
-}
-.tabs .tab:hover { color: rgba(255, 255, 255, 0.75); }
-.tabs .tab.active { background: none; color: #fff; }
-.tabs .tab:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: -2px; }
-.tabs__pill {
-  position: absolute;
-  top: 0.25rem;
-  bottom: 0.25rem;
-  left: 0;
-  z-index: 0;
-  width: 0;
-  border-radius: 0.25rem;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px, inset rgba(255, 255, 255, 0.1) 0 1px 0 0;
-  pointer-events: none;
-  transition:
-    transform var(--duration-fast) var(--ease-smooth-out),
-    width var(--duration-fast) var(--ease-smooth-out);
-  will-change: transform, width;
-}
-
-@supports (corner-shape: superellipse(1.6)) {
-  .tabs-wrap { border-radius: var(--radius-tab-strip); }
-  .tabs .tab, .tabs__pill { border-radius: var(--radius-tab); }
-  .tabs-wrap, .tabs .tab, .tabs__pill { corner-shape: superellipse(1.6); }
-}
 
 .head-slot, .tabs-slot {
   display: grid;
@@ -159,7 +110,7 @@ body.is-editing #editor { height: 100%; overflow: hidden; }
 body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
 
 @media (prefers-reduced-motion: reduce) {
-  .tabs .tab, .tabs__pill, .head-slot, .tabs-slot { transition: none; }
+  .head-slot, .tabs-slot { transition: none; }
 }
 
 /* -- Card in the popup ------------------------------------------------------ */

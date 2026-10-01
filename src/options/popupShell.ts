@@ -2,8 +2,9 @@ import { warnCore } from "@core/logger";
 import { observeResize } from "@modules/ui/layout/layoutWidth";
 import { controlIcons, parseSvgString } from "@modules/ui/lyricsDock/icons";
 import { svgIcon } from "@/options/unison/icons";
-import { type CardTabs, initCardTabs, rovingIndex, travelDirection } from "@/ui/cardTabs";
+import { type CardTabs, initCardTabs } from "@/ui/cardTabs";
 import { attachScrollFade, inlineWheelStep } from "@/ui/scrollFade";
+import { initSegmentedTabs, type SegmentedTabs } from "@/ui/segmentedTabs";
 
 // -- Version --------------------------
 
@@ -40,25 +41,12 @@ export function fitPopupToWindow(): void {
   else window.addEventListener("load", fitNextFrame, { once: true });
 }
 
-// -- Tab pill --------------------------
-
-function movePill(tabs: HTMLElement, animate: boolean): void {
-  const pill = tabs.querySelector<HTMLElement>(".tabs__pill");
-  const active = tabs.querySelector<HTMLElement>(".tab.active");
-  if (!pill || !active) return;
-  if (!animate) pill.style.transition = "none";
-  pill.style.transform = `translateX(${active.offsetLeft}px)`;
-  pill.style.width = `${active.offsetWidth}px`;
-  if (!animate) {
-    void pill.offsetWidth;
-    pill.style.transition = "";
-  }
-}
+// -- Tab strip overflow --------------------------
 
 function revealActiveTab(tabs: HTMLElement, animate: boolean): void {
   if (!tabs.hasAttribute("data-scrollable")) return;
   const smooth = animate && !matchMedia("(prefers-reduced-motion: reduce)").matches;
-  tabs.querySelector<HTMLElement>(".tab.active")?.scrollIntoView({
+  tabs.querySelector<HTMLElement>(".ui-segmented__tab[aria-selected=true]")?.scrollIntoView({
     block: "nearest",
     inline: "nearest",
     behavior: smooth ? "smooth" : "instant",
@@ -73,7 +61,7 @@ function scrollTabsWithWheel(tabs: HTMLElement, event: WheelEvent): void {
   tabs.scrollLeft += step;
 }
 
-function watchTabOverflow(tabs: HTMLElement): void {
+function watchTabOverflow(tabs: HTMLElement, segmented: SegmentedTabs): void {
   let hasFade = false;
   const sync = (): void => {
     const clipped = tabs.scrollWidth > tabs.clientWidth;
@@ -85,10 +73,10 @@ function watchTabOverflow(tabs: HTMLElement): void {
       }
       revealActiveTab(tabs, false);
     }
-    movePill(tabs, false);
+    segmented.place(false);
   };
   tabs.addEventListener("wheel", event => scrollTabsWithWheel(tabs, event), { passive: false });
-  observeResize([tabs, ...tabs.querySelectorAll(".tab")], sync);
+  observeResize([tabs, ...segmented.tabs], sync);
   void document.fonts.ready.then(sync);
 }
 
@@ -97,20 +85,9 @@ function watchTabOverflow(tabs: HTMLElement): void {
 export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
   const tabs = document.querySelector<HTMLElement>(".tabs");
   if (!tabs) return;
-  const buttons = Array.from(tabs.querySelectorAll<HTMLButtonElement>(".tab"));
 
-  const activate = (button: HTMLButtonElement, animate: boolean): void => {
-    const direction = travelDirection(
-      buttons.findIndex(b => b.classList.contains("active")),
-      buttons.indexOf(button)
-    );
-    for (const b of buttons) {
-      b.classList.toggle("active", b === button);
-      b.setAttribute("aria-selected", String(b === button));
-      b.tabIndex = b === button ? 0 : -1;
-    }
+  const showPage = (button: HTMLButtonElement, direction: "next" | "prev" | "", animate: boolean): void => {
     if (document.body.classList.contains("is-about")) setAboutChrome(false);
-    movePill(tabs, animate);
     revealActiveTab(tabs, animate);
     const target = button.dataset.target ?? "";
     for (const page of document.querySelectorAll<HTMLElement>("#options > .tab-content")) {
@@ -122,23 +99,12 @@ export function initPopupTabs(onPageShown: (page: HTMLElement) => void): void {
     if (location.hash.split("/")[0] !== target) history.replaceState(null, "", target);
   };
 
-  tabs.addEventListener("click", event => {
-    const button = (event.target as Element).closest<HTMLButtonElement>(".tab");
-    if (button && !button.classList.contains("active")) activate(button, true);
-  });
-  tabs.addEventListener("keydown", event => {
-    const focused = buttons.indexOf(document.activeElement as HTMLButtonElement);
-    if (focused < 0) return;
-    const index = rovingIndex(focused, event.key, buttons.length, getComputedStyle(tabs).direction === "rtl");
-    if (index < 0) return;
-    event.preventDefault();
-    buttons[index].focus();
-    activate(buttons[index], true);
-  });
-
-  const restored = buttons.find(b => b.dataset.target === `#${location.hash.slice(1).split("/")[0]}`);
-  activate(restored ?? buttons[0], false);
-  watchTabOverflow(tabs);
+  const segmented = initSegmentedTabs(tabs, { onChange: (button, direction) => showPage(button, direction, true) });
+  const restored = segmented.tabs.find(b => b.dataset.target === `#${location.hash.slice(1).split("/")[0]}`);
+  const initial = restored ?? segmented.tabs[0];
+  segmented.select(initial, { animate: false, notify: false });
+  showPage(initial, "", false);
+  watchTabOverflow(tabs, segmented);
 }
 
 // -- Cards --------------------------
@@ -262,7 +228,10 @@ export function initAboutToggle(onPageShown: (page: HTMLElement) => void): void 
     setAboutChrome(open);
     const target = open
       ? about.id
-      : (document.querySelector<HTMLElement>(".tabs .tab.active")?.dataset.target ?? "#general-content").slice(1);
+      : (
+          document.querySelector<HTMLElement>(".tabs .ui-segmented__tab[aria-selected=true]")?.dataset.target ??
+          "#general-content"
+        ).slice(1);
     for (const page of body.querySelectorAll<HTMLElement>(":scope > .page")) {
       const shown = page.id === target;
       page.dataset.uiDir = open ? "next" : "prev";
