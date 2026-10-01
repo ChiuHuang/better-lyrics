@@ -106,6 +106,9 @@ const { countDarkFieldWells, countNativeSelects, countRawFontSizes, countUpperca
   assert.equal(countRawFontSizes(`Object.assign(el.style, { fontSize: '1rem' });`), 1, "fontSize object keys count");
   assert.equal(countRawFontSizes(`el.style.setProperty("font-size", "12px");`), 1, "setProperty counts");
   assert.equal(countRawFontSizes(`el.style.fontSize = "var(--font-size-md)";`), 0, "a token in TypeScript is fine");
+  assert.equal(countRawFontSizes(`const fontSize = 16;`), 0, "a plain variable is not a style");
+  assert.equal(countRawFontSizes(`interface Props { fontSize: number }`), 0, "a type annotation is not a style");
+  assert.equal(countRawFontSizes(`el.style.fontSize = size;`), 0, "a computed value is not a literal size");
   assert.equal(
     countRawFontSizes(`el.style.setProperty("font-size", "var(--font-size-md)");`),
     0,
