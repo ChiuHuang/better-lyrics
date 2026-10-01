@@ -123,12 +123,12 @@ function dismissAfter(kind: ToastKind, action: ToastAction | undefined): number 
 }
 
 function newestActionToast(): HTMLElement | undefined {
-  const live = layer?.querySelectorAll<HTMLElement>(".ui-toast:not(.is-leaving)") ?? [];
-  return Array.from(live).find(el => actionTriggers.has(el));
+  const newest = layer?.querySelector<HTMLElement>(".ui-toast:not(.is-leaving)");
+  return newest && actionTriggers.has(newest) ? newest : undefined;
 }
 
 document.addEventListener("keydown", event => {
-  if (event.key !== "Enter" || event.defaultPrevented || event.isComposing) return;
+  if (event.key !== "Enter" || event.repeat || event.defaultPrevented || event.isComposing) return;
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
   const active = document.activeElement;
   if (isTextEntry(active)) return;

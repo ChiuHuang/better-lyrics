@@ -357,19 +357,36 @@ const actionOf = (el: HTMLElement): HTMLButtonElement | null => el.querySelector
   const calls: string[] = [];
   toast.success("Installed A", { action: { label: "Apply", onClick: () => calls.push("a") } });
   toast.success("Installed B", { action: { label: "Apply", onClick: () => calls.push("b") } });
-  toast.info("No action");
   const event = pressEnter();
-  assert.deepEqual(calls, ["b"], "Enter runs the newest toast that has an action");
+  assert.deepEqual(calls, ["b"], "Enter runs the newest toast's action");
   assert.ok(event.defaultPrevented, "Enter is consumed when it runs an action");
   assert.deepEqual(
     live()
       .map(text)
       .map(s => s.replace(/Apply.*/, "")),
-    ["No action", "Installed A"],
+    ["Installed A"],
     "only that toast is dismissed"
   );
   pressEnter();
-  assert.deepEqual(calls, ["b", "a"], "the next Enter falls back to the older action toast");
+  assert.deepEqual(calls, ["b", "a"], "once the newest toast is gone, the next one down is the newest");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  toast.info("No action");
+  const event = pressEnter();
+  assert.equal(applied, 0, "an older action toast under a newer plain toast does not answer Enter");
+  assert.equal(event.defaultPrevented, false, "Enter is left alone when the newest toast has no action");
+  reset();
+}
+{
+  let applied = 0;
+  toast.success("Installed", { action: { label: "Apply", onClick: () => applied++ } });
+  pressEnter({ repeat: true });
+  assert.equal(applied, 0, "a held Enter (auto-repeat) never runs the action");
+  pressEnter();
+  assert.equal(applied, 1, "a fresh Enter press still runs it");
   reset();
 }
 {
