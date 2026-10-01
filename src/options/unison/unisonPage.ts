@@ -59,6 +59,7 @@ import { type RevisionHost, createBackButton, createButton } from "@/options/uni
 import { createActionMenu } from "@/ui/actionMenu";
 import { createDropdown, type Dropdown } from "@/ui/dropdown";
 import { createModal, isAnyModalOpen } from "@/ui/modal";
+import { initTabStrip, type TabStrip } from "@/ui/tabStrip";
 import { attachScrollFade } from "@/ui/scrollFade";
 import { isTextEntry } from "@/ui/textEntry";
 import { createSyncIcon, createSyncTag, syncTypeForLyric } from "@/ui/syncTag";
@@ -650,31 +651,45 @@ function appendToTab(tab: FeedTabName, node: Node): void {
 
 // -- Feed Tabs --------------------------
 
-let tabRecent: HTMLButtonElement;
-let tabMine: HTMLButtonElement;
+let feedTabs: TabStrip | undefined;
 let resultsMeta: HTMLElement;
+
+function createFeedTab(name: FeedTabName, label: string): HTMLButtonElement {
+  const tab = document.createElement("button");
+  tab.type = "button";
+  tab.className = "ui-tabs__tab";
+  tab.dataset.tab = name;
+  tab.textContent = label;
+  return tab;
+}
 
 function setupFeedTabs(): void {
   const tabsRow = document.createElement("div");
   tabsRow.className = "unison-feed-tabs";
 
-  tabRecent = document.createElement("button");
-  tabRecent.className = "unison-feed-tab unison-feed-tab--active";
-  tabRecent.textContent = t("unison_tabFeed");
-  tabRecent.addEventListener("click", () => onTabClick("recent"));
-
-  tabMine = document.createElement("button");
-  tabMine.className = "unison-feed-tab";
-  tabMine.textContent = t("unison_tabMySubmissions");
-  tabMine.addEventListener("click", () => onTabClick("mine"));
+  const strip = document.createElement("div");
+  strip.className = "ui-tabs";
+  strip.setAttribute("aria-label", t("unison_title"));
+  const bar = document.createElement("span");
+  bar.className = "ui-tabs__bar";
+  bar.setAttribute("aria-hidden", "true");
+  const tabRecent = createFeedTab("recent", t("unison_tabFeed"));
+  tabRecent.setAttribute("aria-selected", String(activeFeedTab === "recent"));
+  const tabMine = createFeedTab("mine", t("unison_tabMySubmissions"));
+  tabMine.setAttribute("aria-selected", String(activeFeedTab === "mine"));
+  strip.append(bar, tabRecent, tabMine);
 
   resultsMeta = document.createElement("span");
   resultsMeta.className = "unison-results-meta";
   resultsMeta.hidden = true;
 
-  tabsRow.append(tabRecent, tabMine, resultsMeta);
+  tabsRow.append(strip, resultsMeta);
   const anchor = filterBar ?? feedContainer;
   anchor.parentElement?.insertBefore(tabsRow, anchor);
+  feedTabs = initTabStrip(strip, {
+    variant: "underline",
+    onChange: tab => onTabClick(tab.dataset.tab === "mine" ? "mine" : "recent"),
+  });
 }
 
 function onTabClick(next: FeedTabName): void {
@@ -695,8 +710,8 @@ function switchTab(next: FeedTabName): void {
 }
 
 function updateTabActiveState(): void {
-  tabRecent?.classList.toggle("unison-feed-tab--active", activeFeedTab === "recent");
-  tabMine?.classList.toggle("unison-feed-tab--active", activeFeedTab === "mine");
+  const tab = feedTabs?.tabs.find(candidate => candidate.dataset.tab === activeFeedTab);
+  if (feedTabs && tab) feedTabs.select(tab, { notify: false });
 }
 
 // -- Feed --------------------------
