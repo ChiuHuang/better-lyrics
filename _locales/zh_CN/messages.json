@@ -342,7 +342,7 @@
     "description": "Label in the offset settings modal preceding the list of sync types a given offset affects"
   },
   "options_language_displayLanguage": {
-    "message": "Display Language",
+    "message": "Display language",
     "description": "Label for the UI language selector dropdown"
   },
   "options_language_displayLanguageAuto": {
@@ -390,7 +390,7 @@
     "description": "Change theme button label"
   },
   "options_themes_customTheme": {
-    "message": "Custom Theme",
+    "message": "Custom theme",
     "description": "Display name for unnamed custom themes"
   },
   "options_themes_customStyles": {
@@ -426,7 +426,7 @@
     "description": "Your identity label"
   },
   "options_identity_unisonStats": {
-    "message": "Unison Stats",
+    "message": "Unison stats",
     "description": "Section title above the user's own Unison level, tier, rank and badges on the Identity tab"
   },
   "options_identity_loading": {
@@ -446,11 +446,11 @@
     "description": "Import key button label"
   },
   "options_identityImport_title": {
-    "message": "Import Identity",
+    "message": "Import identity",
     "description": "Title of the import identity modal"
   },
   "options_identityImport_chooseFile": {
-    "message": "Choose File",
+    "message": "Choose file",
     "description": "Label for the file picker button in the import identity modal"
   },
   "options_identityImport_or": {
@@ -800,7 +800,7 @@
     "description": "YouTube provider name"
   },
   "options_provider_youtubeCaptions": {
-    "message": "YouTube Captions",
+    "message": "YouTube captions",
     "description": "YouTube Captions provider name"
   },
   "options_provider_binilyrics": {
@@ -1428,7 +1428,7 @@
     }
   },
   "blUpdate_storeDelay": {
-    "message": "store may lag briefly",
+    "message": "The store may lag briefly",
     "description": "Trailing note on the update banner for Chrome and Edge, whose store approval can lag the release"
   },
   "blUpdate_action": {
@@ -1526,7 +1526,7 @@
     "description": "Message when no lyrics are available"
   },
   "lyrics_resumeAutoscroll": {
-    "message": "Resume Autoscroll",
+    "message": "Resume autoscroll",
     "description": "Resume Autoscroll button label"
   },
   "options_language_exclusions": {
@@ -1554,15 +1554,15 @@
     "description": "About page section heading"
   },
   "options_about_does1": {
-    "message": "Time-synced lyrics on YouTube Music, seek by clicking any line.",
+    "message": "Lyrics that follow the song. Click any line to jump to it.",
     "description": "About page feature list item"
   },
   "options_about_does2": {
-    "message": "Translations and romanization for foreign-language tracks.",
+    "message": "Translation and romanization for songs in other languages.",
     "description": "About page feature list item"
   },
   "options_about_does3": {
-    "message": "Full-screen mode, with the UI available in multiple languages.",
+    "message": "A full-screen view and a floating lyrics window.",
     "description": "About page feature list item"
   },
   "options_about_does4": {
@@ -1570,7 +1570,7 @@
     "description": "About page feature list item"
   },
   "options_about_does5": {
-    "message": "Customizable lyrics providers from multiple sources.",
+    "message": "Themes from the Marketplace, or your own in the built-in editor.",
     "description": "About page feature list item"
   },
   "options_about_does6": {
@@ -1648,7 +1648,7 @@
     "description": "About page section heading"
   },
   "options_about_madeByBody": {
-    "message": "$BOIDU$ and $ADALIE$, with thanks to everyone in the Better Lyrics community who has tested it and reported bugs.",
+    "message": "$BOIDU$ and $ADALIE$, with thanks to the translators and everyone in the Better Lyrics community who has tested it, reported bugs and submitted lyrics!",
     "description": "About page credits; the names become links",
     "placeholders": {
       "boidu": {
@@ -1770,7 +1770,7 @@
     }
   },
   "theme_author_prefix": {
-    "message": "by $AUTHOR$",
+    "message": "By $AUTHOR$",
     "description": "Author prefix shown on theme selector button",
     "placeholders": {
       "author": {
@@ -1780,7 +1780,7 @@
     }
   },
   "theme_author_you": {
-    "message": "by You",
+    "message": "By you",
     "description": "Author label for custom user themes on theme selector button"
   },
   "symlink_installFailed": {
@@ -1798,11 +1798,11 @@
     }
   },
   "theme_modal_section_featured": {
-    "message": "Featured Themes",
+    "message": "Featured themes",
     "description": "Section title for featured themes (top marketplace picks and built-ins) in the theme chooser modal"
   },
   "theme_modal_section_all": {
-    "message": "All Themes",
+    "message": "All themes",
     "description": "Section title for the user's installed marketplace themes in the theme chooser modal"
   },
   "theme_modal_browse": {
@@ -1810,7 +1810,7 @@
     "description": "Link in the theme chooser modal that opens the full Theme Marketplace page"
   },
   "theme_modal_section_custom": {
-    "message": "Custom Themes",
+    "message": "Custom themes",
     "description": "Section title for custom themes in the theme chooser modal"
   },
   "lyrics_submitToUnison": {
@@ -2250,7 +2250,7 @@
     "description": "Feed tab label for recent submissions"
   },
   "unison_tabMySubmissions": {
-    "message": "My Submissions",
+    "message": "My submissions",
     "description": "Feed tab label for user's own submissions"
   },
   "unison_noSubmissions": {
@@ -2378,7 +2378,7 @@
     }
   },
   "unison_xpToNext": {
-    "message": "$xp$ XP to Level $level$",
+    "message": "$xp$ XP to level $level$",
     "description": "Explains how much experience remains before the next Unison level. $xp$ is a positive integer, $level$ is the next level number",
     "placeholders": {
       "xp": {
@@ -2406,15 +2406,15 @@
     }
   },
   "unison_viewProfile": {
-    "message": "View full profile",
+    "message": "View profile",
     "description": "Link on the Identity tab that opens the user's full Unison profile in a new tab"
   },
   "unison_changePicture": {
-    "message": "Change picture",
+    "message": "Change pfp",
     "description": "Link on the Identity tab, shown when the user has a Unison profile picture, that opens the Unison website where they can pick a different one"
   },
   "unison_addPicture": {
-    "message": "Add a picture",
+    "message": "Add a pfp",
     "description": "Link on the Identity tab, shown when the user has no Unison profile picture, that opens the Unison website where they can pick one"
   },
   "unison_submitted_this": {
