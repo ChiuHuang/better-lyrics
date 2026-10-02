@@ -1554,15 +1554,15 @@
     "description": "About page section heading"
   },
   "options_about_does1": {
-    "message": "Time-synced lyrics on YouTube Music, seek by clicking any line.",
+    "message": "Lyrics that follow the song. Click any line to jump to it.",
     "description": "About page feature list item"
   },
   "options_about_does2": {
-    "message": "Translations and romanization for foreign-language tracks.",
+    "message": "Translation and romanization for songs in other languages.",
     "description": "About page feature list item"
   },
   "options_about_does3": {
-    "message": "Full-screen mode, with the UI available in multiple languages.",
+    "message": "A full-screen view and a floating lyrics window.",
     "description": "About page feature list item"
   },
   "options_about_does4": {
@@ -1570,7 +1570,7 @@
     "description": "About page feature list item"
   },
   "options_about_does5": {
-    "message": "Customizable lyrics providers from multiple sources.",
+    "message": "Themes from the Marketplace, or your own in the built-in editor.",
     "description": "About page feature list item"
   },
   "options_about_does6": {
@@ -1648,7 +1648,7 @@
     "description": "About page section heading"
   },
   "options_about_madeByBody": {
-    "message": "$BOIDU$ and $ADALIE$, with thanks to everyone in the Better Lyrics community who has tested it and reported bugs.",
+    "message": "$BOIDU$ and $ADALIE$, with thanks to the translators and everyone in the Better Lyrics community who has tested it, reported bugs and submitted lyrics!",
     "description": "About page credits; the names become links",
     "placeholders": {
       "boidu": {
@@ -2410,11 +2410,11 @@
     "description": "Link on the Identity tab that opens the user's full Unison profile in a new tab"
   },
   "unison_changePicture": {
-    "message": "Change picture",
+    "message": "Change pfp",
     "description": "Link on the Identity tab, shown when the user has a Unison profile picture, that opens the Unison website where they can pick a different one"
   },
   "unison_addPicture": {
-    "message": "Add a picture",
+    "message": "Add a pfp",
     "description": "Link on the Identity tab, shown when the user has no Unison profile picture, that opens the Unison website where they can pick one"
   },
   "unison_submitted_this": {
