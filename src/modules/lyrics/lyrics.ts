@@ -403,7 +403,7 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
       pinnedProvider &&
       !keepsPin(pinnedProvider, selectedProvider) &&
       !signal.aborted &&
-      !swappedVideoId &&
+      !(swappedVideoId && isUnisonKey(pinnedProvider)) &&
       pinnedVariants(providerPriority, pinnedProvider).every(key => sourceMap[key]?.filled)
     ) {
       void saveProviderPin(detail.videoId, null);
