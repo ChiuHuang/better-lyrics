@@ -53,7 +53,6 @@ interface Box {
   bottom: number;
 }
 
-// A pressed trigger is mid `scale`, which its rect includes; measuring that shrinks the menu.
 export function unscaledBox(rect: Box, layout: { width: number; height: number }): Box {
   const centerX = (rect.left + rect.right) / 2;
   const centerY = (rect.top + rect.bottom) / 2;
@@ -65,7 +64,13 @@ export function unscaledBox(rect: Box, layout: { width: number; height: number }
   };
 }
 
-export function triggerBox(trigger: HTMLElement): Box & { width: number } {
+interface MeasurableTrigger {
+  offsetWidth: number;
+  offsetHeight: number;
+  getBoundingClientRect(): Box;
+}
+
+export function triggerBox(trigger: MeasurableTrigger): Box & { width: number } {
   const width = trigger.offsetWidth;
   return { ...unscaledBox(trigger.getBoundingClientRect(), { width, height: trigger.offsetHeight }), width };
 }

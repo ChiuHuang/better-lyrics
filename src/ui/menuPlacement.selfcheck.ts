@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { menuLeft, menuPlacement, menuSide, unscaledBox } = await import("@/ui/menuPlacement");
+const { menuLeft, menuPlacement, menuSide, triggerBox, unscaledBox } = await import("@/ui/menuPlacement");
 
 const viewportHeight = 800;
 
@@ -130,6 +130,19 @@ const viewportHeight = 800;
     unscaledBox(pressed, { width: 1094, height: 38 }),
     rest,
     "regression: a trigger pressed to scale 0.96 measures at its rest size, not 4% narrower and inset"
+  );
+}
+
+{
+  const pressedTrigger = {
+    offsetWidth: 383,
+    offsetHeight: 38,
+    getBoundingClientRect: () => ({ left: 454.15, top: 100.76, right: 821.35, bottom: 137.24 }),
+  };
+  assert.deepEqual(
+    triggerBox(pressedTrigger),
+    { left: 446.25, top: 100, right: 829.25, bottom: 138, width: 383 },
+    "regression: triggerBox pairs the scaled rect with the layout size, so a mid-press trigger still sizes the menu at rest"
   );
 }
 
