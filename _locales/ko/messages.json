@@ -1340,7 +1340,7 @@
     }
   },
   "marketplace_sortDescendingLabel": {
-    "message": "$LABEL$, descending. Activate to reverse.",
+    "message": "$LABEL$, 내림차순, 눌러서 반전.",
     "description": "Accessible label of the selected sort chip when sorting in descending order",
     "placeholders": {
       "label": {
@@ -1350,7 +1350,7 @@
     }
   },
   "marketplace_sortAscendingLabel": {
-    "message": "$LABEL$, ascending. Activate to reverse.",
+    "message": "$LABEL$, 오름차순, 눌러서 반전.",
     "description": "Accessible label of the selected sort chip when sorting in ascending order",
     "placeholders": {
       "label": {
@@ -1360,7 +1360,7 @@
     }
   },
   "unison_sortAscendingClearLabel": {
-    "message": "$LABEL$, ascending. Activate to clear the sort.",
+    "message": "$LABEL$, 오름차순, 눌러서 정렬 지우기.",
     "description": "Accessible label of the selected Unison sort chip in ascending order, where activating it again removes the sort",
     "placeholders": {
       "label": {
@@ -1370,15 +1370,15 @@
     }
   },
   "marketplace_emptyStore": {
-    "message": "No themes available yet. Check back later",
+    "message": "아직 이용할 수 있는 테마가 없습니다. 나중에 다시 확인하세요",
     "description": "Shown when the Marketplace registry has no themes"
   },
   "marketplace_loadFailed": {
-    "message": "Could not load themes. Check your connection and try again",
+    "message": "테마를 불러올 수 없습니다. 연결을 확인한 후 다시 시도하세요",
     "description": "Shown when the Marketplace theme list fails to load"
   },
   "marketplace_ratedAs": {
-    "message": "You rated this $RATING$/5 as $NAME$",
+    "message": "$NAME$ 계정으로 $RATING$/5 평점을 주었습니다",
     "description": "Status under the rating stars after the user rated a theme",
     "placeholders": {
       "rating": {
@@ -1542,39 +1542,39 @@
     "description": "About page tagline under the product name"
   },
   "options_about_whatHeading": {
-    "message": "What it is",
+    "message": "소개",
     "description": "About page section heading"
   },
   "options_about_whatBody": {
-    "message": "Better Lyrics upgrades your YouTube Music experience by providing beautiful time-synced lyrics for your favorite songs.",
+    "message": "Better Lyrics는 즐겨 듣는 곡의 미려한 싱크 가사를 제공하여 YouTube Music 경험을 업그레이드합니다.",
     "description": "About page section body"
   },
   "options_about_doesHeading": {
-    "message": "What it does",
+    "message": "기능",
     "description": "About page section heading"
   },
   "options_about_does1": {
-    "message": "Time-synced lyrics on YouTube Music, seek by clicking any line.",
+    "message": "곡을 따라 흐르는 가사. 아무 행이나 눌러 이동.",
     "description": "About page feature list item"
   },
   "options_about_does2": {
-    "message": "Translations and romanization for foreign-language tracks.",
+    "message": "다른 언어로 쓰인 곡의 번역과 로마자 표기 제공.",
     "description": "About page feature list item"
   },
   "options_about_does3": {
-    "message": "Full-screen mode, with the UI available in multiple languages.",
+    "message": "전체 화면 보기와 플로팅 가사 창.",
     "description": "About page feature list item"
   },
   "options_about_does4": {
-    "message": "Theme Marketplace with community themes.",
+    "message": "Unison: 누구나 제출, 투표, 수정할 수 있는 커뮤니티 가사.",
     "description": "About page feature list item"
   },
   "options_about_does5": {
-    "message": "Customizable lyrics providers from multiple sources.",
+    "message": "마켓플레이스에서 받거나 스스로 내장 편집기에서 만들 수 있는 테마.",
     "description": "About page feature list item"
   },
   "options_about_does6": {
-    "message": "Lyrics from many sources, in an order you choose.",
+    "message": "다양한 출처의 가사를, 원하는 순서대로 표시.",
     "description": "About page feature list item"
   },
   "options_about_openSourceHeading": {
@@ -2212,7 +2212,7 @@
     "description": "Hint text below the additional videos field on the submit form"
   },
   "unison_additionalVideosSkipped": {
-    "message": "Submitted, but these videos weren't linked: $videos$",
+    "message": "제출했지만 일부 동영상을 연결할 수 없습니다: $videos$",
     "description": "Feedback after submitting when some additional videos could not be linked. $videos$ is a comma-separated list of videoIds",
     "placeholders": {
       "videos": {
@@ -2450,7 +2450,7 @@
     "description": "Button that unlinks a video from a Unison lyric"
   },
   "unison_suggestedVideos": {
-    "message": "Suggested videos",
+    "message": "제안된 동영상",
     "description": "Heading for the list of videos Unison suggests linking to a lyric"
   },
   "unison_noMatchingVideos": {
@@ -2458,7 +2458,7 @@
     "description": "Suggested videos list when every suggestion is judged a different recording; those stay behind the other versions toggle below it"
   },
   "unison_noSuggestions": {
-    "message": "No suggestions right now",
+    "message": "현재 제안 없음",
     "description": "Shown under the suggested-videos heading when Unison has no suggestions"
   },
   "unison_linkConfirmTitle": {
@@ -2500,15 +2500,15 @@
     "description": "Generic error shown when unlinking a video from a Unison lyric fails"
   },
   "unison_suggestMatchSameHint": {
-    "message": "Likely the same recording",
+    "message": "동일한 녹음으로 추정됩니다",
     "description": "Tooltip and accessible label for the lightbulb icon on a suggested video judged to be the same recording as the lyric; also marks videos added to the additional videos field automatically"
   },
   "unison_suggestMatchRelated": {
-    "message": "Might be a different version. Check before adding",
+    "message": "다른 버전일 수도 있습니다. 추가하기 전에 확인하세요",
     "description": "Tooltip and accessible label for the question mark icon on a suggested video that may be a different version of the song (an edit or variant), asking the user to check before linking"
   },
   "unison_suggestMatchDifferentHint": {
-    "message": "A different version, or another song",
+    "message": "다른 버전이거나, 다른 곡입니다",
     "description": "Tooltip and accessible label for the layers icon on a suggested video judged to be a different recording of the song, such as a remix or live version"
   },
   "unison_suggestOtherVersions": {
@@ -2614,7 +2614,7 @@
     "description": "Screen reader label for the editor tabs that switch between the lyric preview and the list of changes"
   },
   "unison_rev_details": {
-    "message": "Details",
+    "message": "상세",
     "description": "Diff section label above changed song details: language, ISRC and album"
   },
   "unison_rev_updating": {
