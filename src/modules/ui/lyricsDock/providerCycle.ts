@@ -9,7 +9,8 @@ export function selectProvider(key: LyricSourceKey): void {
   const saved = videoId
     ? saveProviderPin(videoId, pinned && { key: pinned, unisonLyricsId: AppState.availableUnisonLyricsId })
     : Promise.resolve();
-  void saved.then(reloadLyrics);
+  if (pinned) reloadLyrics();
+  else void saved.then(reloadLyrics);
 }
 
 export function cycleProvider(direction: 1 | -1): void {
