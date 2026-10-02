@@ -1,5 +1,6 @@
 import { UNISON_API_BASE_URL, UNISON_LYRICS_PREVIEW_DEBOUNCE_MS, UNISON_MAX_VIDEOS_PER_LYRIC } from "@constants";
-import { getLanguageDisplayName, t } from "@core/i18n";
+import { t } from "@core/i18n";
+import { languageName } from "@modules/unison/languageNames";
 import { formatTimeAgo } from "@core/relativeTime";
 import {
   DEFAULT_FEED_FILTERS,
@@ -1085,7 +1086,7 @@ function renderDetail(entry: UnisonLyricsEntry, view: AbortSignal, isOwn: boolea
   appendMetaRow(metaTable, t("unison_format"), t(`unison_format_${entry.format}`));
   appendMetaRow(metaTable, t("unison_sync"), createSyncTag(syncTypeForLyric(entry.syncType, entry.format)));
   if (entry.album) appendMetaRow(metaTable, t("unison_album"), entry.album);
-  if (entry.language) appendMetaRow(metaTable, t("unison_language"), getLanguageDisplayName(entry.language));
+  if (entry.language) appendMetaRow(metaTable, t("unison_language"), languageName(entry.language));
   if (entry.isrc) appendMetaRow(metaTable, "ISRC", entry.isrc);
   if (entry.submitter) appendMetaRow(metaTable, t("unison_uploadedBy"), createUploaderCell(entry.submitter));
 
