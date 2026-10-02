@@ -27,7 +27,6 @@ interface UnisonResponse {
   voteCount: number;
   submitter?: SubmitterInfo;
   marks?: Mark[];
-  /** Set when the request carries `x-key-id` */
   userVote: 1 | -1 | null;
 }
 
