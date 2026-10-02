@@ -91,7 +91,7 @@ export function t(key: string, substitutions?: string | string[]): string {
 export function getLanguageDisplayName(langCode: string): string {
   try {
     const displayCode = DISPLAY_CODE_MAP[langCode] ?? langCode;
-    const displayNames = new Intl.DisplayNames([navigator.language], { type: "language" });
+    const displayNames = new Intl.DisplayNames([navigator.language], { type: "language", fallback: "none" });
     return displayNames.of(displayCode) ?? langCode;
   } catch (e) {
     warnCore(`Failed to get display name for "${langCode}":`, e);
