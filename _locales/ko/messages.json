@@ -1566,7 +1566,7 @@
     "description": "About page feature list item"
   },
   "options_about_does4": {
-    "message": "Unison: 누구나 제출, 투표, 수정할 수 있는 커뮤니티 가사.",
+    "message": "Unison: community lyrics anyone can submit, vote on and fix.",
     "description": "About page feature list item"
   },
   "options_about_does5": {
@@ -1628,7 +1628,7 @@
     "description": "About page heading for the donation links"
   },
   "options_about_supportBody": {
-    "message": "Better Lyrics is a labor of love, and we fuss over it more than we'd like to admit... It's free, with no ads or tracking, and it always will be. If it's made your listening experience a little better, you can help keep it going! A star on GitHub helps too, and it's free :)",
+    "message": "Better Lyrics에 사랑을 담아 만들었고, 사실 조금 과할 정도로 신경을 쏟고 있습니다... 서비스는 광고나 추적 없이 무료로 제공되며, 앞으로도 계속 그럴 것입니다. Better Lyrics 덕분에 청취 경험이 조금이라도 나아졌다면, 프로젝트를 계속 유지될 수 있게 도와주세요! GitHub에서 별을 눌러주셔도 큰 도움이 되며, 무료로 누를 수 있습니다 :)",
     "description": "About page note above the donation links, written in the makers' own voice"
   },
   "options_about_supportStar": {
@@ -2208,7 +2208,7 @@
     "description": "Label for the optional submit-form field where the user lists other videos of the same song to link to this lyric"
   },
   "unison_additionalVideosHint": {
-    "message": "Optional. Other uploads of this song to link, videoIds or URLs separated by spaces or commas. Each is verified; ones that don't match are skipped.",
+    "message": "선택. 이 곡의 다른 업로드 링크, videoId, URL을 공백이나 쉼표로 구분합니다. 각각 검증 과정을 거치며, 맞지 않는 동영상은 건너뜁니다.",
     "description": "Hint text below the additional videos field on the submit form"
   },
   "unison_additionalVideosSkipped": {
@@ -2466,7 +2466,7 @@
     "description": "Title of the confirmation shown before linking a suggested video whose title differs from the lyric's song title"
   },
   "unison_linkConfirmBody": {
-    "message": "\"$video$\" isn't titled exactly \"$song$\". Check it's the same recording before linking, since remixes, live and sped-up versions usually need their own lyrics.",
+    "message": "\"$video$\", \"$song$\" 제목이 완전히 일치하지 않습니다. 리믹스, 라이브, 스페드 업 버전이면 보통 별도의 가사가 필요하므로, 연결하기 전에 음원이 같은지 확인하세요.",
     "description": "Body of the confirmation before linking a suggested video. $video$ is the suggested video's title, $song$ is the lyric's song title",
     "placeholders": {
       "video": {
