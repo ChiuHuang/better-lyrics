@@ -54,12 +54,12 @@ const EXTRA_LANGUAGE_CODES =
 let extraOptions: DropdownOption[] | null = null;
 
 export function extraLanguageOptions(query: string, matches: DropdownOption[] = []): DropdownOption[] {
+  const typed = query.trim().toLowerCase();
+  if (!typed) return [];
   extraOptions ??= EXTRA_LANGUAGE_CODES.map(code => ({ value: code, label: getLanguageDisplayName(code) })).filter(
     option => option.label !== option.value
   );
-  const code = query.trim().toLowerCase();
-  if (!code) return [];
-  if (matches.length) return extraOptions.filter(option => option.value === code);
+  if (matches.length) return extraOptions.filter(option => option.value === typed);
   return filterOptions(extraOptions, query);
 }
 

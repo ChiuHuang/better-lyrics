@@ -89,7 +89,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
 
   function renderList(): void {
     const matches = filterOptions(options, search.value);
-    const extras = searchExtras?.(search.value, matches) ?? [];
+    const extras = search.value.trim() && searchExtras ? searchExtras(search.value, matches) : [];
     const shown = [...matches, ...extras.filter(extra => !matches.some(match => match.value === extra.value))];
     if (!shown.length) {
       const empty = document.createElement("div");
