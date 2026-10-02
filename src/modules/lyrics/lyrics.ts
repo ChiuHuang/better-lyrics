@@ -11,7 +11,17 @@ import { stringSimilarity } from "@modules/lyrics/lyricParseUtils";
 import { flushLoader, refreshDockSources, renderLoader } from "@modules/ui/dom";
 import { isLyricsWantedOffTab, publishSecondaryViews } from "@modules/ui/secondaryViews";
 import type { Lyric, LyricSourceResult, ProviderParameters, SourceMapType } from "./providers/shared";
-import { getLyrics, newSourceMap, providerPriority } from "./providers/shared";
+import {
+  isUnisonKey,
+  keepsPin,
+  loadProviderPin,
+  orderByPin,
+  pinWithVote,
+  saveProviderPin,
+  type UnisonLyric,
+  unisonOverride,
+} from "@modules/lyrics/providerPin";
+import { getLyrics, type LyricSourceKey, newSourceMap, providerPriority } from "./providers/shared";
 import { awaitUnifiedStream } from "./providers/unified";
 import type { YTLyricSourceResult } from "./providers/yt";
 import { getSongAlbum, getSongMetadata, type SegmentMap } from "./requestSniffer/requestSniffer";
@@ -114,7 +124,42 @@ function recordAvailableProviders(sourceMap: SourceMapType): boolean {
   const next = providerPriority.filter(key => known.has(key));
   const changed = next.length !== AppState.availableProviderKeys.length;
   AppState.availableProviderKeys = next;
+  const unison = unisonLyricIn(sourceMap);
+  if (unison) AppState.availableUnisonLyricsId = unison.lyricsId;
   return changed;
+}
+
+function unisonLyricIn(sourceMap: SourceMapType): (UnisonLyric & { vote: number | null }) | null {
+  for (const key of providerPriority) {
+    if (!isUnisonKey(key)) continue;
+    const data = sourceMap[key]?.lyricSourceResult?.unisonData;
+    if (data) return { key, lyricsId: data.lyricsId, vote: data.vote };
+  }
+  return null;
+}
+
+async function resolvePin(videoId: string, providerParameters: ProviderParameters): Promise<LyricSourceKey | null> {
+  const manual = AppState.manualProviderKey;
+  const stored = manual ? null : await loadProviderPin(videoId);
+  const pinned = manual ?? stored?.key ?? null;
+  if (!pinned || !(stored || isUnisonKey(pinned))) return pinned;
+
+  const unisonKey = providerPriority.find(isUnisonKey);
+  if (!unisonKey) return pinned;
+  try {
+    await getLyrics(providerParameters, unisonKey);
+  } catch (err) {
+    logCore(err);
+    return pinned;
+  }
+
+  const unison = unisonLyricIn(providerParameters.sourceMap);
+  const override = stored && unisonOverride(providerPriority, stored, unison);
+  if (override && unison) {
+    void saveProviderPin(videoId, { key: override, unisonLyricsId: unison.lyricsId });
+    return pinWithVote(override, unison.vote);
+  }
+  return pinWithVote(pinned, unison?.vote);
 }
 
 async function completeSourceProbe(providerParameters: ProviderParameters, signal: AbortSignal): Promise<void> {
@@ -308,13 +353,10 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
       logCore(err);
     }
 
-    let selectedProvider: string | undefined;
+    let selectedProvider: LyricSourceKey | undefined;
 
-    const pinnedProvider = AppState.manualProviderKey;
-    const orderedProviders =
-      pinnedProvider && providerPriority.includes(pinnedProvider)
-        ? [pinnedProvider, ...providerPriority.filter(provider => provider !== pinnedProvider)]
-        : providerPriority;
+    const pinnedProvider = await resolvePin(detail.videoId, providerParameters);
+    const orderedProviders = orderByPin(providerPriority, pinnedProvider);
 
     for (let provider of orderedProviders) {
       if (signal.aborted) {
@@ -352,6 +394,10 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
       } catch (err) {
         logCore(err);
       }
+    }
+
+    if (pinnedProvider && !keepsPin(pinnedProvider, selectedProvider) && !signal.aborted) {
+      void saveProviderPin(detail.videoId, null);
     }
 
     if (!lyrics) {
