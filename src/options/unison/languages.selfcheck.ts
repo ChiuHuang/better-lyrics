@@ -1,4 +1,5 @@
 import { strict as assert } from "node:assert";
+import { EXTRA_LANGUAGE_CODES, languageName } from "@modules/unison/languageNames";
 import { extraLanguageOptions, languageOptionList, matchLanguageOption } from "@/options/unison/languages";
 
 // -- Chinese scripts --------------------------
@@ -126,6 +127,17 @@ assert.deepEqual(extraLanguageOptions("zzzzqqq"), [], "an unknown name offers no
     !extras.some(option => ["cmn", "hin", "arb", "und", "mul", "zxx", "nb", "nn"].includes(option.value)),
     "aliases of curated languages and non-language codes are excluded"
   );
+}
+
+// -- Language names --------------------------
+
+{
+  for (const code of EXTRA_LANGUAGE_CODES) {
+    assert.ok(languageName(code).length > 0 && languageName(code) !== code, `${code} has a name`);
+  }
+  assert.equal(languageName("bgc"), "Haryanvi", "regression: Haryanvi is named even where the browser ICU lacks it");
+  assert.equal(languageName("zz-unknown"), "zz-unknown", "an unknown code falls back to itself");
+  assert.equal(languageName("ja"), "Japanese", "a curated code uses the browser name");
 }
 
 console.log("unison languages self-check passed");
