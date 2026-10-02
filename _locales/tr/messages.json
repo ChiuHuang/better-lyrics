@@ -40,7 +40,7 @@
     "description": "Auto switch to lyrics tab setting label"
   },
   "options_general_clearCachedLyrics": {
-    "message": "Clear cached lyrics",
+    "message": "Ön belleğe alınan sözleri temizle",
     "description": "Label for the clear cache action row"
   },
   "options_general_clearCachedLyricsHint": {
@@ -56,7 +56,7 @@
     "description": "Total lyrics in cache label"
   },
   "options_general_storageUsed": {
-    "message": "Storage used",
+    "message": "Kullanılan depolama",
     "description": "Popup General tab: label under the total local storage size"
   },
   "options_general_segment": {
@@ -74,19 +74,19 @@
     }
   },
   "options_general_browseThemes": {
-    "message": "Browse themes",
+    "message": "Temalara göz atın",
     "description": "Popup General tab: one-line description on the Theme Marketplace shortcut"
   },
   "options_general_whatsNew": {
-    "message": "What's new",
+    "message": "Yenilikler",
     "description": "Popup General tab: shortcut to the latest release notes"
   },
   "options_general_whatsNewHint": {
-    "message": "Latest release notes",
+    "message": "Son sürüm notları",
     "description": "Popup General tab: one-line description on the What's new shortcut"
   },
   "options_display_fullscreenTab": {
-    "message": "Fullscreen",
+    "message": "Tam ekran",
     "description": "Header tab in Display for fullscreen settings"
   },
   "options_display_videoTab": {
@@ -118,11 +118,11 @@
     "description": "Label for the per-letter wave lyric animation toggle"
   },
   "options_display_letterWaveOff": {
-    "message": "Off",
+    "message": "Kapalı",
     "description": "Spoken value of the letter wave three-way switch when the effect is off"
   },
   "options_display_letterWaveOn": {
-    "message": "On",
+    "message": "Açık",
     "description": "Spoken value of the letter wave three-way switch when the effect is always on"
   },
   "options_display_letterWaveBadge": {
@@ -414,7 +414,7 @@
     "description": "Installed themes button label"
   },
   "options_identity_backupTitle": {
-    "message": "Back up your identity",
+    "message": "Kimliğinizi yedekleyin",
     "description": "Title of the identity backup warning"
   },
   "options_identity_backupBody": {
@@ -1566,7 +1566,7 @@
     "description": "About page feature list item"
   },
   "options_about_does4": {
-    "message": "Theme Marketplace with community themes.",
+    "message": "Unison: community lyrics anyone can submit, vote on and fix.",
     "description": "About page feature list item"
   },
   "options_about_does5": {
