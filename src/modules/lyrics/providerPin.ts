@@ -31,6 +31,15 @@ export function orderByPin(priority: LyricSourceKey[], pinned: LyricSourceKey | 
   return [pinned, ...siblings, ...priority.filter(key => !sameProvider(key, pinned))];
 }
 
+export function pinnedVariants(priority: LyricSourceKey[], pinned: LyricSourceKey): LyricSourceKey[] {
+  return priority.filter(key => sameProvider(key, pinned));
+}
+
+export function unisonRanksAbove(priority: LyricSourceKey[], pinned: LyricSourceKey): boolean {
+  const pinnedRank = priority.indexOf(pinned);
+  return !isUnisonKey(pinned) && priority.slice(0, Math.max(pinnedRank, 0)).some(isUnisonKey);
+}
+
 export function keepsPin(pinned: LyricSourceKey, loaded: LyricSourceKey | undefined): boolean {
   return loaded !== undefined && sameProvider(loaded, pinned);
 }

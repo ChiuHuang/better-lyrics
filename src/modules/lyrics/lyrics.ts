@@ -16,10 +16,12 @@ import {
   keepsPin,
   loadProviderPin,
   orderByPin,
+  pinnedVariants,
   pinWithVote,
   saveProviderPin,
   type UnisonLyric,
   unisonOverride,
+  unisonRanksAbove,
 } from "@modules/lyrics/providerPin";
 import { getLyrics, type LyricSourceKey, newSourceMap, providerPriority } from "./providers/shared";
 import { awaitUnifiedStream } from "./providers/unified";
@@ -142,7 +144,8 @@ async function resolvePin(videoId: string, providerParameters: ProviderParameter
   const manual = AppState.manualProviderKey;
   const stored = manual ? null : await loadProviderPin(videoId);
   const pinned = manual ?? stored?.key ?? null;
-  if (!pinned || !(stored || isUnisonKey(pinned))) return pinned;
+  if (!pinned) return null;
+  if (!isUnisonKey(pinned) && !(stored && unisonRanksAbove(providerPriority, stored.key))) return pinned;
 
   const unisonKey = providerPriority.find(isUnisonKey);
   if (!unisonKey) return pinned;
@@ -396,7 +399,12 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
       }
     }
 
-    if (pinnedProvider && !keepsPin(pinnedProvider, selectedProvider) && !signal.aborted) {
+    if (
+      pinnedProvider &&
+      !keepsPin(pinnedProvider, selectedProvider) &&
+      !signal.aborted &&
+      pinnedVariants(providerPriority, pinnedProvider).every(key => sourceMap[key]?.filled)
+    ) {
       void saveProviderPin(detail.videoId, null);
     }
 

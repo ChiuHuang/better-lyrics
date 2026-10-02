@@ -2,16 +2,14 @@ import { AppState, reloadLyrics } from "@core/appState";
 import { pinForPick, saveProviderPin } from "@modules/lyrics/providerPin";
 import type { LyricSourceKey } from "@modules/lyrics/providers/shared";
 
-// Pins a provider for this song and re-injects through the existing abort + injection queue.
-// A genuine song change cancels the in-flight switch and resets the override.
 export function selectProvider(key: LyricSourceKey): void {
-  AppState.manualProviderKey = key;
+  const pinned = pinForPick(key, AppState.availableProviderKeys);
+  AppState.manualProviderKey = pinned;
   const videoId = AppState.lastLoadedVideoId;
-  if (videoId) {
-    const pinned = pinForPick(key, AppState.availableProviderKeys);
-    void saveProviderPin(videoId, pinned && { key: pinned, unisonLyricsId: AppState.availableUnisonLyricsId });
-  }
-  reloadLyrics();
+  const saved = videoId
+    ? saveProviderPin(videoId, pinned && { key: pinned, unisonLyricsId: AppState.availableUnisonLyricsId })
+    : Promise.resolve();
+  void saved.then(reloadLyrics);
 }
 
 export function cycleProvider(direction: 1 | -1): void {

@@ -1,6 +1,14 @@
 import { strict as assert } from "node:assert";
 import type { LyricSourceKey } from "@modules/lyrics/providers/shared";
-import { keepsPin, orderByPin, pinWithVote, unisonOverride, pinForPick } from "@modules/lyrics/providerPin";
+import {
+  keepsPin,
+  orderByPin,
+  pinnedVariants,
+  pinWithVote,
+  unisonOverride,
+  unisonRanksAbove,
+  pinForPick,
+} from "@modules/lyrics/providerPin";
 
 const priority: LyricSourceKey[] = ["bLyrics-richsynced", "musixmatch-richsync", "lrclib-synced", "yt-lyrics"];
 
@@ -139,3 +147,18 @@ assert.equal(
   null,
   "Unison disabled by the user never overrides"
 );
+
+// -- Pin variants and Unison reach --------------------------
+
+assert.deepEqual(
+  pinnedVariants(full, "unison-plain"),
+  ["unison-richsynced", "unison-wordsynced", "unison-synced", "unison-plain"],
+  "every enabled Unison variant counts as the pinned provider"
+);
+assert.deepEqual(pinnedVariants(full, "musixmatch-richsync"), ["musixmatch-richsync"], "single variant provider");
+assert.deepEqual(pinnedVariants(priority, "unison-synced"), [], "a disabled provider has no variants");
+
+assert.equal(unisonRanksAbove(full, "musixmatch-richsync"), true, "Unison syllable ranks above a word pin");
+assert.equal(unisonRanksAbove(full, "bLyrics-richsynced"), false, "nothing ranks above the top provider");
+assert.equal(unisonRanksAbove(priority, "yt-lyrics"), false, "Unison disabled never ranks above");
+assert.equal(unisonRanksAbove(full, "unison-plain"), false, "a Unison pin is never overridden by Unison");
