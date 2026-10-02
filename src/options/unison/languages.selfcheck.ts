@@ -91,6 +91,26 @@ assert.ok(
   "name search ignores case"
 );
 assert.deepEqual(extraLanguageOptions(""), [], "an empty query offers nothing");
+
+{
+  const curatedMatches = languageOptionList().filter(option => option.label.toLowerCase().includes("an"));
+  assert.ok(curatedMatches.length > 0, "the curated list matches an");
+  assert.deepEqual(
+    extraLanguageOptions("an", curatedMatches).map(option => option.value),
+    ["an"],
+    "regression: an exact extra code is offered even when curated languages match"
+  );
+  assert.deepEqual(
+    extraLanguageOptions(" AN ", curatedMatches).map(option => option.value),
+    ["an"],
+    "exact code matching trims and ignores case"
+  );
+  assert.deepEqual(
+    extraLanguageOptions("Haryan", [{ value: "x", label: "x" }]),
+    [],
+    "names in the extra set are searched only when nothing curated matches"
+  );
+}
 assert.deepEqual(extraLanguageOptions("   "), [], "a blank query offers nothing");
 assert.deepEqual(extraLanguageOptions("zzzzqqq"), [], "an unknown name offers nothing");
 

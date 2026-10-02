@@ -14,7 +14,7 @@ export function createLanguageDropdown(opts: {
     onChange: opts.onChange,
     variant: opts.variant,
     searchPlaceholder: t("options_searchLanguages"),
-    searchFallback: extraLanguageOptions,
+    searchExtras: extraLanguageOptions,
   });
   const showValue = (value: string): void =>
     dropdown.setOptions(languageOptionList({ leading: opts.leading, current: value }), value);

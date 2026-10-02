@@ -13,7 +13,7 @@ interface DropdownConfig {
   variant?: "inline" | "stretch" | "chip";
   searchPlaceholder?: string;
   noResultsLabel?: string;
-  searchFallback?: (query: string) => DropdownOption[];
+  searchExtras?: (query: string, matches: DropdownOption[]) => DropdownOption[];
 }
 
 export interface Dropdown {
@@ -36,7 +36,7 @@ export function createDropdown(config: DropdownConfig): Dropdown {
     variant = "inline",
     searchPlaceholder = t("ui_dropdownSearch"),
     noResultsLabel = t("ui_dropdownNoResults"),
-    searchFallback,
+    searchExtras,
   } = config;
 
   const root = document.createElement("div");
@@ -88,8 +88,9 @@ export function createDropdown(config: DropdownConfig): Dropdown {
   }
 
   function renderList(): void {
-    let shown = filterOptions(options, search.value);
-    if (!shown.length && searchFallback) shown = searchFallback(search.value);
+    const matches = filterOptions(options, search.value);
+    const extras = searchExtras?.(search.value, matches) ?? [];
+    const shown = [...matches, ...extras.filter(extra => !matches.some(match => match.value === extra.value))];
     if (!shown.length) {
       const empty = document.createElement("div");
       empty.className = "ui-menu__empty";
