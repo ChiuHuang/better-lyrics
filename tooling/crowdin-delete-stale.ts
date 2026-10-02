@@ -2,7 +2,7 @@ import { readFileSync } from "fs";
 import { homedir } from "os";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { SOURCE_PATH, copiedBeforeChange, fileHistory, sourceChanges } from "@tooling/check-i18n-stale";
+import { SOURCE_PATH, fileHistory, sourceChanges } from "@tooling/check-i18n-stale";
 
 type Language = { id: string; twoLettersCode: string; name: string };
 type SourceString = { id: number; identifier: string };
@@ -12,7 +12,6 @@ const API = "https://api.crowdin.com/api/v2";
 const PAGE = 500;
 const CONCURRENCY = 4;
 const apply = process.argv.includes("--apply");
-const ignoreAge = process.argv.includes("--all");
 
 const token = (process.env.CROWDIN_TOKEN || readFileSync(join(homedir(), ".config/crowdin-token"), "utf8")).trim();
 
@@ -103,13 +102,7 @@ async function main(): Promise<void> {
         `/projects/${project.id}/translations?stringId=${pair.stringId}&languageId=${pair.language.id}`
       );
       if (++looked % 250 === 0) console.log(`  ${looked}/${pairs.length} looked up`);
-      return translations
-        .filter(
-          t =>
-            changes.get(pair.key)?.has(t.text) &&
-            (ignoreAge || copiedBeforeChange(changes, pair.key, t.text, Date.parse(t.createdAt)))
-        )
-        .map(t => ({ ...pair, translation: t }));
+      return translations.filter(t => changes.get(pair.key)?.has(t.text)).map(t => ({ ...pair, translation: t }));
     })
   );
   const stale = found.flat().sort((a, b) => a.language.id.localeCompare(b.language.id) || a.key.localeCompare(b.key));
@@ -120,9 +113,7 @@ async function main(): Promise<void> {
   console.log(`\n${stale.length} stale translation(s) in ${languages.size} language(s).`);
 
   if (!apply) {
-    console.log(
-      `Dry run. Re-run with --apply to delete them${ignoreAge ? "" : " (add --all to include copies created after the English changed)"}.`
-    );
+    console.log("Dry run. Re-run with --apply to delete them.");
     return;
   }
   const failures: string[] = [];

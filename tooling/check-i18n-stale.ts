@@ -4,34 +4,24 @@ import { dirname, join } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 
 type Bundle = Record<string, { message?: string }>;
-export type Version = { date: number; bundle: Bundle };
-export type SourceChanges = Map<string, Map<string, number>>;
+export type SourceChanges = Map<string, Set<string>>;
 export type StaleTranslation = { locale: string; key: string; stale: string; current: string };
 
 // -- Detection --------------------------
 
-export function sourceChanges(current: Bundle, history: Version[]): SourceChanges {
+export function sourceChanges(current: Bundle, history: Bundle[]): SourceChanges {
   const changes: SourceChanges = new Map();
-  const ordered = [...history].sort((a, b) => a.date - b.date);
-  for (let index = 1; index < ordered.length; index++) {
-    const before = ordered[index - 1].bundle;
-    const after = ordered[index].bundle;
-    for (const [key, entry] of Object.entries(before)) {
+  for (const version of history) {
+    for (const [key, entry] of Object.entries(version)) {
       const old = entry?.message;
       const now = current[key]?.message;
       if (typeof old !== "string" || typeof now !== "string" || old === now) continue;
-      if (after[key]?.message === old) continue;
-      const movedAway = changes.get(key) ?? new Map<string, number>();
-      movedAway.set(old, Math.max(movedAway.get(old) ?? 0, ordered[index].date));
-      changes.set(key, movedAway);
+      const oldTexts = changes.get(key) ?? new Set<string>();
+      oldTexts.add(old);
+      changes.set(key, oldTexts);
     }
   }
   return changes;
-}
-
-export function copiedBeforeChange(changes: SourceChanges, key: string, text: string, createdAt: number): boolean {
-  const movedAway = changes.get(key)?.get(text);
-  return movedAway !== undefined && createdAt < movedAway;
 }
 
 export function findStaleTranslations(
@@ -41,11 +31,11 @@ export function findStaleTranslations(
 ): StaleTranslation[] {
   const stale: StaleTranslation[] = [];
   for (const [locale, bundle] of Object.entries(locales)) {
-    for (const [key, movedAway] of changes) {
+    for (const [key, oldTexts] of changes) {
       const translated = bundle[key]?.message;
       const now = current[key]?.message;
       if (typeof translated !== "string" || typeof now !== "string") continue;
-      if (movedAway.has(translated)) stale.push({ locale, key, stale: translated, current: now });
+      if (oldTexts.has(translated)) stale.push({ locale, key, stale: translated, current: now });
     }
   }
   return stale.sort((a, b) => a.locale.localeCompare(b.locale) || a.key.localeCompare(b.key));
@@ -53,36 +43,32 @@ export function findStaleTranslations(
 
 // -- Git history --------------------------
 
-export function fileHistory(repoRoot: string, path: string): Version[] {
-  const log = execFileSync("git", ["log", "--first-parent", "--no-abbrev", "--raw", "--format=@%cI", "--", path], {
+export function fileHistory(repoRoot: string, path: string): Bundle[] {
+  const log = execFileSync("git", ["log", "--no-abbrev", "--raw", "--format=", "--", path], {
     cwd: repoRoot,
     encoding: "utf8",
     maxBuffer: 64 << 20,
   });
-  const entries: { date: number; blob: string }[] = [];
-  let date = 0;
-  for (const line of log.split("\n")) {
-    if (line.startsWith("@")) date = Date.parse(line.slice(1));
-    else if (line.startsWith(":")) {
-      const blob = line.split(" ")[3];
-      if (!/^0+$/.test(blob)) entries.push({ date, blob });
-    }
-  }
-  if (entries.length === 0) return [];
+  const blobs = log
+    .split("\n")
+    .filter(line => line.startsWith(":"))
+    .map(line => line.split(" ")[3])
+    .filter(blob => !/^0+$/.test(blob));
+  if (blobs.length === 0) return [];
 
   const output = execFileSync("git", ["cat-file", "--batch"], {
     cwd: repoRoot,
-    input: entries.map(entry => entry.blob).join("\n"),
+    input: blobs.join("\n"),
     maxBuffer: 1 << 30,
   });
-  const versions: Version[] = [];
+  const versions: Bundle[] = [];
   let offset = 0;
-  for (const entry of entries) {
+  for (let index = 0; index < blobs.length; index++) {
     const headerEnd = output.indexOf(10, offset);
     const size = Number(output.subarray(offset, headerEnd).toString().split(" ")[2]);
     const body = output.subarray(headerEnd + 1, headerEnd + 1 + size).toString("utf8");
     offset = headerEnd + 1 + size + 1;
-    versions.push({ date: entry.date, bundle: JSON.parse(body) });
+    versions.push(JSON.parse(body));
   }
   return versions;
 }
