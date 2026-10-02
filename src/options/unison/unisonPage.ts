@@ -1688,7 +1688,7 @@ function createManualVideoLinkForm(onLink: (videoId: string) => Promise<string |
 
   const addBtn = document.createElement("button");
   addBtn.type = "submit";
-  addBtn.className = "ui-button ui-button--compact";
+  addBtn.className = "ui-button";
   addBtn.textContent = t("unison_addVideo");
 
   const error = document.createElement("p");

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const { menuLeft, menuPlacement, menuSide } = await import("@/ui/menuPlacement");
+const { menuLeft, menuPlacement, menuSide, unscaledBox } = await import("@/ui/menuPlacement");
 
 const viewportHeight = 800;
 
@@ -110,6 +110,26 @@ const viewportHeight = 800;
     menuLeft({ triggerLeft: 940, triggerRight: 999, menuWidth: 995, viewportWidth }),
     8,
     "an end-side menu never goes past the left margin"
+  );
+}
+
+// -- Unscaled trigger box --------------------------
+{
+  const rest = { left: 28, top: 60, right: 1122, bottom: 98 };
+  assert.deepEqual(unscaledBox(rest, { width: 1094, height: 38 }), rest, "an unscaled trigger keeps its rect");
+
+  const pressedWidth = 1094 * 0.96;
+  const pressedHeight = 38 * 0.96;
+  const pressed = {
+    left: 575 - pressedWidth / 2,
+    top: 79 - pressedHeight / 2,
+    right: 575 + pressedWidth / 2,
+    bottom: 79 + pressedHeight / 2,
+  };
+  assert.deepEqual(
+    unscaledBox(pressed, { width: 1094, height: 38 }),
+    rest,
+    "regression: a trigger pressed to scale 0.96 measures at its rest size, not 4% narrower and inset"
   );
 }
 
