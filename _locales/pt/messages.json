@@ -48,7 +48,7 @@
     "description": "Hint under the clear cached lyrics label"
   },
   "options_general_clearCache": {
-    "message": "Clear cache",
+    "message": "Limpar cache",
     "description": "Clear cache button label"
   },
   "options_general_totalLyrics": {
@@ -362,7 +362,7 @@
     "description": "Translation language setting label"
   },
   "options_sources_title": {
-    "message": "Lyric source preference",
+    "message": "Preferência de fonte de letras",
     "description": "Sources settings section title"
   },
   "options_sources_description": {
@@ -374,7 +374,7 @@
     "description": "Label on the small button in the Sources section header that opens the Unison page"
   },
   "options_themes_title": {
-    "message": "Theme settings",
+    "message": "Configurações de tema",
     "description": "Theme settings section title"
   },
   "options_themes_theme": {
@@ -394,7 +394,7 @@
     "description": "Display name for unnamed custom themes"
   },
   "options_themes_customStyles": {
-    "message": "Custom styles",
+    "message": "Estilos personalizados",
     "description": "Custom styles label"
   },
   "options_themes_create": {
@@ -410,7 +410,7 @@
     "description": "Theme marketplace button label"
   },
   "options_themes_installedThemes": {
-    "message": "Installed themes",
+    "message": "Temas instalados",
     "description": "Installed themes button label"
   },
   "options_identity_backupTitle": {
@@ -434,15 +434,15 @@
     "description": "Loading identity placeholder"
   },
   "options_identity_exportImport": {
-    "message": "Export/import",
+    "message": "Exportar/Importar",
     "description": "Export/Import section label"
   },
   "options_identity_exportKey": {
-    "message": "Export key",
+    "message": "Exportar chave",
     "description": "Export key button label"
   },
   "options_identity_importKey": {
-    "message": "Import key",
+    "message": "Importar chave",
     "description": "Import key button label"
   },
   "options_identityImport_title": {
@@ -542,7 +542,7 @@
     "description": "Shown when the user clicks Import with no JSON provided"
   },
   "options_modal_selectTheme": {
-    "message": "Select a theme",
+    "message": "Selecionar um tema",
     "description": "Theme modal title"
   },
   "options_modal_cancel": {
@@ -562,7 +562,7 @@
     "description": "Cache clear failed message"
   },
   "options_alert_nothingToClear": {
-    "message": "Nothing to clear :/",
+    "message": "Nada para limpar!",
     "description": "Nothing to clear message"
   },
   "options_alert_exportFailed": {
@@ -716,7 +716,7 @@
     "description": "Open in new tab tooltip"
   },
   "options_editor_backToSettings": {
-    "message": "Back to settings",
+    "message": "Voltar para configurações",
     "description": "Back to settings button label"
   },
   "options_editor_fullExperienceNote": {
@@ -728,7 +728,7 @@
     "description": "Open in new tab link text"
   },
   "options_editor_stylingGuide": {
-    "message": "Styling guide",
+    "message": "Guia de estilo",
     "description": "Styling guide link text"
   },
   "options_editor_renameTheme": {
@@ -964,7 +964,7 @@
     "description": "Empty state message"
   },
   "marketplace_grantPermission": {
-    "message": "Grant permission",
+    "message": "Conceder permissão",
     "description": "Grant permission button"
   },
   "marketplace_install": {
@@ -1012,7 +1012,7 @@
     "description": "Cancel button"
   },
   "marketplace_urlPermissionTitle": {
-    "message": "Additional permission required",
+    "message": "Permissão adicional necessária",
     "description": "URL permission modal title"
   },
   "marketplace_urlPermissionWhy": {
@@ -1040,7 +1040,7 @@
     "description": "URL permission note"
   },
   "marketplace_shortcutsTitle": {
-    "message": "Keyboard shortcuts",
+    "message": "Atalhos de teclado",
     "description": "Shortcuts modal title"
   },
   "marketplace_shortcutsNavigation": {
@@ -1104,11 +1104,11 @@
     "description": "Toggle compatible shortcut"
   },
   "marketplace_shortcutsDetails": {
-    "message": "Theme details",
+    "message": "Detalhes do tema",
     "description": "Theme details shortcuts group"
   },
   "marketplace_shortcutsInstallRemove": {
-    "message": "Install / remove",
+    "message": "Instalar / Remover",
     "description": "Install/remove shortcut"
   },
   "marketplace_shortcutsApply": {
@@ -1454,7 +1454,7 @@
     }
   },
   "editor_pageTitle": {
-    "message": "Better Lyrics styles editor",
+    "message": "Editor CSS Better Lyrics",
     "description": "Standalone editor page title"
   },
   "editor_importFromFile": {
@@ -1672,7 +1672,7 @@
     }
   },
   "options_language_exclusionsTitle": {
-    "message": "Language exclusions",
+    "message": "Exclusões de Idioma",
     "description": "Modal title for language exclusions"
   },
   "options_romanization_tab": {
