@@ -345,6 +345,22 @@
     "message": "Unison",
     "description": "Label on the small button in the Sources section header that opens the Unison page"
   },
+  "options_ytmu_upgrade_key": {
+    "message": "YT Music Ultimate push key",
+    "description": "Label for the push key field in the Sources section. The key is copied from the server dashboard (JWT Pool -> Copy push key)."
+  },
+  "options_ytmu_upgrade_keyHint": {
+    "message": "Paste the server's push key to let this browser send better lyrics back.",
+    "description": "Hint shown under the push key field while it is empty"
+  },
+  "options_ytmu_upgrade_enabled": {
+    "message": "Send better lyrics back to the server",
+    "description": "Toggle label for the upgrade push in the Sources section"
+  },
+  "options_ytmu_upgrade_description": {
+    "message": "When another source beats the server for a song, its lyrics are sent back and stored, so the phone and every other client get them too. Only a strictly better result is sent.",
+    "description": "Description under the upgrade toggle in the Sources section"
+  },
 
   "options_themes_title": {
     "message": "Theme Settings",

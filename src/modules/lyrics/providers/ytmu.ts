@@ -1,6 +1,7 @@
 import { AppState } from "@core/appState";
 import { logCore, warnCore } from "@core/logger";
 import type { Lyric, LyricPart, LyricSourceKey, LyricSourceResult, ProviderParameters } from "./shared";
+import { noteServerTier } from "./ytmuUpgrade";
 
 export const YTMU_SERVER_URL = "https://ytmtranslate.chiuhuang.dev";
 
@@ -25,6 +26,7 @@ interface YTMULine {
   translated?: string;
   wordSynced?: boolean;
   parts?: YTMUPart[];
+  isInstrumental?: boolean;
 }
 
 interface YTMUResponse {
@@ -66,15 +68,24 @@ function toLyricPart(part: YTMUPart): LyricPart {
   };
 }
 
+/**
+ * The server derives its own instrumental markers from the gaps between lines
+ * (cache._insert_instrumental_gaps) and tags them `isInstrumental: true`, with
+ * the literal text "[instrumental]" as a placeholder.
+ *
+ * That flag is the WHOLE contract with braccato: buildLyrics renders a note for
+ * a line carrying it and a text row for a line without it, so dropping the flag
+ * on the way in turned every break into a lyric line reading "[instrumental]".
+ * The placeholder text is kept because it is what a plain-text consumer (the
+ * server pushing this back, a report) sees, and braccato never draws it.
+ */
 function toLyrics(lines: YTMULine[], lang: string): Lyric[] {
   return lines
     .filter(line => typeof line.text === "string" && line.text.length > 0)
     .map(line => {
       const startTimeMs = Math.round(line.startTimeMs ?? (line.time ?? 0) * 1000);
       const durationMs = Math.round(line.durationMs ?? (line.duration ?? 0) * 1000);
-      const parts = (line.parts ?? [])
-        .filter(part => (part.words ?? "").length > 0)
-        .map(toLyricPart);
+      const parts = (line.parts ?? []).filter(part => (part.words ?? "").length > 0).map(toLyricPart);
       const result: Lyric = {
         startTimeMs,
         words: line.text!,
@@ -82,6 +93,9 @@ function toLyrics(lines: YTMULine[], lang: string): Lyric[] {
       };
       if (parts.length > 0) {
         result.parts = parts;
+      }
+      if (line.isInstrumental === true) {
+        result.isInstrumental = true;
       }
       if (line.translated && line.translated.length > 0) {
         result.translations = { [lang]: line.translated };
@@ -113,7 +127,11 @@ async function fetchYTMU(providerParameters: ProviderParameters, lang: string): 
     const url = new URL(YTMU_SERVER_URL + "/api/lyrics");
     url.searchParams.set("v", providerParameters.videoId);
     url.searchParams.set("lang", lang);
-    url.searchParams.set("fast", "1");
+    // No `fast=1`: this is the same request the iOS app makes. The fast path is
+    // LRCLib + YouTube + a fast Google pass and no JWT, so a browser on it can
+    // be served line-sync or plain for a song the server would have answered
+    // word-by-word -- and it wrote the fast key, not the full one the phone
+    // reads. Same endpoint, same cache key, same tier for both clients.
     return fetchFromBackground(url.toString());
   })();
 
@@ -144,7 +162,11 @@ export default async function ytmu(
   }
 
   // A previous attempt already stored a tier result.
-  if (sourceMap["ytmu-richsynced"].lyricSourceResult || sourceMap["ytmu-synced"].lyricSourceResult || sourceMap["ytmu-plain"].lyricSourceResult) {
+  if (
+    sourceMap["ytmu-richsynced"].lyricSourceResult ||
+    sourceMap["ytmu-synced"].lyricSourceResult ||
+    sourceMap["ytmu-plain"].lyricSourceResult
+  ) {
     return;
   }
 
@@ -162,6 +184,10 @@ export default async function ytmu(
 
   const hasRealWordSync = data!.wordSynced === true || lines.some(line => line.wordSynced === true);
   const isSynced = data!.synced === true;
+
+  // What the server holds for this song, on the same scale tierOf() uses. If we
+  // end up winning with something better than this, ytmuUpgrade offers it back.
+  noteServerTier(providerParameters.videoId, lang, hasRealWordSync ? 2 : isSynced ? 1 : 0);
 
   const result: LyricSourceResult = {
     lyrics,
@@ -182,5 +208,10 @@ export default async function ytmu(
     sourceMap["ytmu-plain"].lyricSourceResult = result;
   }
 
-  logCore("YT Music Ultimate provider filled", providerParameters.videoId, hasRealWordSync ? "word" : isSynced ? "line" : "plain", `${lyrics.length} lines`);
+  logCore(
+    "YT Music Ultimate provider filled",
+    providerParameters.videoId,
+    hasRealWordSync ? "word" : isSynced ? "line" : "plain",
+    `${lyrics.length} lines`
+  );
 }

@@ -14,6 +14,7 @@ import type { Lyric, LyricSourceResult, ProviderParameters, SourceMapType } from
 import { getLyrics, newSourceMap, providerPriority } from "./providers/shared";
 import { awaitUnifiedStream } from "./providers/unified";
 import type { YTLyricSourceResult } from "./providers/yt";
+import { offerUpgradeToServer } from "./providers/ytmuUpgrade";
 import { getSongAlbum, getSongMetadata, type SegmentMap } from "./requestSniffer/requestSniffer";
 import { clearCache as clearTranslationCache } from "./translation";
 import { mainView } from "@modules/ui/mainLyricsView";
@@ -411,6 +412,19 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
     };
 
     recordAvailableProviders(sourceMap);
+
+    // Hand back a win. `selectedProvider` is undefined when nothing matched, and
+    // the ytmu keys are excluded inside: our own result is already the server's
+    // entry, so sending it would be a write of the same bytes on every play.
+    if (selectedProvider && !selectedProvider.startsWith("ytmu-")) {
+      offerUpgradeToServer(lyricsWithMeta, {
+        videoId,
+        lang: providerParameters.translationLang || AppState.translationLanguage || "zh-TW",
+        song: providerParameters.song,
+        artist: providerParameters.artist,
+        durationMs: providerParameters.duration,
+      });
+    }
 
     AppState.lastLoadedVideoId = detail.videoId;
     if (signal.aborted) {

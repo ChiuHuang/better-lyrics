@@ -2331,6 +2331,39 @@ input.cm-textfield:focus-visible {
 	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* YT Music Ultimate upgrade block (options -> Sources). Reuses .modal-input for
+   the field; these two are the label and the hint under it. */
+.setting-label {
+	display: block;
+	margin-bottom: 0.375rem;
+	font-size: 0.875rem;
+}
+
+.setting-description {
+	margin: 0.375rem 0 0;
+	font-size: 0.8125rem;
+	line-height: 1.4;
+	color: rgba(255, 255, 255, 0.55);
+}
+
+.setting-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+}
+
+.setting-item input[type="checkbox"] {
+	margin: 0;
+}
+
+/* Without a key there is nothing to enable, so the toggle reads as unavailable
+   rather than as a switch that silently does nothing. */
+.setting-item input[type="checkbox"]:disabled + label {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
 .modal-input {
 	width: 100%;
 	background: rgba(0, 0, 0, 0.1);

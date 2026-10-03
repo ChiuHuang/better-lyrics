@@ -70,6 +70,10 @@ interface AppStateType {
   currentUnisonData: UnisonData | null;
   isPictureInPictureOpen: boolean;
   endTimeMode: "total" | "remaining";
+  /** Push key for the YT Music Ultimate server's /api/lyrics/contribute, and
+   * whether this browser may write back at all. Empty key = read-only. */
+  ytmuPushKey: string;
+  isYtmuUpgradeEnabled: boolean;
 }
 
 export const AppState: AppStateType = {
@@ -117,6 +121,8 @@ export const AppState: AppStateType = {
   currentUnisonData: null,
   isPictureInPictureOpen: false,
   endTimeMode: "total",
+  ytmuPushKey: "",
+  isYtmuUpgradeEnabled: false,
 };
 
 export function reloadLyrics(): void {

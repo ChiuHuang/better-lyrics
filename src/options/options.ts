@@ -64,6 +64,8 @@ interface Options {
   globalLyricOffset: number;
   richsyncOffsetTrim: number;
   lineOffsetTrim: number;
+  ytmuPushKey: string;
+  isYtmuUpgradeEnabled: boolean;
 }
 
 const saveOptions = (): void => {
@@ -133,8 +135,28 @@ const getOptionsFromForm = (): Options => {
     globalLyricOffset: parseFloat((document.getElementById("globalLyricOffset") as HTMLInputElement).value) || 0,
     richsyncOffsetTrim: parseFloat((document.getElementById("richsyncOffsetTrim") as HTMLInputElement).value) || 0,
     lineOffsetTrim: parseFloat((document.getElementById("lineOffsetTrim") as HTMLInputElement).value) || 0,
+    ytmuPushKey: ((document.getElementById("ytmuPushKey") as HTMLInputElement | null)?.value ?? "").trim(),
+    isYtmuUpgradeEnabled:
+      (document.getElementById("isYtmuUpgradeEnabled") as HTMLInputElement | null)?.checked === true,
   };
 };
+
+/**
+ * A key is required for the upgrade toggle to do anything, so the toggle is
+ * disabled without one instead of saving as "on but never fires". Same pattern
+ * as syncUnisonModalDependentState for the modal inputs.
+ */
+function syncYtmuUpgradeDependentState(): void {
+  const keyInput = document.getElementById("ytmuPushKey") as HTMLInputElement | null;
+  const toggle = document.getElementById("isYtmuUpgradeEnabled") as HTMLInputElement | null;
+  if (!keyInput || !toggle) return;
+  const hasKey = keyInput.value.trim().length > 0;
+  toggle.disabled = !hasKey;
+  const hint = document.getElementById("ytmuUpgradeKeyHint");
+  if (hint) {
+    hint.style.display = hasKey ? "none" : "";
+  }
+}
 
 function getSelectedUnisonPosition(): string {
   const selected = document.querySelector<HTMLElement>("#unison-position-frame .position-cell[data-selected='true']");
@@ -340,6 +362,8 @@ const restoreOptions = (): void => {
     globalLyricOffset: 0,
     richsyncOffsetTrim: 0,
     lineOffsetTrim: 0,
+    ytmuPushKey: "",
+    isYtmuUpgradeEnabled: false,
   };
 
   const readKeys = [
@@ -366,6 +390,8 @@ const restoreOptions = (): void => {
     });
   });
 
+  const pushKeyInput = document.getElementById("ytmuPushKey");
+  pushKeyInput?.addEventListener("input", () => syncYtmuUpgradeDependentState());
   document.getElementById("clear-cache")!.addEventListener("click", () => clearTransientLyrics());
   setupUnisonActionsModal();
   initPictureInPictureModal();
@@ -411,6 +437,15 @@ const setOptionsInForm = (items: Options): void => {
   setOffsetDisplay("globalLyricOffset", items.globalLyricOffset);
   setOffsetDisplay("richsyncOffsetTrim", items.richsyncOffsetTrim);
   setOffsetDisplay("lineOffsetTrim", items.lineOffsetTrim);
+  const pushKeyInput = document.getElementById("ytmuPushKey") as HTMLInputElement | null;
+  if (pushKeyInput) {
+    pushKeyInput.value = items.ytmuPushKey || "";
+  }
+  const upgradeToggle = document.getElementById("isYtmuUpgradeEnabled") as HTMLInputElement | null;
+  if (upgradeToggle) {
+    upgradeToggle.checked = items.isYtmuUpgradeEnabled;
+  }
+  syncYtmuUpgradeDependentState();
   setDockControlsOrderInForm(items.dockControlsOrder);
   syncUnisonModalDependentState(items.isControlsDockEnabled);
   syncPictureInPictureModalDependentState(items.isPictureInPictureEnabled);

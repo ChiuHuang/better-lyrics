@@ -435,6 +435,22 @@ export function loadTranslationSettings(): void {
   );
 }
 
+/**
+ * The key that lets this browser write a better lyrics result back to the YT
+ * Music Ultimate server, and whether it should.
+ *
+ * Both default off/empty: the upgrade write is a POST to a third-party origin
+ * with a shared secret, so it is opt-in twice -- the toggle says the direction
+ * is wanted, the key says this profile is allowed. A profile with the toggle on
+ * and no key pushes nothing (ytmuUpgrade checks both).
+ */
+export function loadYtmuUpgradeSettings(): void {
+  getStorage({ ytmuPushKey: "", isYtmuUpgradeEnabled: false }, items => {
+    AppState.ytmuPushKey = typeof items.ytmuPushKey === "string" ? items.ytmuPushKey.trim() : "";
+    AppState.isYtmuUpgradeEnabled = items.isYtmuUpgradeEnabled === true && AppState.ytmuPushKey.length > 0;
+  });
+}
+
 export function loadEndTimeModeSetting(): void {
   getStorage({ endTimeMode: "total" }, items => {
     AppState.endTimeMode = items.endTimeMode === "remaining" ? "remaining" : "total";

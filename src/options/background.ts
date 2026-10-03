@@ -168,24 +168,64 @@ chrome.runtime.onMessage.addListener(request => {
 // YT Music Ultimate provider: cross-origin fetch lives here because content
 // scripts are subject to CORS; the background worker is not (host permission).
 chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-  if (request.action !== "fetchYTMULyrics") return;
-  const url = String(request.url || "");
-  if (!url.startsWith(YTMU_SERVER_ORIGIN + "/")) {
-    sendResponse({ ok: false, error: "Blocked URL" });
-    return;
+  if (request.action === "fetchYTMULyrics") {
+    const url = String(request.url || "");
+    if (!url.startsWith(YTMU_SERVER_ORIGIN + "/")) {
+      sendResponse({ ok: false, error: "Blocked URL" });
+      return;
+    }
+    fetch(url, { signal: AbortSignal.timeout(20000) })
+      .then(async response => {
+        if (!response.ok) {
+          sendResponse({ ok: false, status: response.status });
+          return;
+        }
+        sendResponse({ ok: true, data: await response.json() });
+      })
+      .catch(error => {
+        sendResponse({ ok: false, error: String(error) });
+      });
+    return true;
   }
-  fetch(url, { signal: AbortSignal.timeout(20000) })
-    .then(async response => {
-      if (!response.ok) {
-        sendResponse({ ok: false, status: response.status });
-        return;
-      }
-      sendResponse({ ok: true, data: await response.json() });
+
+  // The other direction: hand a better lyrics result back to the server.
+  //
+  // The URL is BUILT here, never taken from the message. A content script can
+  // send any `action` it likes, so a fixed path plus a fixed origin is the only
+  // version of this that cannot be pointed somewhere else; the body is the
+  // caller's to choose, because it is the lyrics.
+  if (request.action === "contributeYTMULyrics") {
+    const payload = (request.payload || {}) as { key?: string; body?: unknown };
+    if (!payload.key || !payload.body) {
+      sendResponse({ ok: false, error: "missing key or body" });
+      return;
+    }
+    fetch(YTMU_SERVER_ORIGIN + "/api/lyrics/contribute", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-YTMU-Key": String(payload.key) },
+      body: JSON.stringify(payload.body),
+      signal: AbortSignal.timeout(20000),
     })
-    .catch(error => {
-      sendResponse({ ok: false, error: String(error) });
-    });
-  return true;
+      .then(async response => {
+        let data: unknown = null;
+        try {
+          data = await response.json();
+        } catch {
+          // A non-JSON body on an error status is still an answer.
+        }
+        if (!response.ok) {
+          sendResponse({ ok: false, status: response.status, data });
+          return;
+        }
+        sendResponse({ ok: true, data });
+      })
+      .catch(error => {
+        sendResponse({ ok: false, error: String(error) });
+      });
+    return true;
+  }
+
+  return;
 });
 
 initBackgroundAuth();
