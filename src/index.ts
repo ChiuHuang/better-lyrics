@@ -17,6 +17,7 @@ import {
   loadLyricOffsetSettings,
   loadPassiveScrollSetting,
   loadTranslationSettings,
+  loadYtmuUpgradeSettings,
   onAlbumArtEnabled,
 } from "@modules/settings/settings";
 import {
@@ -72,6 +73,7 @@ async function modify(isDisposed: () => boolean): Promise<void> {
   handleSettings();
   setupWakeLockForFullscreen();
   loadTranslationSettings();
+  loadYtmuUpgradeSettings();
   loadEndTimeModeSetting();
   loadLyricOffsetSettings();
   loadPassiveScrollSetting();

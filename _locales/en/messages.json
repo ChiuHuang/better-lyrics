@@ -803,6 +803,44 @@
     "message": "LRClib",
     "description": "LRClib provider name"
   },
+  "options_provider_ytmu": {
+    "message": "YT Music Ultimate",
+    "description": "Provider name for the user's own lyrics server"
+  },
+  "options_ytmu_upgrade_key": {
+    "message": "YT Music Ultimate push key",
+    "description": "Label for the push key row in the Sources section. The key is copied from the server dashboard (JWT Pool -> Copy push key)."
+  },
+  "options_ytmu_upgrade_enabled": {
+    "message": "Send better lyrics back to the server",
+    "description": "Toggle label in the Sources section. Automatic: when another source beats the server for a song, its lyrics are sent back."
+  },
+  "options_ytmu_upgrade_pushNow": {
+    "message": "Send current lyrics",
+    "description": "Button label in the Sources section: send the lyrics on screen to the server right now, replacing the stored entry."
+  },
+  "options_ytmu_upgrade_pushed": {
+    "message": "Lyrics sent to the server",
+    "description": "Toast shown after the manual push succeeds"
+  },
+  "options_ytmu_upgrade_pushFailed": {
+    "message": "Could not send lyrics: $ERROR$",
+    "description": "Toast shown when the manual push fails",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "no push key"
+      }
+    }
+  },
+  "options_ytmu_upgrade_noTab": {
+    "message": "Open YouTube Music first.",
+    "description": "Toast shown when the manual push finds no YouTube Music tab to take the lyrics from"
+  },
+  "options_ytmu_upgrade_description": {
+    "message": "When another source beats the server for a song, its lyrics are sent back and stored, so the phone and every other client get them too. Only a strictly better result is sent automatically. \"Send current lyrics\" always replaces, for a lyric fix or a provider the server does not have.",
+    "description": "Description under the YT Music Ultimate upgrade rows in the Sources section"
+  },
   "options_provider_youtube": {
     "message": "YouTube",
     "description": "YouTube provider name"

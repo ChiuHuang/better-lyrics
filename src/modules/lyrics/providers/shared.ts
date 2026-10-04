@@ -9,6 +9,7 @@ import {
 import { getTransientStorage, setTransientStorage } from "@core/storage";
 import unified from "./unified";
 import ytLyrics, { type YTLyricSourceResult } from "./yt";
+import ytmu from "./ytmu";
 import { ytCaptions } from "./ytCaptions";
 import unison, { type UnisonData } from "@modules/lyrics/providers/unison";
 import { mergePreferredProviders } from "./providerList";
@@ -148,6 +149,9 @@ export function initProviders(): void {
 }
 
 const sourceKeyToFillFn = {
+  "ytmu-richsynced": ytmu,
+  "ytmu-synced": ytmu,
+  "ytmu-plain": ytmu,
   "binimum-richsynced": (p: ProviderParameters) => unified(p, "binimum-richsynced"),
   "binimum-synced": (p: ProviderParameters) => unified(p, "binimum-synced"),
   "bLyrics-richsynced": (p: ProviderParameters) => unified(p, "bLyrics-richsynced"),

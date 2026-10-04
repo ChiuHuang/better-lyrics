@@ -23,6 +23,7 @@ import {
 import { initIdentityBackupWatcher } from "@/options/identityBackup";
 import { fetchAllStoreThemes } from "./store/themeStoreService";
 import { logBackground, warnBackground } from "@core/logger";
+import { YTMU_REQUEST_TIMEOUT_MS, YTMU_SERVER_ORIGIN } from "@core/constants";
 
 const THEME_UPDATE_ALARM = "theme-update-check";
 const UPDATE_INTERVAL_MINUTES = 360; // 6 hours
@@ -149,7 +150,7 @@ chrome.alarms.onAlarm.addListener(alarm => {
   }
 });
 
-chrome.runtime.onMessage.addListener(request => {
+chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   if (request.action === "applyStyles") {
     chrome.tabs.query({ url: "*://music.youtube.com/*" }, tabs => {
       tabs.forEach(tab => {
@@ -160,8 +161,65 @@ chrome.runtime.onMessage.addListener(request => {
         }
       });
     });
+    return false;
   }
-  return true;
+
+  // Cross-origin fetch for the YT Music Ultimate provider: a content script is
+  // subject to CORS, the background worker is not (host permission).
+  if (request.action === "fetchYTMULyrics") {
+    const url = String(request.url || "");
+    if (!url.startsWith(YTMU_SERVER_ORIGIN + "/")) {
+      sendResponse({ ok: false, error: "Blocked URL" });
+      return true;
+    }
+    fetch(url, { signal: AbortSignal.timeout(YTMU_REQUEST_TIMEOUT_MS) })
+      .then(async response => {
+        if (!response.ok) {
+          sendResponse({ ok: false, status: response.status });
+          return;
+        }
+        sendResponse({ ok: true, data: await response.json() });
+      })
+      .catch(error => {
+        sendResponse({ ok: false, error: String(error) });
+      });
+    return true;
+  }
+
+  // The other direction: hand a better lyrics result back to the server.
+  //
+  // The URL is BUILT here, never taken from the message. A content script can
+  // send any `action` it likes, so a fixed path on a fixed origin is the only
+  // version of this that cannot be pointed somewhere else; the body is the
+  // caller's to choose, because it is the lyrics.
+  if (request.action === "contributeYTMULyrics") {
+    const payload = (request.payload || {}) as { key?: string; body?: unknown };
+    if (!payload.key || !payload.body) {
+      sendResponse({ ok: false, error: "missing key or body" });
+      return true;
+    }
+    fetch(YTMU_SERVER_ORIGIN + "/api/lyrics/contribute", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-YTMU-Key": String(payload.key) },
+      body: JSON.stringify(payload.body),
+      signal: AbortSignal.timeout(YTMU_REQUEST_TIMEOUT_MS),
+    })
+      .then(async response => {
+        let data: unknown = null;
+        try {
+          data = await response.json();
+        } catch {
+          // A non-JSON body on an error status is still an answer.
+        }
+        sendResponse(response.ok ? { ok: true, data } : { ok: false, status: response.status, data });
+      })
+      .catch(error => {
+        sendResponse({ ok: false, error: String(error) });
+      });
+    return true;
+  }
+
+  return false;
 });
 
 initBackgroundAuth();

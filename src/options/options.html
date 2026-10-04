@@ -261,6 +261,21 @@
 					<div class="ui-card__body" data-scroll-fade="">
 						<div class="ui-panel is-active">
 							<ul id="providers-list" class="sortable-list providers" data-no-autosave=""></ul>
+							<div class="ui-row">
+								<span class="ui-row__label" id="ytmuPushKey-label">__MSG_options_ytmu_upgrade_key__</span>
+								<input type="password" id="ytmuPushKey" class="ui-field" aria-labelledby="ytmuPushKey-label"
+									placeholder="X-YTMU-Key" spellcheck="false" autocomplete="off" data-no-autosave="">
+							</div>
+							<div class="ui-row">
+								<span class="ui-row__label" id="isYtmuUpgradeEnabled-label">__MSG_options_ytmu_upgrade_enabled__</span>
+								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isYtmuUpgradeEnabled" aria-labelledby="isYtmuUpgradeEnabled-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
+							</div>
+							<div class="ui-row">
+								<span class="ui-row__label" id="ytmuPushNow-label">__MSG_options_ytmu_upgrade_pushNow__</span>
+								<button class="ui-button ui-button--compact" id="ytmuPushNow" type="button"
+									aria-labelledby="ytmuPushNow-label" data-no-autosave="">__MSG_options_ytmu_upgrade_pushNow__</button>
+							</div>
+							<p class="setting-help-text">__MSG_options_ytmu_upgrade_description__</p>
 						</div>
 					</div>
 				</div>

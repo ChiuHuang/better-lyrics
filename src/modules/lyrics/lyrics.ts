@@ -26,6 +26,7 @@ import {
 import { getLyrics, type LyricSourceKey, newSourceMap, providerPriority } from "./providers/shared";
 import { awaitUnifiedStream } from "./providers/unified";
 import type { YTLyricSourceResult } from "./providers/yt";
+import { offerUpgradeToServer } from "./providers/ytmuUpgrade";
 import { getSongAlbum, getSongMetadata, type SegmentMap } from "./requestSniffer/requestSniffer";
 import { getSegmentMapTimeShiftMs } from "@modules/lyrics/segmentMap";
 import { clearCache as clearTranslationCache } from "./translation";
@@ -392,6 +393,17 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
           }
           lyrics = sourceLyrics;
           selectedProvider = provider;
+          // Hand a win back to our own server (ytmuUpgrade). Fire and forget on
+          // purpose: the display must not wait on a POST. It is a no-op when the
+          // upgrade is off, when the winner IS us, and when the tier is not
+          // strictly better -- so this is one map lookup on the common path.
+          offerUpgradeToServer(sourceLyrics, {
+            videoId: detail.videoId,
+            lang: AppState.translationLanguage || "zh-TW",
+            song: providerParameters.song,
+            artist: providerParameters.artist,
+            durationMs: providerParameters.duration,
+          });
           break;
         }
       } catch (err) {

@@ -113,6 +113,8 @@ interface Options extends VideoQualitySettings {
   globalLyricOffset: number;
   richsyncOffsetTrim: number;
   lineOffsetTrim: number;
+  ytmuPushKey: string;
+  isYtmuUpgradeEnabled: boolean;
 }
 
 const saveOptions = (): void => {
@@ -189,6 +191,9 @@ const getOptionsFromForm = (): Options => {
     globalLyricOffset: parseFloat((document.getElementById("globalLyricOffset") as HTMLInputElement).value) || 0,
     richsyncOffsetTrim: parseFloat((document.getElementById("richsyncOffsetTrim") as HTMLInputElement).value) || 0,
     lineOffsetTrim: parseFloat((document.getElementById("lineOffsetTrim") as HTMLInputElement).value) || 0,
+    ytmuPushKey: ((document.getElementById("ytmuPushKey") as HTMLInputElement | null)?.value ?? "").trim(),
+    isYtmuUpgradeEnabled:
+      (document.getElementById("isYtmuUpgradeEnabled") as HTMLInputElement | null)?.checked === true,
   };
 };
 
@@ -353,12 +358,14 @@ const restoreOptions = (): void => {
     translationLanguage: "en",
     isRomanizationEnabled: false,
     preferredProviderList: [
+      "ytmu-richsynced",
       "bLyrics-richsynced",
       "unison-richsynced",
       "binimum-richsynced",
       "unison-wordsynced",
       "portato-richsynced",
       "musixmatch-richsync",
+      "ytmu-synced",
       "yt-captions",
       "bLyrics-synced",
       "unison-synced",
@@ -366,6 +373,7 @@ const restoreOptions = (): void => {
       "lrclib-synced",
       "legato-synced",
       "musixmatch-synced",
+      "ytmu-plain",
       "yt-lyrics",
       "unison-plain",
       "lrclib-plain",
@@ -386,6 +394,8 @@ const restoreOptions = (): void => {
     globalLyricOffset: 0,
     richsyncOffsetTrim: 0,
     lineOffsetTrim: 0,
+    ytmuPushKey: "",
+    isYtmuUpgradeEnabled: false,
   };
 
   const readKeys = [
@@ -413,10 +423,73 @@ const restoreOptions = (): void => {
   });
 
   document.getElementById("clear-cache")!.addEventListener("click", () => clearTransientLyrics());
+  initYtmuUpgradeBlock();
   setupUnisonActionsModal();
   initPictureInPictureModal();
   initOffsetModal();
 };
+
+/**
+ * A key is required for anything to be sent, so the toggle and the button read as
+ * unavailable without one instead of as controls that silently do nothing. Same
+ * pattern as syncUnisonModalDependentState for the dock inputs.
+ */
+function syncYtmuUpgradeDependentState(): void {
+  const keyInput = document.getElementById("ytmuPushKey") as HTMLInputElement | null;
+  const toggle = document.getElementById("isYtmuUpgradeEnabled") as HTMLInputElement | null;
+  const pushNow = document.getElementById("ytmuPushNow") as HTMLButtonElement | null;
+  if (!keyInput || !toggle || !pushNow) return;
+  const hasKey = keyInput.value.trim().length > 0;
+  toggle.disabled = !hasKey;
+  pushNow.disabled = !hasKey;
+  if (!hasKey) {
+    toggle.checked = false;
+  }
+}
+
+/**
+ * "Send the lyrics on screen to the server", for the case the automatic gate
+ * cannot cover: a lyric fix, a re-sync, or a provider we do not carry. It
+ * REPLACES the entry rather than being measured against it, which is why it is a
+ * button and not another automatic push.
+ *
+ * The request goes to the YT Music tab, because the lyrics only exist there.
+ */
+function initYtmuUpgradeBlock(): void {
+  const keyInput = document.getElementById("ytmuPushKey") as HTMLInputElement | null;
+  const pushNow = document.getElementById("ytmuPushNow") as HTMLButtonElement | null;
+  keyInput?.addEventListener("input", () => syncYtmuUpgradeDependentState());
+  pushNow?.addEventListener("click", () => {
+    void pushCurrentLyricsToServer();
+  });
+}
+
+async function pushCurrentLyricsToServer(): Promise<void> {
+  const pushNow = document.getElementById("ytmuPushNow") as HTMLButtonElement | null;
+  const tabs = await chrome.tabs.query({ url: "https://music.youtube.com/*" });
+  const targets = tabs.flatMap(tab => (tab.id == null ? [] : [tab.id]));
+  if (pushNow) pushNow.disabled = true;
+  try {
+    if (targets.length === 0) {
+      toast.error(t("options_ytmu_upgrade_noTab"));
+      return;
+    }
+    const results = await Promise.allSettled(
+      targets.map(id => chrome.tabs.sendMessage(id, { action: "pushCurrentLyrics" }))
+    );
+    const failure = results.find(result => result.status === "rejected" || result.value?.success !== true) as
+      | { status?: string; reason?: unknown; value?: { error?: string } }
+      | undefined;
+    if (!failure) {
+      toast.success(t("options_ytmu_upgrade_pushed"));
+      return;
+    }
+    const detail = failure?.value?.error ?? String(failure?.reason ?? "");
+    toast.error(t("options_ytmu_upgrade_pushFailed", detail));
+  } finally {
+    syncYtmuUpgradeDependentState();
+  }
+}
 
 // Function to set options in form elements
 const setOptionsInForm = (items: Options): void => {
@@ -465,6 +538,15 @@ const setOptionsInForm = (items: Options): void => {
   setOffsetDisplay("globalLyricOffset", items.globalLyricOffset);
   setOffsetDisplay("richsyncOffsetTrim", items.richsyncOffsetTrim);
   setOffsetDisplay("lineOffsetTrim", items.lineOffsetTrim);
+  const pushKeyInput = document.getElementById("ytmuPushKey") as HTMLInputElement | null;
+  if (pushKeyInput) {
+    pushKeyInput.value = items.ytmuPushKey || "";
+  }
+  const upgradeToggle = document.getElementById("isYtmuUpgradeEnabled") as HTMLInputElement | null;
+  if (upgradeToggle) {
+    upgradeToggle.checked = items.isYtmuUpgradeEnabled;
+  }
+  syncYtmuUpgradeDependentState();
   setDockControlsOrderInForm(items.dockControlsOrder);
   syncUnisonModalDependentState(items.isControlsDockEnabled);
   syncPictureInPictureModalDependentState(items.isPictureInPictureEnabled);
@@ -478,12 +560,14 @@ const setOptionsInForm = (items: Options): void => {
   providersListElem.replaceChildren();
 
   const defaultProviderOrder = [
+    "ytmu-richsynced",
     "bLyrics-richsynced",
     "unison-richsynced",
     "binimum-richsynced",
     "unison-wordsynced",
     "portato-richsynced",
     "musixmatch-richsync",
+    "ytmu-synced",
     "yt-captions",
     "bLyrics-synced",
     "unison-synced",
@@ -491,6 +575,7 @@ const setOptionsInForm = (items: Options): void => {
     "lrclib-synced",
     "legato-synced",
     "musixmatch-synced",
+    "ytmu-plain",
     "yt-lyrics",
     "unison-plain",
     "lrclib-plain",
@@ -512,6 +597,9 @@ interface ProviderInfo {
 }
 
 const getProviderIdToInfoMap = (): { [key: string]: ProviderInfo } => ({
+  "ytmu-richsynced": { name: t("options_provider_ytmu"), syncType: "syllable" },
+  "ytmu-synced": { name: t("options_provider_ytmu"), syncType: "line" },
+  "ytmu-plain": { name: t("options_provider_ytmu"), syncType: "unsynced" },
   "binimum-richsynced": { name: t("options_provider_binilyrics"), syncType: "syllable" },
   "binimum-synced": { name: t("options_provider_binilyrics"), syncType: "line" },
   "musixmatch-richsync": {

@@ -122,6 +122,18 @@ export const CUBEY_LYRICS_API_URL_TURNSTILE = "https://lyrics.api.dacubeking.com
 
 export const CUBEY_LYRICS_API_URL = "https://lyrics.api.dacubeking.com/" as const;
 
+// The viewer's own lyrics server (YT Music Ultimate). Shared by the content-side
+// provider and the background worker, which must agree on the origin: the worker
+// allowlists it before fetching, and that allowlist is the only thing stopping a
+// content script from pointing the worker at an arbitrary URL.
+export const YTMU_SERVER_ORIGIN = "https://ytmtranslate.chiuhuang.dev" as const;
+
+// The BACKGROUND fetch must outlive the content-side deadline on purpose. The
+// provider resolves empty after YTMU_DEADLINE_MS so the race can continue, and
+// the request is still wanted: the server keeps working and writes the cache, so
+// aborting it early would throw that away.
+export const YTMU_REQUEST_TIMEOUT_MS = 60_000;
+
 // Supported Romanization Languages
 // Display names are fallback only - use getLanguageDisplayName() from @core/i18n for UI
 // to get auto-localized names via Intl.DisplayNames API
@@ -440,42 +452,49 @@ interface ProviderConfig {
 }
 
 export const PROVIDER_CONFIGS: ProviderConfig[] = [
-  { key: "bLyrics-richsynced", displayName: "Better Lyrics", syncType: "syllable", priority: 0 },
+  // YT Music Ultimate first: it is the user's own server and the only entry here
+  // that also gets UPDATED by this browser (see providers/ytmuUpgrade). It
+  // resolves on a deadline, so being first costs nothing when it is slow -- the
+  // race moves on and the request finishes server-side anyway.
+  { key: "ytmu-richsynced", displayName: "YT Music Ultimate", syncType: "syllable", priority: 0 },
+  { key: "bLyrics-richsynced", displayName: "Better Lyrics", syncType: "syllable", priority: 1 },
   {
     key: "unison-richsynced",
     displayName: "Unison",
     syncType: "syllable",
-    priority: 1,
+    priority: 2,
   },
-  { key: "binimum-richsynced", displayName: "BiniLyrics", syncType: "syllable", priority: 2 },
+  { key: "binimum-richsynced", displayName: "BiniLyrics", syncType: "syllable", priority: 3 },
   {
     key: "unison-wordsynced",
     displayName: "Unison",
     syncType: "word",
-    priority: 3,
+    priority: 4,
   },
-  { key: "portato-richsynced", displayName: "Better Lyrics Portato", syncType: "word", priority: 4 },
-  { key: "musixmatch-richsync", displayName: "Musixmatch", syncType: "word", priority: 5 },
-  { key: "bLyrics-synced", displayName: "Better Lyrics", syncType: "line", priority: 6 },
+  { key: "portato-richsynced", displayName: "Better Lyrics Portato", syncType: "word", priority: 5 },
+  { key: "musixmatch-richsync", displayName: "Musixmatch", syncType: "word", priority: 6 },
+  { key: "ytmu-synced", displayName: "YT Music Ultimate", syncType: "line", priority: 7 },
+  { key: "bLyrics-synced", displayName: "Better Lyrics", syncType: "line", priority: 8 },
   {
     key: "unison-synced",
     displayName: "Unison",
     syncType: "line",
-    priority: 7,
+    priority: 9,
   },
-  { key: "yt-captions", displayName: "YouTube Captions", syncType: "line", priority: 8 },
-  { key: "binimum-synced", displayName: "BiniLyrics", syncType: "line", priority: 9 },
-  { key: "lrclib-synced", displayName: "LRCLib", syncType: "line", priority: 10 },
-  { key: "legato-synced", displayName: "Better Lyrics Legato", syncType: "line", priority: 11 },
-  { key: "musixmatch-synced", displayName: "Musixmatch", syncType: "line", priority: 12 },
-  { key: "yt-lyrics", displayName: "YouTube", syncType: "unsynced", priority: 13 },
+  { key: "yt-captions", displayName: "YouTube Captions", syncType: "line", priority: 10 },
+  { key: "binimum-synced", displayName: "BiniLyrics", syncType: "line", priority: 11 },
+  { key: "lrclib-synced", displayName: "LRCLib", syncType: "line", priority: 12 },
+  { key: "legato-synced", displayName: "Better Lyrics Legato", syncType: "line", priority: 13 },
+  { key: "musixmatch-synced", displayName: "Musixmatch", syncType: "line", priority: 14 },
+  { key: "ytmu-plain", displayName: "YT Music Ultimate", syncType: "unsynced", priority: 15 },
+  { key: "yt-lyrics", displayName: "YouTube", syncType: "unsynced", priority: 16 },
   {
     key: "unison-plain",
     displayName: "Unison",
     syncType: "unsynced",
-    priority: 14,
+    priority: 17,
   },
-  { key: "lrclib-plain", displayName: "LRCLib", syncType: "unsynced", priority: 15 },
+  { key: "lrclib-plain", displayName: "LRCLib", syncType: "unsynced", priority: 18 },
 ] as const;
 
 export const LYRIC_SOURCE_KEYS = PROVIDER_CONFIGS.map(p => p.key);

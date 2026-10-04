@@ -12,6 +12,7 @@ import { configureLogging, logContent } from "@core/logger";
 import { syncKaraoke } from "@modules/karaoke/karaokeView";
 import { loadKaraokeSettings } from "@modules/karaoke/settings";
 import { clearCache as clearTranslationCache } from "@modules/lyrics/translation";
+import { pushCurrentLyrics } from "@modules/lyrics/providers/ytmuUpgrade";
 import { mountDock, mountVotingSegment, reloadAlbumArt, unmountDock, updateDockPosition } from "@modules/ui/dom";
 import { applyGlobalOffsets } from "@modules/ui/lyricsDock/offset";
 import { mainView } from "@modules/ui/mainLyricsView";
@@ -287,6 +288,18 @@ export function listenForPopupMessages(): void {
         }
       );
       return true;
+    } else if (request.action === "pushCurrentLyrics") {
+      // The Sources page's "send what is on screen" button. Not gated on the
+      // upgrade toggle: an explicit press is the whole point, and the toggle only
+      // governs the automatic path.
+      pushCurrentLyrics().then(
+        result => sendResponse({ success: result.ok, ...result }),
+        error => {
+          logContent("pushCurrentLyrics failed:", error);
+          sendResponse({ success: false, error: String(error) });
+        }
+      );
+      return true;
     }
   });
 }
@@ -441,6 +454,22 @@ export function loadTranslationSettings(): void {
       AppState.translationDisabledLanguages = items.translationDisabledLanguages || [];
     }
   );
+}
+
+/**
+ * The key that lets this browser write a better lyrics result back to the YT
+ * Music Ultimate server, and whether it should.
+ *
+ * Both default off/empty: the upgrade write is a POST to a third-party origin
+ * carrying a shared secret, so it is opt-in twice -- the toggle says the
+ * direction is wanted, the key says this profile is allowed. A profile with the
+ * toggle on and no key pushes nothing (ytmuUpgrade checks both).
+ */
+export function loadYtmuUpgradeSettings(): void {
+  getStorage({ ytmuPushKey: "", isYtmuUpgradeEnabled: false }, items => {
+    AppState.ytmuPushKey = typeof items.ytmuPushKey === "string" ? items.ytmuPushKey.trim() : "";
+    AppState.isYtmuUpgradeEnabled = items.isYtmuUpgradeEnabled === true && AppState.ytmuPushKey.length > 0;
+  });
 }
 
 export function loadEndTimeModeSetting(): void {
